@@ -170,7 +170,7 @@ export function lookupLegalEvidence(input: CaseInput, candidates?: readonly Evid
   if (!validDate(input.assessmentDate)) return { evidence: [], citations: [], reviewRequirements: [], issues: [{ kind: "invalid-date", sourceId: null }] };
   const maxSnapshotAgeDays = options?.maxSnapshotAgeDays ?? 30;
   if (!Number.isInteger(maxSnapshotAgeDays) || maxSnapshotAgeDays < 0) return { evidence: [], citations: [], reviewRequirements: [], issues: [{ kind: "invalid-option", sourceId: null }] };
-  const selected = candidates ?? registry.candidates;
+  const selected = (candidates ?? registry.candidates).filter((candidate) => candidate.intendedUse === undefined || candidate.intendedUse === options?.intendedUse);
   const loadIssues = candidates === undefined ? registry.issues : [];
   if (selected.length === 0) return { evidence: [], citations: [], reviewRequirements: [], issues: [...loadIssues, { kind: "no-results", sourceId: null }] };
   const evidence = new Map<string, EvidenceRecord>();
@@ -178,7 +178,6 @@ export function lookupLegalEvidence(input: CaseInput, candidates?: readonly Evid
   const issues: SearchIssue[] = [...loadIssues];
   const reviewRequirements = new Set<string>();
   for (const candidate of selected) {
-    if (candidate.intendedUse !== undefined && candidate.intendedUse !== options?.intendedUse) continue;
     const issue = candidateIssue(input, candidate, maxSnapshotAgeDays);
     if (issue !== null) {
       issues.push({ kind: issue, sourceId: candidate.record.sourceId });

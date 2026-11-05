@@ -57,3 +57,11 @@ test("rejects an excerpt linked to a different original PDF", () => {
   expect(result.candidates).toEqual([]);
   expect(result.issues).toEqual([{ kind: "hash-mismatch", sourceId: "legal-290881-annex4-code" }]);
 });
+
+test("reports no results when intended use excludes every registered candidate", () => {
+  const loaded = loadEvidenceRegistry(entries.filter((entry) => entry.sourceId === "legal-290881-annex5-3-food"));
+  expect(loaded.candidates).toHaveLength(1);
+  const result = lookupLegalEvidence(input, loaded.candidates, { intendedUse: "general-resin" });
+  expect(result.evidence).toEqual([]);
+  expect(result.issues).toEqual([{ kind: "no-results", sourceId: null }]);
+});
