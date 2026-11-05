@@ -1,0 +1,16 @@
+[
+  {
+    "sourceId": "waste-rule-2026-10-02",
+    "kind": "annex",
+    "claim": "폐기물의 종류별 세부분류는 별표 4에 따른다.",
+    "quote": "① 법 제2조의2에 따른 폐기물의 종류별 세부분류는 별표 4와 같다.",
+    "locator": "제4조의2 제1항",
+    "sha256": "f3b71f45f2c35edf330e70d61b6610bca5fd4c236a1383bb1a39faaef8664659",
+    "processTerms": [],
+    "polymerTerms": [],
+    "contaminationTerms": [],
+    "siteSpecific": false,
+    "reviewedBy": "Codex (국가법령정보센터 원문 대조)",
+    "reviewedAt": "2026-11-05T09:31:22Z"
+  }
+]
