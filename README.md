@@ -13,6 +13,8 @@ AXR AI Bootcamp Innovation Challenger 2026 Microsoft 주제를 대상으로 한�
 
 ## 시작
 
+팀원은 [docs/team-tasks.md](docs/team-tasks.md)부터 읽고 자기 담당 작업을 시작한다.
+
 검증 환경: Linux x64, Bun 1.4.2. senpi의 Node 요구는 >=24다.
 
 ```sh
