@@ -7,6 +7,7 @@ import type { EvidenceRecord } from "./contracts.ts";
 const SourceSchema = Type.Object({
   sourceId: Type.String(),
   category: Type.Union([Type.Literal("law"), Type.Literal("processor"), Type.Literal("price"), Type.Literal("factor")]),
+  legalFamily: Type.Optional(Type.Union([Type.Literal("waste-rule"), Type.Literal("food-resin-notice")])),
   title: Type.String(),
   publisher: Type.String(),
   url: Type.String(),

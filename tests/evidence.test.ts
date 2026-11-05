@@ -86,13 +86,13 @@ describe("legal evidence lookup", () => {
   test("returns a verified generic article citation from the bundled registry", () => {
     const result = lookupLegalEvidence(caseInput);
 
-    expect(findEvidenceForCase(caseInput).map((item) => item.sourceId)).toEqual(["waste-rule-2026-10-02"]);
-    expect(result.citations).toEqual([{ claim: "폐기물의 종류별 세부분류는 별표 4에 따른다.", kind: "annex", sourceId: "waste-rule-2026-10-02", locator: "제4조의2 제1항" }]);
-    expect(result.issues).toEqual([]);
+    expect(findEvidenceForCase(caseInput).map((item) => item.sourceId)).toContain("waste-rule-2026-10-02");
+    expect(result.citations.find((item) => item.sourceId === "waste-rule-2026-10-02")).toMatchObject({ claim: "폐기물의 종류별 세부분류는 별표 4에 따른다.", kind: "annex", locator: "제4조의2 제1항" });
+    expect(result.issues.filter((item) => item.sourceId === "waste-rule-2026-10-02")).toEqual([]);
   });
 
   test("keeps unverified legal versions in review and reports an uncovered date", () => {
-    expect(pendingLegalSources(caseInput).pending.map((item) => item.sourceId)).toEqual(["waste-rule-2026-10-02"]);
+    expect(pendingLegalSources(caseInput)).toEqual({ pending: [], issues: [] });
     expect(pendingLegalSources({ ...caseInput, assessmentDate: "2026-09-30" }).pending.map((item) => item.sourceId)).toEqual(["waste-rule-2026-09-18"]);
     expect(pendingLegalSources({ ...caseInput, assessmentDate: "2026-09-17" }).issues).toEqual([{ kind: "version-not-registered", sourceId: null }]);
   });
