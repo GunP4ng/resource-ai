@@ -1,5 +1,5 @@
 import type { ActivityInput, ComparisonInput, FactorRecord, QuoteInput, RouteCalculationInput } from "./contracts.ts";
-import type { ActivityReview, CalculationContext, FactorReview, QuoteReview, RouteReview } from "./o-calculation.ts";
+import type { ActivityReview, CalculationContext, CaseMassReview, FactorReview, QuoteReview, RouteReview } from "./o-calculation.ts";
 import { documents, route as assessment, sourceId } from "./o-synthetic-evidence.ts";
 export const sq = <U extends string>(value: number | null, unit: U) => ({ value, unit, evidenceIds: [sourceId], missingReason: value === null ? "synthetic-missing" : null });
 export const treatment: QuoteInput = {
@@ -79,7 +79,11 @@ export function calculationFixture(quotes: readonly QuoteInput[] = [treatment, t
     ...changes,
     ...(q.category === "sales" ? { components: ["sales"] } : {})
   }));
-  const facts: Record<string, unknown> = { [`boundary:synthetic-case:${route.routeId}`]: boundary };
+  const caseMass: CaseMassReview = {
+    caseId: "synthetic-case", assessmentDate: "2026-11-05", functionalUnit: boundary.functionalUnit, boundary: boundary.boundary,
+    material: boundary.material, condition: boundary.condition, moistureBasis: boundary.moistureBasis, massKg: 2000, evidenceIds: [sourceId]
+  };
+  const facts: Record<string, unknown> = { [`boundary:synthetic-case:${route.routeId}`]: boundary, [`case-mass:${caseMass.caseId}`]: caseMass };
   for (const q of quotes) facts[`quote:${q.quoteId}`] = { quote: q, review: reviews.find((v) => v.quoteId === q.quoteId) };
   const evidence = documents(facts);
   const input: ComparisonInput = {
@@ -93,11 +97,12 @@ export function calculationFixture(quotes: readonly QuoteInput[] = [treatment, t
     factors: [],
     evidence: evidence.documents.map((d) => d.record)
   };
-  return { route, input, context: { ...evidence, version: "synthetic-calculation-v1", vatBasis: "included", routes: [boundary], quotes: reviews, factors: [], activities: [] } };
+  return { route, input, context: { ...evidence, version: "synthetic-calculation-v1", vatBasis: "included", caseMass, routes: [boundary], quotes: reviews, factors: [], activities: [] } };
 }
 /** Rebuild actual synthetic snapshot bytes after an explicitly authored fixture edit. */
 export function bindSynthetic(input: ComparisonInput, context: CalculationContext): { input: ComparisonInput; context: CalculationContext } {
   const facts: Record<string, unknown> = {};
+  if (context.caseMass != null) facts[`case-mass:${context.caseMass.caseId}`] = context.caseMass;
   for (const r of context.routes) {
     facts[`boundary:${input.caseId}:${r.routeId}`] = r;
     facts[`assessment:${input.caseId}:${r.routeId}`] = { ...assessment, routeId: r.routeId };

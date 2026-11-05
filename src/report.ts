@@ -1,3 +1,4 @@
+import { creditPolicyNotes, restrictedNet } from "./carbon.ts";
 import type { DecisionResult, Estimate, ScenarioComparison } from "./contracts.ts";
 import { parseDecision } from "./o-decision.ts";
 export interface ReportPresentation {
@@ -94,11 +95,16 @@ function metric(value: Metric, references: EvidenceReferences, shared: readonly 
     case "available": {
       const amount = `${escapeHtml(value.central.toLocaleString("ko-KR", { maximumFractionDigits: 3 }))} ${escapeHtml(value.unit)}`;
       const range = value.low !== value.high ? ` (범위 ${escapeHtml(String(value.low))}–${escapeHtml(String(value.high))})` : "";
-      if (compact) return `${amount}${range}`;
+      if (compact) return `${amount}${range}${list(value.assumptions.filter((note) => /대체효과 제외 경계/.test(note)))}`;
       const assumptions = value.assumptions.filter((item) => !shared.includes(item));
       return `${amount}${range}${assumptions.length ? list(assumptions) : ""}<small>근거: ${references(value.evidenceIds)}</small>`;
     }
   }
+}
+function unavailableNetPolicy(s: ScenarioComparison, value: Metric): string {
+  const notes = creditPolicyNotes([s.materialCredit, s.energyCredit]);
+  return value === s.netEmissions && value.state === "unavailable" && notes.length
+    ? list([...notes, restrictedNet]) : "";
 }
 function metrics(s: ScenarioComparison): readonly (readonly [string, Metric])[] {
   return [
@@ -122,7 +128,7 @@ function comparisonSummary(scenarios: readonly ScenarioComparison[], labels: rea
   return `<h2>대안 비교 요약</h2>
     <div class="table-wrap"><table><caption>동일 조건 확인 후 비교 · 우열 불확실</caption>
     <thead><tr><th scope="col">지표</th>${labels.map((label) => `<th scope="col">${escapeHtml(label)}</th>`).join("")}</tr></thead>
-    <tbody>${rows.map((name, index) => `<tr><th scope="row">${name}</th>${scenarios.map((s) => `<td>${metric(metrics(s)[index]![1], references, [], true)}</td>`).join("")}</tr>`).join("")}
+    <tbody>${rows.map((name, index) => `<tr><th scope="row">${name}</th>${scenarios.map((s) => `<td>${metric(metrics(s)[index]![1], references, [], true)}${unavailableNetPolicy(s, metrics(s)[index]![1])}</td>`).join("")}</tr>`).join("")}
     <tr><th scope="row">기준선 / 회피량</th>${scenarios.map((s) => `<td>${baseline(s, references, true)}</td>`).join("")}</tr></tbody></table></div>`;
 }
 function sharedAssumptions(values: readonly Metric[]): readonly string[] {
@@ -147,7 +153,7 @@ function scenarioAudit(s: ScenarioComparison, label: string, references: Evidenc
   const carbonValues = [...carbonMetrics.map(([, value]) => value), ...s.carbonLines.map((line) => line.amount)];
   if (s.avoidedEmissions.state === "baseline-provided") carbonValues.push(s.avoidedEmissions.amount);
   const carbon = auditGroup("탄소 조건·내역", carbonValues, (shared) => `
-    <dl>${carbonMetrics.map(([name, value]) => `<dt>${escapeHtml(name)}</dt><dd>${metric(value, references, shared)}</dd>`).join("")}</dl>
+    <dl>${carbonMetrics.map(([name, value]) => `<dt>${escapeHtml(name)}</dt><dd>${metric(value, references, shared)}${unavailableNetPolicy(s, value)}</dd>`).join("")}</dl>
     <p>회피량: ${s.avoidedEmissions.state === "no-baseline" ? "기준선 없음" : `기준선 ${escapeHtml(s.avoidedEmissions.baselineRouteId)} ${metric(s.avoidedEmissions.amount, references, shared)}`}</p>
     <div class="table-wrap"><table><caption>탄소 활동·계수</caption>
     <thead><tr><th scope="col">활동 / 계수 버전</th><th scope="col">배출·크레딧</th></tr></thead>

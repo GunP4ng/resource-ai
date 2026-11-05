@@ -2,9 +2,9 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { renderReport, safeLink } from "../src/report.ts";
 import { demo } from "../src/o-demo.ts";
-import { documents } from "../src/o-synthetic-evidence.ts";
-import { calculateRouteCost } from "../src/cost.ts";
-import { bindSynthetic, calculationFixture, treatment, transport, sales } from "../src/o-synthetic.ts";
+import { route as assessment, documents } from "../src/o-synthetic-evidence.ts";
+import { createComparisonCalculator, calculateRouteCost } from "../src/cost.ts";
+import { bindSynthetic, carbonFixture, calculationFixture, treatment, transport, sales } from "../src/o-synthetic.ts";
 test("question and review states escape hostile text and disallow executable source URLs", () => {
   const evidence = documents({}).documents.map((d) => ({ ...d.record, title: '<img src=x onerror="alert(1)">', url: "javascript:alert(1)", locator: "<script>" }));
   const information = renderReport({ state: "needs-information", caseId: "<hostile>", questions: ["<script>attack</script>"], evidence }, { mode: "synthetic" });
@@ -97,5 +97,85 @@ test("sales excluded from net cost keep their amount and visible audit explanati
     assert.ok(disclosure);
     assert.ok(disclosure.includes(explanation));
     assert.ok(disclosure.includes("20,000 KRW"));
+  }
+});
+
+test("P2: excluded credits retain boundary meaning in public estimates and the visible compact summary", async () => {
+  const f = carbonFixture();
+  const route = { ...f.route, activities: f.route.activities.filter((a) => !a.stage.endsWith("credit")) };
+  const factorIds = new Set(route.activities.map((a) => a.factorId));
+  const activityIds = new Set(route.activities.map((a) => a.activityId));
+  const bound = bindSynthetic({ ...f.input, routes: [route], factors: f.input.factors.filter((v) => factorIds.has(v.factorId)) }, {
+    ...f.context,
+    routes: f.context.routes.map((v) => ({ ...v, materialCreditExcluded: true, energyCreditExcluded: true })),
+    activities: f.context.activities.filter((v) => activityIds.has(v.activityId)),
+    factors: f.context.factors.filter((v) => factorIds.has(v.factorId)),
+  });
+  const scenarios = await createComparisonCalculator(bound.context)(bound.input, [assessment]);
+  const scenario = scenarios[0];
+  assert.ok(scenario);
+  const fixture = await demo("normal");
+  assert.ok(fixture && fixture.result.state === "compared");
+  const html = renderReport({ ...fixture.result, caseId: bound.input.caseId, routes: [assessment], scenarios, evidence: bound.input.evidence }, { mode: "synthetic" });
+  // Inspect only the always-visible comparison area, excluding both audit copies.
+  const summary = html.split("<h2>대안 비교 요약</h2>")[1]?.split("<h2>경로와 조건</h2>")[0];
+  assert.ok(summary);
+  const visible = summary.replace(/<[^>]*>/g, " ");
+  const exclusions = /제외|excluded|outside/i;
+  const boundary = /경계|boundary|scope/i;
+  const material = /원료|물질|material/i;
+  const energy = /에너지|energy/i;
+  const failures: string[] = [];
+  for (const [name, value, expected, kinds] of [
+    ["materialCredit", scenario.materialCredit, 0, [material]],
+    ["energyCredit", scenario.energyCredit, 0, [energy]],
+    ["netEmissions", scenario.netEmissions, 100, [material, energy]],
+  ] as const) {
+    assert.ok(value.state === "available");
+    assert.deepEqual([value.low, value.central, value.high], [expected, expected, expected]);
+    for (const kind of kinds) {
+      if (!value.assumptions.some((a) => exclusions.test(a) && boundary.test(a) && kind.test(a))) failures.push(`${name}: missing credit boundary exclusion assumption`);
+    }
+  }
+  assert.ok(scenario.grossEmissions.state === "available");
+  assert.equal(scenario.grossEmissions.central, 100);
+  for (const kind of [material, energy]) {
+    // A credit name elsewhere in the table must not satisfy an unrelated note.
+    const notes = [...summary.matchAll(/<(?:p|li|td)\b[^>]*>([\s\S]*?)<\/(?:p|li|td)>/g)].map((match) => match[1]?.replace(/<[^>]*>/g, " ") ?? "");
+    if (!notes.some((note) => kind.test(note) && exclusions.test(note) && boundary.test(note))) failures.push(`visible summary: missing ${kind.source} boundary exclusion`);
+  }
+  assert.deepEqual(failures, [], JSON.stringify({ failures, materialCredit: scenario.materialCredit, energyCredit: scenario.energyCredit, netEmissions: scenario.netEmissions, visibleSummary: visible }));
+});
+
+for (const mode of ["material", "energy", "both-unavailable", "supported-zero"] as const) test(`P2 visible metric policy and audit: ${mode}`, async () => {
+  const f = carbonFixture();
+  const material = mode === "material" || mode === "both-unavailable";
+  const energy = mode === "energy" || mode === "both-unavailable";
+  const route = { ...f.route, missingInputs: mode === "both-unavailable" ? ["missing-gross-input"] : [], activities: f.route.activities
+    .filter((a) => !(material && a.stage === "material-credit") && !(energy && a.stage === "energy-credit"))
+    .map((a) => mode === "supported-zero" && a.stage.endsWith("credit") ? { ...a, amount: { ...a.amount, value: 0 } } : a) };
+  const bound = bindSynthetic({ ...f.input, routes: [route] }, {
+    ...f.context, routes: f.context.routes.map((r) => ({ ...r, materialCreditExcluded: material, energyCreditExcluded: energy })),
+    activities: f.context.activities.map((a) => mode === "supported-zero" && a.activityId.endsWith("credit") ? { ...a, outputQuantity: 0 } : a),
+  });
+  const scenarios = await createComparisonCalculator(bound.context)(bound.input, [assessment]);
+  const fixture = await demo("normal");
+  assert.ok(fixture?.result.state === "compared");
+  const html = renderReport({ ...fixture.result, routes: [assessment], scenarios, evidence: bound.input.evidence }, { mode: "synthetic" });
+  const summary = html.split("<h2>대안 비교 요약</h2>")[1]?.split("<h2>경로와 조건</h2>")[0];
+  assert.ok(summary && !summary.includes("<details"));
+  const row = (name: string) => summary.match(new RegExp(`<th scope="row">${name}</th>([\\s\\S]*?)</tr>`))?.[1] ?? "";
+  assert.doesNotMatch(row("총배출"), /대체효과 제외/);
+  for (const [label, excluded] of [["원료", material], ["에너지", energy]] as const) {
+    assert.equal(row(`${label} 크레딧`).includes(`${label} 대체효과 제외 경계`), excluded);
+    assert.equal(row("순배출").includes(`${label} 대체효과 제외 경계`), excluded);
+    if (excluded) {
+      assert.ok(html.match(/<div class="print-only">([\s\S]*?)<h2>제약과 다음 확보 항목/)?.[1]?.includes(`${label} 대체효과 제외 경계`));
+    }
+  }
+  if (mode === "both-unavailable") {
+    assert.equal(scenarios[0]?.netEmissions.state, "unavailable");
+    assert.match(row("순배출"), /계산 불가/);
+    assert.match(row("순배출"), /완전한 순탄소 비교 아님/);
   }
 });

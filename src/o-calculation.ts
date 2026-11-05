@@ -1,7 +1,7 @@
 import { Type } from "typebox";
 import { Value } from "typebox/value";
-import type { ComparisonInput, RouteCalculationInput } from "./contracts.ts";
-import { CategorySchema, StageSchema as Stage, UnitSchema as Unit, EvidenceSchema, canonical, date, dateSchema, evidenceIssue, nullableText, quantity, requireValid, strings, text, unique, validateDocuments } from "./o-validation.ts";
+import type { ComparisonInput, Estimate, RouteCalculationInput } from "./contracts.ts";
+import { CategorySchema, StageSchema as Stage, UnitSchema as Unit, EvidenceSchema, canonical, date, dateSchema, evidenceIssue, nullableText, quantity, requireValid, strings, text, unavailable, unique, validateDocuments } from "./o-validation.ts";
 import type { EvidenceContext } from "./o-validation.ts";
 const Q = <U extends string>(unit: U) => Type.Object({ value: Type.Union([Type.Number(), Type.Null()]), unit: Type.Literal(unit), evidenceIds: strings, missingReason: nullableText }, { additionalProperties: false });
 const Quote = Type.Object({ quoteId: text, category: CategorySchema,
@@ -12,6 +12,20 @@ const Activity = Type.Object({ activityId: text, stage: Stage, amount: Type.Obje
 const Factor = Type.Object({ factorId: text, version: text, kgCo2ePerUnit: Q("kgCO2e"), denominatorUnit: Unit, boundary: text, period: text, region: text, gwpMethod: text, includedStages: Type.Array(Stage), reusePermission: Type.Union([Type.Literal("verified"), Type.Literal("unverified")]) });
 const Input = Type.Object({ caseId: text, assessmentDate: dateSchema, functionalUnit: text, boundary: text, baselineRouteId: nullableText, factorRegistryVersion: text,
   routes: Type.Array(Type.Object({ routeId: text, quotes: Type.Array(Quote), activities: Type.Array(Activity), missingInputs: strings })), factors: Type.Array(Factor), evidence: Type.Array(EvidenceSchema) });
+export const CaseMassReviewSchema = Type.Object({ caseId: text, assessmentDate: dateSchema, functionalUnit: text, boundary: text,
+  material: text, condition: text, moistureBasis: text, massKg: Type.Number({ exclusiveMinimum: 0 }), evidenceIds: strings }, { additionalProperties: false });
+/** Independently reviewed whole-case incoming waste represented by the functional unit. */
+export interface CaseMassReview {
+  readonly caseId: string;
+  readonly assessmentDate: string;
+  readonly functionalUnit: string;
+  readonly boundary: string;
+  readonly material: string;
+  readonly condition: string;
+  readonly moistureBasis: string;
+  readonly massKg: number;
+  readonly evidenceIds: readonly string[];
+}
 export const RouteReviewSchema = Type.Object({ caseId: text, routeId: text, functionalUnit: text, boundary: text,
   material: text, condition: text, region: text, process: text, massBasis: text, moistureBasis: text, gasCoverage: text, gwpMethod: text,
   costComponents: strings, carbonComponents: strings, costExclusions: strings, carbonExclusions: strings,
@@ -36,6 +50,8 @@ export type ActivityReview = Readonly<Type.Static<typeof ActivityReviewSchema>>;
 export interface CalculationContext extends EvidenceContext {
   readonly version: string;
   readonly vatBasis: "included" | "excluded";
+  /** Legacy missing/null supplements make whole-case totals unavailable. Never inferred from quotes or text. */
+  readonly caseMass?: CaseMassReview | null;
   readonly routes: readonly RouteReview[];
   readonly quotes: readonly QuoteReview[];
   readonly factors: readonly FactorReview[];
@@ -44,6 +60,10 @@ export interface CalculationContext extends EvidenceContext {
 export function validateCalculation(input: ComparisonInput, context: CalculationContext): void {
   requireValid(Value.Check(Input, input), "invalid-comparison-input"); date(input.assessmentDate); validateDocuments(context);
   requireValid(context.version.trim().length > 0 && ["included", "excluded"].includes(context.vatBasis), "invalid-calculation-context");
+  if (context.caseMass !== undefined && context.caseMass !== null) {
+    requireValid(Value.Check(CaseMassReviewSchema, context.caseMass) && Number.isFinite(context.caseMass.massKg), "invalid-case-mass-review");
+    date(context.caseMass.assessmentDate);
+  }
   requireValid(Value.Check(Type.Array(RouteReviewSchema), context.routes) && Value.Check(Type.Array(QuoteReviewSchema), context.quotes)
     && Value.Check(Type.Array(FactorReviewSchema), context.factors) && Value.Check(Type.Array(ActivityReviewSchema), context.activities), "invalid-calculation-metadata");
   unique(input.evidence.map((v) => v.sourceId), "duplicate-source"); unique(input.routes.map((v) => v.routeId), "duplicate-route");
@@ -72,6 +92,25 @@ export function routeReview(input: ComparisonInput, route: RouteCalculationInput
   const review = context.routes.find((r) => r.caseId === input.caseId && r.routeId === route.routeId);
   if (review === undefined || review.functionalUnit !== input.functionalUnit || review.boundary !== input.boundary) return null;
   return binding(context, input, { evidenceIds: review.evidenceIds, key: `boundary:${input.caseId}:${route.routeId}`, value: review }) === null ? review : null;
+}
+type ReviewedCaseMass = { readonly review: CaseMassReview; readonly issue: null } | { readonly review: null; readonly issue: string };
+export function caseMassReview(input: ComparisonInput, boundary: RouteReview | null, context: CalculationContext): ReviewedCaseMass {
+  const review = context.caseMass;
+  if (review === undefined || review === null) return { review: null, issue: "case-mass-review-missing" };
+  if (boundary === null || review.caseId !== input.caseId || review.assessmentDate !== input.assessmentDate
+    || review.functionalUnit !== input.functionalUnit || review.boundary !== input.boundary
+    || review.material !== boundary.material || review.condition !== boundary.condition || review.moistureBasis !== boundary.moistureBasis) {
+    return { review: null, issue: "case-mass-review-inapplicable" };
+  }
+  const issue = binding(context, input, { key: `case-mass:${input.caseId}`, value: review, evidenceIds: review.evidenceIds });
+  return issue === null ? { review, issue: null } : { review: null, issue };
+}
+/** Attach whole-case applicability only to totals; stage/output quantities keep their own meaning. */
+export function caseMassTotal<U extends "KRW" | "kgCO2e">(value: Estimate<U>, mass: ReviewedCaseMass): Estimate<U> {
+  if (mass.issue !== null) return unavailable([mass.issue, ...(value.state === "unavailable" ? value.missingInputs : [])]);
+  if (value.state === "unavailable") return value;
+  return { ...value, evidenceIds: [...new Set([...value.evidenceIds, ...mass.review.evidenceIds])],
+    assumptions: [...value.assumptions, `검토된 사례 전체 유입 폐기물 질량: ${mass.review.massKg} kg`] };
 }
 export function binding(context: CalculationContext, input: ComparisonInput, fact: { readonly key: string; readonly value: unknown; readonly evidenceIds: readonly string[] }): string | null {
   if (fact.evidenceIds.some((id) => !input.evidence.some((e) => e.sourceId === id))) return "input-evidence-missing";

@@ -137,6 +137,7 @@ Required fact keys:
 | `permit:<processorId>` | Complete facility identity, permit, operations/code/version, service region, periods, conditions, reviewer/check/freshness record |
 | `acceptance:<processorId>:<caseId>:<routeId>` | Case revision, material quantity, route, conditions and confirmation/expiry |
 | `boundary:<caseId>:<routeId>` | Complete route coverage/applicability review |
+| `case-mass:<caseId>` | Complete independent `CaseMassReview`: case/date/functional unit/boundary/material/condition/moisture basis, positive finite whole-case incoming `massKg`, and evidence IDs |
 | `quote:<quoteId>` | `{ quote, review }`, including quantities, perspective, material/case/processor, coverage, VAT, output ownership/quantity and netted revenue reference |
 | `activity:<activityId>` | `{ activity, review }`, including quantities, distinct coverage/leg IDs, basis and any output × substitution derivation |
 | `factor:<factorId>:<version>` | `{ factor, review }`, including registry version, period, geography/process/material, basis/GWP/gases, allocation/substitution and coverage |
@@ -260,3 +261,62 @@ accessibility certification or live Azure/H integration acceptance.
 Real processor matches need case waste code and reviewed facility permits/current verification/acceptance. Real cost totals need applicable actual quotations, quantities, ownership, VAT and complete coverage. Real carbon totals need approved factors, activity measurements, applicability/GWP/allocation and substitution evidence; the real factor registry remains empty. Reference market prices, directory prose and the generic legal citation do not fill those gaps.
 
 H1–H4, host gates, the actual `domain.ts` composition and case session execution remain H-owned integration work. The proposed adapter accepts `submit(raw, signal)` and `answer(caseId, raw, signal)` and must return independently scoped, host-validated results, honor cancellation and use unique case IDs. No Azure trace, usage, authentication success or end-to-end live execution was demonstrated. Lead browser and Astra review results are recorded above.
+
+## PR18 P2 correction ready — P1 approval still pending (2026-11-06)
+
+P2 now retains distinct reviewed material/energy exclusion notes through credits, net and compatible avoided-emissions arithmetic. Each excluded zero explicitly means calculation zero rather than evidenced/observed zero. The always-visible summary places policy beside affected metrics; unavailable net also discloses applicable credit policies. Gross and included evidenced zero are not labelled excluded. Detailed/print audits retain notes, without changing shared fixed-input/VAT grouping or globally merging assumptions.
+
+Both exclusion flags must match for baseline compatibility. Matching excluded policies produce a qualified restricted-boundary comparison; mismatch returns unavailable. The 75 arithmetic case now uses compatible included policies with supported-zero baseline credits. Separate tests preserve rejection of mismatch and credit-exclusion overlap, and missing evidence remains unavailable.
+
+Actual checks: P2 carbon/report **39 pass / 0 fail**; comparison/carbon/report **72 pass / 1 fail**, solely the deliberately retained P1 mass regression. Both source and O-test typechecks and `git diff --check` pass. Full red→green record, exact assumptions and actual function input/output table: [o-regression-evidence.md](o-regression-evidence.md). Raw current-session artifacts: `/tmp/o-p2-tests.log`, `/tmp/o-p2-with-p1.log`, `/tmp/o-p2-actual-io.jsonl`.
+
+P1 `caseMass` approval remains pending; no context/shared schema, P1 check, fixture, source/provenance or other-owner change was made in this correction. No commit/push, cloud, install, browser, smoke or delegation. P2 is ready; stop here.
+
+## PR18 P1 approved O-only mass supplement implemented (2026-11-06)
+
+The user approved **only** `CalculationContext.caseMass`; this section supersedes the earlier P1-pending/stop statements. Shared `src/contracts.ts` and all O1/source/H modules remain unchanged. P2 exclusion assumptions, visible disclosures, policy baseline comparisons and its test changes are preserved. The original P1 regression body and all earlier red evidence are retained.
+
+`CaseMassReview` has exactly `caseId`, `assessmentDate`, `functionalUnit`, `boundary`, `material`, `condition`, `moistureBasis`, `massKg`, `evidenceIds`. It means the independently reviewed **whole-case incoming waste mass represented by the functional unit**, in kg. H must provide the current reviewed supplement; O never parses numeric functional-unit text, derives the anchor from quotes, or treats quote agreement as independent proof. Missing/undefined/null is supported migration behavior and makes whole-case totals unavailable. Invalid schema, extra fields, non-positive/non-finite/non-numeric mass throw typed `ValidationError`; invalid calendar dates follow the existing date convention.
+
+The entire record binds to `case-mass:<caseId>`. Case/date/FU/boundary must match the comparison, and material/condition/moisture basis must match the reviewed route. Its own evidence must be in the comparison, bound, permitted, effective and fresh under the existing document policy. Missing/inapplicable reviews use `case-mass-review-missing` / `case-mass-review-inapplicable`; specific evidence failures remain visible. A stale or incorrect upstream review that still meets the declared evidence/freshness policy remains an upstream review responsibility.
+
+Every consumed quote review must have `caseMassKg === anchor.massKg`; mismatch gives `quote-case-mass-mismatch`. Applicability bounds use the anchor. Checks also apply to total/per-trip quotes, included children, operator/processor sales and already-netted sales. Valid applicability still requires the original quantity, ownership, VAT, coverage and commercial checks. Quote lines and all available whole-case cost/carbon/avoided totals include anchor evidence and disclose `검토된 사례 전체 유입 폐기물 질량: 2000 kg` for the fixture. Baseline composition validates both routes against the same context anchor and compares its numeric mass in addition to the preserved route/policy compatibility checks. Missing/invalid anchor cannot yield self-baseline zero.
+
+**Quantity limitation:** non-sales per-kg/per-tonne billing supports whole-case incoming mass only. Stage-priced treatment/residue needs a future explicit billed-flow role and evidenced quantity. This change is **not a general mass-balance verifier**. Sales bills still use independently reviewed `saleableOutputKg`; carbon stage/residue activities and output × substitution derivations retain their own units/quantities. Valid fixture treatment2t, sales100kg, residue100kg and substituted material50kg remain available at **240000 KRW / 45 kgCO2e**. Carbon whole-case gross/credits/net require the anchor without forcing each stage mass to equal it. Individual carbon activity lines remain auditable when only the anchor is unavailable.
+
+`calculationFixture` explicitly authors mass2000kg and its full fact. `bindSynthetic` only binds the supplied anchor, including its own case key; it never manufactures or repairs one after quote edits. All-stale 1000kg quote reviews are rejected against the unchanged 2000kg anchor. Separate-document tests demonstrate that valid quote/activity evidence cannot replace missing, stale, inapplicable or unbound anchor evidence.
+
+Actual final checks: `bun test tests` **151 pass / 0 fail**, 7 files, 55 expect calls, 7.75s; `bun run typecheck` and `bun run typecheck:o-tests` exit0 without diagnostics; extension build 1 module/0.78KB and app build 15 modules/124.57KB exit0; `bun run demo:o` exit0 with normal/held/review/reference200 and absent-adapter503. `git diff --check` passes. Full commands, actual calculator inputs/outputs and red→green evidence: [o-regression-evidence.md](o-regression-evidence.md).
+
+Smoke was **not rerun**. Read-only inspection found the existing SDK environment points at `/home/yeonbug/.omo/agent`, which is read-only; no cache write, environment override or permission workaround was attempted. The default smoke EROFS failure and separately recorded scoped-cache success above are **historical**, not a current pass. No live H/Azure, browser/PDF acceptance, commit/push, install, cloud request or other-agent work is claimed.
+
+## Separate J/H/O provenance integration limitation
+
+J's raw CSV/PDF and O's derived `/facts` JSON are **separate document identities**. Each needs its own source/document ID, hash of its actual bytes and locator into that document. A raw CSV/PDF hash cannot authenticate the derived JSON. Real integration must additionally agree on the transformation lineage from original documents/rows/pages to derived facts and the reviewer/check/version lineage of those facts.
+
+Current `evidenceIssue` requires **every cited source to duplicate the complete bound fact**. It cannot express several original documents jointly supporting one derived review. Multi-source support and the J/H/O lineage agreement remain unresolved integration work; this P1 patch performs no provenance overhaul and does not assert that a synthetic `/facts` record completes real-source integration.
+
+## PR18 correction acceptance
+
+Astra (`gpt-6-astra`, xhigh) reviewed the P1/P2 changes against `fe787b3`
+and approved them without actionable in-scope findings. It confirmed that
+the baseline fixture correction preserves the 75 kgCO2e arithmetic check with
+matching policies and that the original red evidence remains intact.
+
+The lead independently called the public comparison functions:
+normal input returned 240000 KRW / 45 kgCO2e; the reported mixed-mass input
+returned cost unavailable (`quote-case-mass-mismatch`) while preserving the
+independently valid carbon result of 45 kgCO2e. Excluded credits returned
+0 / 0 and net 100 with both exclusion policies and the restricted-boundary
+qualification in public assumptions.
+
+The actual `renderReport` output for that excluded-credit result was opened in
+Chromium at 1440px and 390px, in light and dark themes. With audit details
+closed, exclusion notes were visible beside credit and net values; no horizontal
+document overflow occurred. This checks the function-generated report, not
+live H/Azure integration. Local input/output and screenshot evidence is in
+`/tmp/resource-ai-p1p2-qa-QFZwhU/`; temporary captures are not committed.
+
+The prior smoke outcomes remain historical, as stated above. O4 integration
+and the separate J/H/O provenance agreement remain open. This correction does
+not close those work items or change the Oyeonseok assignment.

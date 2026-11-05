@@ -1,7 +1,15 @@
 import type { ActivityInput, ComparisonInput, Estimate, RouteCalculationInput, ScenarioComparison } from "./contracts.ts";
-import { binding, overlaps, routeReview, validateCalculation } from "./o-calculation.ts";
+import { binding, caseMassReview, caseMassTotal, overlaps, routeReview, validateCalculation } from "./o-calculation.ts";
 import type { CalculationContext, RouteReview } from "./o-calculation.ts";
 import { canonical, period, point, quantity, requireValid, subtract, sum, unavailable } from "./o-validation.ts";
+
+export const materialExclusion = "원료 대체효과 제외 경계 · 계산상 0 반영 · 실측·근거 기반 0 아님";
+export const energyExclusion = "에너지 대체효과 제외 경계 · 계산상 0 반영 · 실측·근거 기반 0 아님";
+export const restrictedNet = "대체효과 제외 경계의 순배출 · 완전한 순탄소 비교 아님";
+export function creditPolicyNotes(values: readonly Estimate<"kgCO2e">[]): string[] {
+  return [...new Set(values.flatMap((value) => value.state === "available"
+    ? value.assumptions.filter((note) => [materialExclusion, energyExclusion, restrictedNet].includes(note)) : []))];
+}
 
 function carbonAmount(input: ComparisonInput, a: ActivityInput, context: CalculationContext, boundary: RouteReview | null): Estimate<"kgCO2e"> {
   const amount = quantity(a.amount);
@@ -49,6 +57,7 @@ function carbonAmount(input: ComparisonInput, a: ActivityInput, context: Calcula
 export function calculateRouteCarbon(input: ComparisonInput, route: RouteCalculationInput, context: CalculationContext): Pick<ScenarioComparison, "carbonLines" | "grossEmissions" | "materialCredit" | "energyCredit" | "netEmissions"> {
   validateCalculation(input, context);
   const boundary = routeReview(input, route, context);
+  const mass = caseMassReview(input, boundary, context);
   const carbonLines = route.activities.map((a) => ({ activityId: a.activityId, stage: a.stage, factorId: a.factorId, factorVersion: a.factorVersion, amount: carbonAmount(input, a, context, boundary) }));
   const components = route.activities.map((a) => context.activities.find((v) => v.activityId === a.activityId)?.components ?? []);
   requireValid(!overlaps(components), "carbon-coverage-overlap");
@@ -62,19 +71,27 @@ export function calculateRouteCarbon(input: ComparisonInput, route: RouteCalcula
   requireValid(!overlaps([covered, boundary?.carbonExclusions ?? []]), "carbon-exclusion-overlap");
   const missing = boundary === null ? ["boundary-review-missing"] : boundary.carbonComponents.filter((c) => !covered.includes(c) && !boundary.carbonExclusions.includes(c)).map((c) => `carbon-coverage-missing:${c}`);
   const grossLines = carbonLines.filter((l) => l.stage !== "material-credit" && l.stage !== "energy-credit");
-  const grossEmissions = missing.length || route.missingInputs.length ? unavailable([...missing, ...route.missingInputs]) : sum(grossLines.map((l) => l.amount), "kgCO2e");
+  const grossEmissions = caseMassTotal(missing.length || route.missingInputs.length ? unavailable([...missing, ...route.missingInputs]) : sum(grossLines.map((l) => l.amount), "kgCO2e"), mass);
   const credit = (stage: "material-credit" | "energy-credit", excluded: boolean): Estimate<"kgCO2e"> => {
     const lines = carbonLines.filter((l) => l.stage === stage);
     requireValid(!excluded || lines.length === 0, "credit-exclusion-overlap");
-    return excluded && boundary !== null ? point(0, "kgCO2e", boundary.evidenceIds) : lines.length ? sum(lines.map((l) => l.amount), "kgCO2e") : unavailable(`${stage}-evidence-missing`);
+    if (excluded && boundary !== null) {
+      const zero = point(0, "kgCO2e", boundary.evidenceIds);
+      return zero.state === "available" ? { ...zero, assumptions: [...zero.assumptions, stage === "material-credit" ? materialExclusion : energyExclusion] } : zero;
+    }
+    return lines.length ? sum(lines.map((l) => l.amount), "kgCO2e") : unavailable(`${stage}-evidence-missing`);
   };
-  const materialCredit = credit("material-credit", boundary?.materialCreditExcluded ?? false);
-  const energyCredit = credit("energy-credit", boundary?.energyCreditExcluded ?? false);
-  return { carbonLines, grossEmissions, materialCredit, energyCredit, netEmissions: subtract(grossEmissions, [materialCredit, energyCredit], "kgCO2e") };
+  const materialCredit = caseMassTotal(credit("material-credit", boundary?.materialCreditExcluded ?? false), mass);
+  const energyCredit = caseMassTotal(credit("energy-credit", boundary?.energyCreditExcluded ?? false), mass);
+  const net = subtract(grossEmissions, [materialCredit, energyCredit], "kgCO2e");
+  const policies = creditPolicyNotes([materialCredit, energyCredit]);
+  const netEmissions = caseMassTotal(net.state === "available" && policies.length
+    ? { ...net, assumptions: [...net.assumptions, ...policies, restrictedNet] } : net, mass);
+  return { carbonLines, grossEmissions, materialCredit, energyCredit, netEmissions };
 }
 export function compatibleBaseline(a: RouteReview | null, b: RouteReview | null): boolean {
   if (a === null || b === null) return false;
-  const keys = ["functionalUnit", "boundary", "material", "condition", "massBasis", "moistureBasis", "gasCoverage", "gwpMethod"] as const;
+  const keys = ["functionalUnit", "boundary", "material", "condition", "massBasis", "moistureBasis", "gasCoverage", "gwpMethod", "materialCreditExcluded", "energyCreditExcluded"] as const;
   return keys.every((key) => a[key] === b[key]) && canonical([...a.carbonComponents].sort()) === canonical([...b.carbonComponents].sort())
     && canonical([...a.carbonExclusions].sort()) === canonical([...b.carbonExclusions].sort());
 }
