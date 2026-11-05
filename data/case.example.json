@@ -1,0 +1,12 @@
+{
+  "caseId": "synthetic-format-example-001",
+  "description": "형식 예시: 제조 공정에서 분리한 플라스틱 조각. 실제 폐기물 사례나 정답이 아님.",
+  "photoRefs": [],
+  "process": null,
+  "polymer": null,
+  "contamination": null,
+  "hazardousContact": "unknown",
+  "massKg": null,
+  "region": null,
+  "assessmentDate": "2026-11-05"
+}
