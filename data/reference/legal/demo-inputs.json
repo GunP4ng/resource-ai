@@ -1,0 +1,138 @@
+[
+  {
+    "label": "current-clean",
+    "caseOrigin": "constructed-reproduction",
+    "input": {
+      "caseId": "j2-j3-reproduction",
+      "description": "실제 법령 원문 조회용 재현 입력. 실제 제조업체 사례·실측 정답이 아님.",
+      "photoRefs": [],
+      "process": "사출",
+      "polymer": "PP",
+      "contamination": "없음",
+      "hazardousContact": "no",
+      "massKg": null,
+      "region": "울산",
+      "assessmentDate": "2026-11-05"
+    },
+    "intendedUse": "general-resin"
+  },
+  {
+    "label": "previous-version",
+    "caseOrigin": "constructed-reproduction",
+    "input": {
+      "caseId": "j2-j3-reproduction",
+      "description": "실제 법령 원문 조회용 재현 입력. 실제 제조업체 사례·실측 정답이 아님.",
+      "photoRefs": [],
+      "process": "사출",
+      "polymer": "PP",
+      "contamination": "없음",
+      "hazardousContact": "no",
+      "massKg": null,
+      "region": "울산",
+      "assessmentDate": "2026-09-30"
+    },
+    "intendedUse": "general-resin"
+  },
+  {
+    "label": "future-unverified",
+    "caseOrigin": "constructed-reproduction",
+    "input": {
+      "caseId": "j2-j3-reproduction",
+      "description": "실제 법령 원문 조회용 재현 입력. 실제 제조업체 사례·실측 정답이 아님.",
+      "photoRefs": [],
+      "process": "사출",
+      "polymer": "PP",
+      "contamination": "없음",
+      "hazardousContact": "no",
+      "massKg": null,
+      "region": "울산",
+      "assessmentDate": "2026-11-06"
+    },
+    "intendedUse": "general-resin"
+  },
+  {
+    "label": "different-process",
+    "caseOrigin": "constructed-reproduction",
+    "input": {
+      "caseId": "j2-j3-reproduction",
+      "description": "실제 법령 원문 조회용 재현 입력. 실제 제조업체 사례·실측 정답이 아님.",
+      "photoRefs": [],
+      "process": "합성수지 화학합성",
+      "polymer": "PP",
+      "contamination": "없음",
+      "hazardousContact": "no",
+      "massKg": null,
+      "region": "울산",
+      "assessmentDate": "2026-11-05"
+    },
+    "intendedUse": "general-resin"
+  },
+  {
+    "label": "negated-process",
+    "caseOrigin": "constructed-reproduction",
+    "input": {
+      "caseId": "j2-j3-reproduction",
+      "description": "실제 법령 원문 조회용 재현 입력. 실제 제조업체 사례·실측 정답이 아님.",
+      "photoRefs": [],
+      "process": "사출 아님",
+      "polymer": "PP",
+      "contamination": "없음",
+      "hazardousContact": "no",
+      "massKg": null,
+      "region": "울산",
+      "assessmentDate": "2026-11-05"
+    },
+    "intendedUse": "general-resin"
+  },
+  {
+    "label": "oil-contamination",
+    "caseOrigin": "constructed-reproduction",
+    "input": {
+      "caseId": "j2-j3-reproduction",
+      "description": "실제 법령 원문 조회용 재현 입력. 실제 제조업체 사례·실측 정답이 아님.",
+      "photoRefs": [],
+      "process": "사출",
+      "polymer": "PP",
+      "contamination": "폐유 혼합",
+      "hazardousContact": "no",
+      "massKg": null,
+      "region": "울산",
+      "assessmentDate": "2026-11-05"
+    },
+    "intendedUse": "general-resin"
+  },
+  {
+    "label": "unknown-hazard",
+    "caseOrigin": "constructed-reproduction",
+    "input": {
+      "caseId": "j2-j3-reproduction",
+      "description": "실제 법령 원문 조회용 재현 입력. 실제 제조업체 사례·실측 정답이 아님.",
+      "photoRefs": [],
+      "process": "사출",
+      "polymer": "PP",
+      "contamination": "없음",
+      "hazardousContact": "unknown",
+      "massKg": null,
+      "region": "울산",
+      "assessmentDate": "2026-11-05"
+    },
+    "intendedUse": "general-resin"
+  },
+  {
+    "label": "food-purpose",
+    "caseOrigin": "constructed-reproduction",
+    "input": {
+      "caseId": "j2-j3-reproduction",
+      "description": "실제 법령 원문 조회용 재현 입력. 실제 제조업체 사례·실측 정답이 아님.",
+      "photoRefs": [],
+      "process": "사출",
+      "polymer": "PP",
+      "contamination": "없음",
+      "hazardousContact": "no",
+      "massKg": null,
+      "region": "울산",
+      "assessmentDate": "2026-11-05"
+    },
+    "intendedUse": "food-container"
+  }
+]

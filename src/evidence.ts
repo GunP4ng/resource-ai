@@ -1,25 +1,22 @@
-import { createHash } from "node:crypto";
-import { readFileSync } from "node:fs";
-import { Type } from "typebox";
-import { Value } from "typebox/value";
 import registryJson from "../data/sources/evidence-candidates.json" with { type: "json" };
 import type { CaseInput, EvidenceRecord } from "./contracts.ts";
 import { sourceManifest } from "./sources.ts";
+import { loadEvidenceRegistry } from "./evidence-registry.ts";
+export { loadEvidenceRegistry } from "./evidence-registry.ts";
 
-const RegistryEntrySchema = Type.Object({
-  sourceId: Type.String(),
-  kind: Type.Union([Type.Literal("waste-code"), Type.Literal("recycling-type"), Type.Literal("annex"), Type.Literal("other")]),
-  claim: Type.String({ minLength: 1 }),
-  quote: Type.String({ minLength: 1 }),
-  locator: Type.String({ minLength: 1 }),
-  sha256: Type.String({ pattern: "^[a-f0-9]{64}$" }),
-  processTerms: Type.Array(Type.String()),
-  polymerTerms: Type.Array(Type.String()),
-  contaminationTerms: Type.Array(Type.String()),
-  siteSpecific: Type.Boolean(),
-  reviewedBy: Type.String({ minLength: 1 }),
-  reviewedAt: Type.String({ pattern: "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$" }),
-});
+export interface EvidenceProvenance {
+  readonly quote: string;
+  readonly snapshotPath: string;
+  readonly snapshotSha256: string;
+  readonly originalSourceId: string;
+  readonly originalPath: string;
+  readonly originalSha256: string;
+  readonly reviewedBy: string;
+  readonly reviewedAt: string;
+  readonly effectiveFrom: string | null;
+  readonly effectiveTo: string | null;
+  readonly verifiedThrough: string | null;
+}
 
 export interface EvidenceCandidate {
   readonly record: EvidenceRecord;
@@ -32,9 +29,16 @@ export interface EvidenceCandidate {
   readonly polymerTerms: readonly string[];
   readonly contaminationTerms: readonly string[];
   readonly siteSpecific: boolean;
+  readonly verifiedThrough?: string;
+  readonly requireSafeContext?: boolean;
+  readonly intendedUse?: "food-container";
+  readonly reviewRequirements?: readonly string[];
+  readonly provenance?: EvidenceProvenance;
 }
 
 export type SearchIssueKind =
+  | "currentness-unverified"
+  | "hazardous-contact-unconfirmed"
   | "no-results"
   | "invalid-date"
   | "context-missing"
@@ -60,7 +64,7 @@ export interface SearchIssue {
   readonly sourceId: string | null;
 }
 
-export interface EvidenceCitation {
+export interface EvidenceCitation extends Partial<EvidenceProvenance> {
   readonly claim: string;
   readonly kind: EvidenceCandidate["kind"];
   readonly sourceId: string;
@@ -70,6 +74,7 @@ export interface EvidenceCitation {
 export interface EvidenceLookup {
   readonly evidence: readonly EvidenceRecord[];
   readonly citations: readonly EvidenceCitation[];
+  readonly reviewRequirements: readonly string[];
   readonly issues: readonly SearchIssue[];
 }
 
@@ -129,9 +134,7 @@ function contextMatch(value: string | null, terms: readonly string[], context: "
       }
     }
     if (context === "process") {
-      const inputTokens = input.split(" ");
-      const expectedTokens = expected.split(" ");
-      if (inputTokens.some((_, index) => expectedTokens.every((token, offset) => inputTokens[index + offset] === token))) return "match";
+      if (input === `${expected} 성형`) return "match";
     }
     if (input.includes(expected) || expected.includes(input)) ambiguous = true;
   }
@@ -146,6 +149,8 @@ function candidateIssue(input: CaseInput, candidate: EvidenceCandidate, maxSnaps
   if (process === "ambiguous" || polymer === "ambiguous" || contamination === "ambiguous") return "context-ambiguous";
   if (process === "missing" || polymer === "missing" || contamination === "missing") return "context-missing";
   if (candidate.siteSpecific) return "site-specific";
+  if (candidate.requireSafeContext && input.hazardousContact !== "no") return "hazardous-contact-unconfirmed";
+  if (candidate.verifiedThrough !== undefined && (!validDate(candidate.verifiedThrough) || input.assessmentDate > candidate.verifiedThrough)) return "currentness-unverified";
   const record = candidate.record;
   if (record.effectiveFrom === null || !validDate(record.effectiveFrom) || input.assessmentDate < record.effectiveFrom) return "out-of-period";
   if (record.effectiveTo !== null && (!validDate(record.effectiveTo) || input.assessmentDate > record.effectiveTo)) return "stale";
@@ -159,66 +164,31 @@ function candidateIssue(input: CaseInput, candidate: EvidenceCandidate, maxSnaps
   return null;
 }
 
-export function loadEvidenceRegistry(entries: readonly unknown[]): { readonly candidates: readonly EvidenceCandidate[]; readonly issues: readonly SearchIssue[] } {
-  const candidates: EvidenceCandidate[] = [];
-  const issues: SearchIssue[] = [];
-  for (const raw of entries) {
-    if (!Value.Check(RegistryEntrySchema, raw)) { issues.push({ kind: "invalid-candidate", sourceId: null }); continue; }
-    const entry = raw;
-    const source = sourceManifest.find((item) => item.sourceId === entry.sourceId);
-    if (source === undefined) { issues.push({ kind: "source-not-registered", sourceId: entry.sourceId }); continue; }
-    if (source.sha256 === null || entry.sha256 !== source.sha256) { issues.push({ kind: "hash-mismatch", sourceId: entry.sourceId }); continue; }
-    if (source.localPath === null) { issues.push({ kind: "snapshot-unavailable", sourceId: entry.sourceId }); continue; }
-    let bytes: Uint8Array;
-    try { bytes = readFileSync(new URL(`../${source.localPath}`, import.meta.url)); }
-    catch (error) {
-      if (!(error instanceof Error)) throw error;
-      issues.push({ kind: "snapshot-unavailable", sourceId: entry.sourceId }); continue;
-    }
-    if (createHash("sha256").update(bytes).digest("hex") !== entry.sha256) { issues.push({ kind: "hash-mismatch", sourceId: entry.sourceId }); continue; }
-    let snapshot: string;
-    try { snapshot = new TextDecoder("utf-8", { fatal: true }).decode(bytes); }
-    catch (error) {
-      if (!(error instanceof TypeError)) throw error;
-      issues.push({ kind: "snapshot-unavailable", sourceId: entry.sourceId }); continue;
-    }
-    if (!snapshot.includes(entry.quote)) { issues.push({ kind: "quote-not-in-snapshot", sourceId: entry.sourceId }); continue; }
-    if (source.license === null) { issues.push({ kind: "reuse-unverified", sourceId: entry.sourceId }); continue; }
-    candidates.push({
-      record: { sourceId: source.sourceId, title: source.title, publisher: source.publisher, url: source.url,
-        locator: entry.locator, retrievedAt: source.retrievedAt, effectiveFrom: source.effectiveFrom,
-        effectiveTo: source.effectiveTo, datasetVersion: source.datasetVersion, sha256: entry.sha256,
-        license: source.license, licenseVerified: source.licenseVerified },
-      kind: entry.kind, claim: entry.claim, claimVerified: true, originalVerified: true, access: "available",
-      processTerms: entry.processTerms, polymerTerms: entry.polymerTerms, contaminationTerms: entry.contaminationTerms,
-      siteSpecific: entry.siteSpecific,
-    });
-  }
-  return { candidates, issues };
-}
-
 const registry = loadEvidenceRegistry(registryJson);
 
-export function lookupLegalEvidence(input: CaseInput, candidates?: readonly EvidenceCandidate[], options?: { readonly maxSnapshotAgeDays?: number }): EvidenceLookup {
-  if (!validDate(input.assessmentDate)) return { evidence: [], citations: [], issues: [{ kind: "invalid-date", sourceId: null }] };
+export function lookupLegalEvidence(input: CaseInput, candidates?: readonly EvidenceCandidate[], options?: { readonly maxSnapshotAgeDays?: number; readonly intendedUse?: "general-resin" | "food-container" }): EvidenceLookup {
+  if (!validDate(input.assessmentDate)) return { evidence: [], citations: [], reviewRequirements: [], issues: [{ kind: "invalid-date", sourceId: null }] };
   const maxSnapshotAgeDays = options?.maxSnapshotAgeDays ?? 30;
-  if (!Number.isInteger(maxSnapshotAgeDays) || maxSnapshotAgeDays < 0) return { evidence: [], citations: [], issues: [{ kind: "invalid-option", sourceId: null }] };
+  if (!Number.isInteger(maxSnapshotAgeDays) || maxSnapshotAgeDays < 0) return { evidence: [], citations: [], reviewRequirements: [], issues: [{ kind: "invalid-option", sourceId: null }] };
   const selected = candidates ?? registry.candidates;
   const loadIssues = candidates === undefined ? registry.issues : [];
-  if (selected.length === 0) return { evidence: [], citations: [], issues: [...loadIssues, { kind: "no-results", sourceId: null }] };
+  if (selected.length === 0) return { evidence: [], citations: [], reviewRequirements: [], issues: [...loadIssues, { kind: "no-results", sourceId: null }] };
   const evidence = new Map<string, EvidenceRecord>();
   const citations: EvidenceCitation[] = [];
   const issues: SearchIssue[] = [...loadIssues];
+  const reviewRequirements = new Set<string>();
   for (const candidate of selected) {
+    if (candidate.intendedUse !== undefined && candidate.intendedUse !== options?.intendedUse) continue;
     const issue = candidateIssue(input, candidate, maxSnapshotAgeDays);
     if (issue !== null) {
       issues.push({ kind: issue, sourceId: candidate.record.sourceId });
       continue;
     }
     evidence.set(candidate.record.sourceId, candidate.record);
-    citations.push({ claim: candidate.claim, kind: candidate.kind, sourceId: candidate.record.sourceId, locator: candidate.record.locator });
+    for (const requirement of candidate.reviewRequirements ?? []) reviewRequirements.add(requirement);
+    citations.push({ ...candidate.provenance, claim: candidate.claim, kind: candidate.kind, sourceId: candidate.record.sourceId, locator: candidate.record.locator });
   }
-  return { evidence: [...evidence.values()], citations, issues };
+  return { evidence: [...evidence.values()], citations, issues, reviewRequirements: [...reviewRequirements] };
 }
 
 export function findEvidenceForCase(input: CaseInput, candidates: readonly EvidenceCandidate[] = registry.candidates): readonly EvidenceRecord[] {
@@ -227,9 +197,10 @@ export function findEvidenceForCase(input: CaseInput, candidates: readonly Evide
 
 export function pendingLegalSources(input: CaseInput): PendingLegalLookup {
   if (!validDate(input.assessmentDate)) return { pending: [], issues: [{ kind: "invalid-date", sourceId: null }] };
-  const pending: PendingLegalSource[] = sourceManifest
-    .filter((source) => source.category === "law" && source.effectiveFrom !== null && source.effectiveFrom <= input.assessmentDate && (source.effectiveTo === null || source.effectiveTo >= input.assessmentDate))
+  const versions = sourceManifest.filter((source) => source.legalFamily === "waste-rule" && source.effectiveFrom !== null && source.effectiveFrom <= input.assessmentDate && (source.effectiveTo === null || source.effectiveTo >= input.assessmentDate));
+  const pending: PendingLegalSource[] = versions
+    .filter((source) => source.access !== "bundled" || !source.licenseVerified || source.sha256 === null || source.localPath === null)
     .map((source) => ({ state: "needs-review", sourceId: source.sourceId, title: source.title, url: source.url,
       version: source.datasetVersion, missing: source.missing }));
-  return { pending, issues: pending.length === 0 ? [{ kind: "version-not-registered", sourceId: null }] : [] };
+  return { pending, issues: versions.length === 0 ? [{ kind: "version-not-registered", sourceId: null }] : [] };
 }

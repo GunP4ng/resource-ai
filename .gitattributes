@@ -1,2 +1,4 @@
 data/reference/*.csv -text
 data/sources/snapshots/** -text
+data/reference/legal/*.txt -text
+data/reference/legal/*.pdf -text
