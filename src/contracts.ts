@@ -63,12 +63,103 @@ export type Estimate<Unit extends "KRW" | "kgCO2e"> =
     }
   | { readonly state: "unavailable"; readonly missingInputs: readonly string[] };
 
+export interface SourceQuantity<Unit extends string> {
+  readonly value: number | null;
+  readonly unit: Unit;
+  readonly evidenceIds: readonly string[];
+  readonly missingReason: string | null;
+}
+
+export type CostCategory = "transport" | "treatment" | "preprocessing" | "residue" | "other" | "sales";
+
+export type QuoteBasis =
+  | { readonly kind: "per-kg"; readonly rate: SourceQuantity<"KRW/kg">; readonly amount: SourceQuantity<"kg"> }
+  | { readonly kind: "per-tonne"; readonly rate: SourceQuantity<"KRW/t">; readonly amount: SourceQuantity<"t"> }
+  | { readonly kind: "per-trip"; readonly rate: SourceQuantity<"KRW/trip">; readonly amount: SourceQuantity<"trip"> }
+  | { readonly kind: "total"; readonly amount: SourceQuantity<"KRW"> };
+
+export interface QuoteInput {
+  readonly quoteId: string;
+  readonly category: CostCategory;
+  readonly basis: QuoteBasis;
+  readonly validThrough: string | null;
+  readonly vat: "included" | "excluded" | "unknown";
+  readonly includedInQuoteId: string | null;
+  readonly revenueRecipient: "operator" | "processor" | "not-applicable";
+}
+
+export type ActivityUnit = "kWh" | "t-km" | "kg" | "t" | "L";
+export type CarbonStage = "transport" | "preprocessing" | "treatment" | "residue" | "material-credit" | "energy-credit";
+
+export interface FactorRecord {
+  readonly factorId: string;
+  readonly version: string;
+  /** kgCO2e per one denominatorUnit; no untyped ratio string. */
+  readonly kgCo2ePerUnit: SourceQuantity<"kgCO2e">;
+  readonly denominatorUnit: ActivityUnit;
+  readonly boundary: string;
+  readonly period: string;
+  readonly region: string;
+  readonly gwpMethod: string;
+  readonly includedStages: readonly CarbonStage[];
+  readonly reusePermission: "verified" | "unverified";
+}
+
+export interface ActivityInput {
+  readonly activityId: string;
+  readonly stage: CarbonStage;
+  readonly amount: SourceQuantity<ActivityUnit>;
+  readonly factorId: string | null;
+  readonly factorVersion: string | null;
+}
+
+export interface RouteCalculationInput {
+  readonly routeId: string;
+  readonly quotes: readonly QuoteInput[];
+  readonly activities: readonly ActivityInput[];
+  readonly missingInputs: readonly string[];
+}
+
+export interface ComparisonInput {
+  readonly caseId: string;
+  readonly assessmentDate: string;
+  readonly functionalUnit: string;
+  readonly boundary: string;
+  readonly baselineRouteId: string | null;
+  readonly routes: readonly RouteCalculationInput[];
+  readonly factorRegistryVersion: string;
+  readonly factors: readonly FactorRecord[];
+  readonly evidence: readonly EvidenceRecord[];
+}
+
+export interface CostLineResult {
+  readonly quoteId: string;
+  readonly category: CostCategory;
+  readonly amount: Estimate<"KRW">;
+}
+
+export interface CarbonLineResult {
+  readonly activityId: string;
+  readonly stage: CarbonStage;
+  readonly factorId: string | null;
+  readonly factorVersion: string | null;
+  readonly amount: Estimate<"kgCO2e">;
+}
+
 export interface ScenarioComparison {
   readonly routeId: string;
   readonly functionalUnit: string;
   readonly boundary: string;
+  readonly costLines: readonly CostLineResult[];
+  readonly carbonLines: readonly CarbonLineResult[];
   readonly netCost: Estimate<"KRW">;
-  readonly emissions: Estimate<"kgCO2e">;
+  readonly grossEmissions: Estimate<"kgCO2e">;
+  readonly materialCredit: Estimate<"kgCO2e">;
+  readonly energyCredit: Estimate<"kgCO2e">;
+  readonly netEmissions: Estimate<"kgCO2e">;
+  readonly avoidedEmissions:
+    | { readonly state: "no-baseline" }
+    | { readonly state: "baseline-provided"; readonly baselineRouteId: string; readonly amount: Estimate<"kgCO2e"> };
 }
 
 export type DecisionResult =
@@ -99,5 +190,5 @@ export type DecisionResult =
 export interface ResourceDomain {
   assessRoutes(input: CaseInput): Promise<readonly RouteAssessment[]>;
   findProcessors(input: CaseInput, route: RouteAssessment): Promise<readonly ProcessorCandidate[]>;
-  compare(input: CaseInput, routes: readonly RouteAssessment[]): Promise<readonly ScenarioComparison[]>;
+  compare(input: ComparisonInput, routes: readonly RouteAssessment[]): Promise<readonly ScenarioComparison[]>;
 }
