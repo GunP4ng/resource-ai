@@ -147,7 +147,7 @@ export function normalizePriceCsv(csv: string, sourceId: string): { readonly row
     seen.add(key);
     for (const [regionIndex, region] of regions.entries()) {
       const raw = cells[regionIndex + 2]?.trim() ?? "";
-      const validPrice = /^(?:0|[1-9]\d*)(?:\.\d+)?$/.test(raw);
+      const validPrice = /^(?:0|[1-9]\d*)(?:\.\d+)?$/.test(raw) && Number.isFinite(Number(raw));
       if (raw !== "" && !validPrice) issues.push({ kind: "invalid-price", rowNumber });
       const price = validPrice ? Number(raw) : null;
       rows.push({ sourceId, rowNumber, itemLabel, polymer, form, quality: item[3] ?? null, region,
@@ -178,6 +178,7 @@ export function readPriceSnapshot(bytes: Uint8Array, source: SourceManifestEntry
 }
 
 export function normalizeProcessorCsv(csv: string, sourceId: string, sourceDate: string): { readonly rows: readonly ProcessorDirectoryRow[]; readonly issues: readonly QualityIssue[] } {
+  if (!validDate(sourceDate)) return { rows: [], issues: [{ kind: "date", rowNumber: 1 }] };
   const lines = csvLines(csv);
   const sanitized = lines[0]?.cells.join(",") === sanitizedProcessorHeader.join(",");
   if (!sanitized && lines[0]?.cells.join(",") !== processorHeader.join(",")) return { rows: [], issues: [{ kind: "header", rowNumber: 1 }] };

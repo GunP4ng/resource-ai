@@ -48,6 +48,26 @@ describe("source snapshots", () => {
     expect(result.skipped).toEqual({ count: 1, rowNumbers: [2] });
   });
 
+  test("keeps a price outside the finite numeric range unavailable", () => {
+    const csv = `시점,구분,수도권,강원,충북,충남,전북,전남,경북,경남,데이터 기준일\n2026-10-10,압축-PE(잡색),${"9".repeat(400)},,,,,,,,2026-10-26`;
+
+    const result = normalizePriceCsv(csv, "synthetic-overflow");
+
+    expect(result.rows.find((row) => row.region === "수도권")).toMatchObject({
+      priceKrwPerKg: null, missingReason: "invalid-value",
+    });
+    expect(result.issues).toEqual([{ kind: "invalid-price", rowNumber: 2 }]);
+  });
+
+  test("rejects an impossible processor reference date", () => {
+    const csv = "구분,업체명,사무실 소재지,영업구역,비고\n남구,가상환경,울산 남구 가상로 1,울산 남구,재활용";
+
+    const result = normalizeProcessorCsv(csv, "synthetic-processors", "2025-02-30");
+
+    expect(result.rows).toEqual([]);
+    expect(result.issues).toEqual([{ kind: "date", rowNumber: 1 }]);
+  });
+
   test("omits personal fields and never creates permit codes from a directory row", () => {
     const csv = "구분,업체명,대표자,사무실 소재지,전화번호,영업구역,비고\n남구,가상환경,개인명,울산 남구 가상로 1,010-0000-0000,울산 남구,재활용";
 
