@@ -1,10 +1,10 @@
 import { createServer } from "node:http";
-import { createApp } from "../src/app.ts";
+import { createResourceApp } from "../src/session.ts";
 // Run with Bun 1.4.2. Node HTTP keeps launch types within existing dependencies.
 const port = Number(process.env["PORT"] ?? 3000);
 if (!Number.isInteger(port) || port < 1 || port > 65535) throw new RangeError("Invalid PORT");
 const origin = `http://localhost:${port}`;
-const app = createApp({ origin });
+const app = createResourceApp({ origin, timeoutMs: 10000 });
 const server = createServer(async (incoming, outgoing) => {
   const controller = new AbortController();
   incoming.on("aborted", () => controller.abort());
@@ -22,7 +22,7 @@ const server = createServer(async (incoming, outgoing) => {
     }
     const bytes = Buffer.concat(chunks);
     const request = new Request(new URL(incoming.url ?? "/", origin), { method: incoming.method, headers, signal: controller.signal, ...(bytes.byteLength ? { body: bytes } : {}) });
-    const result = await app(request);
+    const result = await app.fetch(request);
     outgoing.writeHead(result.status, Object.fromEntries(result.headers));
     outgoing.end(await result.text());
   } catch (error) {
@@ -31,4 +31,33 @@ const server = createServer(async (incoming, outgoing) => {
   }
 });
 server.requestTimeout = 15000; server.headersTimeout = 10000; server.keepAliveTimeout = 5000;
-server.listen(port, "127.0.0.1", () => console.log(`Re:Source app: ${origin} (H1/H4 unavailable; synthetic demos enabled)`));
+let shuttingDown = false;
+function shutdown(exitCode: number): void {
+  if (shuttingDown) return;
+  shuttingDown = true;
+  server.close(() => {
+    clearTimeout(deadline);
+    process.exitCode = exitCode;
+  });
+  app.dispose();
+  const deadline = setTimeout(() => {
+    server.closeAllConnections();
+    process.exit(exitCode);
+  }, 1000);
+  deadline.unref();
+}
+process.once("SIGTERM", () => shutdown(0));
+process.once("SIGINT", () => shutdown(0));
+server.once("error", () => {
+  console.error("Re:Source app startup failed; local assessment stopped.");
+  shutdown(1);
+});
+try {
+  server.listen(port, "127.0.0.1", () => console.log(`Re:Source app: ${origin} (local assessment enabled; model calls disabled; operational resources unavailable; Azure not verified)`));
+} catch (error) {
+  app.dispose();
+  if (error instanceof Error) {
+    console.error("Re:Source app startup failed; local assessment stopped.");
+    process.exitCode = 1;
+  } else throw error;
+}

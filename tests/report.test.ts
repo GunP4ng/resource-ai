@@ -5,6 +5,12 @@ import { demo } from "../src/o-demo.ts";
 import { route as assessment, documents } from "../src/o-synthetic-evidence.ts";
 import { createComparisonCalculator, calculateRouteCost } from "../src/cost.ts";
 import { bindSynthetic, carbonFixture, calculationFixture, treatment, transport, sales } from "../src/o-synthetic.ts";
+test("live reports without execution metadata explicitly leave Azure success unverified", () => {
+  const html = renderReport({ state: "needs-information", caseId: "no-execution", questions: ["질량 확인"], evidence: [] }, { mode: "live" });
+  assert.match(html, /모델 실행 정보 미제공/);
+  assert.match(html, /Azure 성공 미검증/);
+  assert.doesNotMatch(html, /모델 호출 없음|추적 /);
+});
 test("question and review states escape hostile text and disallow executable source URLs", () => {
   const evidence = documents({}).documents.map((d) => ({ ...d.record, title: '<img src=x onerror="alert(1)">', url: "javascript:alert(1)", locator: "<script>" }));
   const information = renderReport({ state: "needs-information", caseId: "<hostile>", questions: ["<script>attack</script>"], evidence }, { mode: "synthetic" });
