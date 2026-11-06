@@ -1,9 +1,11 @@
 import { defineTool, type ExtensionAPI } from "@code-yeongyu/senpi";
 import { Type } from "typebox";
+import type { CaseInput } from "./contracts.ts";
+import { createResourceDomain } from "./domain.ts";
+import type { DomainResources } from "./domain.ts";
 
 /**
- * Honest scaffold diagnostics. Domain decisions are deliberately not implemented.
- * Teams replace/add domain tools after agreeing on contracts and evidence gates.
+ * Registration diagnostics. Eligibility and live Azure verification remain incomplete.
  */
 export const projectStatusTool = defineTool({
   name: "resource_project_status",
@@ -13,8 +15,10 @@ export const projectStatusTool = defineTool({
   workspaceEffect: "read",
   async execute() {
     const details = {
-      stage: "scaffold",
-      decisionEngine: "not-implemented",
+      stage: "review-bound-host-comparison",
+      decisionEngine: "server-reviewed-inputs-required",
+      routeEligibility: "case-review-supplement-required",
+      azureLiveVerified: false,
       nextDocument: "docs/delivery-plan.md",
     };
     return {
@@ -23,6 +27,50 @@ export const projectStatusTool = defineTool({
     };
   },
 });
+
+/** Only these case-bound read-only tools are exposed to the application session. */
+export function createCaseTools(input: CaseInput, resources: DomainResources = {}) {
+  const domain = createResourceDomain(input, resources);
+  const respond = (details: unknown) => ({ content: [{ type: "text" as const, text: JSON.stringify(details) }], details });
+  return [
+    defineTool({
+      name: "resource_assess_case", label: "사례 근거와 검토 상태", workspaceEffect: "read",
+      description: "Read the host-owned case assessment, questions and conditional citations. Cannot change facts or approve treatment.",
+      parameters: Type.Object({}, { additionalProperties: false }),
+      async execute(_id, _params, signal) {
+        signal?.throwIfAborted();
+        return respond({ assessment: domain.assess(), decision: await domain.decide() });
+      },
+    }),
+    defineTool({
+      name: "resource_find_processors", label: "업체 확인", workspaceEffect: "read",
+      description: "Read processor candidates for a host route. Directory listing is not a permit or acceptance confirmation.",
+      parameters: Type.Object({ routeId: Type.String() }, { additionalProperties: false }),
+      async execute(_id, params, signal) {
+        signal?.throwIfAborted();
+        const route = domain.assess().routes.find((r) => r.routeId === params.routeId);
+        if (route === undefined) return respond({ candidates: [], missing: ["unknown-route-id"] });
+        if (route.eligibility.state !== "eligible") return respond({ candidates: [], missing: ["route-not-eligible"] });
+        return respond({ candidates: await domain.findProcessors(input, route), readiness: domain.readiness() });
+      },
+    }),
+    defineTool({
+      name: "resource_compare", label: "비용·탄소 비교", workspaceEffect: "read",
+      description: "Calculate using server-owned reviewed inputs only. Never invent quotes, factors or a baseline.",
+      parameters: Type.Object({}, { additionalProperties: false }),
+      async execute(_id, _params, signal) {
+        signal?.throwIfAborted();
+        const comparison = domain.comparison();
+        const routes = domain.assess().routes;
+        if (comparison === undefined || !domain.readiness().calculations) return respond({ state: "unavailable", missingInputs: ["reviewed-comparison-resources-missing"] });
+        if (!routes.some((r) => r.eligibility.state === "eligible")) return respond({ state: "unavailable", missingInputs: ["eligible-route-unverified"] });
+        const decision = await domain.decide();
+        return respond(decision.state === "compared" ? decision : { state: "unavailable",
+          missingInputs: decision.state === "needs-review" ? decision.reasons : decision.questions });
+      },
+    }),
+  ];
+}
 
 // The official senpi loader requires a default extension factory.
 export default function resourceExtension(pi: ExtensionAPI): void {
