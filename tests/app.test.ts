@@ -5,6 +5,17 @@ import type { AssessmentAdapter } from "../src/app.ts";
 import type { DecisionResult } from "../src/contracts.ts";
 import { createHash } from "node:crypto";
 import { demo } from "../src/o-demo.ts";
+import { createAssessmentAdapter, createResourceApp, SessionFailure } from "../src/session.ts";
+import type { SessionFailureCode } from "../src/session.ts";
+import type { DomainResources } from "../src/domain.ts";
+import { syntheticCase, syntheticReviewed } from "./h-fixtures.ts";
+import { execFile, spawn } from "node:child_process";
+import { promisify } from "node:util";
+import { fileURLToPath } from "node:url";
+import { createServer } from "node:net";
+import { mkdtemp, rm } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join, resolve } from "node:path";
 const origin = "http://localhost:3000";
 const held = (caseId: string, question = "확인 필요"): DecisionResult => ({ state: "needs-information", caseId, questions: [question], evidence: [] });
 async function session(app: ReturnType<typeof createApp>): Promise<string> {
@@ -149,8 +160,10 @@ test("adapter cannot switch the case identity on answer or reuse another session
   const app = createApp({ origin, adapter: { submit: async () => held("same-case"), answer: async () => held("other-case") } });
   const a = await session(app), b = await session(app);
   assert.equal((await app(post("/cases", a))).status, 303);
+  const before = await ownedPage(app, a, "/cases/same-case/report");
   assert.equal((await app(post("/cases", b))).status, 502);
   assert.equal((await app(post("/cases/same-case/answers", a))).status, 502);
+  assert.equal(await ownedPage(app, a, "/cases/same-case/report"), before);
 });
 test("expired session loses access to reports", async () => {
   let now = 100;
@@ -196,12 +209,19 @@ test("foreign, literal null, missing Origin and cross-site requests are rejected
 });
 test("case-owned execution metadata survives storage, answer updates and report rendering", async () => {
   let serial = 0;
+  let answerMode: "metadata" | "invalid" | "omitted" = "metadata";
   const app = createApp({ origin, adapter: {
     submit: async () => {
       const id = ++serial;
       return { decision: held(`meta-${id}`), execution: { traceId: `trace-${id}`, usage: `tokens-${id * 10}` } };
     },
-    answer: async (id) => ({ decision: held(id), execution: { traceId: "answer-trace" } }),
+    answer: async (id) => {
+      switch (answerMode) {
+        case "omitted": return held(id);
+        case "invalid": return { decision: held(id, "invalid-replacement"), execution: { traceId: "" } };
+        case "metadata": return { decision: held(id), execution: { traceId: "answer-trace" } };
+      }
+    },
   } });
   const cookie = await session(app);
   assert.equal((await app(post("/cases", cookie))).status, 303);
@@ -222,6 +242,12 @@ test("case-owned execution metadata survives storage, answer updates and report 
   assert.ok(updated.includes("answer-trace · 사용량 미제공"));
   assert.ok(!updated.includes("tokens-10"));
   assert.ok((await report(2)).includes("trace-2 · 사용량 tokens-20"));
+  answerMode = "invalid";
+  assert.equal((await app(post("/cases/meta-1/answers", cookie))).status, 502);
+  assert.equal(await report(1), updated);
+  answerMode = "omitted";
+  assert.equal((await app(post("/cases/meta-1/answers", cookie))).status, 303);
+  assert.doesNotMatch(await report(1), /answer-trace|tokens-10|invalid-replacement/);
 });
 test("invalid execution envelopes fail closed without storing or exposing metadata", async () => {
   const invalid: readonly unknown[] = [
@@ -239,5 +265,278 @@ test("invalid execution envelopes fail closed without storing or exposing metada
     assert.equal(response.status, 502);
     assert.ok(!(await response.text()).includes("secret-"));
     assert.equal((await app(new Request(`${origin}/cases/invalid-meta`, { headers: { cookie } }))).status, 404);
+  }
+});
+
+const nativeFields = { description: "O4 합성 HTTP 시험", photoRefs: "", process: "사출", polymer: "", contamination: "없음", hazardousContact: "no", massKg: "", region: "울산", assessmentDate: "2026-11-05" };
+const formHeaders = { "content-type": "application/x-www-form-urlencoded" };
+async function submitNative(app: ReturnType<typeof createApp>, cookie: string, fields = nativeFields): Promise<string> {
+  const result = await app(post("/cases", cookie, new URLSearchParams(fields).toString(), formHeaders));
+  assert.equal(result.status, 303);
+  const path = result.headers.get("location");
+  assert.ok(path);
+  return path;
+}
+async function ownedPage(app: ReturnType<typeof createApp>, cookie: string, path: string): Promise<string> {
+  const result = await app(new Request(origin + path, { headers: { cookie } }));
+  assert.equal(result.status, 200);
+  return result.text();
+}
+
+test("O4 native corrections refresh missing questions and remain usable after review", async () => {
+  const app = createResourceApp({ origin });
+  try {
+    const cookie = await session(app.fetch), path = await submitNative(app.fetch, cookie);
+    const before = await ownedPage(app.fetch, cookie, path);
+    assert.match(before, /수지/);
+    assert.match(before, /확인된 질량은 몇 kg인가요/);
+    assert.match(before, /<textarea[^>]*name="answers"[^>]*><\/textarea>/);
+    const polymer = await app.fetch(post(path + "/answers", cookie, new URLSearchParams({ answers: '{"polymer":"PP"}' }).toString(), formHeaders));
+    assert.equal(polymer.headers.get("location"), path);
+    const middle = await ownedPage(app.fetch, cookie, path);
+    assert.doesNotMatch(middle, /수지 종류/);
+    assert.match(middle, /확인된 질량은 몇 kg인가요/);
+    assert.equal((await app.fetch(post(path + "/answers", cookie, '{"massKg":100}'))).status, 303);
+    const reviewed = await ownedPage(app.fetch, cookie, path);
+    assert.match(reviewed, /<h1>검토 필요<\/h1>/);
+    assert.doesNotMatch(reviewed, /확인된 질량은 몇 kg인가요/);
+    assert.match(reviewed, new RegExp(`action="${path}/answers"`));
+    assert.doesNotMatch(await ownedPage(app.fetch, cookie, path + "/report"), /<form\b/);
+    assert.doesNotMatch(reviewed, /추적 |humanApproval: approved/);
+  } finally { app.dispose(); }
+});
+
+test("O4 current-date review keeps correction access without bypassing currentness", async () => {
+  const app = createResourceApp({ origin });
+  try {
+    const cookie = await session(app.fetch);
+    const path = await submitNative(app.fetch, cookie, { ...nativeFields, polymer: "PP", assessmentDate: "2026-11-06" });
+    assert.match(await ownedPage(app.fetch, cookie, path), /<form\b/);
+    assert.equal((await app.fetch(post(path + "/answers", cookie, '{"massKg":100}'))).status, 303);
+    const html = await ownedPage(app.fetch, cookie, path);
+    assert.match(html, /<h1>검토 필요<\/h1>/);
+    assert.match(html, /currentness-unverified/);
+    assert.match(html, /<form\b/);
+  } finally { app.dispose(); }
+});
+
+test("O4 invalid field corrections return safe 400s, preserve the report and allow recovery", async () => {
+  const app = createResourceApp({ origin });
+  try {
+    const cookie = await session(app.fetch), path = await submitNative(app.fetch, cookie);
+    const before = await ownedPage(app.fetch, cookie, path + "/report");
+    for (const patch of [{ answers: "private-secret<script>" }, { answers: "{" }, {}, [], { massKg: "100" }, { massKg: 0 }, { massKg: -1 }, { assessmentDate: "2026-02-30" }, { caseId: "forged" }, { humanApproval: "approved" }]) {
+      const response = await app.fetch(post(path + "/answers", cookie, JSON.stringify(patch)));
+      assert.equal(response.status, 400, JSON.stringify(patch));
+      const html = await response.text();
+      assert.match(html, /role="alert"/);
+      assert.match(html, /JSON/);
+      assert.doesNotMatch(html, /private-secret|<script>|SessionFailure|AssessmentInputError/);
+      assert.equal(await ownedPage(app.fetch, cookie, path + "/report"), before);
+    }
+    assert.equal((await app.fetch(post(path + "/answers", cookie, '{"polymer":"PP","massKg":100}'))).status, 303);
+    assert.match(await ownedPage(app.fetch, cookie, path), /<h1>검토 필요<\/h1>/);
+    const forged = await app.fetch(post("/cases", cookie, JSON.stringify({ ...syntheticCase })));
+    assert.equal(forged.status, 400);
+  } finally { app.dispose(); }
+});
+
+for (const [code, status] of Object.entries({ "case-not-found": 404, "case-busy": 409, cancelled: 408, timeout: 504, capacity: 429, "rate-limit": 429, "not-configured": 503, authentication: 502, provider: 502, "invalid-model-output": 502, "turn-limit": 502 } satisfies Record<SessionFailureCode, number>)) {
+  test(`O4 session failure ${code} maps to ${status} without leaking upstream details`, async () => {
+    const app = createApp({ origin, adapter: { submit: async () => { throw Object.assign(new Error("private-secret"), { name: "SessionFailure", code }); }, answer: async (id) => held(id) } });
+    const response = await app(post("/cases", await session(app)));
+    assert.equal(response.status, status);
+    const html = await response.text();
+    assert.match(html, /role="alert"/);
+    assert.doesNotMatch(html, /private-secret|SessionFailure/);
+    if (code === "case-not-found") assert.match(html, /href="\/"/);
+  });
+}
+
+test("O4 unknown or non-Error session failure shapes remain generic 502s", async () => {
+  for (const error of [{ name: "SessionFailure", code: "capacity" }, Object.assign(new Error("private-secret"), { name: "SessionFailure", code: "unknown" }), Object.assign(new Error("private-secret"), { code: "capacity" })]) {
+    const app = createApp({ origin, adapter: { submit: async () => { throw error; }, answer: async (id) => held(id) } });
+    const response = await app(post("/cases", await session(app)));
+    assert.equal(response.status, 502);
+    assert.doesNotMatch(await response.text(), /private-secret|capacity|unknown/);
+  }
+});
+
+test("O4 expired H cases return restart guidance while the owned report survives", async () => {
+  let now = 0;
+  const adapter = createAssessmentAdapter({ now: () => now });
+  const app = createApp({ origin, adapter });
+  try {
+    const cookie = await session(app), path = await submitNative(app, cookie);
+    const before = await ownedPage(app, cookie, path + "/report");
+    now = 1_800_000;
+    const response = await app(post(path + "/answers", cookie, '{"massKg":100}'));
+    assert.equal(response.status, 404);
+    assert.match(await response.text(), /href="\/"/);
+    assert.equal(await ownedPage(app, cookie, path + "/report"), before);
+  } finally { adapter.dispose(); }
+});
+
+test("O4 composed app rejects overlapping answers and disposal aborts active work", async () => {
+  let block = false, entered = () => {}, aborted = false;
+  const started = new Promise<void>((resolve) => { entered = resolve; });
+  const app = createResourceApp({ origin, runner: async (_input, signal) => {
+    if (!block) return {};
+    return new Promise((_resolve, reject) => {
+      signal.addEventListener("abort", () => { aborted = true; reject(new SessionFailure("cancelled")); }, { once: true });
+      entered();
+    });
+  } });
+  try {
+    const cookie = await session(app.fetch), path = await submitNative(app.fetch, cookie);
+    const before = await ownedPage(app.fetch, cookie, path + "/report");
+    block = true;
+    const pending = app.fetch(post(path + "/answers", cookie, '{"massKg":100}'));
+    await started;
+    assert.equal((await app.fetch(post(path + "/answers", cookie, '{"massKg":200}'))).status, 409);
+    app.dispose();
+    assert.equal((await pending).status, 408);
+    assert.equal(aborted, true);
+    assert.equal(await ownedPage(app.fetch, cookie, path + "/report"), before);
+  } finally { app.dispose(); }
+});
+
+test("O4 real H timeout returns 504 without replacing the previous assessment", async () => {
+  let block = false, aborted = false;
+  const adapter = createAssessmentAdapter({ timeoutMs: 10, runner: async (_input, signal) => {
+    if (!block) return {};
+    return new Promise((_resolve, reject) => signal.addEventListener("abort", () => {
+      aborted = true;
+      reject(new Error("private-provider-secret"));
+    }, { once: true }));
+  } });
+  const app = createApp({ origin, adapter, timeoutMs: 2000 });
+  try {
+    const cookie = await session(app), path = await submitNative(app, cookie);
+    const before = await ownedPage(app, cookie, path + "/report");
+    block = true;
+    const response = await app(post(path + "/answers", cookie, '{"massKg":100}'));
+    assert.equal(response.status, 504);
+    assert.equal(aborted, true);
+    assert.doesNotMatch(await response.text(), /private-provider-secret/);
+    assert.equal(await ownedPage(app, cookie, path + "/report"), before);
+  } finally { adapter.dispose(); }
+});
+
+test("O4 reviewed comparison allows corrections and rejects cached supplements after mass or date changes", async () => {
+  for (const patch of [{ massKg: 1000 }, { assessmentDate: "2026-11-06" }]) {
+    let cached: DomainResources | undefined;
+    const app = createResourceApp({ origin, resources: (input) => cached ??= syntheticReviewed(input) });
+    try {
+      const cookie = await session(app.fetch);
+      const path = await submitNative(app.fetch, cookie, { ...nativeFields, polymer: "PP", massKg: "2000" });
+      const html = await ownedPage(app.fetch, cookie, path);
+      assert.match(html, /humanApproval: pending/);
+      assert.match(html, /<form\b/);
+      assert.match(html, /기준선/);
+      assert.doesNotMatch(await ownedPage(app.fetch, cookie, path + "/report"), /<form\b/);
+      assert.equal((await app.fetch(post(path + "/answers", cookie, JSON.stringify(patch)))).status, 303);
+      const updated = await ownedPage(app.fetch, cookie, path);
+      assert.match(updated, /<h1>검토 필요<\/h1>/);
+      assert.doesNotMatch(updated, /<h1>조건부 비교<\/h1>/);
+    } finally { app.dispose(); }
+  }
+});
+
+test("O4 source and packaged launchers reduce missing questions before review and exit cleanly", { timeout: 45000 }, async () => {
+  const root = fileURLToPath(new URL("../", import.meta.url));
+  await rm(resolve(root, "dist/data"), { recursive: true, force: true });
+  await promisify(execFile)(process.execPath, ["run", "build:app"], { cwd: root, timeout: 20000 });
+  for (const launcher of ["scripts/app.ts", "dist/app/app.js"]) {
+    const reservation = createServer();
+    await new Promise<void>((resolve, reject) => {
+      reservation.once("error", reject);
+      reservation.listen(0, "127.0.0.1", resolve);
+    });
+    const address = reservation.address();
+    assert.ok(address && typeof address !== "string");
+    const port = address.port;
+    await new Promise<void>((resolve, reject) => reservation.close((error) => error ? reject(error) : resolve()));
+    const directory = await mkdtemp(join(tmpdir(), "o4-launcher-"));
+    const child = spawn(process.execPath, [resolve(root, launcher)], { cwd: directory, env: { ...process.env, PORT: String(port) }, stdio: ["ignore", "pipe", "pipe"] });
+    const exited = new Promise<{ code: number | null; signal: NodeJS.Signals | null }>((resolve, reject) => {
+      child.once("error", reject);
+      child.once("exit", (code, signal) => resolve({ code, signal }));
+    });
+    let stdout = "", stderr = "";
+    child.stderr.on("data", (chunk: Buffer) => { stderr += chunk.toString(); });
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    try {
+      await Promise.race([new Promise<void>((resolve, reject) => {
+        timer = setTimeout(() => reject(new Error("launcher readiness timeout")), 10000);
+        child.stdout.on("data", (chunk: Buffer) => { stdout += chunk.toString(); if (stdout.includes("Re:Source app:")) resolve(); });
+      }), exited.then(() => { throw new Error(`launcher exited before readiness: ${stderr}`); })]);
+      clearTimeout(timer);
+      const url = `http://localhost:${port}`;
+      const home = await fetch(url, { signal: AbortSignal.timeout(2000) });
+      const cookie = home.headers.get("set-cookie")?.split(";")[0];
+      assert.ok(cookie);
+      const submitted = await fetch(url + "/cases", { method: "POST", redirect: "manual", headers: { ...formHeaders, cookie, origin: url }, body: new URLSearchParams(nativeFields), signal: AbortSignal.timeout(2000) });
+      assert.equal(submitted.status, 303);
+      const path = submitted.headers.get("location");
+      assert.ok(path);
+      const caseId = path.slice("/cases/".length);
+      const page = await fetch(url + path, { headers: { cookie }, signal: AbortSignal.timeout(2000) });
+      assert.equal(page.status, 200);
+      const initial = await page.text();
+      const polymerQuestion = "확인된 수지 종류와 이를 확인한 자료(라벨·재질 명세 등)가 있나요?";
+      const massQuestion = "확인된 질량은 몇 kg인가요?";
+      const answerGuidance = '추가 답변은 필드별 JSON으로 입력해 주세요. 예: {&quot;massKg&quot;:100,&quot;process&quot;:&quot;사출&quot;}. 숫자에는 따옴표를 붙이지 않습니다.';
+      const questions = (html: string): string[] => {
+        const list = html.match(/<h1>추가 정보 필요<\/h1><ul>(.*?)<\/ul>/s);
+        assert.ok(list, `${launcher}: expected needs-information`);
+        const contents = list[1];
+        assert.ok(typeof contents === "string");
+        const items = [...contents.matchAll(/<li>(.*?)<\/li>/gs)].map((item) => {
+          const question = item[1];
+          assert.ok(question);
+          return question;
+        });
+        assert.equal(items.filter((item) => item === answerGuidance).length, 1);
+        return items.filter((item) => item !== answerGuidance);
+      };
+      assert.deepEqual(questions(initial), [polymerQuestion, massQuestion]);
+      assert.match(initial, /name="answers"/);
+      assert.ok(initial.includes(`사례 ${caseId}</p>`));
+      assert.doesNotMatch(initial, /snapshot-unavailable/);
+      const polymer = await fetch(url + path + "/answers", { method: "POST", redirect: "manual", headers: { ...formHeaders, cookie, origin: url }, body: new URLSearchParams({ answers: '{"polymer":"PP"}' }), signal: AbortSignal.timeout(2000) });
+      assert.equal(polymer.status, 303);
+      assert.equal(polymer.headers.get("location"), path);
+      const middlePage = await fetch(url + path, { headers: { cookie }, signal: AbortSignal.timeout(2000) });
+      assert.equal(middlePage.status, 200);
+      const middle = await middlePage.text();
+      assert.deepEqual(questions(middle), [massQuestion]);
+      assert.ok(middle.includes(`사례 ${caseId}</p>`));
+      assert.doesNotMatch(middle, /snapshot-unavailable/);
+      const corrected = await fetch(url + path + "/answers", { method: "POST", redirect: "manual", headers: { ...formHeaders, cookie, origin: url }, body: new URLSearchParams({ answers: '{"massKg":100}' }), signal: AbortSignal.timeout(2000) });
+      assert.equal(corrected.status, 303);
+      assert.equal(corrected.headers.get("location"), path);
+      const refreshed = await fetch(url + path, { headers: { cookie }, signal: AbortSignal.timeout(2000) });
+      assert.equal(refreshed.status, 200);
+      const reviewed = await refreshed.text();
+      assert.match(reviewed, /<h1>검토 필요<\/h1>/);
+      assert.ok(reviewed.includes(`사례 ${caseId}</p>`));
+      assert.doesNotMatch(reviewed, /snapshot-unavailable/);
+      assert.ok(!reviewed.includes(polymerQuestion));
+      assert.ok(!reviewed.includes(massQuestion));
+      assert.ok(reviewed.includes(`action="${path}/answers"`));
+      const report = await fetch(url + path + "/report", { headers: { cookie }, signal: AbortSignal.timeout(2000) });
+      assert.equal(report.status, 200);
+      assert.doesNotMatch(await report.text(), /<form\b/);
+      child.kill("SIGTERM");
+      const result = await Promise.race([exited, new Promise<never>((_, reject) => { timer = setTimeout(() => reject(new Error("launcher shutdown timeout")), 2000); })]);
+      assert.deepEqual(result, { code: 0, signal: null });
+      assert.equal(stderr, "");
+    } finally {
+      clearTimeout(timer);
+      if (child.exitCode === null && child.signalCode === null) child.kill("SIGKILL");
+      await exited;
+      await rm(directory, { recursive: true, force: true });
+    }
   }
 });

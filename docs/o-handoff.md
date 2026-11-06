@@ -320,3 +320,84 @@ live H/Azure integration. Local input/output and screenshot evidence is in
 The prior smoke outcomes remain historical, as stated above. O4 integration
 and the separate J/H/O provenance agreement remain open. This correction does
 not close those work items or change the Oyeonseok assignment.
+
+## O4 local H integration — 2026-11-06
+
+Local integration, packaging and the launcher test correction are complete on
+`feat/oyeonseok-o4-input-questions`, base
+`b2ca2c427e1da7570907a4bf8192de4885eb99e1`. Final verification:
+**298 tests pass, 0 fail**, including actual source and packaged launchers.
+Astra (`gpt-6-astra`, xhigh) returned **APPROVE** after reviewing the full diff
+and all 42 full-page captures. Earlier sections remain
+historical; this section is the current O4 handoff.
+
+The launcher uses `createResourceApp({ origin, timeoutMs: 10000 })` with no
+runner or operational resources. Environment variables cannot enable Azure.
+The existing nine-field input and single-column layout remain. Owned
+needs-information, needs-review and compared pages allow explicit JSON field
+corrections; omitted fields stay unchanged, permitted null means unknown, and
+numbers must be unquoted. H converts native form strings and reassesses patches.
+Printable report routes contain no forms. Missing execution metadata leaves
+model execution information unavailable and Azure success unverified.
+
+Input errors return safe 400 guidance. Recognized session failures map to
+404/409/408/504/429/503/502; unknown failures remain generic 502. Origin,
+session ownership, identity, size and output validation remain enforced.
+SIGINT/SIGTERM dispose work with bounded shutdown; actual SIGTERM exit and
+occupied-port exit 1 with a static message are verified.
+
+Distribute `dist/app/` **with sibling `dist/data/`** and the external package
+dependencies; launch with `bun /path/to/dist/app/app.js`.
+`bun run build:app` stages manifest-listed bundled assets, including legal PDFs
+and text snapshots, with lexical/real-path confinement and SHA-256 checks.
+Missing files, escaped paths and hash mismatches fail the build. All 14 staged
+manifest assets were hash-checked.
+
+Reproduction commands and log results are in
+[verification](verification.md#2026-11-06-o4-local-inputcorrection-integration).
+The retained launcher regression removes stale `dist/data`, performs a fresh
+build/staging, and runs both entries from unrelated temporary directories. It
+checks native submission → polymer and mass questions → mass only after
+`{"polymer":"PP"}` → review after `{"massKg":100}`, keeping the same case ID,
+correction access, no `snapshot-unavailable`, form-free print and SIGTERM exit 0.
+
+The lead's actual packaged browser, **after restart**, also shows
+needs-information with polymer and mass and no `snapshot-unavailable`:
+`/tmp/resource-ai-o4-qa-vqI0QI/bundle-fixed.json` and
+`packaged-questions-mobile.png`. The original missing-asset failure remains
+recorded in `bundle-initial.html` in that directory.
+
+Failed-first evidence is retained in `/tmp/resource-ai-o4-red.log`:
+28 pass / 15 fail comprised 14 intended behavior regressions and one loopback
+reservation failure before child spawn. That environment failure did not
+establish a launcher behavior regression. The corrected test asserts H's
+instructional list item once, then compares the actual missing-fact questions;
+it does not count the instruction as a third question. The currentness
+assertion checks `currentness-unverified` while retaining November 6 input.
+All original tests and 21 added instances remain enabled; none were removed
+or skipped.
+
+Browser evidence covers seven states × three widths × two themes (42
+combinations), with zero detector errors/warnings and no horizontal overflow.
+320px expanded-text-spacing and keyboard-focus checks pass. HTTP checks show
+cross-session case/report/answer isolation 404, foreign Origin 403 and invalid
+answer 400. Evidence and capture details are in
+`/tmp/resource-ai-o4-qa-vqI0QI/qa-summary.md` and its JSONs. Detector advisories
+include an absent script-error probe and existing mobile heading wrapping.
+Before/after review found no new blocking readability defect. The two long
+mobile comparison captures reach the image height limit; bottom captures
+supplement them. No Lighthouse or comprehensive WCAG certification is claimed.
+
+No actual Azure/model calls or operational resources were used. Synthetic
+comparison is QA only; pending approval and unavailable/no-baseline semantics
+remain. J coverage ends November 5, so November 6 currentness remains held.
+Photos are references, not image inference. H's 30-minute case TTL can expire
+before O's one-hour session, yielding restart guidance while O's report survives.
+H commits facts before O validates its returned envelope; preserving O's
+snapshot does not guarantee H rollback. Real reviewed operational supplements,
+refreshed legal coverage and live Azure verification remain external work.
+No H/J/shared-contract/dependency changes were made. The optional no-excuse
+scanner timed out (124); LSP/linter were unavailable. Neither is claimed as a
+pass. A nonblocking review note remains: the launcher test pins H's existing
+guidance sentence, so an intentional copy change will require updating that
+expectation. Review: `/tmp/resource-ai-o4-astra-final-review.txt`.

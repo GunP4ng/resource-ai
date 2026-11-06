@@ -253,7 +253,7 @@ export function renderReport(result: DecisionResult, presentation: ReportPresent
   }
   const execution = presentation.mode === "live" && presentation.execution
     ? `<p>추적 ${escapeHtml(presentation.execution.traceId)} · 사용량 ${escapeHtml(presentation.execution.usage ?? "미제공")}</p>`
-    : "<p>실행 사용량 미제공</p>";
+    : presentation.mode === "live" ? "<p>모델 실행 정보 미제공 · Azure 성공 미검증</p>" : "<p>실행 사용량 미제공</p>";
   return page("조건부 보고서", `<p>${mode}</p><p>사례 ${escapeHtml(result.caseId)}</p>${content}
     ${evidenceSection(result)}<h2>실행·계산 버전</h2>
     <p>계산 ${escapeHtml(presentation.calculationVersion ?? "미제공")} · 출처 묶음 ${escapeHtml(presentation.sourceVersion ?? "미제공")}</p>${execution}`);

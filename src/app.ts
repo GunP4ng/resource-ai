@@ -8,6 +8,8 @@ import { referencePage } from "./o-reference.ts";
 import type { ReportPresentation } from "./report.ts";
 import { escapeHtml, page, renderReport } from "./report.ts";
 import { requireValid } from "./o-validation.ts";
+import { AssessmentInputError } from "./assessment.ts";
+import type { SessionFailureCode } from "./session.ts";
 
 export interface AssessmentEnvelope {
   readonly decision: DecisionResult;
@@ -52,8 +54,30 @@ class HttpFailure extends Error {
   }
 }
 const idPattern = /^[A-Za-z0-9_-]{1,100}$/;
+const sessionFailures: Readonly<Record<SessionFailureCode, { readonly status: number; readonly message: string }>> = {
+  "case-not-found": { status: 404, message: "실행 중인 사례를 찾을 수 없거나 유효기간이 지났습니다. 입력 화면에서 새 사례를 제출해 주세요." },
+  "case-busy": { status: 409, message: "이 사례의 수정 사항을 처리 중입니다. 완료 후 다시 제출해 주세요." },
+  cancelled: { status: 408, message: "요청이 취소되었습니다. 사례 상태를 확인한 뒤 다시 제출해 주세요." },
+  timeout: { status: 504, message: "처리 시간이 초과되었습니다. 사례 상태를 확인한 뒤 다시 제출해 주세요." },
+  capacity: { status: 429, message: "현재 저장 가능한 사례 제한에 도달했습니다. 잠시 후 다시 제출해 주세요." },
+  "rate-limit": { status: 429, message: "실행 요청 제한에 도달했습니다. 잠시 후 다시 제출해 주세요." },
+  "not-configured": { status: 503, message: "실행 연결이 구성되지 않았습니다. 담당자에게 설정을 확인해 주세요." },
+  authentication: { status: 502, message: "실행 서비스 인증을 확인할 수 없습니다. 담당자에게 연결 설정을 확인해 주세요." },
+  provider: { status: 502, message: "실행 서비스 요청에 실패했습니다. 잠시 후 다시 제출해 주세요." },
+  "invalid-model-output": { status: 502, message: "실행 결과를 검증하지 못했습니다. 담당자에게 실행 상태를 확인해 주세요." },
+  "turn-limit": { status: 502, message: "실행 단계 제한에 도달했습니다. 담당자에게 실행 상태를 확인해 주세요." },
+};
+function sessionFailureCode(error: unknown): SessionFailureCode | undefined {
+  // Type-only session import avoids the runtime app ↔ session composition cycle.
+  if (!(error instanceof Error) || error.name !== "SessionFailure" || !("code" in error) || typeof error.code !== "string") return undefined;
+  const code = error.code;
+  return Object.keys(sessionFailures).find((key): key is SessionFailureCode => key === code);
+}
 function form(action: string, answers = false): string {
-  return `<form method="post" action="${escapeHtml(action)}">${answers ? '<label for="answers">추가 답변</label><textarea id="answers" name="answers" required maxlength="10000"></textarea>' : `
+  return `<form method="post" action="${escapeHtml(action)}">${answers ? `<label for="answers">사례 필드 답변·수정 (JSON 객체)</label>
+  <p id="answers-help">수정할 필드만 입력하세요. 생략한 필드는 유지됩니다. 허용되는 필드의 null은 미상이며 숫자에는 따옴표를 붙이지 않습니다. caseId와 판정·승인은 수정할 수 없습니다.</p>
+  <p>입력 예시 (자동 입력되지 않음): <code>{"polymer":"PP","massKg":100}</code></p>
+  <textarea id="answers" name="answers" aria-describedby="answers-help" required maxlength="10000"></textarea>` : `
   <label for="description">폐자원 설명</label><textarea id="description" name="description" required maxlength="10000"></textarea>
   <label for="process">발생 공정</label><input id="process" name="process" maxlength="500">
   <label for="polymer">수지 (미상은 공란)</label><input id="polymer" name="polymer" maxlength="200">
@@ -63,7 +87,7 @@ function form(action: string, answers = false): string {
   <label for="region">발생 지역</label><input id="region" name="region" maxlength="200">
   <label for="assessmentDate">평가 기준일</label><input id="assessmentDate" name="assessmentDate" type="date" required>
   <label for="photoRefs">사진 참조 URL (선택, 서버가 가져오지 않음)</label><input id="photoRefs" name="photoRefs" maxlength="2000">`}
-  <button type="submit">${answers ? "답변 제출" : "사례 검토 요청"}</button></form>`;
+  <button type="submit">${answers ? "사례 필드 수정 제출" : "사례 제출"}</button></form>`;
 }
 async function body(request: Request, limit: number, signal: AbortSignal): Promise<unknown> {
   const length = request.headers.get("content-length");
@@ -207,8 +231,8 @@ export function createApp(dependencies: AppDependencies): (request: Request) => 
         if (stored === undefined) throw new HttpFailure(404, "사례를 찾을 수 없습니다.");
         const result = stored.decision;
         const html = renderReport(result, { mode: "live", ...(stored.execution ? { execution: stored.execution } : {}) });
-        const extra = suffix === "report" ? "" : `<p class="screen-only"><a href="/cases/${caseId}/report">인쇄용 보고서</a></p>${result.state === "needs-information" ? form(`/cases/${caseId}/answers`, true) : ""}`;
-        return response(html.replace("</main>", `${extra}</main>`));
+        const extra = suffix === "report" ? "" : `<p class="screen-only"><a href="/cases/${caseId}/report">인쇄용 보고서</a></p>${form(`/cases/${caseId}/answers`, true)}`;
+        return response(html.replace('<h2>출처와 원문 위치</h2>', `${extra}<h2>출처와 원문 위치</h2>`));
       }
       if (request.method === "POST" && (url.pathname === "/cases" || (caseId && suffix === "answers"))) {
         if (request.headers.get("origin") !== origin || request.headers.get("sec-fetch-site") === "cross-site") throw new HttpFailure(403, "같은 앱에서 제출해 주세요.");
@@ -234,6 +258,15 @@ export function createApp(dependencies: AppDependencies): (request: Request) => 
       throw new HttpFailure(404, "페이지를 찾을 수 없습니다.");
     } catch (error) {
       if (error instanceof HttpFailure) return response(page("요청 상태", `<h1>요청을 완료하지 못했습니다</h1><p role="alert">${escapeHtml(error.publicMessage)}</p>`), error.status);
+      if (error instanceof AssessmentInputError) {
+        const issues = error.issues.map((issue) => `<li>${escapeHtml(issue.field)}: ${issue.code === "required" ? "필수 필드가 필요합니다." : "필드 형식과 허용 값을 확인해 주세요."}</li>`).join("");
+        return response(page("입력 확인", `<h1>입력을 확인해 주세요</h1><p role="alert">사례 필드와 값 형식을 확인해 주세요. 답변·수정은 JSON 객체로 입력하고 숫자에는 따옴표를 붙이지 않습니다. 질량은 0보다 큰 숫자, 날짜는 YYYY-MM-DD 형식의 실제 날짜여야 합니다. caseId와 판정·승인은 수정할 수 없습니다.</p><ul>${issues}</ul><p>예: <code>{"massKg":100}</code> · 생략한 필드는 유지되며 허용되는 필드의 null은 미상입니다. 사례 화면으로 돌아가 수정해 주세요.</p>`), 400);
+      }
+      const code = sessionFailureCode(error);
+      if (code !== undefined) {
+        const failure = sessionFailures[code];
+        return response(page("실행 상태", `<h1>요청을 완료하지 못했습니다</h1><p role="alert">${escapeHtml(failure.message)}</p><p><a href="/">입력 화면에서 새 사례 제출</a></p>`), failure.status);
+      }
       // HTTP trust boundary: provider and unexpected implementation errors never enter HTML/logs.
       return response(page("실행 실패", "<h1>검토 실행 실패</h1><p role=\"alert\">연결 또는 결과 검증에 실패했습니다. 담당자에게 실행 상태를 확인해 주세요.</p>"), 502);
     }
