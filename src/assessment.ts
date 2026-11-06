@@ -32,6 +32,12 @@ export interface AssessmentOptions {
 /** H2 diagnostics for H3/H4. This is not a replacement for DecisionResult. */
 export interface CaseAssessment {
   readonly caseId: string;
+  /** Conditional presentation only; never consumed as proof of route eligibility. */
+  readonly candidates: {
+    readonly resins: readonly { readonly value: string; readonly basis: "reported-input" }[];
+    readonly wasteCodes: readonly { readonly value: string; readonly state: "conditional"; readonly claim: string; readonly sourceId: string; readonly locator: string; readonly sha256: string }[];
+    readonly photoInference: "not-performed";
+  };
   readonly routes: readonly RouteAssessment[];
   readonly questions: readonly string[];
   /** Includes conditional code/type citations, issues and unresolved review requirements. */
@@ -153,7 +159,18 @@ export function assessCase(input: CaseInput, options: AssessmentOptions = {}, re
       return hold(issue);
     }
   });
-  return { caseId: facts.caseId, routes, questions, legal, pendingLegal, reviewReasons, reviewIssues, requiredChecks, reviewEvidence };
+  const candidates: CaseAssessment["candidates"] = {
+    resins: facts.polymer?.trim() ? [{ value: facts.polymer, basis: "reported-input" }] : [],
+    wasteCodes: legal.citations.filter((citation) => citation.kind === "waste-code").flatMap((citation) => {
+      const record = legal.evidence.find((item) => item.sourceId === citation.sourceId);
+      if (!record) return [];
+      return [...new Set(citation.quote?.match(/\b\d{2}-\d{2}-\d{2}\b/g) ?? [])].map((value) => ({
+        value, state: "conditional" as const, claim: citation.claim, sourceId: record.sourceId, locator: citation.locator, sha256: record.sha256,
+      }));
+    }),
+    photoInference: "not-performed",
+  };
+  return { caseId: facts.caseId, candidates, routes, questions, legal, pendingLegal, reviewReasons, reviewIssues, requiredChecks, reviewEvidence };
 }
 
 /** ResourceDomain-compatible projection; use assessCase when collecting H3 diagnostics. */
