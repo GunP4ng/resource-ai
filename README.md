@@ -30,6 +30,23 @@ smoke는 소스와 빌드된 extension을 **실제 senpi loader**로 열고, SDK
 
 도메인 구현을 시작할 때 `src/contracts.ts`부터 합의하고, `data/*.example.json`을 실제 데이터와 구분한다. `.env.example`에는 변수명만 있으며 실제 키를 커밋하지 않는다.
 
+## 앱의 구독 모델 runner
+
+`bun run app`은 기본으로 `chatgpt-subscription` / `gpt-5.5`를 사용한다.
+기존 senpi 로그인 `auth.json`을 SDK가 읽으며 Azure 환경변수는 필요하지 않다.
+로그인은 senpi에서 먼저 완료한다. 앱은 로그인 화면을 띄우거나 비밀값을 입력받지 않는다.
+`RESOURCE_AUTH_PATH`로 서버가 소유한 auth.json 경로를 지정할 수 있고,
+`RESOURCE_MODEL_ID`로 설치된 SDK의 모델을 선택할 수 있다.
+인증이나 모델이 없으면 제출은 HTTP 503(`not-configured`)으로 끝난다.
+구독이 설정돼 있으면 제출 시 실제 모델 요청이 발생하므로 승인된 사례만 사용한다.
+
+`RESOURCE_MODEL_RUNNER=local bun run app`은 모델 호출 없이 기존 질문/답변/보류 흐름을 실행한다.
+`RESOURCE_MODEL_RUNNER=azure bun run app`은 기존 Azure runner를 명시적으로 선택한다.
+이때만 `.env.example`의 Azure 키·endpoint·deployment 설정이 필요하다.
+공유 운영 배포의 요청별 승인/감사·사진 동의·운영 자료 공급은 별도 인수 대상이며
+이 loopback launcher가 그 통합 완료를 의미하지 않는다.
+테스트는 합성 OAuth와 주입 HTTP/SSE만 사용하며 실제 유료 요청을 보내지 않는다.
+
 ## 읽는 순서
 
 1. [대회 근거와 영상 확인](docs/competition-evidence.md)
