@@ -30,6 +30,24 @@ const sha = (bytes: Uint8Array) => createHash("sha256").update(bytes).digest("he
 const facts: CaseInput = { caseId: "synthetic-case", description: "synthetic test pixels", photoRefs: [], process: null,
   polymer: null, contamination: null, hazardousContact: "unknown", massKg: null, region: null, assessmentDate: "2026-11-06" };
 
+test("irreversible model withdrawal survives store reopen and restoration of photo JSON while retaining storage preview", async () => {
+  const root = await mkdtemp(join(tmpdir(), "photo-denial-"));
+  const options = { root, retentionMs: 60000, maxPhotos: 5, authorize: async () => ({ ownerId: "owner", caseRevision: revision(facts), read: true, sendToModel: true }) };
+  try {
+    const store = await createPhotoStore(options);
+    const photo = await store.put("owner", facts.caseId, image(), "image/png", { recordId: "synthetic", store: true, model: true, visibleContentReviewed: true, expiresAt: Date.now() + 60000 }, signal());
+    const request = { caseId: facts.caseId, caseRevision: revision(facts), photoRef: photo.photoRef };
+    assert.equal((await store.resolver("owner")(request, signal()))?.approvedForModel, true);
+    const backup = await readFile(join(root, `${photo.photoRef}.json`));
+    await store.withdrawModel("owner", photo.photoRef, signal());
+    await writeFile(join(root, `${photo.photoRef}.json`), backup);
+    const reopened = await createPhotoStore(options);
+    await assert.rejects(reopened.resolver("owner")(request, signal()), failure("denied"));
+    await assert.rejects(reopened.assertCanTransmit("owner", { ...facts, photoRefs: [photo.photoRef] }, signal()), failure("denied"));
+    assert.equal((await reopened.read("owner", request, signal())).receipt.sha256, photo.sha256);
+  } finally { await rm(root, { recursive: true, force: true }); }
+});
+
 test("full PNG/JPEG decode produces fresh PNG pixels and removes metadata", async () => {
   const png = withChunk("tEXt", Buffer.from("Comment\0private-gps-and-name"));
   const clean = await sanitizePhoto(png, "image/png", signal());

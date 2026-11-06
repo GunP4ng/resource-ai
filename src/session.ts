@@ -8,6 +8,7 @@ import type { AgentSession, ResourceLoader } from "@code-yeongyu/senpi";
 import type { FetchFunction, ImageContent } from "@earendil-works/pi-ai";
 import { createApp } from "./app.ts";
 import type { AssessmentAdapter, AssessmentEnvelope } from "./app.ts";
+import type { AppDependencies } from "./app.ts";
 import type { CaseInput } from "./contracts.ts";
 import { AssessmentInputError } from "./assessment.ts";
 import { parseDecision } from "./o-decision.ts";
@@ -119,7 +120,9 @@ function submission(raw: unknown, caseId: string, format: "json" | "form"): Case
       if (mass !== "" && !/^(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?$/i.test(mass)) inputError("질량은 kg 단위 숫자 또는 공란이어야 합니다.");
       values["massKg"] = mass === "" ? null : Number(mass);
     }
-    if (typeof values["photoRefs"] === "string") values["photoRefs"] = values["photoRefs"].trim() === "" ? [] : [values["photoRefs"]];
+    // Case-first native forms have no photo control; JSON still requires the field.
+    if (!Object.hasOwn(values, "photoRefs")) values["photoRefs"] = [];
+    else if (typeof values["photoRefs"] === "string") values["photoRefs"] = values["photoRefs"].trim() === "" ? [] : [values["photoRefs"]];
   }
   return checked({ ...values, caseId });
 }
@@ -163,6 +166,9 @@ async function boundedRun(runner: CaseRunner, input: CaseInput, signal: AbortSig
 /** H-owned O4 adapter. The HTTP layer must authenticate/authorize caseId before answer(). */
 export function createAssessmentAdapter(options: { readonly runner?: CaseRunner; readonly resources?: ResourceProvider; readonly timeoutMs?: number; readonly ttlMs?: number; readonly maxCases?: number; readonly now?: () => number; readonly checkRequest?: () => void } = {}): AssessmentAdapter & {
   submitForm(raw: unknown, signal: AbortSignal): Promise<AssessmentEnvelope>; dispose(): void;
+  prepareSubmit(raw: unknown, format: "json" | "form"): CaseInput;
+  prepareAnswer(input: CaseInput, raw: unknown): CaseInput;
+  evaluate(input: CaseInput, signal: AbortSignal): Promise<AssessmentEnvelope>;
 } {
   const timeoutMs = options.timeoutMs ?? 30_000, ttlMs = options.ttlMs ?? 1_800_000, maxCases = options.maxCases ?? 100;
   if (![timeoutMs, ttlMs, maxCases].every((n) => Number.isSafeInteger(n) && n > 0)) throw new RangeError("세션 제한은 양의 정수여야 합니다.");
@@ -206,6 +212,9 @@ export function createAssessmentAdapter(options: { readonly runner?: CaseRunner;
     } finally { pending--; }
   };
   return {
+    prepareSubmit: (raw, format) => submission(raw, randomUUID(), format),
+    prepareAnswer: answered,
+    evaluate,
     submit: (raw, signal) => submit(raw, signal, "json"),
     submitForm: (raw, signal) => submit(raw, signal, "form"),
     async answer(caseId, raw, signal) {
@@ -226,13 +235,13 @@ export function createAssessmentAdapter(options: { readonly runner?: CaseRunner;
   };
 }
 
-/** H-owned application composition; O4's existing renderer/HTTP module stays unchanged. */
-export function createResourceApp(options: { readonly origin: string; readonly runner?: CaseRunner; readonly resources?: ResourceProvider; readonly timeoutMs?: number; readonly checkRequest?: () => void }) {
+/** Integrated browser composition uses stateless H preparation and O's committed case store. */
+export function createResourceApp(options: { readonly origin: string; readonly runner?: CaseRunner; readonly resources?: ResourceProvider; readonly timeoutMs?: number; readonly checkRequest?: () => void } & Pick<AppDependencies, "actorForRequest" | "photoStore" | "caseStore" | "photoPolicy" | "committed">) {
   const adapter = createAssessmentAdapter(options);
   // O's adapter receives parsed values without the request's content type. Carry that
   // server-owned distinction per async request without changing O's interface or state.
   const format = new AsyncLocalStorage<"json" | "form">();
-  const app = createApp({ origin: options.origin, timeoutMs: options.timeoutMs, adapter: {
+  const app = createApp({ ...options, preparer: adapter, origin: options.origin, timeoutMs: options.timeoutMs, adapter: {
     submit: (raw, signal) => format.getStore() === "form" ? adapter.submitForm(raw, signal) : adapter.submit(raw, signal),
     answer: adapter.answer,
   } });

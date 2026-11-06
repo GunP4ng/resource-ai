@@ -16,6 +16,7 @@ import { revision } from "../src/o-validation.ts";
 import { createHash } from "node:crypto";
 import { prepareCaseRecord, createBundledSnapshotReader } from "../src/case-record.ts";
 import type { CaseInput } from "../src/contracts.ts";
+import { createCaseStore } from "../src/o-case-store.ts";
 
 // All credentials, approval records and provider responses are synthetic. No network.
 const input = { ...syntheticCase, description: "PRIVATE description" };
@@ -238,11 +239,13 @@ test("authenticated app submit/answer uses the photo store, preserves SHA and re
   const photon = createRequire(import.meta.resolve("@code-yeongyu/senpi"))("@silvia-odwyer/photon-node") as typeof import("@silvia-odwyer/photon-node");
   const image = new photon.PhotonImage(new Uint8Array([255,0,0,255]),1,1), f = fixture(); let current: CaseInput | undefined;
   const captured: Awaited<ReturnType<typeof prepareCaseRecord>>[] = [];
+  const cases = createCaseStore();
   const store = await createPhotoStore({ root, retentionMs: 60_000, maxPhotos: 2,
-    authorize: async (actor, caseId) => current?.caseId === caseId && actor === "authenticated-owner"
-      ? { ownerId: actor, caseRevision: revision(current), read: true, sendToModel: true } : null });
+    authorize: cases.authorize });
+  let identity = "authenticated-owner";
   const app = createOperationalApp({ origin, operations: { ...f.options, transport: async () => new Response("", { headers: { "x-request-id": "synthetic-app" } }) },
-    photoStore: store, actorForRequest: async () => "authenticated-owner",
+    caseStore: cases, photoStore: store, actorForRequest: async () => identity,
+    photoPolicy: { retentionMs: 60_000, guardedModel: { provider: "synthetic Azure", purpose: "synthetic test" } },
     resources: async (value, signal) => {
       current = value;
       captured.push(await prepareCaseRecord(value, { dataOrigin: { kind: "synthetic", reference: "HTTP fixture; no field data or Azure call" },
@@ -252,10 +255,13 @@ test("authenticated app submit/answer uses the photo store, preserves SHA and re
   try {
     const b = await browser(app), first = await b.post("/cases", submission); assert.equal(first.status, 303);
     const path = first.headers.get("location")!; assert.ok(current);
-    const photo = await store.put("authenticated-owner", current.caseId, image.get_bytes(), "image/png",
-      { recordId: "synthetic-consent", store: true, model: true, visibleContentReviewed: true, expiresAt: Date.now() + 60_000 }, live());
+    const upload = new FormData(); upload.set("baseVersion", "1"); upload.set("store", "yes"); upload.set("model", "yes"); upload.set("visible", "yes");
+    upload.set("file", new File([new Uint8Array(image.get_bytes())], "synthetic.png", { type: "image/png" }));
+    assert.equal((await app.fetch(new Request(origin + path + "/photos", { method: "POST", headers: { origin }, body: upload }))).status, 303);
+    const photo = cases.read("actor:authenticated-owner", current.caseId)?.photos[0]; assert.ok(photo);
+    let baseVersion = 2;
     for (const patch of [{ photoRefs: [photo.photoRef], process: null, contamination: null }, { process: "압출", contamination: "기름 오염", hazardousContact: "yes" }]) {
-      assert.equal((await b.post(path + "/answers", patch)).status, 303);
+      assert.equal((await b.post(path + "/answers", { baseVersion: baseVersion++, patch })).status, 303);
       assert.equal(captured.at(-1)?.record.images[0]?.sha256, photo.sha256);
       assert.equal(f.records.at(-1)?.images[0]?.sha256, photo.sha256);
       assert.equal(f.records.at(-1)?.outcome, "success");
@@ -265,8 +271,9 @@ test("authenticated app submit/answer uses the photo store, preserves SHA and re
     assert.equal(captured[2]!.record.decision.state, "needs-review");
     const before = await (await b.get(path)).text();
     await store.revoke("authenticated-owner", photo.photoRef, live());
-    assert.equal((await b.post(path + "/answers", { massKg: 1000 })).status, 502);
+    assert.equal((await b.post(path + "/answers", { baseVersion, patch: { massKg: 1000 } })).status, 502);
     assert.equal(await (await b.get(path)).text(), before);
+    identity = "other-owner";
     const other = await browser(app); assert.equal((await other.get(path)).status, 404);
   } finally { app.dispose(); image.free(); await rm(root, { recursive: true, force: true }); }
 });

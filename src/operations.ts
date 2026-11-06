@@ -7,6 +7,9 @@ import { revision } from "./o-validation.ts";
 import { createAzureRunner, createResourceApp, openCaseSession, SessionFailure } from "./session.ts";
 import type { CaseRunner, PhotoResolver, ResourceProvider, SessionFailureCode } from "./session.ts";
 import type { createPhotoStore } from "./photos.ts";
+import { createCaseStore } from "./o-case-store.ts";
+import type { OCaseStore } from "./o-case-store.ts";
+import type { AppDependencies } from "./app.ts";
 
 /** Inject from the server secret store, never JSON/form input. No process.env fallback. */
 export interface AzureConfiguration {
@@ -27,13 +30,13 @@ const monotonicClock: OperationalClock = {
   schedule(callback, delayMs) { const timer = setTimeout(callback, Math.max(0, Math.ceil(delayMs))); return () => clearTimeout(timer); },
 };
 function requestDeadline(clock: OperationalClock, end: number, parent: AbortSignal, cancellation: () => "timeout" | "cancelled" = () => "cancelled") {
-  const controller = new AbortController(); let failure: SessionFailure | undefined, closed = false;
+  const controller = new AbortController(); let failure: SessionFailure | undefined, closed = false, committed = false;
   let reject!: (error: SessionFailure) => void, clearTimer = () => {};
   const interrupted = new Promise<never>((_resolve, no) => { reject = no; });
   // A pre-aborted caller is valid even before the operation attaches its race handler.
   void interrupted.catch(() => {});
   const stop = (code: "timeout" | "cancelled") => {
-    if (failure || closed) return;
+    if (failure || closed || committed) return;
     failure = new SessionFailure(code); reject(failure); controller.abort(failure);
   };
   const remaining = () => Math.max(0, end - clock.now());
@@ -47,14 +50,16 @@ function requestDeadline(clock: OperationalClock, end: number, parent: AbortSign
   parent.addEventListener("abort", cancel, { once: true });
   if (parent.aborted) cancel(); else clearTimer = clock.schedule(expire, remaining());
   return { clock, end, signal: controller.signal, interrupted, remaining, check, stop,
+    commit() { committed = true; clearTimer(); },
+    get committed() { return committed; },
     get failure() { return failure; },
     close() { closed = true; clearTimer(); parent.removeEventListener("abort", cancel); controller.abort(failure ?? new SessionFailure("cancelled")); },
   };
 }
 const requestBudgets = new AsyncLocalStorage<ReturnType<typeof requestDeadline>>();
 
-/** H-owned composition used by the launcher. Without operations or a runner, assessment is local.
- * Actor/case ownership, consent collection and upload UI remain server integration responsibilities.
+/** H/O composition used by the launcher. Without operations or a runner, assessment is local.
+ * Identity verification and storage policy are injected by the server owner.
  * No environment variable can enable inference here; readiness never claims live verification.
  */
 export function createOperationalApp(options: {
@@ -65,16 +70,24 @@ export function createOperationalApp(options: {
   readonly resources?: ResourceProvider;
   readonly timeoutMs?: number;
   readonly photoStore?: Awaited<ReturnType<typeof createPhotoStore>>;
-  readonly actorForRequest?: (request: Request, signal: AbortSignal) => Promise<string | null>;
+  readonly actorForRequest?: AppDependencies["actorForRequest"];
   readonly clock?: OperationalClock;
+  readonly caseStore?: OCaseStore;
+  readonly photoPolicy?: AppDependencies["photoPolicy"];
 }, open: typeof openCaseSession = openCaseSession) {
   if (options.photoStore && !options.actorForRequest) throw new RangeError("authenticated-photo-actor-required");
   if (options.runner && options.operations) throw new RangeError("conflicting-runner-configuration");
-  const actors = new AsyncLocalStorage<string | null>();
-  const actor = () => { const value = actors.getStore(); if (!value) throw new SessionFailure("authentication"); return value; };
+  const caseStore = options.caseStore ?? createCaseStore();
+  const actor = () => caseStore.currentActor();
   const binding: OperationalRunnerOptions["photos"] = options.photoStore ? {
-    resolve: (request, signal) => options.photoStore!.resolver(actor())(request, signal),
-    assertCanTransmit: (input, signal, expected) => options.photoStore!.assertCanTransmit(actor(), input, signal, expected),
+    resolve: (request, signal) => {
+      if (!caseStore.canResolve(actor(), request.caseId, request.photoRef, request.caseRevision)) throw new SessionFailure("provider");
+      return options.photoStore!.resolver(actor())(request, signal);
+    },
+    assertCanTransmit: (input, signal, expected) => {
+      if (!input.photoRefs.every(ref => caseStore.canResolve(actor(), input.caseId, ref, revision(input)))) throw new SessionFailure("provider");
+      return options.photoStore!.assertCanTransmit(actor(), input, signal, expected);
+    },
   } : options.operations?.photos;
   const enabled = options.operations?.enabled === true;
   const runner = enabled ? createOperationalRunner({ ...options.operations!, photos: binding }, open) : options.runner;
@@ -83,6 +96,11 @@ export function createOperationalApp(options: {
   const clock = options.clock ?? monotonicClock;
   const active = new Set<ReturnType<typeof requestDeadline>>(); let disposed = false;
   const app = createResourceApp({ origin: options.origin, runner, timeoutMs,
+    caseStore, photoStore: options.photoStore,
+    photoPolicy: options.photoPolicy ? { retentionMs: options.photoPolicy.retentionMs,
+      ...(enabled && binding && options.photoStore && options.photoPolicy.guardedModel ? { guardedModel: options.photoPolicy.guardedModel } : {}) } : undefined,
+    committed: () => requestBudgets.getStore()?.commit(),
+    actorForRequest: options.actorForRequest,
     checkRequest: () => requestBudgets.getStore()?.check(),
     resources: async (input, signal) => {
       requestBudgets.getStore()?.check();
@@ -104,18 +122,14 @@ export function createOperationalApp(options: {
           if (forwarded.method === "GET" && url.origin === new URL(options.origin).origin && url.pathname === "/operations/readiness") {
             return Response.json({ mode: enabled ? "request-gated" : runner ? "model-runner" : "local-only", azure: "not-verified",
               authorization: enabled ? "required-per-request" : "disabled", photos: binding && enabled ? "server-bound" : "reference-only",
+              identity: options.actorForRequest ? "server-resolver" : "anonymous-session", privatePhotoStorage: !!(options.actorForRequest && options.photoStore && options.photoPolicy),
+              guardedModelPhotos: !!(enabled && binding && options.photoStore && options.photoPolicy?.guardedModel),
               resources: options.resources ? "server-bound-unverified" : "unavailable", liveAzureVerified: false }, { headers: { "cache-control": "no-store" } });
           }
-          if (!enabled || !options.photoStore) return app.fetch(forwarded);
-          let identity: string | null;
-          try { identity = await options.actorForRequest!(forwarded, budget.signal); }
-          catch { budget.check(); return new Response("Authentication unavailable", { status: 503 }); }
-          budget.check();
-          if (!identity) return new Response("Authentication required", { status: 403 });
-          return actors.run(identity, () => app.fetch(forwarded));
+          return app.fetch(forwarded);
         };
         const response = await requestBudgets.run(budget, () => Promise.race([budget.interrupted, work()]));
-        budget.check(); return response;
+        if (!budget.committed) budget.check(); return response;
       } catch (error) {
         const failure = budget.failure ?? (error instanceof SessionFailure ? error : undefined);
         return new Response(failure?.code === "timeout" ? "Request deadline exceeded" : failure?.code === "cancelled" ? "Request cancelled" : "Execution failed",

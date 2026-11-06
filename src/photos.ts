@@ -15,6 +15,7 @@ const opaque = Type.String({ minLength: 1, maxLength: 128, pattern: id.source })
 const digest = Type.String({ pattern: "^[a-f0-9]{64}$" });
 const instant = Type.Integer({ minimum: 0, maximum: Number.MAX_SAFE_INTEGER });
 const ConsentSchema = Type.Object({ recordId: opaque, store: Type.Literal(true), model: Type.Boolean(),
+  modelScope: Type.Optional(Type.Object({ provider: Type.String({ minLength: 1, maxLength: 200 }), purpose: Type.String({ minLength: 1, maxLength: 500 }) }, { additionalProperties: false })),
   visibleContentReviewed: Type.Boolean(), expiresAt: instant }, { additionalProperties: false });
 export type PhotoConsent = Readonly<Type.Static<typeof ConsentSchema>>;
 const RecordSchema = Type.Object({ version: Type.Literal(1), photoRef: Type.String({ pattern: ref.source }),
@@ -50,6 +51,11 @@ export async function createPhotoStore(options: { root: string; authorize: Photo
   const clock = () => { const value = now(); if (!Number.isSafeInteger(value) || value < 0) throw new PhotoStorageError("invalid-policy"); return value; };
   const aborted = (signal: AbortSignal) => { if (signal.aborted) throw new PhotoStorageError("cancelled"); };
   const revokedPath = (photoRef: string) => `${path(photoRef)}.revoked`;
+  const deniedPath = (photoRef: string) => `${path(photoRef)}.model-denied`;
+  const modelDenied = async (photoRef: string) => {
+    try { await lstat(deniedPath(photoRef)); return true; }
+    catch (error) { if ((error as NodeJS.ErrnoException).code === "ENOENT") return false; throw error; }
+  };
   const isRevoked = async (photoRef: string) => {
     try { await lstat(revokedPath(photoRef)); return true; }
     catch (error) { if ((error as NodeJS.ErrnoException).code === "ENOENT") return false; throw error; }
@@ -60,6 +66,8 @@ export async function createPhotoStore(options: { root: string; authorize: Photo
     if (tombstone) {
       try { const marker = await open(revokedPath(photoRef), "wx", 0o600); try { await marker.sync(); } finally { await marker.close(); } }
       catch (error) { if ((error as NodeJS.ErrnoException).code !== "EEXIST") throw error; }
+      const directory = await open(root, constants.O_RDONLY);
+      try { await directory.sync(); } finally { await directory.close(); }
     }
     await ensureRoot(); await unlink(path(photoRef));
   };
@@ -103,11 +111,29 @@ export async function createPhotoStore(options: { root: string; authorize: Photo
     const access = await authorize(actorId, request.caseId, signal);
     const value = await load(request.photoRef); aborted(signal);
     if (value.ownerHash !== hash(actorId) || value.caseId !== request.caseId || access.caseRevision !== request.caseRevision
-      || (model && (access.sendToModel !== true || !value.consent.model || !value.consent.visibleContentReviewed))) throw new PhotoStorageError("denied");
+      || (model && (access.sendToModel !== true || !value.consent.model || !value.consent.visibleContentReviewed || await modelDenied(request.photoRef)))) throw new PhotoStorageError("denied");
     return value;
   };
   let pending = 0;
   return {
+    async read(actorId: string, request: PhotoRequest, signal: AbortSignal) {
+      const value = await permitted(actorId, request, signal, false);
+      const data = Buffer.from(value.png, "base64");
+      if (data.toString("base64") !== value.png || data.length > 10 * 1024 * 1024 || hash(data) !== value.sha256) throw new PhotoStorageError("unavailable");
+      await permitted(actorId, request, signal, false);
+      return { receipt: receipt(value), data };
+    },
+    async withdrawModel(actorId: string, photoRef: string, signal: AbortSignal): Promise<void> {
+      aborted(signal); const value = await load(photoRef);
+      if (!id.test(actorId) || value.ownerHash !== hash(actorId)) throw new PhotoStorageError("denied");
+      aborted(signal); await ensureRoot();
+      try {
+        const marker = await open(deniedPath(photoRef), "wx", 0o600);
+        try { await marker.sync(); } finally { await marker.close(); }
+      } catch (error) { if ((error as NodeJS.ErrnoException).code !== "EEXIST") throw new PhotoStorageError("unavailable"); }
+      const directory = await open(root, constants.O_RDONLY);
+      try { await directory.sync(); } finally { await directory.close(); }
+    },
     async put(actorId: string, caseId: string, data: Uint8Array, mime: string, consent: PhotoConsent, signal: AbortSignal): Promise<PhotoReceipt> {
       const allowed: unknown = structuredClone(consent), createdAt = clock();
       if (!Value.Check(ConsentSchema, allowed) || allowed.expiresAt <= createdAt) throw new PhotoStorageError("denied");
@@ -120,6 +146,7 @@ export async function createPhotoStore(options: { root: string; authorize: Photo
       let created: string | undefined;
       try {
         const clean = await sanitizePhoto(owned, mime, signal);
+        if (clean.data.byteLength > 5 * 1024 * 1024) throw new PhotoStorageError("image-limit");
         const again = await authorize(actorId, caseId, signal);
         if (again.caseRevision !== access.caseRevision) throw new PhotoStorageError("denied");
         const photoRef = randomUUID(), expiresAt = Math.min(allowed.expiresAt, createdAt + options.retentionMs);
