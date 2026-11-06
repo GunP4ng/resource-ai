@@ -15,8 +15,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.2
       - run: bun install --frozen-lockfile --ignore-scripts
       - run: bun run typecheck
       - run: bun run typecheck:o-tests
-      - run: bun test
+      - run: bun test --timeout 30000 ./tests
       - run: bun run build
+      - run: bun run build:app
+      - run: bun run smoke
