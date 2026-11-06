@@ -99,12 +99,14 @@
 
 | 항목 | 진행 상태 | 다음 작업 |
 |---|---|---|
-| H1 / #5 | 구조화 파서·질문 모듈 수용, 실제 입력 흐름 인계 미완료 | 이상협·오연석: #8/#12의 실제 submit/answer에 연결하고 질문 갱신 입력·출력 증거를 인계한 뒤 #5 종료 |
-| H2 / #6 | 미완료 | 이상협: J 근거의 issues/reviewRequirements와 분류 후보를 연결; 파싱 성공을 적합 판정으로 승격하지 않음 |
-| H3 / #7 | 미완료 | 이상협: 빈/가짜/권리 미확인 근거 거부, 정보 부족/위험 검토 상태를 host에서 강제 |
-| H4 / #8 | 미완료 | 이상협·오연석: host caseId, 폼 문자열 변환, photoRefs 배열, null/unknown 정책을 합의하고 세션/도구·Azure 실패 전달 연결 |
+| H1 / #5 | 파서·질문 및 H 앱 submit/answer 실행 수용, 운영 진입점 인계 미완료 | 이상협·오연석: 검증된 H 어댑터를 `scripts/app.ts`에 연결하고 운영 자료/실행 방법을 인계한 뒤 종료 |
+| H2 / #6 | 부분 완료: PR #21 J 근거·검토 snapshot과 4개 경로 연결 수용 | 이상협: 실제 사진/사례와 운영 검토 자료 공급; 코드 후보를 적합 판정으로 승격하지 않음 |
+| H3 / #7 | PR #21 host gate 모듈 수용 | 빈/가짜/권리 미확인 근거 거부, 정보 부족/위험 검토/인간 승인 대기 회귀 유지; 운영 통합은 #8/#12 |
+| H4 / #8 | 부분 완료: 도구·사례 세션·도메인 조합·H 앱 어댑터 수용 | 이상협·오연석: 운영 진입점 연결, 실제 Azure 성공/usage/request ID 및 실패/취소 증거 인계 |
 
 PR #19 검토 당시 앱의 같은 Origin/session `POST /cases`는 실제 HTTP 503을 반환했다. H1 모듈 병합이 H4/O4 연결이나 Azure 성공을 뜻하지 않으며 #5/#8/#12의 통합 완료는 별도 검증한다. PR #20에서 H1을 포함한 전체 테스트 정적 검사와 공통 CI를 연결했다. 11/10 정상 통합·11/20 기능 동결 일정과 기존 담당자는 유지한다.
+
+**2026-11-06 PR #21 검토·병합 (`b1ac1ca`).** H가 제공하는 `createResourceApp`으로 실제 HTTP/브라우저의 질문→답변→조건부 비교와 변경된 질량/현행성 보류를 확인했다. 합성 검토 자료의 240,000 KRW·45 kgCO2e는 테스트 기대값이며 운영 견적/배출이 아니다. 사례 전용 credential 저장소를 명시하고 Node/Bun 테스트 타입 환경을 분리하는 작은 수정을 반영했다. 전체 277개 테스트, 모든 strict 검사·두 빌드·offline smoke가 통과했다. 전체 11개 테스트와 helper가 정적 검사에 포함된다. [승인 리뷰](https://github.com/GunP4ng/resource-ai/pull/21#pullrequestreview-5795704273). 실제 Azure/이미지 호출·운영 ResourceProvider·기존 `scripts/app.ts` 연결은 남아 있으며 #5/#6/#8/#12는 해당 미완료 범위로 유지한다.
 
 <a id="h1"></a>
 ### H1 입력 파싱과 추가질문
@@ -117,23 +119,23 @@ PR #19 검토 당시 앱의 같은 Origin/session `POST /cases`는 실제 HTTP 5
 ### H2 분류 후보와 경로 판단
 
 - [ ] 사진+공정/성상에서 수지/코드 후보와 필요한 질문을 제시한다.
-- [ ] 윤정준의 근거를 사용해 재사용·기계적 재활용·기타 회수·처분을 `RouteAssessment[]`로 만든다.
-- [ ] `eligible`/`ineligible`/`unknown`을 구분하고 누락·모순·위험 정보는 검토 대상으로 남긴다.
+- [x] 윤정준의 근거를 사용해 재사용·기계적 재활용·기타 회수·처분을 `RouteAssessment[]`로 만든다.
+- [x] `eligible`/`ineligible`/`unknown`을 구분하고 누락·모순·위험 정보는 검토 대상으로 남긴다.
 
 <a id="h3"></a>
 ### H3 host 결과 검증과 보류 게이트
 
-- [ ] `eligible` 빈 근거·존재하지 않는 sourceId·배포 사용권 미확인 자료를 host에서 거부한다.
-- [ ] 정보 부족은 `needs-information`, 위험/근거 충돌은 `needs-review`로 전달한다.
-- [ ] 도구 출력/검색문서/사진 속 명령을 실행하지 않고, 처리/계약 자동 실행 없이 인간 승인 상태를 유지한다.
+- [x] `eligible` 빈 근거·존재하지 않는 sourceId·배포 사용권 미확인 자료를 host에서 거부한다.
+- [x] 정보 부족은 `needs-information`, 위험/근거 충돌은 `needs-review`로 전달한다.
+- [x] 도구 출력/검색문서/사진 속 명령을 실행하지 않고, 처리/계약 자동 실행 없이 인간 승인 상태를 유지한다.
 
 <a id="h4"></a>
 ### H4 senpi 도구·단일 세션·Azure 실행 연결
 
-- [ ] 기존 공식 extension 등록 패턴과 SDK를 사용해 `ResourceDomain` 함수와 제한된 도구를 연결한다.
-- [ ] 케이스별 독립 세션으로 구성하고 앱에서 범용 bash/read/write 도구를 제외한다. 권한 검사는 host가 수행한다.
+- [x] 기존 공식 extension 등록 패턴과 SDK를 사용해 `ResourceDomain` 함수와 제한된 도구를 연결한다.
+- [x] 케이스별 독립 세션으로 구성하고 앱에서 범용 bash/read/write 도구를 제외한다. 권한 검사는 host가 수행한다.
 - [ ] 팀장이 확보한 Azure 배포/권한으로 실제 호출·추적·사용량·timeout/취소/인증 실패 상태를 전달한다. 비밀값은 기록하지 않는다.
-- [ ] `src/domain.ts`에서 `assessRoutes`는 H2, `findProcessors`는 O1, `compare`는 O2/O3 구현으로 조합한다. 도메인 코어가 SDK/UI를 import하지 않게 한다.
+- [x] `src/domain.ts`에서 `assessRoutes`는 H2, `findProcessors`는 O1, `compare`는 O2/O3 구현으로 조합한다. 도메인 코어가 SDK/UI를 import하지 않게 한다.
 
 **입력·출력 인터페이스:** 사용자 원문 → `CaseInput`; `CaseInput` + 조회 `EvidenceRecord[]` → `RouteAssessment[]`; `ResourceDomain.assessRoutes`, `findProcessors`, `compare`를 연결해 `DecisionResult`를 O4에 넘긴다. 비교 입력은 별도 `ComparisonInput`을 사용하며 `CaseInput`에서 견적/기준선을 추측해 만들지 않는다. 질문/실패를 성공 결과로 감추지 않는다. 원문 파서/실행 함수는 senpi의 새 API라고 주장하지 않는다.
 
