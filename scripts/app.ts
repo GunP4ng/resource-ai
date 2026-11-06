@@ -1,10 +1,10 @@
 import { createServer } from "node:http";
-import { createResourceApp } from "../src/session.ts";
+import { createOperationalApp } from "../src/operations.ts";
 // Run with Bun 1.4.2. Node HTTP keeps launch types within existing dependencies.
 const port = Number(process.env["PORT"] ?? 3000);
 if (!Number.isInteger(port) || port < 1 || port > 65535) throw new RangeError("Invalid PORT");
 const origin = `http://localhost:${port}`;
-const app = createResourceApp({ origin, timeoutMs: 10000 });
+const app = createOperationalApp({ origin, timeoutMs: 10000 });
 const server = createServer(async (incoming, outgoing) => {
   const controller = new AbortController();
   incoming.on("aborted", () => controller.abort());
