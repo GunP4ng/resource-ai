@@ -184,7 +184,17 @@ launcher 기본값은 `RESOURCE_MODEL_RUNNER=subscription`; `local`은 기존 �
 | O1 / #9 | 필터·근거 보존 구현 수용 | 오연석·윤정준: 실제 허가/인수 확인 자료 확보 시 재검증. 디렉터리 등재를 허가나 수탁 의사로 승격하지 않음 |
 | O2 / #10 | 단위·사례 질량·비용 경계 구현 수용 | 오연석·이상협: 독립 `CaseMassReview`와 검토된 실제 견적을 #12 통합 입력에 연결. 질량 보완물 없으면 합계 보류 |
 | O3 / #11 | 계수 검증·배출/크레딧·제외 경계 구현 수용 | 오연석·윤정준: 권리·GWP·경계가 검증된 계수 확보. 미확보 계수는 계속 `unavailable` |
-| O4 / #12 | PR #28 구독 모델 guarded 사진 실행 계약 수용 | 오연석·이상협: 실제 로그인·영속 사례·운영 자료, 승인 계정/제공자/목적·한도, 실제 실행/usage·영속 감사·예약/정산 인계. [PR28 승인](https://github.com/GunP4ng/resource-ai/pull/28#pullrequestreview-5802416900) |
+| O4 / #12 | PR #29 로컬 운영자 로그인·SQLite 사례·정확한 revision 자료 연결 수용 | 오연석·이상협·윤정준: 검토된 현장 package, 승인 계정/제공자/목적·한도, 실제 실행/usage·영속 감사·예약/정산 인계. [PR29 승인](https://github.com/GunP4ng/resource-ai/pull/29#pullrequestreview-5803632425) |
+
+**2026-11-06 PR #29 검토·병합 (`2bf8579`).** 최종 검토 head는 `55b0d6a`다. 별도 연결의 갱신·정리 사이에서 사례 행과 아티팩트가 다른 시점을 읽는 결함을 실제 두 SQLite 연결 회귀로 재현한 뒤, `55b0d6a`에서 deferred read transaction으로 수정했다. 수정 head의 모든 strict 검사·두 빌드·offline smoke·**521 tests / 0 failures**, exact-head CI `42253968286`이 통과했다. 실제 HTTP 보고서 읽기 중 갱신·정리에도200/일관된 기존 자료를 반환하고 다음 요청은 새 revision을 읽었다.
+
+실제 운영자 CLI와 Chrome native 로그인→생성→수정→입력 내보내기, 소스에서 패키지로 재시작한 뒤 같은 SQLite의 입력 bytes/ETag·사례/보관기한·보고서 복구를 확인했다. 저장 전용 합성 PNG의 모델 선택 비활성·철회 후 preview404·정리, 기존 J 원문/인용 snapshot9개의 실제 bytes/SHA를 담은 private artifact 재평가, 잘못된 artifact SHA503/기존 보고서 보존도 확인했다. desktop1440/mobile390 light/dark 화면과 실제 `/reference`의 참고가격136행·등재업체31행을 검토했다.
+
+이는 로컬 구현 수용이며 현장 인수가 아니다. 사례·계정·사진은 합성이고, 원문9개는 기존 배포 snapshot이다. 오늘의 법령 현행성·실제 허가/견적/계수·원본에서 파생 fact의 지지 관계·실제 외부 제공자 실행/usage·영속 감사/정산·통합 시연 영상은 미완료다. 로그인과 SHA는 자료 승인을 뜻하지 않으며 날짜2026-11-06의 현행성 보류를 유지한다.
+
+후속 배분은 #12에서 계속한다. 오연석은 정확한 actor/case/revision의 검토된 현장 package 설치·재평가와 실행/실패/usage 표시 인계, 이상협은 승인 계정/provider/purpose·한도 아래 실제 구독 실행·취소/실패·usage 및 H/O 감사/정산, 윤정준은 현행성·권리·원본/파생 계보를 맡는다. 팀장은 계정/한도/지원 OS 승인, 통합 QA·잠금 평가·영상/최종 보고서를 유지한다. #12 OPEN, #8 CLOSED와 기존 담당·11/20 동결을 유지하며 실제 실행·백업 영상 체크박스를 완료로 바꾸지 않는다.
+
+병합 main `2bf8579`도 동일 strict 검사·두 빌드·offline smoke·521개 테스트와 실제 HTTP 읽기 회귀를 통과했다. main CI `42254698501` 성공을 별도로 확인했다.
 
 **2026-11-06 PR #28 검토·병합 (`2ee1cb2`).** head `1b1299c`의 명시적 구독 provider/model/account·목적 authority와 read-only credential snapshot, 승인·감사·단일 deadline 아래 사진 실행을 [승인](https://github.com/GunP4ng/resource-ai/pull/28#pullrequestreview-5802416900)했다. Linux/Bun1.4.2 head/main 모두 strict 검사·두 빌드·offline smoke·**412 tests / 0 failures**, main CI `42243089652` 성공. 실제 Node HTTP/Chrome native 생성→사진 동의/업로드→선택/평가303, 실제 SDK 직렬화 이미지 SHA와 저장 SHA 일치, scope 변경·mapping 누락·승인 중 변경 시502/추가 전송0/이전 사례·보고서 보존을 확인했다. local launcher 수정과 default subscription 빈 인증503, 실제 묶음 `/reference`의136가격/31등재업체·계산불가도 유지됐다.
 
