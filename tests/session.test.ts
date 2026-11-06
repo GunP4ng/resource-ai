@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { existsSync } from "node:fs";
+import { join } from "node:path";
 import { createAssistantMessageEventStream } from "@earendil-works/pi-ai";
 import type { AssistantMessage } from "@earendil-works/pi-ai";
 import { createAssessmentAdapter, createAzureRunner, openCaseSession, SessionFailure } from "../src/session.ts";
@@ -202,6 +203,12 @@ test("real SDK sessions use separate in-memory histories and only three bound re
   const paths = [a.session.agentDir, b.session.agentDir];
   try {
     assert.notEqual(a.session.sessionId, b.session.sessionId); assert.notEqual(paths[0], paths[1]);
+    assert.ok(a.modelRuntime.authStorage && b.modelRuntime.authStorage);
+    assert.equal(a.modelRuntime.authStorage.getStoragePath(), join(a.session.agentDir, "auth.json"));
+    assert.equal(b.modelRuntime.authStorage.getStoragePath(), join(b.session.agentDir, "auth.json"));
+    assert.notEqual(a.modelRuntime.authStorage, b.modelRuntime.authStorage);
+    assert.equal(a.session.modelRegistry.authStorage, a.modelRuntime.authStorage);
+    assert.equal(b.session.modelRegistry.authStorage, b.modelRuntime.authStorage);
     assert.deepEqual(a.session.getActiveToolNames().sort(), ["resource_assess_case", "resource_compare", "resource_find_processors"]);
     assert.equal(a.session.model?.provider, "azure-openai-responses");
     assert.deepEqual(a.session.resourceLoader.getExtensions().extensions, []);

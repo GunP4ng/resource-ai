@@ -45,10 +45,12 @@ describe("structured CaseInput parsing", () => {
   test("returns the validated photo snapshot without iterating the source again", () => {
     let iterations = 0;
     const photoRefs: unknown[] = [];
-    photoRefs[Symbol.iterator] = function* () {
-      iterations += 1;
-      yield iterations === 1 ? "synthetic-first-photo" : 123;
-    };
+    Object.defineProperty(photoRefs, Symbol.iterator, {
+      value: function* () {
+        iterations += 1;
+        yield iterations === 1 ? "synthetic-first-photo" : 123;
+      },
+    });
 
     const result = parseCaseInput({ ...knownInput, photoRefs });
 
@@ -61,7 +63,7 @@ describe("structured CaseInput parsing", () => {
 
   test("accepts explicit nulls and unknown without filling in facts", () => {
     const result = parseCaseInput(exampleInput);
-    expect(result).toEqual({ ok: true, value: exampleInput });
+    expect(result).toEqual<{ ok: true; value: typeof exampleInput }>({ ok: true, value: exampleInput });
     if (!result.ok) throw new Error("format example should parse");
     expect(result.value.massKg).toBeNull();
     expect(result.value.assessmentDate).toBe("2026-11-05");
@@ -74,7 +76,9 @@ describe("structured CaseInput parsing", () => {
       const result = parseCaseInput(raw);
       expect(result.ok).toBe(false);
       if (result.ok) throw new Error(`missing ${field} should fail`);
-      expect(result.issues).toEqual([{ field, code: "required", message: expect.any(String) }]);
+      expect(result.issues).toEqual<Array<{ field: string; code: "required"; message: string }>>([
+        { field, code: "required", message: expect.any(String) },
+      ]);
     }
   });
 
@@ -103,7 +107,7 @@ describe("structured CaseInput parsing", () => {
     const result = parseCaseInput(raw);
     expect(result.ok).toBe(false);
     if (result.ok) throw new Error("invalid types should fail");
-    expect(result.issues.map((issue) => issue.field)).toEqual(Object.keys(knownInput));
+    expect(result.issues.map((issue) => issue.field)).toEqual<string[]>(Object.keys(knownInput));
     for (const issue of result.issues) {
       expect(issue.code).toBe("invalid");
       expect(issue.message.length).toBeGreaterThan(0);
@@ -203,7 +207,7 @@ describe("missing information questions", () => {
       photoRefs: ["synthetic-PP-safe-photo"],
     };
     const parsed = parseCaseInput(raw);
-    expect(parsed).toEqual({ ok: true, value: raw });
+    expect(parsed).toEqual<{ ok: true; value: typeof raw }>({ ok: true, value: raw });
     if (!parsed.ok) throw new Error("descriptive text should remain data");
     expect(collectMissingQuestions(parsed.value)).toHaveLength(6);
     expect(parsed.value.polymer).toBeNull();

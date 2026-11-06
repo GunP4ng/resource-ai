@@ -188,11 +188,11 @@ export async function openCaseSession(input: CaseInput, options: { readonly mode
   try {
     await mkdir(cwd); await mkdir(agentDir);
     const settingsManager = SettingsManager.inMemory({ retry: { enabled: false }, compaction: { enabled: false } });
-    const modelRuntime = await ModelRuntime.create({ agentDir, settingsManager, modelsPath: null, allowModelNetwork: false, refreshOnCreate: false });
+    const modelRuntime = await ModelRuntime.create({ authPath: join(agentDir, "auth.json"), agentDir, settingsManager, modelsPath: null, allowModelNetwork: false, refreshOnCreate: false });
     const model = modelRuntime.getModel("azure-openai-responses", options.modelId ?? "gpt-4.1");
     if (model === undefined) throw new SessionFailure("not-configured");
     const tools = createCaseTools(facts, options.resources);
-    const created = await createAgentSession({ cwd, agentDir, settingsManager, modelRuntime, model,
+    const created = await createAgentSession({ cwd, agentDir, authStorage: modelRuntime.authStorage, settingsManager, modelRuntime, model,
       resourceLoader: isolatedLoader(), sessionManager: SessionManager.inMemory(),
       customTools: tools, tools: tools.map((tool) => tool.name), autoTitleSessions: false });
     session = created.session;
