@@ -473,6 +473,11 @@ test("O4 source and packaged launchers reduce missing questions before review an
       }), exited.then(() => { throw new Error(`launcher exited before readiness: ${stderr}`); })]);
       clearTimeout(timer);
       const url = `http://localhost:${port}`;
+      const reference = await fetch(url + "/reference", { signal: AbortSignal.timeout(2000) });
+      assert.equal(reference.status, 200, `${launcher}: reference assets resolve outside repository cwd`);
+      const referenceHtml = await reference.text();
+      assert.match(referenceHtml, /136개 정규화 가격/);
+      assert.match(referenceHtml, /31곳 등재/);
       const home = await fetch(url, { signal: AbortSignal.timeout(2000) });
       const cookie = home.headers.get("set-cookie")?.split(";")[0];
       assert.ok(cookie);

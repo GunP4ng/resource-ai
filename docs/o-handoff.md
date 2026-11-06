@@ -154,7 +154,7 @@ For facts citing multiple sources, **each referenced snapshot must contain that 
 - O4 renders all three `DecisionResult` states, every metric's unavailable reason, breakdowns, conditions, sources/locators/version/retrieval, limitations and the exact approval enum. Negative net emissions are not called removal. Fixture/offline/live/recording provenance is separate presentation data. Missing usage stays unavailable; actual H4 trace/usage is still an integration dependency.
 - HTTP handling uses same-origin mutation checks, unpredictable HttpOnly/SameSite session cookies, case ownership, one-hour expiry, bounded in-memory storage, 16 KiB input and 512 KiB output defaults, bounded execution and cancellation. No source/photo URL is fetched. Case/fixture IDs never become filesystem paths. Reports are private/no-store with restrictive CSP; text and links are escaped and link schemes restricted. Provider/authentication failures and malformed results return a sanitized execution error, never a successful domain decision.
 
-The Node HTTP launch wrapper runs under Bun using the existing Node types, with transport byte/time limits. `src/app.ts` only exports the handler factory; importing it does not start a server. Run source and built commands from the repository root so fixed real snapshot paths resolve.
+The Node HTTP launch wrapper runs under Bun using the existing Node types, with transport byte/time limits. `src/app.ts` only exports the handler factory; importing it does not start a server. Source snapshots resolve relative to their module. The built app requires sibling `dist/data/` assets, including the reference page's price and processor snapshots; neither launcher depends on the working directory.
 
 ## Reproduce
 
