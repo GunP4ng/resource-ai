@@ -5,6 +5,16 @@ import { demo } from "../src/o-demo.ts";
 import { route as assessment, documents } from "../src/o-synthetic-evidence.ts";
 import { createComparisonCalculator, calculateRouteCost } from "../src/cost.ts";
 import { bindSynthetic, carbonFixture, calculationFixture, treatment, transport, sales } from "../src/o-synthetic.ts";
+test("reported string zero survives while missing usage stays unavailable; history keeps configured execution separate", () => {
+  const decision = { state: "needs-information", caseId: "metadata-case", questions: ["질량 확인"], evidence: [] } as const;
+  const zero = renderReport(decision, { mode: "live", runtime: { identity: "local-operator", storage: "sqlite", runner: "subscription" }, execution: { traceId: "senpi:trace", usage: "0" }, historical: true });
+  const missing = renderReport(decision, { mode: "live", execution: { traceId: "senpi:trace", usage: null } });
+  assert.match(zero, /사용량 0<\/p>/); assert.doesNotMatch(zero, /사용량 미제공/);
+  assert.match(missing, /사용량 미제공/); assert.doesNotMatch(missing, /사용량 0/);
+  assert.match(zero, /과거 평가: 현재 입력과 평가 당시 입력이 다릅니다/);
+  assert.match(zero, /구성된 실행기 subscription \(실행 성공과 별개\)/);
+  assert.match(zero, /제공자 요청 ID를 보증하지 않습니다/); assert.match(zero, /청구 비용 미제공/);
+});
 test("live reports without execution metadata explicitly leave Azure success unverified", () => {
   const html = renderReport({ state: "needs-information", caseId: "no-execution", questions: ["질량 확인"], evidence: [] }, { mode: "live" });
   assert.match(html, /모델 실행 정보 미제공/);

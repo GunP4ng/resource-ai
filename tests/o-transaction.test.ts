@@ -22,6 +22,20 @@ import { decideCase } from "../src/assessment.ts";
 import { createResourceApp } from "../src/session.ts";
 
 const origin = "http://localhost:3000";
+test("default store merges cleanup notices queued during a private evaluation", async () => {
+  const cases = createCaseStore(), owner = "actor:owner", id = syntheticCase.caseId;
+  const decision = { state: "needs-review", caseId: id, reasons: ["review"], evidence: [] } as const;
+  try {
+    const initial = cases.begin(owner, id, null);
+    await cases.run(initial, syntheticCase, async () => undefined); cases.commit(initial, { decision }, () => undefined);
+    const next = cases.begin(owner, id, 1), ref = "11111111-1111-4111-8111-111111111111";
+    await cases.run(next, syntheticCase, async () => { cases.queueCleanup(owner, id, ref); });
+    cases.commit(next, { decision }, () => undefined);
+    assert.equal(cases.read(owner, id)?.permissionChanged, true);
+    assert.deepEqual(cases.read(owner, id)?.pendingCleanup, [ref]);
+  } finally { cases.dispose(); }
+});
+
 function post(path: string, value: unknown) {
   return new Request(origin + path, { method: "POST", headers: { origin, "content-type": "application/json" }, body: JSON.stringify(value) });
 }

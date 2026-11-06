@@ -1,8 +1,5 @@
 import { randomBytes, randomUUID } from "node:crypto";
-import { Type } from "typebox";
-import { Value } from "typebox/value";
 import type { DecisionResult } from "./contracts.ts";
-import { parseDecision } from "./o-decision.ts";
 import { demo } from "./o-demo.ts";
 import { referencePage } from "./o-reference.ts";
 import type { ReportPresentation } from "./report.ts";
@@ -11,7 +8,10 @@ import { requireValid } from "./o-validation.ts";
 import { AssessmentInputError } from "./assessment.ts";
 import type { SessionFailureCode } from "./session.ts";
 import type { CaseInput } from "./contracts.ts";
-import { CaseConflict, createCaseStore } from "./o-case-store.ts";
+import { CaseConflict, createCaseStore, parseAssessment } from "./o-case-store.ts";
+import { LocalAuthError, type createLocalAuth } from "./o-auth.ts";
+import { RuntimeStorageError } from "./o-runtime-db.ts";
+import { ResourceUnavailableError } from "./o-resources.ts";
 import type { OCaseStore, CaseSnapshot } from "./o-case-store.ts";
 import type { createPhotoStore } from "./photos.ts";
 import { PhotoStorageError } from "./photo-codec.ts";
@@ -23,27 +23,7 @@ export interface AssessmentEnvelope {
   readonly decision: DecisionResult;
   readonly execution?: { readonly traceId: string; readonly usage?: string | null };
 }
-interface StoredAssessment {
-  readonly decision: DecisionResult;
-  readonly execution?: NonNullable<ReportPresentation["execution"]>;
-}
-const AssessmentSchema = Type.Object({ decision: Type.Unknown(), execution: Type.Optional(Type.Unknown()) }, { additionalProperties: false });
-const ExecutionSchema = Type.Object({ traceId: Type.Optional(Type.Unknown()), usage: Type.Optional(Type.Unknown()) }, { additionalProperties: false });
-function parseAssessment(output: unknown): StoredAssessment {
-  if (typeof output !== "object" || output === null || !Object.hasOwn(output, "decision")) {
-    return { decision: parseDecision(output) };
-  }
-  requireValid(Value.Check(AssessmentSchema, output), "invalid-assessment-envelope");
-  const decision = parseDecision(output.decision);
-  const execution = output.execution;
-  if (execution === undefined) return { decision };
-  requireValid(Value.Check(ExecutionSchema, execution), "invalid-execution-metadata");
-  const traceId = execution.traceId;
-  const usage = execution.usage ?? null;
-  requireValid(typeof traceId === "string" && traceId.trim().length > 0 && traceId.length <= 200, "invalid-execution-trace");
-  requireValid(usage === null || (typeof usage === "string" && usage.trim().length > 0 && usage.length <= 2000), "invalid-execution-usage");
-  return { decision, execution: { traceId, usage } };
-}
+type StoredAssessment = AssessmentEnvelope;
 /** Proposed H1/H4 handoff; not a senpi API. No provider is invoked by this module. */
 export interface AssessmentAdapter {
   submit(raw: unknown, signal: AbortSignal): Promise<DecisionResult | AssessmentEnvelope>;
@@ -56,7 +36,9 @@ export interface AppDependencies {
   readonly maxBodyBytes?: number;
   readonly now?: () => number;
   /** Trusted server verification only; never read caller-supplied actor fields here. */
-  readonly actorForRequest?: (request: Request, signal: AbortSignal) => Promise<string | { readonly actorId: string; readonly validUntil: number } | null>;
+  readonly actorForRequest?: (request: Request, signal: AbortSignal) => Promise<string | { readonly actorId: string; readonly validUntil: number; readonly assertCurrent?: () => void } | null>;
+  readonly localAuth?: ReturnType<typeof createLocalAuth>;
+  readonly runtime?: ReportPresentation["runtime"];
   readonly preparer?: {
     prepareSubmit(raw: unknown, format: "json" | "form"): CaseInput;
     prepareAnswer(input: CaseInput, raw: unknown): CaseInput;
@@ -168,31 +150,33 @@ async function body(request: Request, limit: number, signal: AbortSignal): Promi
     default: throw new HttpFailure(415, "JSON 또는 폼 입력이 필요합니다.");
   }
 }
-async function bounded<T>(operation: (signal: AbortSignal) => Promise<T>, request: Request, timeoutMs: number): Promise<T> {
+async function bounded<T>(operation: (signal: AbortSignal) => Promise<T>, request: Request, timeoutMs: number, pending: Set<Promise<unknown>>): Promise<T> {
   const controller = new AbortController();
   let timer: ReturnType<typeof setTimeout> | undefined;
   let cancel = () => {};
   const interruption = new Promise<never>((_, reject) => {
     cancel = () => {
-      controller.abort();
-      reject(new HttpFailure(408, "요청이 취소되었습니다."));
+      const failure = new HttpFailure(408, "요청이 취소되었습니다.");
+      reject(failure); controller.abort(failure);
     };
     timer = setTimeout(() => {
-      controller.abort();
-      reject(new HttpFailure(504, "처리 시간이 초과되었습니다. 다시 시도해 주세요."));
+      const failure = new HttpFailure(504, "처리 시간이 초과되었습니다. 다시 시도해 주세요.");
+      reject(failure); controller.abort(failure);
     }, timeoutMs);
     if (request.signal.aborted) cancel();
     else request.signal.addEventListener("abort", cancel, { once: true });
   });
   try {
-    return await Promise.race([interruption, operation(controller.signal)]);
+    const work = operation(controller.signal); pending.add(work);
+    void work.then(() => pending.delete(work), () => pending.delete(work));
+    return await Promise.race([interruption, work]);
   } finally {
     clearTimeout(timer);
     request.signal.removeEventListener("abort", cancel);
     controller.abort();
   }
 }
-export function createApp(dependencies: AppDependencies): (request: Request) => Promise<Response> {
+export function createApp(dependencies: AppDependencies) {
   const origin = new URL(dependencies.origin).origin;
   requireValid(["http:", "https:"].includes(new URL(origin).protocol), "invalid-app-origin");
   const timeoutMs = dependencies.timeoutMs ?? 10000;
@@ -200,8 +184,16 @@ export function createApp(dependencies: AppDependencies): (request: Request) => 
   const now = dependencies.now ?? Date.now;
   const caseStore = dependencies.caseStore ?? createCaseStore(now, dependencies.photoExecution);
   const preparer = dependencies.preparer;
-  const photoEnabled = !!(dependencies.actorForRequest && dependencies.photoStore && dependencies.photoPolicy);
-  const checkRequest = (signal: AbortSignal) => { signal.throwIfAborted(); dependencies.checkRequest?.(); };
+  const cancelLease = (lease: Parameters<OCaseStore["rollback"]>[0]) => {
+    try { caseStore.rollback(lease); }
+    catch (error) {
+      // Rollback invalidates the local lease before attempting SQL. A busy or
+      // unavailable database leaves only the existing bounded reservation.
+      if (!(error instanceof CaseConflict) && !(error instanceof RuntimeStorageError)) throw error;
+    }
+  };
+  const photoEnabled = !!((dependencies.actorForRequest || dependencies.localAuth) && dependencies.photoStore && dependencies.photoPolicy);
+  const checkRequest = (signal: AbortSignal) => { dependencies.checkRequest?.(); signal.throwIfAborted(); };
   const versionOf = (raw: unknown, fallback?: number): number => {
     if (raw === undefined && fallback !== undefined) return fallback; // Legacy anonymous text API.
     const value = typeof raw === "string" && /^[1-9]\d*$/.test(raw) ? Number(raw) : raw;
@@ -234,29 +226,55 @@ export function createApp(dependencies: AppDependencies): (request: Request) => 
     "referrer-policy": "same-origin",
     "content-security-policy": "default-src 'none'; img-src 'self'; style-src 'unsafe-inline'; form-action 'self'; base-uri 'none'; frame-ancestors 'none'", ...headers } });
   const redirect = (path: string) => response("", 303, { location: path });
-  return async (request) => {
+  const pending = new Set<Promise<unknown>>();
+  const fetch = async (request: Request): Promise<Response> => {
     const deadline = performance.now() + timeoutMs;
+    let recovery = '<p><a href="/cases">내 사례에서 마지막 저장 결과 확인</a> · <a href="/">사례 입력</a></p>';
     try {
       return await bounded(async (signal) => {
       const guard = (signal: AbortSignal) => {
-        checkRequest(signal);
         if (performance.now() >= deadline) throw new HttpFailure(504, "처리 시간이 초과되었습니다. 다시 시도해 주세요.");
+        checkRequest(signal);
       };
       const url = new URL(request.url);
       if (url.origin !== origin) throw new HttpFailure(400, "앱 주소가 일치하지 않습니다.");
+      const sameOrigin = () => {
+        if (request.headers.get("origin") !== origin || request.headers.get("sec-fetch-site") === "cross-site") throw new HttpFailure(403, "같은 앱에서 제출해 주세요.");
+      };
+      if (dependencies.localAuth && url.pathname === "/login") {
+        if (request.method === "GET") return response(page("로그인", `<h1>로컬 운영자 로그인</h1><p>운영자가 발급한 계정으로 로그인하세요. 조직 소속이나 자료 승인을 인증하지 않습니다.</p><form method="post" action="/login"><label for="username">사용자 이름</label><input id="username" name="username" autocomplete="username" required maxlength="64"><label for="password">비밀번호</label><input id="password" name="password" type="password" autocomplete="current-password" required maxlength="1024"><button type="submit">로그인</button></form>`));
+        if (request.method === "POST") {
+          sameOrigin();
+          const raw = await body(request, Math.min(maxBodyBytes, 8192), signal); guard(signal);
+          if (typeof raw !== "object" || raw === null || !("username" in raw) || !("password" in raw) || typeof raw.username !== "string" || typeof raw.password !== "string" || Object.keys(raw).length !== 2) throw new HttpFailure(400, "로그인 입력을 확인해 주세요.");
+          const result = redirect("/cases");
+          const logged = await dependencies.localAuth.login(raw.username, raw.password, signal, () => guard(signal))
+            .catch(error => { guard(signal); throw error; });
+          dependencies.committed?.(); result.headers.set("set-cookie", logged.setCookie); return result;
+        }
+      }
+      if (dependencies.localAuth && request.method === "POST" && url.pathname === "/logout") {
+        sameOrigin(); const result = redirect("/login");
+        const identity = dependencies.localAuth.resolve(request, signal);
+        if (!identity) throw new HttpFailure(403, "인증이 필요합니다.");
+        identity.assertCurrent();
+        const logged = dependencies.localAuth.logout(request, signal, () => guard(signal));
+        dependencies.committed?.(); result.headers.set("set-cookie", logged.setCookie); return result;
+      }
       let actor: string | null = null;
       let validUntil = Infinity;
-      if (dependencies.actorForRequest && (url.pathname === "/" || url.pathname.startsWith("/cases"))) {
+      let assertCurrent: (() => void) | undefined;
+      if ((dependencies.localAuth || dependencies.actorForRequest) && (url.pathname === "/" || url.pathname.startsWith("/cases"))) {
         try {
-          const identity = await dependencies.actorForRequest(request, signal);
+          const identity = dependencies.localAuth ? dependencies.localAuth.resolve(request, signal) : await dependencies.actorForRequest?.(request, signal);
           actor = typeof identity === "string" ? identity : identity?.actorId ?? null;
-          if (identity && typeof identity === "object") validUntil = Number.isSafeInteger(identity.validUntil) ? identity.validUntil : 0;
+          if (identity && typeof identity === "object") { validUntil = Number.isSafeInteger(identity.validUntil) ? identity.validUntil : 0; assertCurrent = identity.assertCurrent; }
         }
-        catch { guard(signal); throw new HttpFailure(503, "인증 서비스를 사용할 수 없습니다."); }
+        catch (error) { guard(signal); if (error instanceof LocalAuthError) throw error; throw new HttpFailure(503, "인증 서비스를 사용할 수 없습니다."); }
         guard(signal);
         if (!actor || !/^[A-Za-z0-9_-]{1,128}$/.test(actor) || validUntil <= now() || Number.isNaN(validUntil)) throw new HttpFailure(403, "인증이 필요합니다.");
       }
-      const privateGuard = () => { guard(signal); if (validUntil <= now()) throw new HttpFailure(403, "인증 유효기간이 지났습니다."); };
+      const privateGuard = () => { guard(signal); if (validUntil <= now()) throw new HttpFailure(403, "인증 유효기간이 지났습니다."); assertCurrent?.(); };
       for (const [token, session] of sessions) if (now() - session.created > 3600000) {
         sessions.delete(token);
         for (const caseId of session.cases.keys()) owners.delete(caseId);
@@ -268,15 +286,30 @@ export function createApp(dependencies: AppDependencies): (request: Request) => 
       const session = cookie === undefined ? undefined : sessions.get(cookie);
       const owner = actor ? `actor:${actor}` : cookie && session ? `session:${cookie}` : undefined;
       const reports = actor ? actorReports.get(actor)?.cases : session?.cases;
-      if (request.method === "GET" && url.pathname === "/health") return new Response(JSON.stringify({ app: "ready", backend: dependencies.adapter ? "adapter-connected" : "unavailable", azure: "not-verified" }), { headers: { "content-type": "application/json", "cache-control": "no-store" } });
+      if (request.method === "GET" && url.pathname === "/cases" && preparer) {
+        if (!owner) throw new HttpFailure(403, "인증이 필요합니다.");
+        const rows = caseStore.list(owner).map(item => `<tr><td><a href="/cases/${item.caseId}">${escapeHtml(caseStore.read(owner, item.caseId)?.input.description ?? item.caseId)}</a></td><td>${item.version}</td><td>${escapeHtml(new Date(item.expires).toISOString())}</td><td><a href="/cases/${item.caseId}/report">보고서</a></td></tr>`).join("");
+        const result = response(page("내 사례", `<h1>내 사례</h1><p><a class="primary-action" href="/">새 사례 입력</a></p>${rows ? `<div class="table-wrap case-list" role="region" aria-label="내 사례 목록" tabindex="0"><table><thead><tr><th>사례</th><th>버전</th><th>보관 만료 (UTC)</th><th>결과</th></tr></thead><tbody>${rows}</tbody></table></div>` : "<p>저장된 사례가 없습니다.</p>"}${dependencies.localAuth ? '<form method="post" action="/logout"><button class="secondary-action" type="submit">로그아웃</button></form>' : ""}`));
+        privateGuard(); return result;
+      }
+      if (request.method === "GET" && url.pathname === "/health") {
+        dependencies.localAuth?.resolve(request, signal);
+        return new Response(JSON.stringify({ app: "ready", backend: dependencies.adapter ? "adapter-connected" : "unavailable", azure: "not-verified", ...(dependencies.runtime ? { runtime: dependencies.runtime } : {}) }), { headers: { "content-type": "application/json", "cache-control": "no-store" } });
+      }
       if (request.method === "GET" && url.pathname === "/") {
+        if (actor && dependencies.localAuth) {
+          const result = response(page("사례 입력", `<h1>폐자원 조건부 검토</h1><p class="notice">${dependencies.localAuth ? "로컬 운영자 · SQLite 사례 보관 (최대 1시간)" : "서버 인증 사용자"} · 구성된 실행기 ${escapeHtml(dependencies.runtime?.runner ?? "미제공")} · 실행 성공은 평가 후 확인</p><p>입력은 미검토 자료입니다. 로그인은 자료나 법적 승인을 뜻하지 않습니다.</p><p><a href="/cases">내 사례·복구</a></p>${form("/cases")}<p>사진: ${photoEnabled ? "비공개 저장 전용" : "저장 비활성"}</p><p><a href="/demo/normal">합성 비교 데모</a></p>`));
+          privateGuard(); return result;
+        }
         if (session === undefined && sessions.size >= 1000) throw new HttpFailure(503, "현재 새 세션을 열 수 없습니다.");
         const token = cookie !== undefined && session !== undefined ? cookie : randomBytes(32).toString("hex");
         if (session === undefined) sessions.set(token, { created: now(), cases: new Map() });
-        return response(page("사례 입력", `<h1>폐자원 조건부 검토</h1>
+        const homeResponse = response(page("사례 입력", `<h1>폐자원 조건부 검토</h1>
           <p class="notice">${dependencies.adapter ? "입력·세션 어댑터 연결됨 · 실행 후 상태를 확인하세요." : "입력·세션 연결 준비 중 · 현재 제출하면 503 준비 상태를 표시합니다."}</p>
           <p>실제 자료와 합성 데모를 구분합니다. 설명·사진만으로 법적 코드나 처리 허가를 확정하지 않습니다.</p>
+          <p>${actor ? "서버 인증 사용자" : "익명 임시 세션 · 재시작하면 사례를 복구할 수 없습니다."}${dependencies.runtime ? ` 구성된 실행기 ${escapeHtml(dependencies.runtime.runner)} · 실행 성공은 평가 후 확인하세요.` : ""}</p>
           ${form("/cases")}<p>사진 저장: ${photoEnabled ? "인증된 사례에서 사용 가능" : "인증된 비공개 사진 저장소를 사용할 수 없습니다."}</p><p><a href="/demo/review">합성 위험·검토 예시 보기</a></p>`), 200, { "set-cookie": `resource_session=${token}; HttpOnly; SameSite=Strict; Path=/; Max-Age=3600${secure ? "; Secure" : ""}` });
+        privateGuard(); return homeResponse;
       }
       if (request.method === "GET" && url.pathname === "/reference") return response(referencePage());
       const fixtureMatch = /^\/demo\/([A-Za-z0-9_-]+)$/.exec(url.pathname);
@@ -292,21 +325,27 @@ export function createApp(dependencies: AppDependencies): (request: Request) => 
         const html = renderReport(fixture.result, fixture.presentation);
         return response(html.replace("</main>", '<p class="screen-only"><a href="/demo/review">합성 위험·검토 예시</a></p></main>'));
       }
-      const caseMatch = /^\/cases\/([A-Za-z0-9_-]{1,100})(?:\/(answers|report))?$/.exec(url.pathname);
+      const caseMatch = /^\/cases\/([A-Za-z0-9_-]{1,100})(?:\/(answers|report|input))?$/.exec(url.pathname);
       const caseId = caseMatch?.[1];
       const suffix = caseMatch?.[2];
+      if (caseId) recovery = `<p>실패한 시도는 이전 저장 결과와 다릅니다. <a href="/cases/${caseId}">이 사례의 마지막 저장 결과 확인</a> · <a href="/cases">내 사례</a></p>`;
       const photoMatch = /^\/cases\/([A-Za-z0-9_-]{1,100})\/photos(?:\/([a-f0-9-]{36})(?:\/(withdraw-model|withdraw-storage))?)?$/.exec(url.pathname);
       if (preparer && (caseMatch || photoMatch || url.pathname === "/cases")) {
+        if (!owner) throw new HttpFailure(403, "인증이 필요합니다.");
         const id = caseId ?? photoMatch?.[1];
         const snapshot = owner && id ? caseStore.read(owner, id) : undefined;
         if (id && !snapshot) throw new HttpFailure(404, "사례를 찾을 수 없습니다.");
+        if (request.method === "GET" && snapshot && suffix === "input") {
+          const result = Response.json(snapshot.input, { headers: { etag: `"${revision(snapshot.input)}"`, "cache-control": "private, no-store", "content-disposition": `attachment; filename="${snapshot.input.caseId}.json"`, "x-content-type-options": "nosniff" } });
+          privateGuard(); return result;
+        }
         if (request.method === "GET" && snapshot && caseMatch && suffix !== "answers") {
           const ticket = dependencies.photoExecution?.current() ?? null;
           const stored = snapshot.assessment;
-          const html = renderReport(stored.decision, { mode: "live", ...(stored.execution ? { execution: { traceId: stored.execution.traceId, usage: stored.execution.usage ?? null } } : {}) });
+          const html = renderReport(stored.decision, { ...snapshot.presentation, mode: snapshot.presentation?.mode ?? "live", review: snapshot.review, historical: snapshot.evaluated.revision !== revision(snapshot.input), execution: stored.execution ? { traceId: stored.execution.traceId, usage: stored.execution.usage ?? null } : undefined });
           const notice = snapshot.permissionChanged ? '<p class="notice">사진 권한이 변경되었습니다. 이전 보고서는 과거 평가입니다. 이미 전송된 사진을 회수하지 않습니다. 사진 없이 다시 평가할 수 있습니다.</p>' : "";
           const selection = `<input type="hidden" name="photoSelection" value="explicit">${snapshot.photos.map(photo => `<label style="display:flex;align-items:center;gap:.7rem;min-height:44px"><input style="width:auto" type="checkbox" name="photo_${photo.photoRef}" value="yes" ${matchesPhotoConsent(photo.consent, ticket) && photo.expiresAt > now() && !snapshot.denied.includes(photo.photoRef) ? "" : "disabled"}>다음 평가에 이 사진 선택</label>`).join("")}`;
-          const extra = suffix === "report" ? notice : `${notice}<p>버전 ${snapshot.version}</p><p class="screen-only"><a href="/cases/${id}/report">인쇄용 보고서</a></p>${form(`/cases/${id}/answers`, true, snapshot.version, selection)}${photoUI(snapshot, ticket)}`;
+          const extra = suffix === "report" ? notice : `${notice}<p>버전 ${snapshot.version}</p><p class="screen-only"><a href="/cases/${id}/report">인쇄용 보고서</a> · <a href="/cases/${id}/input">정확한 입력 내보내기</a> · <a href="/cases">내 사례</a></p>${form(`/cases/${id}/answers`, true, snapshot.version, selection)}${photoUI(snapshot, ticket)}`;
           const result = response(html.replace('<h2>출처와 원문 위치</h2>', `${extra}<h2>출처와 원문 위치</h2>`));
           privateGuard(); return result;
         }
@@ -325,8 +364,10 @@ export function createApp(dependencies: AppDependencies): (request: Request) => 
           if (request.method === "POST") {
             if (request.headers.get("origin") !== origin || request.headers.get("sec-fetch-site") === "cross-site") throw new HttpFailure(403, "같은 앱에서 제출해 주세요.");
             if (ref && action) {
-              guard(signal);
-              caseStore.withdraw(snapshot.owner, snapshot.input.caseId, ref, action === "withdraw-storage");
+              privateGuard();
+              const result = redirect(`/cases/${snapshot.input.caseId}`);
+              caseStore.withdraw(snapshot.owner, snapshot.input.caseId, ref, action === "withdraw-storage", privateGuard);
+              if (dependencies.localAuth) { dependencies.committed?.(); return result; }
               if (action === "withdraw-storage") {
                 await store.revoke(actor, ref, signal);
                 caseStore.completeCleanup(snapshot.owner, snapshot.input.caseId, ref);
@@ -341,17 +382,18 @@ export function createApp(dependencies: AppDependencies): (request: Request) => 
                 || (data.has("model") && (!ticket || data.get("modelBindingId") !== ticket.bindingId || data.get("visible") !== "yes"))) throw new HttpFailure(400, "사진 동의를 확인해 주세요.");
               if (ticket) dependencies.photoExecution!.assertCurrent(ticket);
               const lease = caseStore.begin(snapshot.owner, snapshot.input.caseId, version);
-              const cancel = () => caseStore.rollback(lease);
+              const cancel = () => cancelLease(lease);
               signal.addEventListener("abort", cancel, { once: true });
               if (signal.aborted) cancel();
               let receipt: Awaited<ReturnType<typeof store.put>> | undefined;
               try {
+                const result = redirect(`/cases/${snapshot.input.caseId}`);
                 const file = data.get("file"); if (!(file instanceof File)) throw new HttpFailure(400, "사진이 필요합니다.");
                 receipt = await store.put(actor, snapshot.input.caseId, new Uint8Array(await file.arrayBuffer()), file.type,
                   { recordId: randomUUID(), store: true, model: data.has("model"), visibleContentReviewed: data.has("visible"), expiresAt: now() + (dependencies.photoPolicy?.retentionMs ?? 0),
                     ...(ticket ? { modelScope: ticket.scope, modelBindingId: ticket.bindingId } : {}) }, signal);
                 caseStore.associate(lease, receipt, () => { privateGuard(); if (ticket) dependencies.photoExecution!.assertCurrent(ticket); }); dependencies.committed?.();
-                return redirect(`/cases/${snapshot.input.caseId}`);
+                return result;
               } catch (error) {
                 if (receipt) {
                   caseStore.queueCleanup(snapshot.owner, snapshot.input.caseId, receipt.photoRef);
@@ -394,9 +436,14 @@ export function createApp(dependencies: AppDependencies): (request: Request) => 
           const ticket = input.photoRefs.length ? dependencies.photoExecution?.current() : undefined;
           if (input.photoRefs.length && (input.photoRefs.length > 3 || !ticket || !snapshot || !caseStore.eligible(snapshot, input, ticket))) throw new HttpFailure(sessionFailures.provider.status, sessionFailures.provider.message);
           const lease = caseStore.begin(owner, input.caseId, expected);
-          const cancel = () => caseStore.rollback(lease); signal.addEventListener("abort", cancel, { once: true });
+          const cancel = () => cancelLease(lease); signal.addEventListener("abort", cancel, { once: true });
           try {
-            const output = await caseStore.run(lease, input, runSignal => preparer.evaluate(structuredClone(input), runSignal), ticket ?? undefined);
+            const output = await caseStore.run(lease, input, async runSignal => {
+              const output = await preparer.evaluate(structuredClone(input), runSignal);
+              privateGuard();
+              caseStore.stagePresentation({ mode: "live", ...(dependencies.runtime ? { runtime: dependencies.runtime } : {}) });
+              return output;
+            }, ticket ?? undefined);
             guard(signal);
             const captured: unknown = structuredClone(output);
             if (Buffer.byteLength(JSON.stringify(captured), "utf8") > 524288) throw new HttpFailure(502, "검토 결과 크기 제한을 초과했습니다.");
@@ -410,13 +457,14 @@ export function createApp(dependencies: AppDependencies): (request: Request) => 
         }
         throw new HttpFailure(404, "페이지를 찾을 수 없습니다.");
       }
-      if (request.method === "GET" && caseId && suffix !== "answers") {
+      if (request.method === "GET" && caseId && suffix !== "answers" && suffix !== "input") {
         const stored = reports?.get(caseId);
         if (stored === undefined) throw new HttpFailure(404, "사례를 찾을 수 없습니다.");
         const result = stored.decision;
-        const html = renderReport(result, { mode: "live", ...(stored.execution ? { execution: stored.execution } : {}) });
+        const html = renderReport(result, { mode: "live", ...(stored.execution ? { execution: { traceId: stored.execution.traceId, usage: stored.execution.usage ?? null } } : {}) });
         const extra = suffix === "report" ? "" : `<p class="screen-only"><a href="/cases/${caseId}/report">인쇄용 보고서</a></p>${form(`/cases/${caseId}/answers`, true)}`;
-        return response(html.replace('<h2>출처와 원문 위치</h2>', `${extra}<h2>출처와 원문 위치</h2>`));
+        const reportResponse = response(html.replace('<h2>출처와 원문 위치</h2>', `${extra}<h2>출처와 원문 위치</h2>`));
+        privateGuard(); return reportResponse;
       }
       if (request.method === "POST" && (url.pathname === "/cases" || (caseId && suffix === "answers"))) {
         if (request.headers.get("origin") !== origin || request.headers.get("sec-fetch-site") === "cross-site") throw new HttpFailure(403, "같은 앱에서 제출해 주세요.");
@@ -435,33 +483,42 @@ export function createApp(dependencies: AppDependencies): (request: Request) => 
         const result = stored.decision;
         if (!idPattern.test(result.caseId) || (caseId && result.caseId !== caseId) || (owners.has(result.caseId) && owners.get(result.caseId) !== owner)) throw new HttpFailure(502, "사례 식별 정보를 확인할 수 없습니다.");
         if (!caseId && reports?.has(result.caseId)) throw new HttpFailure(409, "이미 존재하는 사례입니다.");
-        const owned = structuredClone(stored); privateGuard();
+        const owned = structuredClone(stored), resultResponse = redirect(`/cases/${result.caseId}`); privateGuard();
         if (actor) {
           const collection = actorReports.get(actor) ?? { created: now(), cases: new Map<string, StoredAssessment>() };
           collection.cases.set(result.caseId, owned); actorReports.set(actor, collection);
         } else session?.cases.set(result.caseId, owned);
         owners.set(result.caseId, owner);
-        return redirect(`/cases/${result.caseId}`);
+        dependencies.committed?.(); return resultResponse;
       }
       throw new HttpFailure(404, "페이지를 찾을 수 없습니다.");
-      }, request, timeoutMs);
+      }, request, timeoutMs, pending);
     } catch (error) {
-      if (error instanceof CaseConflict && error.message === "capacity") return response(page("실행 상태", `<p role="alert">${escapeHtml(sessionFailures.capacity.message)}</p>`), sessionFailures.capacity.status);
-      if (error instanceof CaseConflict) return response(page("수정 충돌", "<p>사례가 변경되었거나 처리 중입니다. 새로고침해 주세요.</p>"), 409);
-      if (error instanceof PhotoHttpFailure) return response(page("사진 입력 확인", "<p>사진 입력 형식과 크기를 확인해 주세요.</p>"), error.status);
-      if (error instanceof PhotoStorageError) return response(page("사진 요청 실패", "<p>사진 권한·형식 또는 저장 상태를 확인해 주세요.</p>"), error.code === "denied" ? 403 : error.code === "unavailable" ? 503 : 400);
-      if (error instanceof HttpFailure) return response(page("요청 상태", `<h1>요청을 완료하지 못했습니다</h1><p role="alert">${escapeHtml(error.publicMessage)}</p>`), error.status);
+      if (error instanceof LocalAuthError) {
+        const status = { denied: 403, throttled: 429, unavailable: 503, cancelled: 408 }[error.code];
+        return response(page("인증 상태", `<h1>요청을 완료하지 못했습니다</h1><p role="alert">인증 또는 계정 상태를 확인해 주세요.</p><p><a href="/login">로그인</a></p>${recovery}`), status);
+      }
+      if (error instanceof RuntimeStorageError || error instanceof ResourceUnavailableError) return response(page("저장·자료 상태", `<h1>검토 시도 실패</h1><p role="alert">저장소 또는 사례 자료를 사용할 수 없습니다. 이전 저장 결과를 확인해 주세요.</p>${recovery}`), 503);
+      if (error instanceof CaseConflict && error.message === "capacity") return response(page("실행 상태", `<p role="alert">${escapeHtml(sessionFailures.capacity.message)}</p>${recovery}`), sessionFailures.capacity.status);
+      if (error instanceof CaseConflict) return response(page("수정 충돌", `<p>사례가 변경되었거나 처리 중입니다. 새로고침해 주세요.</p>${recovery}`), 409);
+      if (error instanceof PhotoHttpFailure) return response(page("사진 입력 확인", `<p>사진 입력 형식과 크기를 확인해 주세요.</p>${recovery}`), error.status);
+      if (error instanceof PhotoStorageError) return response(page("사진 요청 실패", `<p>사진 권한·형식 또는 저장 상태를 확인해 주세요.</p>${recovery}`), error.code === "denied" ? 403 : error.code === "unavailable" ? 503 : 400);
+      if (error instanceof HttpFailure) return response(page("요청 상태", `<h1>요청을 완료하지 못했습니다</h1><p role="alert">${escapeHtml(error.publicMessage)}</p>${recovery}${dependencies.localAuth ? '<p><a href="/login">로그인</a></p>' : ""}`), error.status);
       if (error instanceof AssessmentInputError) {
         const issues = error.issues.map((issue) => `<li>${escapeHtml(issue.field)}: ${issue.code === "required" ? "필수 필드가 필요합니다." : "필드 형식과 허용 값을 확인해 주세요."}</li>`).join("");
-        return response(page("입력 확인", `<h1>입력을 확인해 주세요</h1><p role="alert">사례 필드와 값 형식을 확인해 주세요. 답변·수정은 JSON 객체로 입력하고 숫자에는 따옴표를 붙이지 않습니다. 질량은 0보다 큰 숫자, 날짜는 YYYY-MM-DD 형식의 실제 날짜여야 합니다. caseId와 판정·승인은 수정할 수 없습니다.</p><ul>${issues}</ul><p>예: <code>{"massKg":100}</code> · 생략한 필드는 유지되며 허용되는 필드의 null은 미상입니다. 사례 화면으로 돌아가 수정해 주세요.</p>`), 400);
+        return response(page("입력 확인", `<h1>입력을 확인해 주세요</h1><p role="alert">사례 필드와 값 형식을 확인해 주세요. 답변·수정은 JSON 객체로 입력하고 숫자에는 따옴표를 붙이지 않습니다. 질량은 0보다 큰 숫자, 날짜는 YYYY-MM-DD 형식의 실제 날짜여야 합니다. caseId와 판정·승인은 수정할 수 없습니다.</p><ul>${issues}</ul><p>예: <code>{"massKg":100}</code> · 생략한 필드는 유지되며 허용되는 필드의 null은 미상입니다. 사례 화면으로 돌아가 수정해 주세요.</p>${recovery}`), 400);
       }
       const code = sessionFailureCode(error);
       if (code !== undefined) {
         const failure = sessionFailures[code];
-        return response(page("실행 상태", `<h1>요청을 완료하지 못했습니다</h1><p role="alert">${escapeHtml(failure.message)}</p><p><a href="/">입력 화면에서 새 사례 제출</a></p>`), failure.status);
+        return response(page("실행 상태", `<h1>검토 시도 실패</h1><p role="alert">${escapeHtml(failure.message)}</p>${recovery}`), failure.status);
       }
       // HTTP trust boundary: provider and unexpected implementation errors never enter HTML/logs.
-      return response(page("실행 실패", "<h1>검토 실행 실패</h1><p role=\"alert\">연결 또는 결과 검증에 실패했습니다. 담당자에게 실행 상태를 확인해 주세요.</p>"), 502);
+      return response(page("실행 실패", `<h1>검토 시도 실패</h1><p role="alert">연결 또는 결과 검증에 실패했습니다. 담당자에게 실행 상태를 확인해 주세요.</p>${recovery}`), 502);
     }
   };
+  return Object.assign(fetch, {
+    async settled() { while (pending.size) await Promise.allSettled([...pending]); },
+    dispose() { if (!dependencies.caseStore) caseStore.dispose(); },
+  });
 }

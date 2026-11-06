@@ -3,5 +3,5 @@
   "compilerOptions": {
     "types": ["node", "bun"]
   },
-  "include": ["tests/input.test.ts", "tests/sources.test.ts", "tests/evidence.test.ts", "tests/legal-registry.test.ts"]
+  "include": ["tests/input.test.ts", "tests/sources.test.ts", "tests/evidence.test.ts", "tests/legal-registry.test.ts", "tests/o-auth.test.ts"]
 }

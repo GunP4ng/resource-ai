@@ -452,3 +452,18 @@ scanner timed out (124); LSP/linter were unavailable. Neither is claimed as a
 pass. A nonblocking review note remains: the launcher test pins H's existing
 guidance sentence, so an intentional copy change will require updating that
 expectation. Review: `/tmp/resource-ai-o4-astra-final-review.txt`.
+
+## O4 local operator runtime integration (2026-11-07)
+
+Provisioning, exact artifact installation, input export, reassessment, recovery,
+packaged commands and the 3-minute synthetic/2-minute held tracks are documented
+in [o-runtime-integration.md](o-runtime-integration.md). The runtime adds native
+`GET/POST /login`, `POST /logout`, `GET /cases`, `GET /cases/:id/input`; it persists
+evaluation-time presentation without changing shared decisions or approval.
+The launcher adds opt-in local accounts/SQLite/resources/storage-only photos.
+Anonymous ephemeral mode and the subscription runner default remain.
+
+Only O dependency/error/lifecycle forwarding touches H factories. Actual
+provider dispatch, audit/billing, photo authority and domain calculations remain
+H/J boundaries. The lead owns final full-suite/smoke, browser QA and videos;
+field acceptance still requires a supplied exact-revision reviewed artifact.

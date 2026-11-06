@@ -68,11 +68,13 @@ export function createOperationalApp(options: {
   readonly timeoutMs?: number;
   readonly photoStore?: Awaited<ReturnType<typeof createPhotoStore>>;
   readonly actorForRequest?: AppDependencies["actorForRequest"];
+  readonly localAuth?: AppDependencies["localAuth"];
+  readonly runtime?: AppDependencies["runtime"];
   readonly clock?: OperationalClock;
   readonly caseStore?: OCaseStore;
   readonly photoPolicy?: AppDependencies["photoPolicy"];
 }, open: typeof openCaseSession = openCaseSession) {
-  if (options.photoStore && !options.actorForRequest) throw new RangeError("authenticated-photo-actor-required");
+  if (options.photoStore && !options.actorForRequest && !options.localAuth) throw new RangeError("authenticated-photo-actor-required");
   if (options.runner && options.operations) throw new RangeError("conflicting-runner-configuration");
   const enabled = options.operations?.enabled === true;
   const photoExecution = enabled ? options.operations?.photoExecution : undefined;
@@ -99,6 +101,7 @@ export function createOperationalApp(options: {
     photoPolicy: options.photoPolicy,
     committed: () => requestBudgets.getStore()?.commit(),
     actorForRequest: options.actorForRequest,
+    localAuth: options.localAuth, runtime: options.runtime,
     checkRequest: () => requestBudgets.getStore()?.check(),
     resources: async (input, signal) => {
       requestBudgets.getStore()?.check();
@@ -118,9 +121,12 @@ export function createOperationalApp(options: {
         const work = async () => {
           budget.check(); const url = new URL(forwarded.url);
           if (forwarded.method === "GET" && url.origin === new URL(options.origin).origin && url.pathname === "/operations/readiness") {
+            try { options.localAuth?.resolve(forwarded, budget.signal); }
+            catch { budget.check(); return Response.json({ app: "unavailable", identity: "local-operator", storage: "unavailable" }, { status: 503, headers: { "cache-control": "no-store" } }); }
             return Response.json({ mode: enabled ? "request-gated" : runner ? "model-runner" : "local-only", azure: "not-verified",
               authorization: enabled ? "required-per-request" : "disabled", photos: binding && enabled ? "server-bound" : "reference-only",
-              identity: options.actorForRequest ? "server-resolver" : "anonymous-session", privatePhotoStorage: !!(options.actorForRequest && options.photoStore && options.photoPolicy),
+              identity: options.localAuth ? "local-operator" : options.actorForRequest ? "server-resolver" : "anonymous-session", privatePhotoStorage: !!((options.actorForRequest || options.localAuth) && options.photoStore && options.photoPolicy),
+              ...(options.runtime ? { runtime: options.runtime } : {}),
               guardedModelPhotos: !!(enabled && binding && options.photoStore && photoExecution?.current()),
               resources: options.resources ? "server-bound-unverified" : "unavailable", liveAzureVerified: false,
               modelProvider: enabled ? options.operations?.provider === "subscription" ? "chatgpt-subscription" : "azure-openai-responses" : null,
@@ -136,7 +142,9 @@ export function createOperationalApp(options: {
           { status: failure?.code === "timeout" ? 504 : failure?.code === "cancelled" ? 408 : 502, headers: { "cache-control": "no-store" } });
       } finally { budget.close(); active.delete(budget); }
     },
+    settled: app.settled,
     dispose() { disposed = true; for (const budget of active) budget.stop("cancelled"); app.dispose(); },
+    async close() { await app.close(); if (!options.caseStore) caseStore.dispose(); },
   };
 }
 export interface DispatchRequest {
