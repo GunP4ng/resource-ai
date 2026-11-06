@@ -365,7 +365,7 @@ test("O4 unknown or non-Error session failure shapes remain generic 502s", async
 test("O4 expired H cases return restart guidance while the owned report survives", async () => {
   let now = 0;
   const adapter = createAssessmentAdapter({ now: () => now });
-  const app = createApp({ origin, adapter });
+  const app = createApp({ origin, adapter: { submit: adapter.submitForm, answer: adapter.answer } });
   try {
     const cookie = await session(app), path = await submitNative(app, cookie);
     const before = await ownedPage(app, cookie, path + "/report");
@@ -410,7 +410,7 @@ test("O4 real H timeout returns 504 without replacing the previous assessment", 
       reject(new Error("private-provider-secret"));
     }, { once: true }));
   } });
-  const app = createApp({ origin, adapter, timeoutMs: 2000 });
+  const app = createApp({ origin, adapter: { submit: adapter.submitForm, answer: adapter.answer }, timeoutMs: 2000 });
   try {
     const cookie = await session(app), path = await submitNative(app, cookie);
     const before = await ownedPage(app, cookie, path + "/report");

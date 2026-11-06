@@ -2,12 +2,12 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
+import { createHash } from "node:crypto";
 import { createAssistantMessageEventStream } from "@earendil-works/pi-ai";
 import type { AssistantMessage } from "@earendil-works/pi-ai";
-import { createAssessmentAdapter, createAzureRunner, openCaseSession, SessionFailure } from "../src/session.ts";
-import type { CaseRunner } from "../src/session.ts";
+import { createAssessmentAdapter, createAzureRunner, createResourceApp, openCaseSession, SessionFailure } from "../src/session.ts";
+import type { CasePhoto, CaseRunner, PhotoRequest, PhotoResolver } from "../src/session.ts";
 import { AssessmentInputError, decideCase } from "../src/assessment.ts";
-import { createApp } from "../src/app.ts";
 import type { CaseInput } from "../src/contracts.ts";
 import { syntheticReviewed } from "./h-fixtures.ts";
 import type { DomainResources } from "../src/domain.ts";
@@ -21,6 +21,16 @@ function envelope(result: Awaited<ReturnType<ReturnType<typeof createAssessmentA
 }
 function failure(code: string) {
   return (error: unknown) => { assert.ok(error instanceof SessionFailure); assert.equal(error.code, code); return true; };
+}
+function photoFailure(detailCode: string) {
+  return (error: unknown) => {
+    assert.ok(error instanceof SessionFailure);
+    assert.equal(error.code, "provider");
+    assert.equal(error.message, "사례 실행 실패: provider");
+    assert.ok("detailCode" in error);
+    assert.equal(error.detailCode, detailCode);
+    return true;
+  };
 }
 
 test("adapter generates case IDs, preserves inputs and refreshes only explicitly answered facts", async () => {
@@ -42,10 +52,18 @@ test("explicit HTML form conversion handles empty fields, one photo and a numeri
   const seen: CaseInput[] = [];
   const adapter = createAssessmentAdapter({ runner: async (value) => { seen.push(value); return {}; } });
   try {
-    await adapter.submit({ ...fields, photoRefs: "", process: "", massKg: "12.5" }, live());
+    await adapter.submitForm({ ...fields, photoRefs: "", process: "", massKg: "12.5" }, live());
     assert.equal(seen[0]?.massKg, 12.5); assert.equal(seen[0]?.process, null); assert.deepEqual(seen[0]?.photoRefs, []);
-    await adapter.submit({ ...fields, photoRefs: "https://example.invalid/photo", massKg: "" }, live());
+    await adapter.submitForm({ ...fields, photoRefs: "https://example.invalid/photo", massKg: "" }, live());
     assert.equal(seen[1]?.massKg, null); assert.deepEqual(seen[1]?.photoRefs, ["https://example.invalid/photo"]);
+  } finally { adapter.dispose(); }
+});
+
+test("all-string JSON is rejected instead of being mistaken for an HTML form", async () => {
+  const adapter = createAssessmentAdapter();
+  try {
+    await assert.rejects(adapter.submit({ ...fields, photoRefs: "", massKg: "12.5" }, live()), AssessmentInputError);
+    await assert.rejects(adapter.submitForm({ ...fields, photoRefs: [], massKg: "12.5" }, live()), AssessmentInputError);
   } finally { adapter.dispose(); }
 });
 
@@ -182,7 +200,7 @@ test("cancellation or disposal between evaluation and commit prevents storing a 
 });
 
 test("real O4 HTTP handler accepts H adapter, updates questions and enforces ownership", async () => {
-  const origin = "http://localhost:3000", adapter = createAssessmentAdapter(), app = createApp({ origin, adapter });
+  const origin = "http://localhost:3000", resourceApp = createResourceApp({ origin }), app = resourceApp.fetch;
   const cookie = async () => { const r = await app(new Request(origin)); const c = r.headers.get("set-cookie")?.split(";")[0]; assert.ok(c); return c; };
   const post = (path: string, owner: string, body: Record<string, string>) => app(new Request(origin + path, { method: "POST", headers: { origin, cookie: owner, "content-type": "application/x-www-form-urlencoded" }, body: new URLSearchParams(body) }));
   try {
@@ -195,7 +213,23 @@ test("real O4 HTTP handler accepts H adapter, updates questions and enforces own
     assert.equal((await post(path + "/answers", b, { answers: '{"massKg":100}' })).status, 404);
     assert.equal((await post(path + "/answers", a, { answers: '{"massKg":100}' })).status, 303);
     const review = await (await get(a)).text(); assert.ok(review.includes("검토 필요")); assert.ok(!review.includes("확인된 질량은"));
-  } finally { adapter.dispose(); }
+  } finally { resourceApp.dispose(); }
+});
+
+test("HTTP content types stay isolated across concurrent form and JSON submissions", async () => {
+  const origin = "http://localhost:3000", resourceApp = createResourceApp({ origin, runner: async () => { await Promise.resolve(); return {}; } });
+  try {
+    const first = await resourceApp.fetch(new Request(origin));
+    const cookie = first.headers.get("set-cookie")!.split(";")[0]!;
+    const raw = { ...fields, photoRefs: "", massKg: "100" };
+    const post = (type: string, body: string) => resourceApp.fetch(new Request(origin + "/cases", { method: "POST", headers: { cookie, origin, "content-type": type }, body }));
+    const results = await Promise.all([
+      post("application/x-www-form-urlencoded; charset=UTF-8", new URLSearchParams(raw).toString()),
+      post("application/json", JSON.stringify(raw)),
+      post("application/json", JSON.stringify({ ...fields, massKg: 100 })),
+    ]);
+    assert.deepEqual(results.map((r) => r.status), [303, 400, 303]); // Invalid JSON stays invalid; only the form is converted.
+  } finally { resourceApp.dispose(); }
 });
 
 test("real SDK sessions use separate in-memory histories and only three bound read-only tools", async () => {
@@ -219,6 +253,145 @@ test("real SDK sessions use separate in-memory histories and only three bound re
 });
 
 const fakeEnv = { AZURE_OPENAI_API_KEY: "synthetic-key-not-a-secret", AZURE_OPENAI_BASE_URL: "https://synthetic.openai.azure.com", AZURE_OPENAI_DEPLOYMENT_NAME_MAP: "gpt-4.1=synthetic-deployment" };
+
+// A synthetic 1x1 PNG. Not a waste photograph, field case or visual classification example.
+const syntheticPng = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Y9ZlXcAAAAASUVORK5CYII=", "base64");
+const syntheticPhoto = (request: PhotoRequest): CasePhoto => ({ ...request, data: Buffer.from(syntheticPng), mimeType: "image/png",
+  sha256: createHash("sha256").update(syntheticPng).digest("hex"), approvedForModel: true });
+
+test("image resolver rejects unauthorized, unavailable, mismatched and altered photos before opening a model session", async () => {
+  const withPhoto = { ...input, photoRefs: ["synthetic-photo"] };
+  const variants: readonly [PhotoResolver, string][] = [
+    [async () => null, "image-unavailable"],
+    [async () => { throw new Error("private storage path or credential"); }, "image-unavailable"],
+    [async (r) => ({ ...syntheticPhoto(r), approvedForModel: false }), "image-not-authorized"],
+    [async (r) => ({ ...syntheticPhoto(r), caseId: "different-case" }), "image-not-authorized"],
+    [async (r) => ({ ...syntheticPhoto(r), caseRevision: "old-revision" }), "image-not-authorized"],
+    [async (r) => ({ ...syntheticPhoto(r), photoRef: "different-photo" }), "image-not-authorized"],
+    [async (r) => ({ ...syntheticPhoto(r), sha256: "0".repeat(64) }), "image-invalid"],
+    [async (r) => ({ ...syntheticPhoto(r), data: new Uint8Array() }), "image-invalid"],
+    [async (r) => ({ ...syntheticPhoto(r), mimeType: "image/jpeg" }), "image-invalid"],
+    [async (r) => { const data = Buffer.from("<svg>not an accepted image</svg>"); return { ...syntheticPhoto(r), data, sha256: createHash("sha256").update(data).digest("hex") }; }, "image-invalid"],
+  ];
+  let opened = 0;
+  for (const [photos, code] of variants) {
+    const runner = createAzureRunner({ enabled: true, env: fakeEnv, photos }, async () => { opened++; throw new Error("must not open"); });
+    await assert.rejects(runner(withPhoto, live()), (error) => { photoFailure(code)(error); assert.ok(!String(error).includes("private")); return true; });
+  }
+  assert.equal(opened, 0);
+});
+
+test("image count, per-image bytes and total bytes are bounded before model use", async () => {
+  for (const [photoLimits, photoRefs] of [
+    [{ maxImages: 1 }, ["a", "b"]],
+    [{ maxBytesPerImage: syntheticPng.length - 1 }, ["a"]],
+    [{ maxTotalBytes: syntheticPng.length }, ["a", "b"]],
+  ] as const) {
+    const runner = createAzureRunner({ enabled: true, env: fakeEnv, photos: async (r) => syntheticPhoto(r), photoLimits });
+    await assert.rejects(runner({ ...input, photoRefs }, live()), photoFailure("image-limit"));
+  }
+  assert.throws(() => createAzureRunner({ enabled: true, photoLimits: { maxImages: 0 } }), /invalid-image-limits/);
+});
+
+test("cancellation while loading a photo prevents a model session and preserves the case", async () => {
+  const controller = new AbortController();
+  const runner = createAzureRunner({ enabled: true, env: fakeEnv, photos: async (request, signal) => {
+    controller.abort(); assert.equal(signal.aborted, true); return syntheticPhoto(request);
+  } }, async () => { throw new Error("must not open"); });
+  await assert.rejects(runner({ ...input, photoRefs: ["synthetic-photo"] }, controller.signal), failure("cancelled"));
+});
+
+test("photo failures retain O4 provider handling without exposing image details", async () => {
+  const origin = "http://localhost:3000";
+  const app = createResourceApp({ origin, runner: createAzureRunner({ enabled: true, env: fakeEnv, photos: async () => null }) });
+  try {
+    const first = await app.fetch(new Request(origin));
+    const cookie = first.headers.get("set-cookie")!.split(";")[0]!;
+    const response = await app.fetch(new Request(origin + "/cases", { method: "POST",
+      headers: { origin, cookie, "content-type": "application/json" },
+      body: JSON.stringify({ ...fields, photoRefs: ["private-photo-reference"] }),
+    }));
+    assert.equal(response.status, 502);
+    const html = await response.text();
+    assert.match(html, /실행 서비스 요청에 실패했습니다/);
+    assert.doesNotMatch(html, /image-unavailable|detailCode|private-photo-reference/);
+  } finally { app.dispose(); }
+});
+
+test("real SDK receives approved image bytes but a photo cannot fill missing facts or approve a route", async () => {
+  let captured: string | undefined;
+  let previousBytes: Uint8Array | undefined;
+  const caseWithPhoto = { ...input, photoRefs: ["synthetic-photo-a", "synthetic-photo-b"] };
+  const runner = createAzureRunner({ enabled: true, env: fakeEnv, photos: async (request) => {
+    previousBytes?.fill(0); // The resolver must not be able to mutate an already checked image.
+    const photo = syntheticPhoto(request); previousBytes = photo.data; return photo;
+  } }, async (value, options) => {
+    const owned = await openCaseSession(value, options);
+    owned.session.agent.streamFunction = () => {
+      const user = owned.session.messages.find((m) => m.role === "user");
+      const attached = user && Array.isArray(user.content) ? user.content.filter((c) => c.type === "image") : [];
+      assert.equal(attached.length, 2); captured = attached[0]?.data;
+      const message: AssistantMessage = { role: "assistant", api: "azure-openai-responses", provider: "azure-openai-responses", model: "gpt-4.1", timestamp: Date.now(),
+        content: [{ type: "text", text: JSON.stringify(decideCase(value)) }], stopReason: "stop",
+        usage: { input: 1, output: 1, cacheRead: 0, cacheWrite: 0, totalTokens: 2, cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, total: 0 } } };
+      const stream = createAssistantMessageEventStream(); stream.push({ type: "done", reason: "stop", message }); return stream;
+    };
+    return owned;
+  });
+  const result = await runner(caseWithPhoto, live());
+  assert.equal(captured, syntheticPng.toString("base64"));
+  const usage = JSON.parse(result.execution?.usage ?? "{}");
+  assert.equal(usage.imageCount, 2); assert.deepEqual(usage.imageSha256, Array(2).fill(createHash("sha256").update(syntheticPng).digest("hex")));
+  assert.equal(decideCase(caseWithPhoto, result.proposal).state, "needs-information");
+  assert.ok(!result.execution?.usage?.includes(syntheticPng.toString("base64")));
+});
+
+test("photo getters are read once so validation and transmission use the same data and MIME type", async () => {
+  let dataReads = 0, mimeReads = 0, requests = 0;
+  const runner = createAzureRunner({ enabled: true, env: fakeEnv, photos: async (request) => ({
+    ...syntheticPhoto(request),
+    get data() { dataReads++; return dataReads === 1 ? Buffer.from(syntheticPng) : new Uint8Array(); },
+    get mimeType() { mimeReads++; return mimeReads === 1 ? "image/png" : "image/jpeg"; },
+  }), transport: async (_url, init) => {
+    requests++;
+    const body = JSON.parse(String(init?.body));
+    const images = body.input.flatMap((m: { content?: { type: string; image_url?: string }[] }) =>
+      Array.isArray(m.content) ? m.content.filter((c) => c.type === "input_image") : []);
+    assert.equal(images[0]?.image_url, `data:image/png;base64,${syntheticPng.toString("base64")}`);
+    return new Response(JSON.stringify({ error: { message: "synthetic rejection" } }), { status: 401, headers: { "content-type": "application/json" } });
+  } });
+  await assert.rejects(runner({ ...input, photoRefs: ["synthetic-photo"] }, live()), failure("authentication"));
+  assert.equal(dataReads, 1); assert.equal(mimeReads, 1); assert.equal(requests, 1);
+});
+
+test("photo resolver timeout is cancelled before any model call", async () => {
+  let aborted = false, opened = false;
+  const runner = createAzureRunner({ enabled: true, env: fakeEnv, photos: async (_request, signal) => new Promise((_resolve, reject) => {
+    signal.addEventListener("abort", () => { aborted = true; reject(new Error("private photo store")); }, { once: true });
+  }) }, async () => { opened = true; throw new Error("must not open"); });
+  const adapter = createAssessmentAdapter({ runner, timeoutMs: 10 });
+  try {
+    await assert.rejects(adapter.submit({ ...fields, photoRefs: ["synthetic-photo"] }, live()), failure("timeout"));
+    assert.equal(aborted, true); assert.equal(opened, false);
+  } finally { adapter.dispose(); }
+});
+
+test("actual Azure SDK request encodes the approved image; references alone cause no image retrieval", async () => {
+  for (const attach of [false, true]) {
+    let requests = 0;
+    const runner = createAzureRunner({ enabled: true, env: fakeEnv, photos: attach ? async (r) => syntheticPhoto(r) : undefined,
+      transport: async (_url, init) => {
+        requests++;
+        const body = JSON.parse(String(init?.body));
+        const images = body.input.flatMap((m: { content?: { type: string; image_url?: string }[] }) => Array.isArray(m.content) ? m.content.filter((c) => c.type === "input_image") : []);
+        assert.equal(images.length, attach ? 1 : 0);
+        if (attach) assert.equal(images[0]?.image_url, `data:image/png;base64,${syntheticPng.toString("base64")}`);
+        return new Response(JSON.stringify({ error: { message: "synthetic HTTP rejection" } }), { status: 401, headers: { "content-type": "application/json" } });
+      } });
+    await assert.rejects(runner({ ...input, photoRefs: ["https://example.invalid/not-fetched"] }, live()), failure("authentication"));
+    assert.equal(requests, 1);
+  }
+});
 test("Azure inference requires explicit opt-in and complete endpoint/deployment configuration", async () => {
   for (const runner of [createAzureRunner({ enabled: false, env: fakeEnv }), createAzureRunner({ enabled: true, env: {} }), createAzureRunner({ enabled: true, env: { ...fakeEnv, AZURE_OPENAI_BASE_URL: "https://example.invalid" } })]) {
     await assert.rejects(runner(input, live()), failure("not-configured"));
