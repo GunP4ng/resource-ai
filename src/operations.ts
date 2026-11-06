@@ -53,13 +53,15 @@ function requestDeadline(clock: OperationalClock, end: number, parent: AbortSign
 }
 const requestBudgets = new AsyncLocalStorage<ReturnType<typeof requestDeadline>>();
 
-/** H-owned composition used by the launcher. Missing operations keep local assessment only.
+/** H-owned composition used by the launcher. Without operations or a runner, assessment is local.
  * Actor/case ownership, consent collection and upload UI remain server integration responsibilities.
  * No environment variable can enable inference here; readiness never claims live verification.
  */
 export function createOperationalApp(options: {
   readonly origin: string;
   readonly operations?: OperationalRunnerOptions;
+  /** Local launcher integration; mutually exclusive with request-gated operations. */
+  readonly runner?: CaseRunner;
   readonly resources?: ResourceProvider;
   readonly timeoutMs?: number;
   readonly photoStore?: Awaited<ReturnType<typeof createPhotoStore>>;
@@ -67,6 +69,7 @@ export function createOperationalApp(options: {
   readonly clock?: OperationalClock;
 }, open: typeof openCaseSession = openCaseSession) {
   if (options.photoStore && !options.actorForRequest) throw new RangeError("authenticated-photo-actor-required");
+  if (options.runner && options.operations) throw new RangeError("conflicting-runner-configuration");
   const actors = new AsyncLocalStorage<string | null>();
   const actor = () => { const value = actors.getStore(); if (!value) throw new SessionFailure("authentication"); return value; };
   const binding: OperationalRunnerOptions["photos"] = options.photoStore ? {
@@ -74,7 +77,7 @@ export function createOperationalApp(options: {
     assertCanTransmit: (input, signal, expected) => options.photoStore!.assertCanTransmit(actor(), input, signal, expected),
   } : options.operations?.photos;
   const enabled = options.operations?.enabled === true;
-  const runner = enabled ? createOperationalRunner({ ...options.operations!, photos: binding }, open) : undefined;
+  const runner = enabled ? createOperationalRunner({ ...options.operations!, photos: binding }, open) : options.runner;
   // Set once at fetch entry. Every later stage consumes this same absolute budget.
   const timeoutMs = options.timeoutMs ?? (enabled ? options.operations!.timeoutMs + 1500 : 10_000);
   const clock = options.clock ?? monotonicClock;
@@ -99,7 +102,7 @@ export function createOperationalApp(options: {
         const work = async () => {
           budget.check(); const url = new URL(forwarded.url);
           if (forwarded.method === "GET" && url.origin === new URL(options.origin).origin && url.pathname === "/operations/readiness") {
-            return Response.json({ mode: enabled ? "request-gated" : "local-only", azure: "not-verified",
+            return Response.json({ mode: enabled ? "request-gated" : runner ? "model-runner" : "local-only", azure: "not-verified",
               authorization: enabled ? "required-per-request" : "disabled", photos: binding && enabled ? "server-bound" : "reference-only",
               resources: options.resources ? "server-bound-unverified" : "unavailable", liveAzureVerified: false }, { headers: { "cache-control": "no-store" } });
           }

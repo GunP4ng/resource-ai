@@ -255,7 +255,7 @@ function isolatedLoader(): ResourceLoader {
 }
 
 /** Opens an isolated SDK session without prompting or making a model request. */
-export async function openCaseSession(input: CaseInput, options: { readonly modelId?: string; readonly resources?: DomainResources } = {}) {
+export async function openCaseSession(input: CaseInput, options: { readonly provider?: "azure-openai-responses" | "chatgpt-subscription"; readonly modelId?: string; readonly authPath?: string; readonly resources?: DomainResources } = {}) {
   const facts = checked(input);
   const root = await mkdtemp(join(tmpdir(), "resource-case-"));
   const cwd = join(root, "workspace"), agentDir = join(root, "agent");
@@ -268,8 +268,11 @@ export async function openCaseSession(input: CaseInput, options: { readonly mode
   try {
     await mkdir(cwd); await mkdir(agentDir);
     const settingsManager = SettingsManager.inMemory({ retry: { enabled: false }, compaction: { enabled: false } });
-    const modelRuntime = await ModelRuntime.create({ authPath: join(agentDir, "auth.json"), agentDir, settingsManager, modelsPath: null, allowModelNetwork: false, refreshOnCreate: false });
-    const model = modelRuntime.getModel("azure-openai-responses", options.modelId ?? "gpt-4.1");
+    const provider = options.provider ?? "azure-openai-responses";
+    // Subscription credentials belong to the SDK's existing auth store, not the disposable case.
+    const authPath = provider === "chatgpt-subscription" ? options.authPath : join(agentDir, "auth.json");
+    const modelRuntime = await ModelRuntime.create({ authPath, agentDir, settingsManager, modelsPath: null, allowModelNetwork: false, refreshOnCreate: false });
+    const model = modelRuntime.getModel(provider, options.modelId ?? (provider === "chatgpt-subscription" ? "gpt-5.5" : "gpt-4.1"));
     if (model === undefined) throw new SessionFailure("not-configured");
     const tools = createCaseTools(facts, options.resources);
     const created = await createAgentSession({ cwd, agentDir, authStorage: modelRuntime.authStorage, settingsManager, modelRuntime, model,
@@ -282,8 +285,27 @@ export async function openCaseSession(input: CaseInput, options: { readonly mode
 }
 
 /** Explicit opt-in only. This function does not call Azure until its runner is invoked. */
-export function createAzureRunner(options: { readonly enabled: boolean; readonly modelId?: string; readonly maxTurns?: number; readonly maxOutputTokens?: number; readonly env?: Readonly<Record<string, string | undefined>>; readonly transport?: FetchFunction; readonly photos?: PhotoResolver; readonly photoLimits?: PhotoLimits }, open: typeof openCaseSession = openCaseSession): CaseRunner {
-  const modelId = options.modelId ?? "gpt-4.1", maxTurns = options.maxTurns ?? 3, maxOutputTokens = options.maxOutputTokens ?? 1500;
+export function createAzureRunner(options: RunnerOptions, open: typeof openCaseSession = openCaseSession): CaseRunner {
+  return createModelRunner("azure-openai-responses", options, open);
+}
+
+export interface RunnerOptions {
+  readonly enabled: boolean;
+  readonly modelId?: string;
+  readonly maxTurns?: number;
+  readonly maxOutputTokens?: number;
+  readonly env?: Readonly<Record<string, string | undefined>>;
+  readonly transport?: FetchFunction;
+  readonly photos?: PhotoResolver;
+  readonly photoLimits?: PhotoLimits;
+}
+/** Uses the SDK auth.json by default. No Azure environment or login flow is required here. */
+export function createSubscriptionRunner(options: RunnerOptions & { readonly authPath?: string }, open: typeof openCaseSession = openCaseSession): CaseRunner {
+  return createModelRunner("chatgpt-subscription", options, open);
+}
+
+function createModelRunner(provider: "azure-openai-responses" | "chatgpt-subscription", options: RunnerOptions & { readonly authPath?: string }, open: typeof openCaseSession): CaseRunner {
+  const modelId = options.modelId ?? (provider === "chatgpt-subscription" ? "gpt-5.5" : "gpt-4.1"), maxTurns = options.maxTurns ?? 3, maxOutputTokens = options.maxOutputTokens ?? 1500;
   const limits: Required<PhotoLimits> = { maxImages: options.photoLimits?.maxImages ?? 3,
     maxBytesPerImage: options.photoLimits?.maxBytesPerImage ?? 5 * 1024 * 1024, maxTotalBytes: options.photoLimits?.maxTotalBytes ?? 10 * 1024 * 1024 };
   if (!Number.isInteger(maxTurns) || maxTurns < 1 || maxTurns > 10 || !Number.isInteger(maxOutputTokens) || maxOutputTokens < 16 || maxOutputTokens > 8192) throw new RangeError("invalid-model-limits");
@@ -296,12 +318,22 @@ export function createAzureRunner(options: { readonly enabled: boolean; readonly
     const env = options.env ?? process.env;
     const key = env["AZURE_OPENAI_API_KEY"], endpoint = env["AZURE_OPENAI_BASE_URL"], map = env["AZURE_OPENAI_DEPLOYMENT_NAME_MAP"];
     const deployment = map?.split(",").map((item) => item.trim().split("=")).find(([id]) => id === modelId)?.[1];
-    if (!key?.trim() || !endpoint || !deployment?.trim()) throw new SessionFailure("not-configured");
-    let url: URL;
-    try { url = new URL(endpoint); } catch { throw new SessionFailure("not-configured"); }
-    if (url.protocol !== "https:" || !url.hostname.endsWith(".openai.azure.com") || url.username || url.password || url.search || url.hash || !["", "/", "/openai/v1"].includes(url.pathname)) throw new SessionFailure("not-configured");
+    let azureEnv: Record<string, string> | undefined;
+    if (provider === "azure-openai-responses") {
+      if (!key?.trim() || !endpoint || !deployment?.trim()) throw new SessionFailure("not-configured");
+      let url: URL;
+      try { url = new URL(endpoint); } catch { throw new SessionFailure("not-configured"); }
+      if (url.protocol !== "https:" || !url.hostname.endsWith(".openai.azure.com") || url.username || url.password || url.search || url.hash || !["", "/", "/openai/v1"].includes(url.pathname)) throw new SessionFailure("not-configured");
+      azureEnv = { AZURE_OPENAI_BASE_URL: endpoint, AZURE_OPENAI_DEPLOYMENT_NAME_MAP: `${modelId}=${deployment}`, AZURE_OPENAI_API_VERSION: env["AZURE_OPENAI_API_VERSION"] ?? "v1" };
+    }
     const photos = await caseImages(facts, options.photos, limits, signal);
-    const owned = await open(facts, { modelId, resources });
+    let owned: Awaited<ReturnType<typeof openCaseSession>>;
+    try { owned = await open(facts, { provider, modelId, resources, authPath: options.authPath }); }
+    catch (error) {
+      if (signal.aborted) throw new SessionFailure("cancelled");
+      if (error instanceof SessionFailure) throw error;
+      throw new SessionFailure("provider");
+    }
     const { session, modelRuntime } = owned;
     let requestId: string | undefined, responseStatus: number | undefined, turns = 0;
     const cancel = () => { void session.abort().catch(() => undefined); };
@@ -309,11 +341,23 @@ export function createAzureRunner(options: { readonly enabled: boolean; readonly
     try {
       if (signal.aborted) throw new SessionFailure("cancelled");
       if (photos.images.length && !session.model?.input.includes("image")) throw new PhotoFailure("image-not-supported");
-      modelRuntime.authStorage?.setRuntimeApiKey("azure-openai-responses", key);
+      if (provider === "azure-openai-responses" && key) modelRuntime.authStorage?.setRuntimeApiKey(provider, key);
+      if (provider === "chatgpt-subscription") {
+        if (!await modelRuntime.checkAuth(provider, { signal })) throw new SessionFailure("not-configured");
+        try {
+          const auth = await modelRuntime.getAuth(provider, { signal });
+          if (!auth) throw new SessionFailure("authentication");
+        } catch {
+          if (signal.aborted) throw new SessionFailure("cancelled");
+          throw new SessionFailure("authentication");
+        }
+      }
       const stream = session.agent.streamFunction;
       session.agent.streamFunction = (model, context, config) => {
         if (++turns > maxTurns) throw new SessionFailure("turn-limit");
         return stream(model, context, { ...config, maxTokens: maxOutputTokens, maxRetries: 0,
+          // SSE makes the injected transport, status classification and retry limit authoritative.
+          ...(provider === "chatgpt-subscription" ? { transport: "sse" as const } : {}),
           // Record structured HTTP status even when the SDK throws before onResponse.
           fetch: async (request, init) => {
             const response = await (options.transport ?? fetch)(request, init);
@@ -322,7 +366,7 @@ export function createAzureRunner(options: { readonly enabled: boolean; readonly
             if (id && /^[A-Za-z0-9_-]{1,100}$/.test(id)) requestId = id;
             return response;
           },
-          env: { AZURE_OPENAI_BASE_URL: endpoint, AZURE_OPENAI_DEPLOYMENT_NAME_MAP: `${modelId}=${deployment}`, AZURE_OPENAI_API_VERSION: env["AZURE_OPENAI_API_VERSION"] ?? "v1" },
+          ...(azureEnv ? { env: azureEnv } : {}),
           onResponse(response) {
             responseStatus = response.status;
             const id = response.headers["x-request-id"] ?? response.headers["apim-request-id"];
@@ -340,8 +384,8 @@ export function createAzureRunner(options: { readonly enabled: boolean; readonly
       let proposal: unknown;
       try { proposal = JSON.parse(text); } catch { throw new SessionFailure("invalid-model-output"); }
       const stats = session.getSessionStats();
-      return { proposal, execution: { traceId: requestId ? `azure:${requestId}` : `senpi:${session.sessionId}`,
-        usage: JSON.stringify({ provider: "azure-openai-responses", modelId, input: stats.tokens.input, output: stats.tokens.output, cacheRead: stats.tokens.cacheRead, cacheWrite: stats.tokens.cacheWrite, total: stats.tokens.total,
+      return { proposal, execution: { traceId: requestId ? `${provider === "azure-openai-responses" ? "azure" : provider}:${requestId}` : `senpi:${session.sessionId}`,
+        usage: JSON.stringify({ provider, modelId, input: stats.tokens.input, output: stats.tokens.output, cacheRead: stats.tokens.cacheRead, cacheWrite: stats.tokens.cacheWrite, total: stats.tokens.total,
           imageCount: photos.images.length, imageSha256: photos.hashes }) } };
     } catch (error) {
       if (signal.aborted) throw new SessionFailure("cancelled");

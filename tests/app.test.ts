@@ -458,7 +458,7 @@ test("O4 source and packaged launchers reduce missing questions before review an
     const port = address.port;
     await new Promise<void>((resolve, reject) => reservation.close((error) => error ? reject(error) : resolve()));
     const directory = await mkdtemp(join(tmpdir(), "o4-launcher-"));
-    const child = spawn(process.execPath, [resolve(root, launcher)], { cwd: directory, env: { ...process.env, PORT: String(port) }, stdio: ["ignore", "pipe", "pipe"] });
+    const child = spawn(process.execPath, [resolve(root, launcher)], { cwd: directory, env: { ...process.env, PORT: String(port), RESOURCE_MODEL_RUNNER: "local" }, stdio: ["ignore", "pipe", "pipe"] });
     const exited = new Promise<{ code: number | null; signal: NodeJS.Signals | null }>((resolve, reject) => {
       child.once("error", reject);
       child.once("exit", (code, signal) => resolve({ code, signal }));

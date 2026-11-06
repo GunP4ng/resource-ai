@@ -1,10 +1,16 @@
 import { createServer } from "node:http";
 import { createOperationalApp } from "../src/operations.ts";
+import { createAzureRunner, createSubscriptionRunner } from "../src/session.ts";
 // Run with Bun 1.4.2. Node HTTP keeps launch types within existing dependencies.
 const port = Number(process.env["PORT"] ?? 3000);
 if (!Number.isInteger(port) || port < 1 || port > 65535) throw new RangeError("Invalid PORT");
 const origin = `http://localhost:${port}`;
-const app = createOperationalApp({ origin, timeoutMs: 10000 });
+const mode = process.env["RESOURCE_MODEL_RUNNER"] ?? "subscription";
+if (!["subscription", "azure", "local"].includes(mode)) throw new RangeError("Invalid RESOURCE_MODEL_RUNNER");
+const runner = mode === "subscription"
+  ? createSubscriptionRunner({ enabled: true, modelId: process.env["RESOURCE_MODEL_ID"], authPath: process.env["RESOURCE_AUTH_PATH"] })
+  : mode === "azure" ? createAzureRunner({ enabled: true, modelId: process.env["RESOURCE_MODEL_ID"] }) : undefined;
+const app = createOperationalApp({ origin, runner, timeoutMs: 10000 });
 const server = createServer(async (incoming, outgoing) => {
   const controller = new AbortController();
   incoming.on("aborted", () => controller.abort());
@@ -53,7 +59,7 @@ server.once("error", () => {
   shutdown(1);
 });
 try {
-  server.listen(port, "127.0.0.1", () => console.log(`Re:Source app: ${origin} (local assessment enabled; model calls disabled; operational resources unavailable; Azure not verified)`));
+  server.listen(port, "127.0.0.1", () => console.log(`Re:Source app: ${origin} (runner=${mode}; operational resources unavailable; live provider not verified)`));
 } catch (error) {
   app.dispose();
   if (error instanceof Error) {
