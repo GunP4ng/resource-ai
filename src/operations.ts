@@ -17,6 +17,42 @@ export interface AzureConfiguration {
   readonly apiVersion: string;
 }
 
+/** Monotonic scheduling boundary; injectable for deterministic deadline regressions. */
+export interface OperationalClock {
+  readonly now: () => number;
+  readonly schedule: (callback: () => void, delayMs: number) => () => void;
+}
+const monotonicClock: OperationalClock = {
+  now: () => performance.now(),
+  schedule(callback, delayMs) { const timer = setTimeout(callback, Math.max(0, Math.ceil(delayMs))); return () => clearTimeout(timer); },
+};
+function requestDeadline(clock: OperationalClock, end: number, parent: AbortSignal, cancellation: () => "timeout" | "cancelled" = () => "cancelled") {
+  const controller = new AbortController(); let failure: SessionFailure | undefined, closed = false;
+  let reject!: (error: SessionFailure) => void, clearTimer = () => {};
+  const interrupted = new Promise<never>((_resolve, no) => { reject = no; });
+  // A pre-aborted caller is valid even before the operation attaches its race handler.
+  void interrupted.catch(() => {});
+  const stop = (code: "timeout" | "cancelled") => {
+    if (failure || closed) return;
+    failure = new SessionFailure(code); reject(failure); controller.abort(failure);
+  };
+  const remaining = () => Math.max(0, end - clock.now());
+  const check = () => {
+    if (!closed && !failure && remaining() === 0) stop("timeout");
+    if (failure) throw failure;
+    if (closed) throw new SessionFailure("cancelled");
+  };
+  const cancel = () => stop(cancellation());
+  const expire = () => { if (remaining() === 0) stop("timeout"); else clearTimer = clock.schedule(expire, remaining()); };
+  parent.addEventListener("abort", cancel, { once: true });
+  if (parent.aborted) cancel(); else clearTimer = clock.schedule(expire, remaining());
+  return { clock, end, signal: controller.signal, interrupted, remaining, check, stop,
+    get failure() { return failure; },
+    close() { closed = true; clearTimer(); parent.removeEventListener("abort", cancel); controller.abort(failure ?? new SessionFailure("cancelled")); },
+  };
+}
+const requestBudgets = new AsyncLocalStorage<ReturnType<typeof requestDeadline>>();
+
 /** H-owned composition used by the launcher. Missing operations keep local assessment only.
  * Actor/case ownership, consent collection and upload UI remain server integration responsibilities.
  * No environment variable can enable inference here; readiness never claims live verification.
@@ -28,6 +64,7 @@ export function createOperationalApp(options: {
   readonly timeoutMs?: number;
   readonly photoStore?: Awaited<ReturnType<typeof createPhotoStore>>;
   readonly actorForRequest?: (request: Request, signal: AbortSignal) => Promise<string | null>;
+  readonly clock?: OperationalClock;
 }, open: typeof openCaseSession = openCaseSession) {
   if (options.photoStore && !options.actorForRequest) throw new RangeError("authenticated-photo-actor-required");
   const actors = new AsyncLocalStorage<string | null>();
@@ -38,35 +75,51 @@ export function createOperationalApp(options: {
   } : options.operations?.photos;
   const enabled = options.operations?.enabled === true;
   const runner = enabled ? createOperationalRunner({ ...options.operations!, photos: binding }, open) : undefined;
-  // Keep the runner's deadline below both H and O adapter deadlines so its timeout is recorded first.
+  // Set once at fetch entry. Every later stage consumes this same absolute budget.
   const timeoutMs = options.timeoutMs ?? (enabled ? options.operations!.timeoutMs + 1500 : 10_000);
-  if (enabled && timeoutMs <= options.operations!.timeoutMs + Math.min(options.operations!.timeoutMs, 1000)) throw new RangeError("app-deadline-must-allow-audit");
-  const app = createResourceApp({ origin: options.origin, runner, resources: options.resources, timeoutMs });
+  const clock = options.clock ?? monotonicClock;
+  const active = new Set<ReturnType<typeof requestDeadline>>(); let disposed = false;
+  const app = createResourceApp({ origin: options.origin, runner, timeoutMs,
+    checkRequest: () => requestBudgets.getStore()?.check(),
+    resources: async (input, signal) => {
+      requestBudgets.getStore()?.check();
+      const resources = await options.resources?.(input, signal) ?? {};
+      requestBudgets.getStore()?.check(); return resources;
+    },
+  });
   return {
     async fetch(request: Request): Promise<Response> {
-      const url = new URL(request.url);
-      if (request.method === "GET" && url.origin === new URL(options.origin).origin && url.pathname === "/operations/readiness") {
-        return Response.json({ mode: enabled ? "request-gated" : "local-only", azure: "not-verified",
-          authorization: enabled ? "required-per-request" : "disabled", photos: binding && enabled ? "server-bound" : "reference-only",
-          resources: options.resources ? "server-bound-unverified" : "unavailable", liveAzureVerified: false }, { headers: { "cache-control": "no-store" } });
-      }
-      if (!enabled || !options.photoStore) return app.fetch(request);
-      let identity: string | null;
-      const controller = new AbortController(); let timer: ReturnType<typeof setTimeout> | undefined;
-      let rejectAbort: () => void = () => {};
-      const cancelled = new Promise<never>((_resolve, reject) => { rejectAbort = () => { controller.abort(); reject(new Error("cancelled")); }; });
-      request.signal.addEventListener("abort", rejectAbort, { once: true });
+      const budget = requestDeadline(clock, clock.now() + timeoutMs, request.signal); active.add(budget);
       try {
-        if (request.signal.aborted) rejectAbort();
-        identity = await Promise.race([cancelled, options.actorForRequest!(request, controller.signal), new Promise<never>((_resolve, reject) => {
-          timer = setTimeout(() => { controller.abort(); reject(new Error("authentication-timeout")); }, timeoutMs);
-        })]);
-      } catch { return new Response("Authentication unavailable", { status: request.signal.aborted ? 408 : 503 }); }
-      finally { clearTimeout(timer); request.signal.removeEventListener("abort", rejectAbort); }
-      if (!identity) return new Response("Authentication required", { status: 403 });
-      return actors.run(identity, () => app.fetch(request));
+        if (disposed) budget.stop("cancelled"); budget.check();
+        // Forward the same body stream; cloning a Request may tee it and leave the
+        // original branch alive when O4 cancels its reader (notably on Bun).
+        const forwarded = new Request(request.url, { method: request.method, headers: request.headers,
+          body: request.body, signal: budget.signal, duplex: "half" } as RequestInit & { duplex: "half" });
+        const work = async () => {
+          budget.check(); const url = new URL(forwarded.url);
+          if (forwarded.method === "GET" && url.origin === new URL(options.origin).origin && url.pathname === "/operations/readiness") {
+            return Response.json({ mode: enabled ? "request-gated" : "local-only", azure: "not-verified",
+              authorization: enabled ? "required-per-request" : "disabled", photos: binding && enabled ? "server-bound" : "reference-only",
+              resources: options.resources ? "server-bound-unverified" : "unavailable", liveAzureVerified: false }, { headers: { "cache-control": "no-store" } });
+          }
+          if (!enabled || !options.photoStore) return app.fetch(forwarded);
+          let identity: string | null;
+          try { identity = await options.actorForRequest!(forwarded, budget.signal); }
+          catch { budget.check(); return new Response("Authentication unavailable", { status: 503 }); }
+          budget.check();
+          if (!identity) return new Response("Authentication required", { status: 403 });
+          return actors.run(identity, () => app.fetch(forwarded));
+        };
+        const response = await requestBudgets.run(budget, () => Promise.race([budget.interrupted, work()]));
+        budget.check(); return response;
+      } catch (error) {
+        const failure = budget.failure ?? (error instanceof SessionFailure ? error : undefined);
+        return new Response(failure?.code === "timeout" ? "Request deadline exceeded" : failure?.code === "cancelled" ? "Request cancelled" : "Execution failed",
+          { status: failure?.code === "timeout" ? 504 : failure?.code === "cancelled" ? 408 : 502, headers: { "cache-control": "no-store" } });
+      } finally { budget.close(); active.delete(budget); }
     },
-    dispose: app.dispose,
+    dispose() { disposed = true; for (const budget of active) budget.stop("cancelled"); app.dispose(); },
   };
 }
 export interface DispatchRequest {
@@ -86,7 +139,7 @@ export interface OperationalAudit {
   readonly at: string;
   readonly elapsedMs: number;
   readonly outcome?: "success" | SessionFailureCode;
-  readonly requests: readonly { readonly attempt: number; readonly approvalId: string; readonly status: number | null; readonly requestId: string | null }[];
+  readonly requests: readonly { readonly attempt: number; readonly approvalId: string; readonly transportStarted: boolean; readonly status: number | null; readonly requestId: string | null }[];
   /** null means unavailable, including interrupted/failed calls; it never means zero cost. */
   readonly usage: Readonly<Record<"input" | "output" | "cacheRead" | "cacheWrite" | "total", number>> | null;
   /** Hashes of actual outbound image bytes; never raw refs, URLs or image content. */
@@ -136,24 +189,22 @@ export function createOperationalRunner(options: OperationalRunnerOptions, open:
   return async (input, signal, resources) => {
     const parsed = parseCaseInput(input);
     if (!parsed.ok) throw new SessionFailure("provider");
-    const facts = parsed.value, runId = randomUUID(), caseRevision = revision(facts), started = Date.now();
-    const controller = new AbortController();
-    const requests: { attempt: number; approvalId: string; status: number | null; requestId: string | null }[] = [];
+    const parent = requestBudgets.getStore(), clock = parent?.clock ?? monotonicClock;
+    const facts = parsed.value, runId = randomUUID(), caseRevision = revision(facts), started = clock.now();
+    const end = parent?.end ?? started + options.timeoutMs;
+    // Reserve terminal audit time WITHIN the existing deadline, never after a fresh timeout.
+    const reserve = Math.min(1000, Math.max(0, end - started) * 0.1);
+    const work = requestDeadline(clock, Math.min(started + options.timeoutMs, end - reserve), signal,
+      () => parent?.failure?.code === "timeout" ? "timeout" : "cancelled");
+    const controller = { signal: work.signal };
+    const requests: { attempt: number; approvalId: string; transportStarted: boolean; status: number | null; requestId: string | null }[] = [];
     const resolved: { photoRef: string; sha256: string; mimeType: "image/png" | "image/jpeg" }[] = [];
     let sentImages: OperationalAudit["images"] = [];
     let usage: OperationalAudit["usage"] = null, outcome: NonNullable<OperationalAudit["outcome"]> = "provider";
-    let stop: SessionFailure | undefined, dispatchFailure: SessionFailure | undefined;
-    let rejectStop: (error: SessionFailure) => void = () => {};
-    const interrupted = new Promise<never>((_resolve, reject) => { rejectStop = reject; });
-    const abort = (code: "cancelled" | "timeout") => {
-      if (stop) return; stop = new SessionFailure(code); rejectStop(stop); controller.abort(stop);
-    };
-    const cancel = () => abort("cancelled");
-    signal.addEventListener("abort", cancel, { once: true });
-    const timer = setTimeout(() => abort("timeout"), options.timeoutMs);
-    const check = () => { if (stop) throw stop; };
+    let dispatchFailure: SessionFailure | undefined;
+    const check = () => { parent?.check(); work.check(); };
     const event = (phase: OperationalAudit["phase"]): OperationalAudit => ({ phase, runId, caseRevision,
-      at: new Date().toISOString(), elapsedMs: Math.max(0, Date.now() - started), ...(phase === "finish" ? { outcome } : {}),
+      at: new Date().toISOString(), elapsedMs: Math.max(0, clock.now() - started), ...(phase === "finish" ? { outcome } : {}),
       requests: structuredClone(requests), images: structuredClone(sentImages), usage });
     const photos: PhotoResolver = async (request, imageSignal) => {
       const photo = await options.photos!.resolve(request, imageSignal);
@@ -166,6 +217,7 @@ export function createOperationalRunner(options: OperationalRunnerOptions, open:
       return { data: bytes, mimeType, sha256, caseId, caseRevision: photoRevision, photoRef, approvedForModel };
     };
     const run = async () => {
+      check();
       await options.record(event("start"), controller.signal); check();
       if (options.enabled !== true) throw new SessionFailure("not-configured");
       const config = checkedConfiguration(await options.configuration(controller.signal)); check();
@@ -182,7 +234,7 @@ export function createOperationalRunner(options: OperationalRunnerOptions, open:
             deployment: config.deployment, modelId: config.modelId, attempt, maxOutputTokens: options.maxOutputTokens }, controller.signal);
           check();
           if (!permit || !isId(permit.approvalId) || !Number.isSafeInteger(permit.expiresAt) || permit.expiresAt <= Date.now()) throw new SessionFailure("not-configured");
-          const row = { attempt, approvalId: permit.approvalId, status: null as number | null, requestId: null as string | null };
+          const row = { attempt, approvalId: permit.approvalId, transportStarted: false, status: null as number | null, requestId: null as string | null };
           requests.push(row);
           await options.record(event("dispatch"), controller.signal); check();
           if (facts.photoRefs.length) {
@@ -207,6 +259,7 @@ export function createOperationalRunner(options: OperationalRunnerOptions, open:
           check();
           if (permit.expiresAt <= Date.now()) throw new SessionFailure("not-configured");
           sentImages = resolved.map((image) => ({ photoRefSha256: sha(image.photoRef), sha256: image.sha256, mimeType: image.mimeType }));
+          row.transportStarted = true; // Invocation evidence, not proof of provider processing or billing.
           const response = await (options.transport ?? fetch)(request, { ...init, signal: controller.signal, redirect: "error" });
           row.status = response.status;
           const id = response.headers.get("x-request-id") ?? response.headers.get("apim-request-id");
@@ -225,21 +278,24 @@ export function createOperationalRunner(options: OperationalRunnerOptions, open:
       catch (error) { throw dispatchFailure ?? error; }
     };
     try {
-      if (signal.aborted) cancel();
-      const result = await Promise.race([interrupted, run()]); check();
+      const result = await Promise.race([work.interrupted, run()]); check();
       usage = usageOf(result.execution?.usage); outcome = "success"; return result;
     } catch (error) {
-      const failure = stop ?? (error instanceof SessionFailure ? error : new SessionFailure("provider"));
+      const failure = parent?.failure ?? work.failure ?? (error instanceof SessionFailure ? error : new SessionFailure("provider"));
       outcome = failure.code; throw failure;
     } finally {
-      clearTimeout(timer); signal.removeEventListener("abort", cancel);
+      work.close(); // Also blocks late continuations of callbacks which ignored their AbortSignal.
       // Never log raw cases, images, credentials, URLs or exception/provider bodies.
-      const auditController = new AbortController(); let auditTimer: ReturnType<typeof setTimeout> | undefined;
+      const auditController = new AbortController(); let clearAudit = () => {};
       try {
-        await Promise.race([options.record(event("finish"), auditController.signal), new Promise<never>((_resolve, reject) => {
-          auditTimer = setTimeout(() => { auditController.abort(); reject(new SessionFailure("provider")); }, Math.min(options.timeoutMs, 1000));
-        })]);
-      } catch { throw new SessionFailure("provider"); } finally { clearTimeout(auditTimer); }
+        const remaining = Math.max(0, Math.min(end - clock.now(), 1000));
+        const expired = new Promise<never>((_resolve, reject) => {
+          const stopAudit = () => { auditController.abort(); reject(new SessionFailure("provider")); };
+          if (!remaining) stopAudit(); else clearAudit = clock.schedule(stopAudit, remaining);
+        });
+        await Promise.race([expired, options.record(event("finish"), auditController.signal)]);
+        if (clock.now() >= end) throw new SessionFailure("provider");
+      } catch { throw new SessionFailure("provider"); } finally { clearAudit(); auditController.abort(); }
     }
   };
 }

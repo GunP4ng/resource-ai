@@ -283,9 +283,25 @@ test("authentication lookup honors request cancellation and the app deadline", a
       if (cancel) controller.abort();
       try {
         const result = await Promise.race([pending, new Promise<never>((_resolve, reject) => { timer = setTimeout(() => reject(new Error("auth-hung")), 200); })]);
-        assert.equal(result.status, cancel ? 408 : 503);
+        // Exhausting the whole request budget is 504; an actual auth service error remains 503.
+        assert.equal(result.status, cancel ? 408 : 504);
       } finally { clearTimeout(timer); }
     }
     assert.equal(f.calls(), 0);
   } finally { app.dispose(); await rm(root, { recursive: true, force: true }); }
+});
+
+test("terminal audit failure after transport is not reported as success and preserves the previous report", async () => {
+  const f = fixture(); let failAudit = false, sent = 0;
+  const app = createOperationalApp({ origin, operations: { ...f.options,
+    transport: async () => { sent++; return new Response("", { headers: { "x-request-id": "synthetic-sent" } }); },
+    record: async (event) => { if (event.phase === "finish" && failAudit) throw new Error("PRIVATE audit storage failure"); await f.options.record(event); },
+  } }, syntheticOpen);
+  try {
+    const b = await browser(app), first = await b.post("/cases", submission); assert.equal(first.status, 303);
+    const path = first.headers.get("location")!, before = await (await b.get(path)).text(); failAudit = true;
+    const response = await b.post(path + "/answers", { massKg: 999 });
+    assert.equal(response.status, 502); assert.equal((await response.text()).includes("PRIVATE"), false);
+    assert.equal(sent, 2); assert.equal(await (await b.get(path)).text(), before);
+  } finally { app.dispose(); }
 });

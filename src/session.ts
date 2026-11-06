@@ -161,7 +161,7 @@ async function boundedRun(runner: CaseRunner, input: CaseInput, signal: AbortSig
 }
 
 /** H-owned O4 adapter. The HTTP layer must authenticate/authorize caseId before answer(). */
-export function createAssessmentAdapter(options: { readonly runner?: CaseRunner; readonly resources?: ResourceProvider; readonly timeoutMs?: number; readonly ttlMs?: number; readonly maxCases?: number; readonly now?: () => number } = {}): AssessmentAdapter & {
+export function createAssessmentAdapter(options: { readonly runner?: CaseRunner; readonly resources?: ResourceProvider; readonly timeoutMs?: number; readonly ttlMs?: number; readonly maxCases?: number; readonly now?: () => number; readonly checkRequest?: () => void } = {}): AssessmentAdapter & {
   submitForm(raw: unknown, signal: AbortSignal): Promise<AssessmentEnvelope>; dispose(): void;
 } {
   const timeoutMs = options.timeoutMs ?? 30_000, ttlMs = options.ttlMs ?? 1_800_000, maxCases = options.maxCases ?? 100;
@@ -200,6 +200,7 @@ export function createAssessmentAdapter(options: { readonly runner?: CaseRunner;
     try {
       const output = await evaluate(input, signal);
       if (disposed || signal.aborted) throw new SessionFailure("cancelled");
+      options.checkRequest?.(); // Host deadline guard immediately before committing a case revision.
       cases.set(input.caseId, { input, expires: now() + ttlMs, busy: false });
       return output;
     } finally { pending--; }
@@ -216,6 +217,7 @@ export function createAssessmentAdapter(options: { readonly runner?: CaseRunner;
       try {
         const output = await evaluate(input, signal);
         if (disposed || signal.aborted) throw new SessionFailure("cancelled");
+        options.checkRequest?.();
         cases.set(caseId, { input, expires: now() + ttlMs, busy: false });
         return output;
       } finally { entry.busy = false; }
@@ -225,7 +227,7 @@ export function createAssessmentAdapter(options: { readonly runner?: CaseRunner;
 }
 
 /** H-owned application composition; O4's existing renderer/HTTP module stays unchanged. */
-export function createResourceApp(options: { readonly origin: string; readonly runner?: CaseRunner; readonly resources?: ResourceProvider; readonly timeoutMs?: number }) {
+export function createResourceApp(options: { readonly origin: string; readonly runner?: CaseRunner; readonly resources?: ResourceProvider; readonly timeoutMs?: number; readonly checkRequest?: () => void }) {
   const adapter = createAssessmentAdapter(options);
   // O's adapter receives parsed values without the request's content type. Carry that
   // server-owned distinction per async request without changing O's interface or state.
