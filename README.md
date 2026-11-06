@@ -3,8 +3,8 @@
 중소 제조업체 환경 담당자를 위한 **근거 기반 폐플라스틱 의사결정 지원** 설계와 구현 시작 골격.
 AXR AI Bootcamp Innovation Challenger 2026 Microsoft 주제를 대상으로 한다.
 
-**현재 상태: 설계 + 검증된 senpi 등록 골격. 실제 제품 기능은 아직 구현하지 않았다.**
-사진 분류, 규정 판정, 업체 매칭, 비용/탄소 계산, 웹 앱과 Azure 실호출은 팀원의 구현 작업이다.
+**현재 상태: 로컬 사례·답변·보고서 앱과 도메인 검증이 구현되어 있다. 운영 인증·검토 자료·실제 제공자 검증은 별도 인수 대상이다.**
+O4는 신뢰된 서버 인증을 주입하면 사례 소유권과 비공개 사진 저장·미리보기·철회를 제공한다. 기본 launcher는 익명 텍스트 앱이며 사진 모델 전송을 활성화하지 않는다.
 
 ## 추천 구조
 
@@ -32,7 +32,7 @@ smoke는 소스와 빌드된 extension을 **실제 senpi loader**로 열고, SDK
 
 ## 앱의 구독 모델 runner
 
-`bun run app`은 기본으로 `chatgpt-subscription` / `gpt-5.5`를 사용한다.
+`bun run app`은 기본으로 `chatgpt-subscription` / `gpt-6-sol`을 사용한다.
 기존 senpi 로그인 `auth.json`을 SDK가 읽으며 Azure 환경변수는 필요하지 않다.
 로그인은 senpi에서 먼저 완료한다. 앱은 로그인 화면을 띄우거나 비밀값을 입력받지 않는다.
 `RESOURCE_AUTH_PATH`로 서버가 소유한 auth.json 경로를 지정할 수 있고,
@@ -46,6 +46,12 @@ smoke는 소스와 빌드된 extension을 **실제 senpi loader**로 열고, SDK
 공유 운영 배포의 요청별 승인/감사·사진 동의·운영 자료 공급은 별도 인수 대상이며
 이 loopback launcher가 그 통합 완료를 의미하지 않는다.
 테스트는 합성 OAuth와 주입 HTTP/SSE만 사용하며 실제 유료 요청을 보내지 않는다.
+
+O4 인증·사진 통합 API와 제한은 [O 인수 문서](docs/o-handoff.md#o4-application-transaction-and-photo-boundary-2026-11-06)에 있다.
+PR27 사진 모델 동의는 [H 실행 범위 authority](docs/photo-execution-scope.md)의 서버 발급 ticket에 묶인다. 운영 매핑은 기본 제공하지 않으며 `photoPolicy.guardedModel` 문구만으로 사진 전송을 허용하지 않는다. 구독 사진 전송은 계속 비활성 상태다.
+네이티브 입력 폼은 사진 없이 사례를 먼저 만들며, 생략된 `photoRefs`는 H의 폼 변환에서 `[]`로 정규화한다. JSON 제출은 여전히 `photoRefs` 배열을 명시해야 한다.
+데스크톱/모바일 담당자는 `bun qa-o4.ts`로 `http://localhost:3001`의 **합성 QA 전용** 앱을 실행할 수 있다.
+이 harness는 고정 가짜 인증과 worktree의 `.qa-o4-photos` 저장소를 사용하며 모델을 호출하지 않는다. 운영 배포에 사용하지 않는다.
 
 ## 읽는 순서
 

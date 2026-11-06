@@ -16,6 +16,8 @@ import { revision } from "../src/o-validation.ts";
 import { createHash } from "node:crypto";
 import { prepareCaseRecord, createBundledSnapshotReader } from "../src/case-record.ts";
 import type { CaseInput } from "../src/contracts.ts";
+import { createCaseStore } from "../src/o-case-store.ts";
+import { createPhotoExecutionAuthority } from "../src/photo-execution.ts";
 
 // All credentials, approval records and provider responses are synthetic. No network.
 const input = { ...syntheticCase, description: "PRIVATE description" };
@@ -24,13 +26,16 @@ const config = { endpoint: "https://synthetic.openai.azure.com", deployment: "sy
 const live = () => new AbortController().signal;
 const failure = (code: string) => (error: unknown) => error instanceof SessionFailure && error.code === code;
 function fixture() {
+  const photoExecution = createPhotoExecutionAuthority();
+  photoExecution.publish(config, [{ target: config, scope: { provider: "synthetic provider", purpose: "synthetic purpose" } }]);
   const records: OperationalAudit[] = []; let calls = 0, authorizations = 0;
   const options: OperationalRunnerOptions = { enabled: true, timeoutMs: 10_000, maxTurns: 2, maxOutputTokens: 100,
+    photoExecution,
     configuration: async () => config,
     authorizeDispatch: async (request) => { authorizations++; assert.equal(request.maxOutputTokens, 100); return { approvalId: "synthetic-approval", expiresAt: Date.now() + 5000 }; },
     record: async (event) => { records.push(structuredClone(event)); },
     transport: async (_url, init) => { calls++; assert.equal(init?.redirect, "error"); return new Response("PRIVATE provider body", { status: 401, headers: { "x-request-id": "synthetic-request" } }); } };
-  return { options, records, calls: () => calls, authorizations: () => authorizations };
+  return { options, photoExecution, ticket: photoExecution.current()!, records, calls: () => calls, authorizations: () => authorizations };
 }
 const syntheticOpen: typeof openCaseSession = async (facts, options) => {
   const owned = await openCaseSession(facts, options);
@@ -43,7 +48,7 @@ const syntheticOpen: typeof openCaseSession = async (facts, options) => {
       try {
         const content = _context.messages.flatMap((message) => Array.isArray(message.content) ? message.content.flatMap((part) =>
           part.type === "image" ? [{ type: "input_image", image_url: `data:${part.mimeType};base64,${part.data}` }] : []) : []);
-        const response = await settings!.fetch!("https://synthetic.openai.azure.com/openai/v1/responses", { method: "POST", body: JSON.stringify({ input: [{ content }] }) });
+        const response = await settings!.fetch!("https://synthetic.openai.azure.com/openai/v1/responses?api-version=v1", { method: "POST", body: JSON.stringify({ model: config.deployment, input: [{ content }] }) });
         await settings?.onResponse?.({ status: response.status, headers: { "x-request-id": "synthetic-request" } }, model);
         stream.push({ type: "done", reason: "stop", message });
       } catch {
@@ -129,20 +134,24 @@ test("failed durable start/dispatch writes prevent HTTP requests", async () => {
 });
 
 test("real photo store hands sanitized pixels to the SDK and blocks revocation just before dispatch", async () => {
+  const f = fixture();
   const root = await mkdtemp(join(tmpdir(), "resource-h-dispatch-"));
   const photon = createRequire(import.meta.resolve("@code-yeongyu/senpi"))("@silvia-odwyer/photon-node") as typeof import("@silvia-odwyer/photon-node");
   const generated = new photon.PhotonImage(new Uint8Array([255,0,0,255]), 1, 1);
   let current = input;
   try {
-    const store = await createPhotoStore({ root, retentionMs: 60_000, maxPhotos: 3,
+    const store = await createPhotoStore({ root, photoExecution: f.photoExecution, retentionMs: 60_000, maxPhotos: 3,
       authorize: async () => ({ ownerId: "owner", caseRevision: revision(current), read: true, sendToModel: true }) });
     const receipt = await store.put("owner", input.caseId, generated.get_bytes_jpeg(90), "image/jpeg",
-      { recordId: "synthetic-consent", store: true, model: true, visibleContentReviewed: true, expiresAt: Date.now() + 60_000 }, live());
+      { recordId: "synthetic-consent", store: true, model: true, modelScope: f.ticket.scope, modelBindingId: f.ticket.bindingId, visibleContentReviewed: true, expiresAt: Date.now() + 60_000 }, live());
     current = { ...input, photoRefs: [receipt.photoRef] };
-    const expected = await store.resolver("owner")({ caseId: current.caseId, caseRevision: revision(current), photoRef: receipt.photoRef }, live());
-    const f = fixture(); let calls = 0;
-    const photos = { resolve: store.resolver("owner"), assertCanTransmit: (value: typeof input, signal: AbortSignal) => store.assertCanTransmit("owner", value, signal) };
+    const expected = await store.resolver("owner", f.ticket)({ caseId: current.caseId, caseRevision: revision(current), photoRef: receipt.photoRef }, live());
+    let calls = 0;
+    const photos = { resolve: store.resolver("owner", f.ticket), assertCanTransmit: (value: typeof input, signal: AbortSignal) => store.assertCanTransmit("owner", value, signal, undefined, f.ticket) };
     const runner = createOperationalRunner({ ...f.options, photos, transport: async (_url, init) => {
+      const url = new URL(String(_url));
+      assert.equal(url.pathname, "/openai/v1/responses"); assert.equal(url.search, "?api-version=v1");
+      assert.equal(JSON.parse(String(init?.body)).model, config.deployment);
       calls++; const body = String(init?.body);
       assert.ok(body.includes(`data:image/png;base64,${Buffer.from(expected!.data).toString("base64")}`));
       assert.equal(body.includes("data:image/jpeg"), false);
@@ -153,7 +162,7 @@ test("real photo store hands sanitized pixels to the SDK and blocks revocation j
     const substituted = createOperationalRunner({ ...f.options, photos }, async (value, settings) => {
       const owned = await syntheticOpen(value, settings), original = owned.session.agent.streamFunction;
       owned.session.agent.streamFunction = (model, context, config) => original(model, context, { ...config,
-        fetch: (url, init) => config!.fetch!(url, { ...init, body: JSON.stringify({ input: [] }) }) });
+        fetch: (url, init) => config!.fetch!(url, { ...init, body: JSON.stringify({ model: "synthetic-deployment", input: [] }) }) });
       return owned;
     });
     await assert.rejects(substituted(current, live()), failure("provider")); assert.equal(f.calls(), 0);
@@ -182,6 +191,121 @@ test("a stalled terminal audit sink cannot defeat the operation deadline", async
     const bounded = Promise.race([runner(input, live()), new Promise<never>((_resolve, reject) => { timer = setTimeout(() => reject(new Error("audit-hung")), 300); })]);
     await assert.rejects(bounded, failure("provider")); assert.equal(f.calls(), 0);
   } finally { clearTimeout(timer); }
+});
+
+function scopedRunFixture() {
+  const f = fixture(), facts = { ...input, photoRefs: ["synthetic-photo"] };
+  const photon = createRequire(import.meta.resolve("@code-yeongyu/senpi"))("@silvia-odwyer/photon-node") as typeof import("@silvia-odwyer/photon-node");
+  const image = new photon.PhotonImage(new Uint8Array([255, 0, 0, 255]), 1, 1);
+  const data = Buffer.from(image.get_bytes()); image.free();
+  const sha256 = createHash("sha256").update(data).digest("hex");
+  const photos: NonNullable<OperationalRunnerOptions["photos"]> = {
+    resolve: async (request, _signal, ticket) => {
+      assert.equal(ticket, f.ticket); f.photoExecution.assertCurrent(ticket!);
+      return { ...request, approvedForModel: true, data, mimeType: "image/png", sha256 };
+    },
+    assertCanTransmit: async (_facts, _signal, _expected, ticket) => { assert.equal(ticket, f.ticket); f.photoExecution.assertCurrent(ticket!); },
+  };
+  const change = () => f.photoExecution.publish({ ...config, deployment: "synthetic-b" }, [{ target: { ...config, deployment: "synthetic-b" }, scope: f.ticket.scope }]);
+  const options = { ...f.options, photos, configuration: async () => { throw new Error("independent configuration must never run for photos"); } };
+  return { ...f, facts, photos, options, change };
+}
+
+test("issued scope reaches guarded dispatch using only authority configuration; actual installed SDK serialization succeeds", async () => {
+  const f = scopedRunFixture(); let calls = 0;
+  const result = await createOperationalRunner({ ...f.options, transport: async (request, init) => {
+    calls++;
+    const url = new URL(String(request)), body = JSON.parse(String(init?.body));
+    assert.equal(url.href, "https://synthetic.openai.azure.com/openai/v1/responses?api-version=v1");
+    assert.equal(body.model, config.deployment);
+    assert.ok(JSON.stringify(body.input).includes("data:image/png;base64,"));
+    const text = JSON.stringify(decideCase(f.facts));
+    const item = { id: "synthetic-message", type: "message", role: "assistant", status: "completed", content: [{ type: "output_text", text, annotations: [] }] };
+    const events = [
+      { type: "response.created", response: { id: "synthetic-response" } },
+      { type: "response.output_item.added", output_index: 0, item: { ...item, content: [] } },
+      { type: "response.output_text.delta", output_index: 0, content_index: 0, delta: text },
+      { type: "response.output_item.done", output_index: 0, item },
+      { type: "response.completed", response: { id: "synthetic-response", status: "completed", output: [item], usage: { input_tokens: 10, output_tokens: 20, total_tokens: 30 } } },
+    ];
+    return new Response(events.map(event => `event: ${event.type}\ndata: ${JSON.stringify(event)}\n\n`).join(""), { headers: { "content-type": "text/event-stream", "x-request-id": "synthetic-sdk" } });
+  } })(f.facts, live());
+  assert.equal(calls, 1); assert.deepEqual(result.proposal, decideCase(f.facts));
+});
+
+test("authority changes during authorization, audit or final async photo checks prevent transport", async () => {
+  for (const phase of ["authorization", "audit", "photo", "aba"] as const) {
+    const f = scopedRunFixture();
+    const runner = createOperationalRunner({ ...f.options,
+      authorizeDispatch: async (...args) => {
+        const permit = await f.options.authorizeDispatch(...args);
+        if (phase === "authorization" || phase === "aba") {
+          f.change();
+          if (phase === "aba") f.photoExecution.publish(config, [{ target: config, scope: f.ticket.scope }]);
+        }
+        return permit;
+      },
+      record: async (...args) => { await f.options.record(...args); if (phase === "audit" && args[0].phase === "dispatch") f.change(); },
+      photos: { ...f.photos, assertCanTransmit: async (...args) => {
+        await f.photos.assertCanTransmit(...args); if (phase === "photo") f.change();
+      } },
+    }, syntheticOpen);
+    await assert.rejects(runner(f.facts, live()), failure("provider"));
+    assert.equal(f.calls(), 0);
+    assert.equal(f.authorizations(), 1);
+    assert.equal(f.records.at(-1)?.requests.some(request => request.transportStarted), false);
+  }
+});
+
+test("no or ambiguous scope mapping refuses photo runs before resolution/configuration/dispatch", async () => {
+  for (const ambiguous of [false, true]) {
+    const f = scopedRunFixture(), row = { target: config, scope: f.ticket.scope };
+    f.photoExecution.publish(config, ambiguous ? [row, row] : []);
+    let resolved = false;
+    const runner = createOperationalRunner({ ...f.options, photos: { ...f.photos, resolve: async () => { resolved = true; return null; } } }, syntheticOpen);
+    await assert.rejects(runner(f.facts, live()), failure("not-configured"));
+    assert.equal(resolved, false); assert.equal(f.authorizations(), 0); assert.equal(f.calls(), 0);
+  }
+});
+
+test("forged/different-authority tickets and same-origin wrong deployment/path/version fail before outbound calls", async () => {
+  for (const mismatch of ["forged", "authority", "deployment", "path", "version"] as const) {
+    const f = scopedRunFixture();
+    const other = fixture();
+    const open: typeof openCaseSession = async (facts, settings) => {
+      const owned = await syntheticOpen(facts, settings), original = owned.session.agent.streamFunction;
+      owned.session.agent.streamFunction = (model, context, config) => original(model, context, { ...config, fetch: (url, init) => {
+        const actual = new URL(String(url));
+        if (mismatch === "path") actual.pathname = "/openai/v1/deployments/wrong/responses";
+        if (mismatch === "version") actual.searchParams.set("api-version", "wrong");
+        const body = JSON.parse(String(init?.body)); if (mismatch === "deployment") body.model = "wrong";
+        return config!.fetch!(actual.href, { ...init, body: JSON.stringify(body) });
+      } });
+      return owned;
+    };
+    const runner = createOperationalRunner({ ...f.options, photoTicket: () => mismatch === "forged" ? { ...f.ticket } : mismatch === "authority" ? other.ticket : f.ticket }, open);
+    await assert.rejects(runner(f.facts, live())); assert.equal(f.calls(), 0);
+  }
+});
+
+test("change after one dispatched request prevents the next dispatch and stale successful result", async () => {
+  for (const phase of ["next-dispatch", "finish"] as const) {
+    const f = scopedRunFixture(); let calls = 0;
+    const open: typeof openCaseSession = async (facts, settings) => {
+      const owned = await syntheticOpen(facts, settings), original = owned.session.agent.streamFunction;
+      owned.session.agent.streamFunction = (model, context, config) => original(model, context, { ...config, fetch: async (...args) => {
+        const response = await config!.fetch!(...args);
+        return phase === "next-dispatch" ? config!.fetch!(...args) : response;
+      } });
+      return owned;
+    };
+    const runner = createOperationalRunner({ ...f.options,
+      transport: async () => { calls++; if (phase === "next-dispatch") f.change(); return new Response(""); },
+      record: async (...args) => { await f.options.record(...args); if (phase === "finish" && args[0].phase === "finish") f.change(); },
+    }, open);
+    await assert.rejects(runner(f.facts, live()), failure("provider"));
+    assert.equal(calls, 1); assert.equal(f.records.at(-1)?.requests.filter(request => request.transportStarted).length, 1);
+  }
 });
 
 const origin = "http://localhost";
@@ -238,24 +362,30 @@ test("authenticated app submit/answer uses the photo store, preserves SHA and re
   const photon = createRequire(import.meta.resolve("@code-yeongyu/senpi"))("@silvia-odwyer/photon-node") as typeof import("@silvia-odwyer/photon-node");
   const image = new photon.PhotonImage(new Uint8Array([255,0,0,255]),1,1), f = fixture(); let current: CaseInput | undefined;
   const captured: Awaited<ReturnType<typeof prepareCaseRecord>>[] = [];
-  const store = await createPhotoStore({ root, retentionMs: 60_000, maxPhotos: 2,
-    authorize: async (actor, caseId) => current?.caseId === caseId && actor === "authenticated-owner"
-      ? { ownerId: actor, caseRevision: revision(current), read: true, sendToModel: true } : null });
+  const cases = createCaseStore(Date.now, f.photoExecution);
+  const store = await createPhotoStore({ root, photoExecution: f.photoExecution, retentionMs: 60_000, maxPhotos: 2,
+    authorize: cases.authorize });
+  let identity = "authenticated-owner";
   const app = createOperationalApp({ origin, operations: { ...f.options, transport: async () => new Response("", { headers: { "x-request-id": "synthetic-app" } }) },
-    photoStore: store, actorForRequest: async () => "authenticated-owner",
+    caseStore: cases, photoStore: store, actorForRequest: async () => identity,
+    photoPolicy: { retentionMs: 60_000, guardedModel: { provider: "synthetic Azure", purpose: "synthetic test" } },
     resources: async (value, signal) => {
       current = value;
       captured.push(await prepareCaseRecord(value, { dataOrigin: { kind: "synthetic", reference: "HTTP fixture; no field data or Azure call" },
-        codeRevision: "497fdb0144ddcbb36fd0974d616dfdb78e435750", signal, sources: createBundledSnapshotReader(process.cwd()), photos: store.resolver("authenticated-owner") }));
+        codeRevision: "497fdb0144ddcbb36fd0974d616dfdb78e435750", signal, sources: createBundledSnapshotReader(process.cwd()), photos: value.photoRefs.length ? store.resolver("authenticated-owner", cases.currentPhotoTicket()) : undefined }));
       return {};
     } }, syntheticOpen);
   try {
     const b = await browser(app), first = await b.post("/cases", submission); assert.equal(first.status, 303);
     const path = first.headers.get("location")!; assert.ok(current);
-    const photo = await store.put("authenticated-owner", current.caseId, image.get_bytes(), "image/png",
-      { recordId: "synthetic-consent", store: true, model: true, visibleContentReviewed: true, expiresAt: Date.now() + 60_000 }, live());
+    const upload = new FormData(); upload.set("baseVersion", "1"); upload.set("store", "yes"); upload.set("model", "yes"); upload.set("visible", "yes");
+    upload.set("modelBindingId", f.ticket.bindingId);
+    upload.set("file", new File([new Uint8Array(image.get_bytes())], "synthetic.png", { type: "image/png" }));
+    assert.equal((await app.fetch(new Request(origin + path + "/photos", { method: "POST", headers: { origin }, body: upload }))).status, 303);
+    const photo = cases.read("actor:authenticated-owner", current.caseId)?.photos[0]; assert.ok(photo);
+    let baseVersion = 2;
     for (const patch of [{ photoRefs: [photo.photoRef], process: null, contamination: null }, { process: "압출", contamination: "기름 오염", hazardousContact: "yes" }]) {
-      assert.equal((await b.post(path + "/answers", patch)).status, 303);
+      assert.equal((await b.post(path + "/answers", { baseVersion: baseVersion++, patch })).status, 303);
       assert.equal(captured.at(-1)?.record.images[0]?.sha256, photo.sha256);
       assert.equal(f.records.at(-1)?.images[0]?.sha256, photo.sha256);
       assert.equal(f.records.at(-1)?.outcome, "success");
@@ -265,8 +395,9 @@ test("authenticated app submit/answer uses the photo store, preserves SHA and re
     assert.equal(captured[2]!.record.decision.state, "needs-review");
     const before = await (await b.get(path)).text();
     await store.revoke("authenticated-owner", photo.photoRef, live());
-    assert.equal((await b.post(path + "/answers", { massKg: 1000 })).status, 502);
+    assert.equal((await b.post(path + "/answers", { baseVersion, patch: { massKg: 1000 } })).status, 502);
     assert.equal(await (await b.get(path)).text(), before);
+    identity = "other-owner";
     const other = await browser(app); assert.equal((await other.get(path)).status, 404);
   } finally { app.dispose(); image.free(); await rm(root, { recursive: true, force: true }); }
 });

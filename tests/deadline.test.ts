@@ -113,8 +113,8 @@ test("failed updates preserve the report and case revision even when resources i
     const token = await cookie(app), first = await app.fetch(post(token)); assert.equal(first.status, 303);
     const path = first.headers.get("location")!, committed = revision(current);
     const report = () => app.fetch(new Request(origin + path, { headers: { cookie: token } }));
-    const before = await (await report()).text();
     for (const kind of ["timeout", "cancelled"] as const) {
+      const before = await (await report()).text();
       resource = deferred<{}>(); entered = deferred<AbortSignal>(); delayed = true; const controller = new AbortController();
       const pending = app.fetch(post(token, { massKg: 999 }, path + "/answers", controller.signal)); const signal = await entered.promise;
       if (kind === "timeout") clock.advance(200); else controller.abort();
