@@ -1,0 +1,7 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "types": ["node", "bun"]
+  },
+  "include": ["src/contracts.ts", "src/input.ts", "tests/input.test.ts"]
+}
