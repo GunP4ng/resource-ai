@@ -7,7 +7,7 @@
   "engines": { "node": ">=24.0.0" },
   "packageManager": "bun@1.4.2",
   "scripts": {
-    "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.tests.json",
+    "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.tests.json && tsc --noEmit -p tsconfig.bun-tests.json",
     "build": "bun build src/extension.ts --target=bun --packages=external --outdir=dist",
     "smoke": "bun scripts/smoke.ts",
     "app": "bun scripts/app.ts",
