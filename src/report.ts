@@ -7,6 +7,9 @@ export interface ReportPresentation {
   readonly execution?: { readonly traceId: string; readonly usage: string | null };
   readonly calculationVersion?: string;
   readonly sourceVersion?: string;
+  readonly runtime?: { readonly identity: "anonymous" | "trusted" | "local-operator"; readonly storage: "ephemeral" | "sqlite"; readonly runner: "local" | "subscription" | "azure" | "unspecified" };
+  readonly review?: { readonly hash: string; readonly origin: { readonly kind: "synthetic" | "field"; readonly reference: string }; readonly caseRevision: string } | null;
+  readonly historical?: boolean;
 }
 export function escapeHtml(value: string): string {
   return value.replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char] ?? char);
@@ -47,18 +50,23 @@ th,td{text-align:left;vertical-align:top;padding:.75rem .4rem;border-bottom:1px 
 caption{text-align:left;font-weight:700;padding-block:.75rem}
 small,.muted{color:var(--muted)}
 label{display:block;margin-top:1.25rem}
-input,textarea,select,button{font:inherit;border:1px solid var(--line);border-radius:4px;min-height:44px;padding:.65rem;background:var(--surface);color:var(--ink);caret-color:var(--focus)}
+input,textarea,select,button,.primary-action{font:inherit;border:1px solid var(--line);border-radius:4px;min-height:44px;padding:.65rem;background:var(--surface);color:var(--ink);caret-color:var(--focus)}
 input,textarea,select{width:100%}
 textarea{min-height:8rem;resize:vertical}
-button{background:var(--action);color:var(--on-action);cursor:pointer;margin-top:1.5rem;padding-inline:1.25rem}
-button:hover{filter:brightness(1.12)}
-button:active{filter:brightness(.9)}
+button,.primary-action{background:var(--action);color:var(--on-action);cursor:pointer;margin-top:1.5rem;padding-inline:1.25rem}
+.primary-action{display:inline-flex;align-items:center;justify-content:center;min-width:44px;text-decoration:none}
+.secondary-action{background:var(--surface);color:var(--ink)}
+button:hover,.primary-action:hover{filter:brightness(1.12)}
+button:active,.primary-action:active{filter:brightness(.9)}
 button:disabled{opacity:.6;cursor:wait}
 .notice{padding:1rem;background:var(--surface)}
 dl{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:.75rem}
 dd{margin:0;font-variant-numeric:tabular-nums}
 li{margin-block:.4rem}
 .table-wrap{overflow:auto}
+.case-list{max-width:100%;min-width:0}
+.case-list table{min-width:40rem}
+.case-list th,.case-list td:last-child{white-space:nowrap}
 summary{cursor:pointer;min-height:44px;padding:.5rem 0}
 footer{margin-top:3rem;border-top:1px solid var(--line);padding-top:1rem}
 .print-only{display:none}
@@ -251,10 +259,12 @@ export function renderReport(result: DecisionResult, presentation: ReportPresent
       break;
     }
   }
-  const execution = presentation.mode === "live" && presentation.execution
-    ? `<p>추적 ${escapeHtml(presentation.execution.traceId)} · 사용량 ${escapeHtml(presentation.execution.usage ?? "미제공")}</p>`
+  const execution = presentation.execution
+    ? `<p>실행 추적 ${escapeHtml(presentation.execution.traceId)} · 사용량 ${escapeHtml(presentation.execution.usage ?? "미제공")}</p><p>실행기가 보고한 사용량입니다. 추적 식별자는 제공자 요청 ID를 보증하지 않습니다. 청구 비용 미제공.</p>`
     : presentation.mode === "live" ? "<p>모델 실행 정보 미제공 · Azure 성공 미검증</p>" : "<p>실행 사용량 미제공</p>";
-  return page("조건부 보고서", `<p>${mode}</p><p>사례 ${escapeHtml(result.caseId)}</p>${content}
+  const runtime = presentation.runtime ? `<p>평가 당시: ${escapeHtml(presentation.runtime.identity)} · ${escapeHtml(presentation.runtime.storage)} · 구성된 실행기 ${escapeHtml(presentation.runtime.runner)} (실행 성공과 별개)</p>` : "<p>평가 당시 인증·저장·실행기 설정 미제공</p>";
+  const data = presentation.review ? `<p class="notice">${presentation.review.origin.kind === "synthetic" ? "합성 자료 · 현장 근거 아님" : "현장 자료로 선언된 검토 아티팩트 · 인간·법적 승인 아님"} · review-required</p><p>자료 선언 ${escapeHtml(presentation.review.origin.reference)} · 아티팩트 SHA-256 ${escapeHtml(presentation.review.hash)} · 결합 입력 ${escapeHtml(presentation.review.caseRevision)}</p>` : presentation.mode === "synthetic" ? "<p>합성 입력·계산 예시 · 현장 근거 아님</p>" : "<p>미검토 사용자 입력 · 정확한 입력에 결합된 검토 아티팩트 없음 · 운영 자료 미제공</p>";
+  return page("조건부 보고서", `<p>${mode}</p>${data}${presentation.historical ? '<p class="notice">과거 평가: 현재 입력과 평가 당시 입력이 다릅니다. 명시적으로 다시 평가해 주세요.</p>' : ""}<p>사례 ${escapeHtml(result.caseId)}</p>${content}
     ${evidenceSection(result)}<h2>실행·계산 버전</h2>
-    <p>계산 ${escapeHtml(presentation.calculationVersion ?? "미제공")} · 출처 묶음 ${escapeHtml(presentation.sourceVersion ?? "미제공")}</p>${execution}`);
+    <p>계산 ${escapeHtml(presentation.calculationVersion ?? "미제공")} · 출처 묶음 ${escapeHtml(presentation.sourceVersion ?? "미제공")}</p>${runtime}${execution}<p>사용량은 청구·비용 증빙이 아닙니다.</p>`);
 }

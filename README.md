@@ -55,6 +55,19 @@ PR27 사진 모델 동의는 [H 실행 범위 authority](docs/photo-execution-sc
 
 ## 읽는 순서
 
+로컬 계정·SQLite 보관을 켜는 실행 경로:
+
+```sh
+bun scripts/o-account.ts create --state-dir /absolute/private/resource-state --username operator
+RESOURCE_MODEL_RUNNER=local RESOURCE_APP_AUTH=local-operator RESOURCE_STATE_DIR=/absolute/private/resource-state bun run app
+```
+
+비밀번호는 터미널에서 숨김 입력한다. `http://localhost:3000/login`에서 로그인하고
+`/cases`에서 사례를 복구한다. 사례 화면의 입력 내보내기는 정확한 입력과 revision ETag를
+제공한다. 자료 설치·재평가·패키지 CLI·사진 삭제 및 3분/2분 시연 절차는
+[런타임 통합 문서](docs/o-runtime-integration.md)에 있다. `bun run demo:o`의 HTML은
+핸들러 생성 산출물이며 실제 브라우저 검증이나 영상이 아니다.
+
 1. [대회 근거와 영상 확인](docs/competition-evidence.md)
 2. [대안 비교·권장 아키텍처](docs/architecture.md)
 3. [senpi 실제 API·Azure 구성](docs/senpi-and-azure.md)

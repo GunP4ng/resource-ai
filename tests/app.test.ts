@@ -1,6 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { createApp } from "../src/app.ts";
+import { createCaseStore } from "../src/o-case-store.ts";
 import type { AssessmentAdapter } from "../src/app.ts";
 import type { DecisionResult } from "../src/contracts.ts";
 import { createHash } from "node:crypto";
@@ -18,7 +19,7 @@ import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 const origin = "http://localhost:3000";
 const held = (caseId: string, question = "확인 필요"): DecisionResult => ({ state: "needs-information", caseId, questions: [question], evidence: [] });
-async function session(app: ReturnType<typeof createApp>): Promise<string> {
+async function session(app: (request: Request) => Promise<Response>): Promise<string> {
   const response = await app(new Request(origin));
   assert.equal(response.status, 200);
   assert.equal(response.headers.get("referrer-policy"), "same-origin");
@@ -270,14 +271,14 @@ test("invalid execution envelopes fail closed without storing or exposing metada
 
 const nativeFields = { description: "O4 합성 HTTP 시험", photoRefs: "", process: "사출", polymer: "", contamination: "없음", hazardousContact: "no", massKg: "", region: "울산", assessmentDate: "2026-11-05" };
 const formHeaders = { "content-type": "application/x-www-form-urlencoded" };
-async function submitNative(app: ReturnType<typeof createApp>, cookie: string, fields = nativeFields): Promise<string> {
+async function submitNative(app: (request: Request) => Promise<Response>, cookie: string, fields = nativeFields): Promise<string> {
   const result = await app(post("/cases", cookie, new URLSearchParams(fields).toString(), formHeaders));
   assert.equal(result.status, 303);
   const path = result.headers.get("location");
   assert.ok(path);
   return path;
 }
-async function ownedPage(app: ReturnType<typeof createApp>, cookie: string, path: string): Promise<string> {
+async function ownedPage(app: (request: Request) => Promise<Response>, cookie: string, path: string): Promise<string> {
   const result = await app(new Request(origin + path, { headers: { cookie } }));
   assert.equal(result.status, 200);
   return result.text();
@@ -321,11 +322,13 @@ test("O4 current-date review keeps correction access without bypassing currentne
 });
 
 test("O4 invalid field corrections return safe 400s, preserve the report and allow recovery", async () => {
-  const app = createResourceApp({ origin });
+  const cases = createCaseStore(), app = createResourceApp({ origin, caseStore: cases });
   try {
     const cookie = await session(app.fetch), path = await submitNative(app.fetch, cookie);
+    const owner = `session:${cookie.slice("resource_session=".length)}`, id = path.slice("/cases/".length);
+    const snapshot = cases.read(owner, id); assert.ok(snapshot);
     const before = await ownedPage(app.fetch, cookie, path + "/report");
-    for (const patch of [{ answers: "private-secret<script>" }, { answers: "{" }, {}, [], { massKg: "100" }, { massKg: 0 }, { massKg: -1 }, { assessmentDate: "2026-02-30" }, { caseId: "forged" }, { humanApproval: "approved" }]) {
+    for (const patch of [{ massKg: -1 }, { answers: "private-secret<script>" }, { answers: "{" }, {}, [], { massKg: "100" }, { massKg: 0 }, { assessmentDate: "2026-02-30" }, { caseId: "forged" }, { humanApproval: "approved" }]) {
       const response = await app.fetch(post(path + "/answers", cookie, JSON.stringify(patch)));
       assert.equal(response.status, 400, JSON.stringify(patch));
       const html = await response.text();
@@ -333,12 +336,18 @@ test("O4 invalid field corrections return safe 400s, preserve the report and all
       assert.match(html, /JSON/);
       assert.doesNotMatch(html, /private-secret|<script>|SessionFailure|AssessmentInputError/);
       assert.equal(await ownedPage(app.fetch, cookie, path + "/report"), before);
+      const persisted = cases.read(owner, id); assert.ok(persisted);
+      assert.equal(persisted.version, snapshot.version);
+      assert.deepEqual(persisted.assessment, snapshot.assessment);
+      const destinations = [...html.matchAll(/<a\b[^>]*\bhref="([^"]*)"/g)].map(match => match[1]);
+      assert.ok(destinations.includes(path), `Missing recovery link to ${path}`);
+      assert.ok(destinations.includes("/cases"), "Missing owned-case list recovery link");
     }
     assert.equal((await app.fetch(post(path + "/answers", cookie, '{"polymer":"PP","massKg":100}'))).status, 303);
     assert.match(await ownedPage(app.fetch, cookie, path), /<h1>검토 필요<\/h1>/);
     const forged = await app.fetch(post("/cases", cookie, JSON.stringify({ ...syntheticCase })));
     assert.equal(forged.status, 400);
-  } finally { app.dispose(); }
+  } finally { app.dispose(); await app.close(); cases.dispose(); }
 });
 
 for (const [code, status] of Object.entries({ "case-not-found": 404, "case-busy": 409, cancelled: 408, timeout: 504, capacity: 429, "rate-limit": 429, "not-configured": 503, authentication: 502, provider: 502, "invalid-model-output": 502, "turn-limit": 502 } satisfies Record<SessionFailureCode, number>)) {
