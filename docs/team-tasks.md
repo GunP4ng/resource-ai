@@ -145,7 +145,7 @@ PR #19 검토 당시 앱의 같은 Origin/session `POST /cases`는 실제 HTTP 5
 ### H4 senpi 도구·단일 세션·구독 모델 runner 연결
 
 **2026-11-06 범위 변경:** 기본 실행 공급자는 Azure에서 senpi `chatgpt-subscription`으로 변경한다.
-`createSubscriptionRunner`는 기존 SDK auth.json과 `gpt-5.5` 기본 모델을 사용하며 Azure 환경변수를 요구하지 않는다.
+`createSubscriptionRunner`는 기존 SDK auth.json과 `gpt-6-sol` 기본 모델을 사용하며 Azure 환경변수를 요구하지 않는다.
 launcher 기본값은 `RESOURCE_MODEL_RUNNER=subscription`; `local`은 기존 오프라인 평가,
 `azure`는 기존 Azure 경로의 명시적 선택이다. 미구성 모델/인증은 `not-configured`로 실패한다.
 아래 과거 PR 기록의 local-only/Azure 필수 설명은 당시 검증 기록이다.
