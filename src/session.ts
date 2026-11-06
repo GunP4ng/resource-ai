@@ -272,7 +272,7 @@ export async function openCaseSession(input: CaseInput, options: { readonly prov
     // Subscription credentials belong to the SDK's existing auth store, not the disposable case.
     const authPath = provider === "chatgpt-subscription" ? options.authPath : join(agentDir, "auth.json");
     const modelRuntime = await ModelRuntime.create({ authPath, agentDir, settingsManager, modelsPath: null, allowModelNetwork: false, refreshOnCreate: false });
-    const model = modelRuntime.getModel(provider, options.modelId ?? (provider === "chatgpt-subscription" ? "gpt-5.5" : "gpt-4.1"));
+    const model = modelRuntime.getModel(provider, options.modelId ?? (provider === "chatgpt-subscription" ? "gpt-6-sol" : "gpt-4.1"));
     if (model === undefined) throw new SessionFailure("not-configured");
     const tools = createCaseTools(facts, options.resources);
     const created = await createAgentSession({ cwd, agentDir, authStorage: modelRuntime.authStorage, settingsManager, modelRuntime, model,
@@ -305,7 +305,7 @@ export function createSubscriptionRunner(options: RunnerOptions & { readonly aut
 }
 
 function createModelRunner(provider: "azure-openai-responses" | "chatgpt-subscription", options: RunnerOptions & { readonly authPath?: string }, open: typeof openCaseSession): CaseRunner {
-  const modelId = options.modelId ?? (provider === "chatgpt-subscription" ? "gpt-5.5" : "gpt-4.1"), maxTurns = options.maxTurns ?? 3, maxOutputTokens = options.maxOutputTokens ?? 1500;
+  const modelId = options.modelId ?? (provider === "chatgpt-subscription" ? "gpt-6-sol" : "gpt-4.1"), maxTurns = options.maxTurns ?? 3, maxOutputTokens = options.maxOutputTokens ?? 1500;
   const limits: Required<PhotoLimits> = { maxImages: options.photoLimits?.maxImages ?? 3,
     maxBytesPerImage: options.photoLimits?.maxBytesPerImage ?? 5 * 1024 * 1024, maxTotalBytes: options.photoLimits?.maxTotalBytes ?? 10 * 1024 * 1024 };
   if (!Number.isInteger(maxTurns) || maxTurns < 1 || maxTurns > 10 || !Number.isInteger(maxOutputTokens) || maxOutputTokens < 16 || maxOutputTokens > 8192) throw new RangeError("invalid-model-limits");
