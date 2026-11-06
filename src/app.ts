@@ -17,6 +17,7 @@ import type { createPhotoStore } from "./photos.ts";
 import { PhotoStorageError } from "./photo-codec.ts";
 import { photoForm, PhotoHttpFailure } from "./o-photo-http.ts";
 import { revision } from "./o-validation.ts";
+import { matchesPhotoConsent, type PhotoExecutionAuthority, type PhotoExecutionTicket } from "./photo-execution.ts";
 
 export interface AssessmentEnvelope {
   readonly decision: DecisionResult;
@@ -64,6 +65,7 @@ export interface AppDependencies {
   readonly caseStore?: OCaseStore;
   readonly photoStore?: Awaited<ReturnType<typeof createPhotoStore>>;
   readonly photoPolicy?: { readonly retentionMs: number; readonly guardedModel?: { readonly provider: string; readonly purpose: string } };
+  readonly photoExecution?: PhotoExecutionAuthority;
   readonly checkRequest?: () => void;
   readonly committed?: () => void;
 }
@@ -196,7 +198,7 @@ export function createApp(dependencies: AppDependencies): (request: Request) => 
   const timeoutMs = dependencies.timeoutMs ?? 10000;
   const maxBodyBytes = dependencies.maxBodyBytes ?? 16384;
   const now = dependencies.now ?? Date.now;
-  const caseStore = dependencies.caseStore ?? createCaseStore(now);
+  const caseStore = dependencies.caseStore ?? createCaseStore(now, dependencies.photoExecution);
   const preparer = dependencies.preparer;
   const photoEnabled = !!(dependencies.actorForRequest && dependencies.photoStore && dependencies.photoPolicy);
   const checkRequest = (signal: AbortSignal) => { signal.throwIfAborted(); dependencies.checkRequest?.(); };
@@ -206,16 +208,17 @@ export function createApp(dependencies: AppDependencies): (request: Request) => 
     if (typeof value !== "number" || !Number.isSafeInteger(value) || value < 1) throw new HttpFailure(409, "사례 버전을 확인하고 새로고침해 주세요.");
     return value;
   };
-  const photoUI = (snapshot: CaseSnapshot) => {
+  const photoUI = (snapshot: CaseSnapshot, ticket: PhotoExecutionTicket | null) => {
     if (!photoEnabled) return '<p class="notice">인증된 비공개 사진 저장소를 사용할 수 없습니다.</p>';
     const base = `/cases/${snapshot.input.caseId}`, policy = dependencies.photoPolicy;
-    const model = policy?.guardedModel;
+    const model = ticket?.scope;
     return `<section class="screen-only"><h2>비공개 사진</h2><p>저장 기간: 최대 ${Math.ceil((policy?.retentionMs ?? 0) / 60000)}분. 저장 동의와 모델 전송 동의는 별개입니다. ${model ? `전송 제공자: ${escapeHtml(model.provider)} · 목적: ${escapeHtml(model.purpose)}` : "모델 사진 전송을 사용할 수 없습니다. 모델 동의·선택은 비활성 상태입니다."}</p>
-    <form method="post" enctype="multipart/form-data" action="${base}/photos"><input type="hidden" name="baseVersion" value="${snapshot.version}"><label>PNG/JPEG 한 장 (최대 5 MiB)<input type="file" name="file" accept="image/png,image/jpeg" required></label>
+    <form method="post" enctype="multipart/form-data" action="${base}/photos"><input type="hidden" name="baseVersion" value="${snapshot.version}">${ticket ? `<input type="hidden" name="modelBindingId" value="${escapeHtml(ticket.bindingId)}">` : ""}<label>PNG/JPEG 한 장 (최대 5 MiB)<input type="file" name="file" accept="image/png,image/jpeg" required></label>
     <label style="display:flex;align-items:center;gap:.7rem;min-height:44px"><input style="width:auto" type="checkbox" name="store" value="yes" required>비공개 저장에 동의합니다</label>
     <label style="display:flex;align-items:center;gap:.7rem;min-height:44px"><input style="width:auto" type="checkbox" name="model" value="yes" ${model ? "" : "disabled"}>명시된 제공자·목적의 모델 전송에 동의합니다</label>
     <label style="display:flex;align-items:center;gap:.7rem;min-height:44px"><input style="width:auto" type="checkbox" name="visible" value="yes">사진에 보이는 식별·민감 내용을 검토했습니다</label><button type="submit">사진 저장</button></form>
-    ${snapshot.photos.map(photo => `<figure><img style="max-width:100%;max-height:240px;object-fit:contain" src="${base}/photos/${photo.photoRef}" alt="정제된 비공개 사진"><figcaption>${snapshot.denied.includes(photo.photoRef) ? "모델 사용 철회됨" : photo.consent.model ? "모델 사용 동의됨" : "저장 전용"}</figcaption></figure>
+    ${snapshot.pendingCleanup.map(ref => `<p role="status">사진 삭제 대기 중 · 미리보기와 모델 사용이 차단되었습니다. 실제 파일 삭제는 아직 확인되지 않았습니다.</p><form method="post" action="${base}/photos/${ref}/withdraw-storage"><button type="submit">사진 삭제 다시 시도</button></form>`).join("")}
+    ${snapshot.photos.map(photo => `<figure><img style="max-width:100%;max-height:240px;object-fit:contain" src="${base}/photos/${photo.photoRef}" alt="정제된 비공개 사진"><figcaption>${snapshot.denied.includes(photo.photoRef) ? "모델 사용 철회됨" : photo.consent.model ? matchesPhotoConsent(photo.consent, ticket) ? "현재 제공자·목적의 모델 사용 동의됨" : "현재 제공자·목적에 새 업로드와 재동의가 필요합니다." : "저장 전용"}</figcaption></figure>
     ${["model", "storage"].map(kind => `<form method="post" action="${base}/photos/${photo.photoRef}/withdraw-${kind}"><button type="submit">${kind === "model" ? "모델 사용 철회" : "사진 저장 철회·삭제"}</button></form>`).join("")}`).join("")}</section>`;
   };
   requireValid(Number.isInteger(timeoutMs) && timeoutMs > 0 && timeoutMs <= 60000 && Number.isInteger(maxBodyBytes) && maxBodyBytes > 0 && maxBodyBytes <= 1048576, "invalid-http-limits");
@@ -298,11 +301,12 @@ export function createApp(dependencies: AppDependencies): (request: Request) => 
         const snapshot = owner && id ? caseStore.read(owner, id) : undefined;
         if (id && !snapshot) throw new HttpFailure(404, "사례를 찾을 수 없습니다.");
         if (request.method === "GET" && snapshot && caseMatch && suffix !== "answers") {
+          const ticket = dependencies.photoExecution?.current() ?? null;
           const stored = snapshot.assessment;
           const html = renderReport(stored.decision, { mode: "live", ...(stored.execution ? { execution: { traceId: stored.execution.traceId, usage: stored.execution.usage ?? null } } : {}) });
           const notice = snapshot.permissionChanged ? '<p class="notice">사진 권한이 변경되었습니다. 이전 보고서는 과거 평가입니다. 이미 전송된 사진을 회수하지 않습니다. 사진 없이 다시 평가할 수 있습니다.</p>' : "";
-          const selection = `<input type="hidden" name="photoSelection" value="explicit">${snapshot.photos.map(photo => `<label style="display:flex;align-items:center;gap:.7rem;min-height:44px"><input style="width:auto" type="checkbox" name="photo_${photo.photoRef}" value="yes" ${dependencies.photoPolicy?.guardedModel && photo.consent.model && !snapshot.denied.includes(photo.photoRef) ? "" : "disabled"}>다음 평가에 이 사진 선택</label>`).join("")}`;
-          const extra = suffix === "report" ? notice : `${notice}<p>버전 ${snapshot.version}</p><p class="screen-only"><a href="/cases/${id}/report">인쇄용 보고서</a></p>${form(`/cases/${id}/answers`, true, snapshot.version, selection)}${photoUI(snapshot)}`;
+          const selection = `<input type="hidden" name="photoSelection" value="explicit">${snapshot.photos.map(photo => `<label style="display:flex;align-items:center;gap:.7rem;min-height:44px"><input style="width:auto" type="checkbox" name="photo_${photo.photoRef}" value="yes" ${matchesPhotoConsent(photo.consent, ticket) && photo.expiresAt > now() && !snapshot.denied.includes(photo.photoRef) ? "" : "disabled"}>다음 평가에 이 사진 선택</label>`).join("")}`;
+          const extra = suffix === "report" ? notice : `${notice}<p>버전 ${snapshot.version}</p><p class="screen-only"><a href="/cases/${id}/report">인쇄용 보고서</a></p>${form(`/cases/${id}/answers`, true, snapshot.version, selection)}${photoUI(snapshot, ticket)}`;
           const result = response(html.replace('<h2>출처와 원문 위치</h2>', `${extra}<h2>출처와 원문 위치</h2>`));
           privateGuard(); return result;
         }
@@ -323,14 +327,19 @@ export function createApp(dependencies: AppDependencies): (request: Request) => 
             if (ref && action) {
               guard(signal);
               caseStore.withdraw(snapshot.owner, snapshot.input.caseId, ref, action === "withdraw-storage");
-              if (action === "withdraw-storage") await store.revoke(actor, ref, signal);
+              if (action === "withdraw-storage") {
+                await store.revoke(actor, ref, signal);
+                caseStore.completeCleanup(snapshot.owner, snapshot.input.caseId, ref);
+              }
               else await store.withdrawModel(actor, ref, signal);
               guard(signal); return redirect(`/cases/${snapshot.input.caseId}`);
             }
             if (!ref) {
               const data = await photoForm(request, signal), version = versionOf(data.get("baseVersion"));
+              const ticket = data.has("model") ? dependencies.photoExecution?.current() : undefined;
               if (data.get("store") !== "yes" || (data.has("model") && data.get("model") !== "yes") || (data.has("visible") && data.get("visible") !== "yes")
-                || (data.has("model") && (!dependencies.photoPolicy?.guardedModel || data.get("visible") !== "yes"))) throw new HttpFailure(400, "사진 동의를 확인해 주세요.");
+                || (data.has("model") && (!ticket || data.get("modelBindingId") !== ticket.bindingId || data.get("visible") !== "yes"))) throw new HttpFailure(400, "사진 동의를 확인해 주세요.");
+              if (ticket) dependencies.photoExecution!.assertCurrent(ticket);
               const lease = caseStore.begin(snapshot.owner, snapshot.input.caseId, version);
               const cancel = () => caseStore.rollback(lease);
               signal.addEventListener("abort", cancel, { once: true });
@@ -340,11 +349,15 @@ export function createApp(dependencies: AppDependencies): (request: Request) => 
                 const file = data.get("file"); if (!(file instanceof File)) throw new HttpFailure(400, "사진이 필요합니다.");
                 receipt = await store.put(actor, snapshot.input.caseId, new Uint8Array(await file.arrayBuffer()), file.type,
                   { recordId: randomUUID(), store: true, model: data.has("model"), visibleContentReviewed: data.has("visible"), expiresAt: now() + (dependencies.photoPolicy?.retentionMs ?? 0),
-                    ...(data.has("model") ? { modelScope: dependencies.photoPolicy?.guardedModel } : {}) }, signal);
-                caseStore.associate(lease, receipt, privateGuard); dependencies.committed?.();
+                    ...(ticket ? { modelScope: ticket.scope, modelBindingId: ticket.bindingId } : {}) }, signal);
+                caseStore.associate(lease, receipt, () => { privateGuard(); if (ticket) dependencies.photoExecution!.assertCurrent(ticket); }); dependencies.committed?.();
                 return redirect(`/cases/${snapshot.input.caseId}`);
               } catch (error) {
-                if (receipt) await store.revoke(actor, receipt.photoRef, new AbortController().signal);
+                if (receipt) {
+                  caseStore.queueCleanup(snapshot.owner, snapshot.input.caseId, receipt.photoRef);
+                  await store.revoke(actor, receipt.photoRef, new AbortController().signal);
+                  caseStore.completeCleanup(snapshot.owner, snapshot.input.caseId, receipt.photoRef);
+                }
                 throw error;
               } finally { signal.removeEventListener("abort", cancel); caseStore.rollback(lease); }
             }
@@ -378,11 +391,12 @@ export function createApp(dependencies: AppDependencies): (request: Request) => 
             } else payload = rest;
           }
           const input = snapshot ? preparer.prepareAnswer(snapshot.input, payload) : preparer.prepareSubmit(raw, request.headers.get("content-type")?.startsWith("application/x-www-form-urlencoded") ? "form" : "json");
-          if (input.photoRefs.length && (input.photoRefs.length > 3 || !dependencies.photoPolicy?.guardedModel || !snapshot || !caseStore.eligible(snapshot, input))) throw new HttpFailure(sessionFailures.provider.status, sessionFailures.provider.message);
+          const ticket = input.photoRefs.length ? dependencies.photoExecution?.current() : undefined;
+          if (input.photoRefs.length && (input.photoRefs.length > 3 || !ticket || !snapshot || !caseStore.eligible(snapshot, input, ticket))) throw new HttpFailure(sessionFailures.provider.status, sessionFailures.provider.message);
           const lease = caseStore.begin(owner, input.caseId, expected);
           const cancel = () => caseStore.rollback(lease); signal.addEventListener("abort", cancel, { once: true });
           try {
-            const output = await caseStore.run(lease, input, runSignal => preparer.evaluate(structuredClone(input), runSignal));
+            const output = await caseStore.run(lease, input, runSignal => preparer.evaluate(structuredClone(input), runSignal), ticket ?? undefined);
             guard(signal);
             const captured: unknown = structuredClone(output);
             if (Buffer.byteLength(JSON.stringify(captured), "utf8") > 524288) throw new HttpFailure(502, "검토 결과 크기 제한을 초과했습니다.");
@@ -390,7 +404,7 @@ export function createApp(dependencies: AppDependencies): (request: Request) => 
             if (parsed.decision.caseId !== input.caseId || !idPattern.test(parsed.decision.caseId)) throw new HttpFailure(502, "사례 식별 정보를 확인할 수 없습니다.");
             const owned = structuredClone(parsed);
             const result = redirect(`/cases/${input.caseId}`);
-            caseStore.commit(lease, owned, privateGuard); dependencies.committed?.();
+            caseStore.commit(lease, owned, () => { privateGuard(); if (ticket) dependencies.photoExecution!.assertCurrent(ticket); }); dependencies.committed?.();
             return result;
           } finally { signal.removeEventListener("abort", cancel); caseStore.rollback(lease); }
         }

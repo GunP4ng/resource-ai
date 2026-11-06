@@ -10,15 +10,10 @@ import type { createPhotoStore } from "./photos.ts";
 import { createCaseStore } from "./o-case-store.ts";
 import type { OCaseStore } from "./o-case-store.ts";
 import type { AppDependencies } from "./app.ts";
-
-/** Inject from the server secret store, never JSON/form input. No process.env fallback. */
-export interface AzureConfiguration {
-  readonly endpoint: string;
-  readonly deployment: string;
-  readonly modelId: string;
-  readonly apiKey: string;
-  readonly apiVersion: string;
-}
+import { checkedConfiguration, AzureConfigurationError } from "./azure-configuration.ts";
+import type { AzureConfiguration } from "./azure-configuration.ts";
+import type { PhotoExecutionAuthority, PhotoExecutionTicket } from "./photo-execution.ts";
+export type { AzureConfiguration } from "./azure-configuration.ts";
 
 /** Monotonic scheduling boundary; injectable for deterministic deadline regressions. */
 export interface OperationalClock {
@@ -77,28 +72,29 @@ export function createOperationalApp(options: {
 }, open: typeof openCaseSession = openCaseSession) {
   if (options.photoStore && !options.actorForRequest) throw new RangeError("authenticated-photo-actor-required");
   if (options.runner && options.operations) throw new RangeError("conflicting-runner-configuration");
-  const caseStore = options.caseStore ?? createCaseStore();
+  const enabled = options.operations?.enabled === true;
+  const photoExecution = enabled ? options.operations?.photoExecution : undefined;
+  const caseStore = options.caseStore ?? createCaseStore(Date.now, photoExecution);
   const actor = () => caseStore.currentActor();
   const binding: OperationalRunnerOptions["photos"] = options.photoStore ? {
-    resolve: (request, signal) => {
+    resolve: (request, signal, ticket) => {
       if (!caseStore.canResolve(actor(), request.caseId, request.photoRef, request.caseRevision)) throw new SessionFailure("provider");
-      return options.photoStore!.resolver(actor())(request, signal);
+      return options.photoStore!.resolver(actor(), ticket)(request, signal);
     },
-    assertCanTransmit: (input, signal, expected) => {
+    assertCanTransmit: (input, signal, expected, ticket) => {
       if (!input.photoRefs.every(ref => caseStore.canResolve(actor(), input.caseId, ref, revision(input)))) throw new SessionFailure("provider");
-      return options.photoStore!.assertCanTransmit(actor(), input, signal, expected);
+      return options.photoStore!.assertCanTransmit(actor(), input, signal, expected, ticket);
     },
   } : options.operations?.photos;
-  const enabled = options.operations?.enabled === true;
-  const runner = enabled ? createOperationalRunner({ ...options.operations!, photos: binding }, open) : options.runner;
+  const runner = enabled ? createOperationalRunner({ ...options.operations!, photos: binding, photoExecution,
+    photoTicket: () => caseStore.currentPhotoTicket() }, open) : options.runner;
   // Set once at fetch entry. Every later stage consumes this same absolute budget.
   const timeoutMs = options.timeoutMs ?? (enabled ? options.operations!.timeoutMs + 1500 : 10_000);
   const clock = options.clock ?? monotonicClock;
   const active = new Set<ReturnType<typeof requestDeadline>>(); let disposed = false;
   const app = createResourceApp({ origin: options.origin, runner, timeoutMs,
-    caseStore, photoStore: options.photoStore,
-    photoPolicy: options.photoPolicy ? { retentionMs: options.photoPolicy.retentionMs,
-      ...(enabled && binding && options.photoStore && options.photoPolicy.guardedModel ? { guardedModel: options.photoPolicy.guardedModel } : {}) } : undefined,
+    caseStore, photoStore: options.photoStore, photoExecution,
+    photoPolicy: options.photoPolicy,
     committed: () => requestBudgets.getStore()?.commit(),
     actorForRequest: options.actorForRequest,
     checkRequest: () => requestBudgets.getStore()?.check(),
@@ -123,7 +119,7 @@ export function createOperationalApp(options: {
             return Response.json({ mode: enabled ? "request-gated" : runner ? "model-runner" : "local-only", azure: "not-verified",
               authorization: enabled ? "required-per-request" : "disabled", photos: binding && enabled ? "server-bound" : "reference-only",
               identity: options.actorForRequest ? "server-resolver" : "anonymous-session", privatePhotoStorage: !!(options.actorForRequest && options.photoStore && options.photoPolicy),
-              guardedModelPhotos: !!(enabled && binding && options.photoStore && options.photoPolicy?.guardedModel),
+              guardedModelPhotos: !!(enabled && binding && options.photoStore && photoExecution?.current()),
               resources: options.resources ? "server-bound-unverified" : "unavailable", liveAzureVerified: false }, { headers: { "cache-control": "no-store" } });
           }
           return app.fetch(forwarded);
@@ -172,22 +168,16 @@ export interface OperationalRunnerOptions {
   readonly authorizeDispatch: (request: DispatchRequest, signal: AbortSignal) => Promise<DispatchPermit | null>;
   /** Durable, access-controlled sink. A failed start/dispatch write blocks network dispatch. */
   readonly record: (event: OperationalAudit, signal?: AbortSignal) => Promise<void>;
-  readonly photos?: { readonly resolve: PhotoResolver; readonly assertCanTransmit: (input: CaseInput, signal: AbortSignal, expected: readonly { photoRef: string; sha256: string }[]) => Promise<void> };
+  readonly photoExecution?: PhotoExecutionAuthority;
+  /** Composition pins this in the private case lease before resources. Direct runners pin current at entry. */
+  readonly photoTicket?: () => PhotoExecutionTicket;
+  readonly photos?: { readonly resolve: (request: Parameters<PhotoResolver>[0], signal: AbortSignal, ticket?: PhotoExecutionTicket) => ReturnType<PhotoResolver>; readonly assertCanTransmit: (input: CaseInput, signal: AbortSignal, expected: readonly { photoRef: string; sha256: string }[], ticket?: PhotoExecutionTicket) => Promise<void> };
   readonly transport?: FetchFunction;
 }
 
 const safeId = /^[A-Za-z0-9_.-]{1,128}$/;
 const isId = (value: unknown): value is string => typeof value === "string" && safeId.test(value);
 const sha = (value: string | Uint8Array) => createHash("sha256").update(value).digest("hex");
-function checkedConfiguration(value: AzureConfiguration | null): AzureConfiguration {
-  if (!value || !isId(value.deployment) || !isId(value.modelId) || !isId(value.apiVersion)
-    || typeof value.apiKey !== "string" || !value.apiKey.trim()) throw new SessionFailure("not-configured");
-  let url: URL;
-  try { url = new URL(value.endpoint); } catch { throw new SessionFailure("not-configured"); }
-  if (url.protocol !== "https:" || !url.hostname.endsWith(".openai.azure.com") || url.port || url.username || url.password
-    || url.search || url.hash || !["", "/", "/openai/v1"].includes(url.pathname)) throw new SessionFailure("not-configured");
-  return { ...value };
-}
 function usageOf(text: string | null | undefined): OperationalAudit["usage"] {
   if (text == null) return null;
   try {
@@ -208,6 +198,12 @@ export function createOperationalRunner(options: OperationalRunnerOptions, open:
     if (!parsed.ok) throw new SessionFailure("provider");
     const parent = requestBudgets.getStore(), clock = parent?.clock ?? monotonicClock;
     const facts = parsed.value, runId = randomUUID(), caseRevision = revision(facts), started = clock.now();
+    const ticket = facts.photoRefs.length ? (options.photoTicket?.() ?? options.photoExecution?.current()) : undefined;
+    const assertPhotoExecution = () => {
+      if (!facts.photoRefs.length) return;
+      if (!options.photoExecution || !ticket) throw new SessionFailure("not-configured");
+      options.photoExecution.assertCurrent(ticket);
+    };
     const end = parent?.end ?? started + options.timeoutMs;
     // Reserve terminal audit time WITHIN the existing deadline, never after a fresh timeout.
     const reserve = Math.min(1000, Math.max(0, end - started) * 0.1);
@@ -224,7 +220,9 @@ export function createOperationalRunner(options: OperationalRunnerOptions, open:
       at: new Date().toISOString(), elapsedMs: Math.max(0, clock.now() - started), ...(phase === "finish" ? { outcome } : {}),
       requests: structuredClone(requests), images: structuredClone(sentImages), usage });
     const photos: PhotoResolver = async (request, imageSignal) => {
-      const photo = await options.photos!.resolve(request, imageSignal);
+      assertPhotoExecution();
+      const photo = await options.photos!.resolve(request, imageSignal, ticket ?? undefined);
+      assertPhotoExecution();
       if (!photo) return null;
       const { data, mimeType, sha256, caseId, caseRevision: photoRevision, photoRef, approvedForModel } = photo;
       if (!(data instanceof Uint8Array) || data.length > 10 * 1024 * 1024) throw new SessionFailure("provider");
@@ -237,14 +235,23 @@ export function createOperationalRunner(options: OperationalRunnerOptions, open:
       check();
       await options.record(event("start"), controller.signal); check();
       if (options.enabled !== true) throw new SessionFailure("not-configured");
-      const config = checkedConfiguration(await options.configuration(controller.signal)); check();
+      assertPhotoExecution();
+      const config = ticket ? options.photoExecution!.configuration(ticket) : checkedConfiguration(await options.configuration(controller.signal)); check();
       if (facts.photoRefs.length && !options.photos) throw new SessionFailure("provider");
       const transport: FetchFunction = async (request, init) => {
         try {
           check();
+          assertPhotoExecution();
+          const dispatchInit = { ...init };
           // Defense against redirects/SDK endpoint changes before any billable dispatch.
           const actual = new URL(typeof request === "string" ? request : request instanceof URL ? request.href : request.url);
           if (actual.origin !== new URL(config.endpoint).origin) throw new SessionFailure("not-configured");
+          if (ticket) {
+            const body: unknown = JSON.parse(typeof dispatchInit.body === "string" ? dispatchInit.body : "null");
+            if (actual.pathname !== "/openai/v1/responses" || actual.hash || actual.username || actual.password
+              || actual.searchParams.size !== 1 || actual.searchParams.get("api-version") !== ticket.target.apiVersion
+              || dispatchInit.method !== "POST" || typeof body !== "object" || body === null || !("model" in body) || body.model !== ticket.target.deployment) throw new SessionFailure("not-configured");
+          }
           const attempt = requests.length + 1;
           if (attempt > options.maxTurns) throw new SessionFailure("turn-limit");
           const permit = await options.authorizeDispatch({ runId, caseRevision, endpoint: config.endpoint,
@@ -257,13 +264,13 @@ export function createOperationalRunner(options: OperationalRunnerOptions, open:
           if (facts.photoRefs.length) {
             // Re-resolve to reject byte/MIME changes as well as revoked permissions.
             for (const expected of resolved) {
-              const latest = await options.photos!.resolve({ caseId: facts.caseId, caseRevision, photoRef: expected.photoRef }, controller.signal);
+              const latest = await options.photos!.resolve({ caseId: facts.caseId, caseRevision, photoRef: expected.photoRef }, controller.signal, ticket ?? undefined);
               if (!latest || latest.approvedForModel !== true || latest.caseId !== facts.caseId || latest.caseRevision !== caseRevision
                 || latest.photoRef !== expected.photoRef || latest.mimeType !== expected.mimeType || latest.sha256 !== expected.sha256
                 || !(latest.data instanceof Uint8Array) || sha(latest.data) !== expected.sha256) throw new SessionFailure("provider");
             }
             // Verify the SDK's serialized payload too; a resize/substitution must not silently change the evidence SHA.
-            const body = JSON.parse(typeof init?.body === "string" ? init.body : "null") as { input?: { content?: { type?: string; image_url?: string }[] }[] } | null;
+            const body = JSON.parse(typeof dispatchInit.body === "string" ? dispatchInit.body : "null") as { input?: { content?: { type?: string; image_url?: string }[] }[] } | null;
             const urls = body?.input?.flatMap((message) => Array.isArray(message.content) ? message.content.filter((part) => part.type === "input_image").map((part) => part.image_url) : []) ?? [];
             if (urls.length !== resolved.length || urls.some((url, index) => {
               const expected = resolved[index]!; const prefix = `data:${expected.mimeType};base64,`;
@@ -271,13 +278,14 @@ export function createOperationalRunner(options: OperationalRunnerOptions, open:
               const encoded = url.slice(prefix.length), bytes = Buffer.from(encoded, "base64");
               return bytes.toString("base64") !== encoded || sha(bytes) !== expected.sha256;
             })) throw new SessionFailure("provider");
-            await options.photos!.assertCanTransmit(facts, controller.signal, resolved);
+            await options.photos!.assertCanTransmit(facts, controller.signal, resolved, ticket ?? undefined);
           }
           check();
           if (permit.expiresAt <= Date.now()) throw new SessionFailure("not-configured");
+          assertPhotoExecution();
           sentImages = resolved.map((image) => ({ photoRefSha256: sha(image.photoRef), sha256: image.sha256, mimeType: image.mimeType }));
           row.transportStarted = true; // Invocation evidence, not proof of provider processing or billing.
-          const response = await (options.transport ?? fetch)(request, { ...init, signal: controller.signal, redirect: "error" });
+          const response = await (options.transport ?? fetch)(ticket ? actual.href : request, { ...dispatchInit, signal: controller.signal, redirect: "error" });
           row.status = response.status;
           const id = response.headers.get("x-request-id") ?? response.headers.get("apim-request-id");
           if (id && /^[A-Za-z0-9_-]{1,100}$/.test(id)) row.requestId = id;
@@ -295,10 +303,10 @@ export function createOperationalRunner(options: OperationalRunnerOptions, open:
       catch (error) { throw dispatchFailure ?? error; }
     };
     try {
-      const result = await Promise.race([work.interrupted, run()]); check();
+      const result = await Promise.race([work.interrupted, run()]); check(); assertPhotoExecution();
       usage = usageOf(result.execution?.usage); outcome = "success"; return result;
     } catch (error) {
-      const failure = parent?.failure ?? work.failure ?? (error instanceof SessionFailure ? error : new SessionFailure("provider"));
+      const failure = parent?.failure ?? work.failure ?? (error instanceof SessionFailure ? error : new SessionFailure(error instanceof AzureConfigurationError ? "not-configured" : "provider"));
       outcome = failure.code; throw failure;
     } finally {
       work.close(); // Also blocks late continuations of callbacks which ignored their AbortSignal.
@@ -312,6 +320,7 @@ export function createOperationalRunner(options: OperationalRunnerOptions, open:
         });
         await Promise.race([expired, options.record(event("finish"), auditController.signal)]);
         if (clock.now() >= end) throw new SessionFailure("provider");
+        if (outcome === "success") assertPhotoExecution();
       } catch { throw new SessionFailure("provider"); } finally { clearAudit(); auditController.abort(); }
     }
   };

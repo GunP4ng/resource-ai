@@ -48,6 +48,7 @@ smoke는 소스와 빌드된 extension을 **실제 senpi loader**로 열고, SDK
 테스트는 합성 OAuth와 주입 HTTP/SSE만 사용하며 실제 유료 요청을 보내지 않는다.
 
 O4 인증·사진 통합 API와 제한은 [O 인수 문서](docs/o-handoff.md#o4-application-transaction-and-photo-boundary-2026-11-06)에 있다.
+PR27 사진 모델 동의는 [H 실행 범위 authority](docs/photo-execution-scope.md)의 서버 발급 ticket에 묶인다. 운영 매핑은 기본 제공하지 않으며 `photoPolicy.guardedModel` 문구만으로 사진 전송을 허용하지 않는다. 구독 사진 전송은 계속 비활성 상태다.
 네이티브 입력 폼은 사진 없이 사례를 먼저 만들며, 생략된 `photoRefs`는 H의 폼 변환에서 `[]`로 정규화한다. JSON 제출은 여전히 `photoRefs` 배열을 명시해야 한다.
 데스크톱/모바일 담당자는 `bun qa-o4.ts`로 `http://localhost:3001`의 **합성 QA 전용** 앱을 실행할 수 있다.
 이 harness는 고정 가짜 인증과 worktree의 `.qa-o4-photos` 저장소를 사용하며 모델을 호출하지 않는다. 운영 배포에 사용하지 않는다.

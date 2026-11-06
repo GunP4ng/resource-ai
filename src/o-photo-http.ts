@@ -21,11 +21,11 @@ export async function photoForm(request: Request, signal: AbortSignal): Promise<
     try { form = await new Response(bytes, { headers: { "content-type": request.headers.get("content-type") ?? "" } }).formData(); }
     catch { throw new PhotoHttpFailure(400); }
     const keys = [...form.keys()];
-    if (keys.length > 5 || new Set(keys).size !== keys.length || keys.some(key => !["file", "baseVersion", "store", "model", "visible"].includes(key))) throw new PhotoHttpFailure(400);
+    if (keys.length > 6 || new Set(keys).size !== keys.length || keys.some(key => !["file", "baseVersion", "store", "model", "visible", "modelBindingId"].includes(key))) throw new PhotoHttpFailure(400);
     const file = form.get("file");
     if (!(file instanceof File) || !file.size || file.size > 5 * 1024 * 1024) throw new PhotoHttpFailure(413);
     if (!["image/png", "image/jpeg"].includes(file.type)) throw new PhotoHttpFailure(415);
-    for (const key of ["baseVersion", "store", "model", "visible"]) if (form.has(key) && typeof form.get(key) !== "string") throw new PhotoHttpFailure(400);
+    for (const key of ["baseVersion", "store", "model", "visible", "modelBindingId"]) if (form.has(key) && typeof form.get(key) !== "string") throw new PhotoHttpFailure(400);
     return form;
   } finally { signal.removeEventListener("abort", cancel); reader.releaseLock(); }
 }

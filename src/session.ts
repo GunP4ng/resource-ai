@@ -236,7 +236,7 @@ export function createAssessmentAdapter(options: { readonly runner?: CaseRunner;
 }
 
 /** Integrated browser composition uses stateless H preparation and O's committed case store. */
-export function createResourceApp(options: { readonly origin: string; readonly runner?: CaseRunner; readonly resources?: ResourceProvider; readonly timeoutMs?: number; readonly checkRequest?: () => void } & Pick<AppDependencies, "actorForRequest" | "photoStore" | "caseStore" | "photoPolicy" | "committed">) {
+export function createResourceApp(options: { readonly origin: string; readonly runner?: CaseRunner; readonly resources?: ResourceProvider; readonly timeoutMs?: number; readonly checkRequest?: () => void } & Pick<AppDependencies, "actorForRequest" | "photoStore" | "caseStore" | "photoPolicy" | "photoExecution" | "committed">) {
   const adapter = createAssessmentAdapter(options);
   // O's adapter receives parsed values without the request's content type. Carry that
   // server-owned distinction per async request without changing O's interface or state.
