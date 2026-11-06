@@ -1,10 +1,11 @@
 import { createHash, randomUUID } from "node:crypto";
 import { AsyncLocalStorage } from "node:async_hooks";
+import { zstdDecompressSync } from "node:zlib";
 import type { FetchFunction } from "@earendil-works/pi-ai";
 import type { CaseInput } from "./contracts.ts";
 import { parseCaseInput } from "./input.ts";
 import { revision } from "./o-validation.ts";
-import { createAzureRunner, createResourceApp, openCaseSession, SessionFailure } from "./session.ts";
+import { createAzureRunner, createSubscriptionRunner, createResourceApp, openCaseSession, SessionFailure } from "./session.ts";
 import type { CaseRunner, PhotoResolver, ResourceProvider, SessionFailureCode } from "./session.ts";
 import type { createPhotoStore } from "./photos.ts";
 import { createCaseStore } from "./o-case-store.ts";
@@ -13,6 +14,7 @@ import type { AppDependencies } from "./app.ts";
 import { checkedConfiguration, AzureConfigurationError } from "./azure-configuration.ts";
 import type { AzureConfiguration } from "./azure-configuration.ts";
 import type { PhotoExecutionAuthority, PhotoExecutionTicket } from "./photo-execution.ts";
+import { checkedSubscriptionConfiguration, subscriptionCredentials, SubscriptionConfigurationError, SUBSCRIPTION_ENDPOINT, type SubscriptionConfiguration } from "./subscription-configuration.ts";
 export type { AzureConfiguration } from "./azure-configuration.ts";
 
 /** Monotonic scheduling boundary; injectable for deterministic deadline regressions. */
@@ -59,7 +61,7 @@ const requestBudgets = new AsyncLocalStorage<ReturnType<typeof requestDeadline>>
  */
 export function createOperationalApp(options: {
   readonly origin: string;
-  readonly operations?: OperationalRunnerOptions;
+  readonly operations?: OperationalRunnerOptions | SubscriptionOperationalRunnerOptions;
   /** Local launcher integration; mutually exclusive with request-gated operations. */
   readonly runner?: CaseRunner;
   readonly resources?: ResourceProvider;
@@ -86,7 +88,7 @@ export function createOperationalApp(options: {
       return options.photoStore!.assertCanTransmit(actor(), input, signal, expected, ticket);
     },
   } : options.operations?.photos;
-  const runner = enabled ? createOperationalRunner({ ...options.operations!, photos: binding, photoExecution,
+  const runner = enabled ? createOperationalRunner({ ...options.operations!, photos: binding,
     photoTicket: () => caseStore.currentPhotoTicket() }, open) : options.runner;
   // Set once at fetch entry. Every later stage consumes this same absolute budget.
   const timeoutMs = options.timeoutMs ?? (enabled ? options.operations!.timeoutMs + 1500 : 10_000);
@@ -120,7 +122,9 @@ export function createOperationalApp(options: {
               authorization: enabled ? "required-per-request" : "disabled", photos: binding && enabled ? "server-bound" : "reference-only",
               identity: options.actorForRequest ? "server-resolver" : "anonymous-session", privatePhotoStorage: !!(options.actorForRequest && options.photoStore && options.photoPolicy),
               guardedModelPhotos: !!(enabled && binding && options.photoStore && photoExecution?.current()),
-              resources: options.resources ? "server-bound-unverified" : "unavailable", liveAzureVerified: false }, { headers: { "cache-control": "no-store" } });
+              resources: options.resources ? "server-bound-unverified" : "unavailable", liveAzureVerified: false,
+              modelProvider: enabled ? options.operations?.provider === "subscription" ? "chatgpt-subscription" : "azure-openai-responses" : null,
+              liveModelVerified: false }, { headers: { "cache-control": "no-store" } });
           }
           return app.fetch(forwarded);
         };
@@ -143,6 +147,9 @@ export interface DispatchRequest {
   readonly modelId: string;
   readonly attempt: number;
   readonly maxOutputTokens: number;
+  readonly provider?: "azure-openai-responses" | "chatgpt-subscription";
+  /** Subscription SSE currently does NOT serialize a provider-enforced output token cap. */
+  readonly outputLimitEnforced?: boolean;
 }
 export interface DispatchPermit { readonly approvalId: string; readonly expiresAt: number }
 export interface OperationalAudit {
@@ -158,26 +165,54 @@ export interface OperationalAudit {
   /** Hashes of actual outbound image bytes; never raw refs, URLs or image content. */
   readonly images: readonly { readonly photoRefSha256: string; readonly sha256: string; readonly mimeType: string }[];
 }
-export interface OperationalRunnerOptions {
+interface OperationalRunnerCommon {
   readonly enabled: boolean;
   readonly timeoutMs: number;
   readonly maxTurns: number;
   readonly maxOutputTokens: number;
-  readonly configuration: (signal: AbortSignal) => Promise<AzureConfiguration | null>;
   /** Must verify live approval and reserve budget atomically for EACH outbound request. */
   readonly authorizeDispatch: (request: DispatchRequest, signal: AbortSignal) => Promise<DispatchPermit | null>;
   /** Durable, access-controlled sink. A failed start/dispatch write blocks network dispatch. */
   readonly record: (event: OperationalAudit, signal?: AbortSignal) => Promise<void>;
-  readonly photoExecution?: PhotoExecutionAuthority;
   /** Composition pins this in the private case lease before resources. Direct runners pin current at entry. */
   readonly photoTicket?: () => PhotoExecutionTicket;
   readonly photos?: { readonly resolve: (request: Parameters<PhotoResolver>[0], signal: AbortSignal, ticket?: PhotoExecutionTicket) => ReturnType<PhotoResolver>; readonly assertCanTransmit: (input: CaseInput, signal: AbortSignal, expected: readonly { photoRef: string; sha256: string }[], ticket?: PhotoExecutionTicket) => Promise<void> };
   readonly transport?: FetchFunction;
 }
+export type OperationalRunnerOptions = OperationalRunnerCommon & {
+  readonly provider?: "azure";
+  readonly configuration: (signal: AbortSignal) => Promise<AzureConfiguration | null>;
+  readonly photoExecution?: PhotoExecutionAuthority<AzureConfiguration>;
+};
+export type SubscriptionOperationalRunnerOptions = OperationalRunnerCommon & {
+  readonly provider: "subscription";
+  readonly configuration: (signal: AbortSignal) => Promise<SubscriptionConfiguration | null>;
+  readonly photoExecution?: PhotoExecutionAuthority<SubscriptionConfiguration>;
+};
 
 const safeId = /^[A-Za-z0-9_.-]{1,128}$/;
 const isId = (value: unknown): value is string => typeof value === "string" && safeId.test(value);
 const sha = (value: string | Uint8Array) => createHash("sha256").update(value).digest("hex");
+const isSubscription = (config: AzureConfiguration | SubscriptionConfiguration): config is SubscriptionConfiguration => "provider" in config;
+function matchesExecutionTarget(config: AzureConfiguration | SubscriptionConfiguration, target: PhotoExecutionTicket["target"]): boolean {
+  if (isSubscription(config)) return "provider" in target && target.provider === config.provider
+    && target.endpoint === SUBSCRIPTION_ENDPOINT && target.modelId === config.modelId && target.accountIdSha256 === config.accountIdSha256;
+  return "deployment" in target && target.endpoint === config.endpoint && target.deployment === config.deployment
+    && target.modelId === config.modelId && target.apiVersion === config.apiVersion;
+}
+/** Snapshot and inspect the exact SDK SSE payload, including its bounded zstd encoding. */
+function subscriptionPayload(init: RequestInit) {
+  const headers = new Headers(init.headers), limit = 64 * 1024 * 1024;
+  const bytes = typeof init.body === "string" ? Buffer.from(init.body) : init.body instanceof ArrayBuffer ? Buffer.from(new Uint8Array(init.body))
+    : ArrayBuffer.isView(init.body) ? Buffer.from(new Uint8Array(init.body.buffer, init.body.byteOffset, init.body.byteLength)) : null;
+  if (!bytes || bytes.length > limit) throw new SessionFailure("not-configured");
+  const encoding = headers.get("content-encoding");
+  if (encoding && encoding !== "zstd") throw new SessionFailure("not-configured");
+  const decoded = encoding === "zstd" ? zstdDecompressSync(bytes, { maxOutputLength: limit }) : bytes;
+  const body: unknown = JSON.parse(decoded.toString("utf8"));
+  // Keep the copied compressed bytes intact; the approved bytes are the bytes dispatched.
+  return { init: { ...init, headers, body: new Uint8Array(bytes).buffer }, body };
+}
 function usageOf(text: string | null | undefined): OperationalAudit["usage"] {
   if (text == null) return null;
   try {
@@ -189,7 +224,7 @@ function usageOf(text: string | null | undefined): OperationalAudit["usage"] {
 }
 
 /** Reuses PR23's runner and its public failure codes. This does not install an app route. */
-export function createOperationalRunner(options: OperationalRunnerOptions, open: typeof openCaseSession = openCaseSession): CaseRunner {
+export function createOperationalRunner(options: OperationalRunnerOptions | SubscriptionOperationalRunnerOptions, open: typeof openCaseSession = openCaseSession): CaseRunner {
   if (!Number.isSafeInteger(options.timeoutMs) || options.timeoutMs <= 0 || options.timeoutMs > 300_000
     || !Number.isInteger(options.maxTurns) || options.maxTurns < 1 || options.maxTurns > 10
     || !Number.isInteger(options.maxOutputTokens) || options.maxOutputTokens < 16 || options.maxOutputTokens > 8192) throw new RangeError("invalid-operational-limits");
@@ -236,26 +271,40 @@ export function createOperationalRunner(options: OperationalRunnerOptions, open:
       await options.record(event("start"), controller.signal); check();
       if (options.enabled !== true) throw new SessionFailure("not-configured");
       assertPhotoExecution();
-      const config = ticket ? options.photoExecution!.configuration(ticket) : checkedConfiguration(await options.configuration(controller.signal)); check();
+      const supplied = ticket ? options.photoExecution!.configuration(ticket) : await options.configuration(controller.signal); check();
+      const config = options.provider === "subscription"
+        ? checkedSubscriptionConfiguration(supplied as SubscriptionConfiguration | null)
+        : checkedConfiguration(supplied as AzureConfiguration | null);
+      // A miswired authority must not move an issued consent to another target.
+      if (ticket && !matchesExecutionTarget(config, ticket.target)) throw new SessionFailure("not-configured");
+      const endpoint = isSubscription(config) ? SUBSCRIPTION_ENDPOINT : config.endpoint;
       if (facts.photoRefs.length && !options.photos) throw new SessionFailure("provider");
       const transport: FetchFunction = async (request, init) => {
         try {
           check();
           assertPhotoExecution();
-          const dispatchInit = { ...init };
+          let dispatchInit = { ...init };
+          let serialized: unknown;
           // Defense against redirects/SDK endpoint changes before any billable dispatch.
           const actual = new URL(typeof request === "string" ? request : request instanceof URL ? request.href : request.url);
-          if (actual.origin !== new URL(config.endpoint).origin) throw new SessionFailure("not-configured");
-          if (ticket) {
-            const body: unknown = JSON.parse(typeof dispatchInit.body === "string" ? dispatchInit.body : "null");
+          if (actual.origin !== new URL(endpoint).origin) throw new SessionFailure("not-configured");
+          if (isSubscription(config)) {
+            const snapshot = subscriptionPayload(dispatchInit); dispatchInit = snapshot.init; serialized = snapshot.body;
+            const account = new Headers(dispatchInit.headers).get("chatgpt-account-id");
+            if (actual.href !== SUBSCRIPTION_ENDPOINT || dispatchInit.method !== "POST" || !account || sha(account) !== config.accountIdSha256
+              || typeof serialized !== "object" || !serialized || !("model" in serialized) || serialized.model !== config.modelId) throw new SessionFailure("not-configured");
+          } else if (ticket) {
+            serialized = JSON.parse(typeof dispatchInit.body === "string" ? dispatchInit.body : "null");
             if (actual.pathname !== "/openai/v1/responses" || actual.hash || actual.username || actual.password
-              || actual.searchParams.size !== 1 || actual.searchParams.get("api-version") !== ticket.target.apiVersion
-              || dispatchInit.method !== "POST" || typeof body !== "object" || body === null || !("model" in body) || body.model !== ticket.target.deployment) throw new SessionFailure("not-configured");
+              || actual.searchParams.size !== 1 || actual.searchParams.get("api-version") !== config.apiVersion
+              || dispatchInit.method !== "POST" || typeof serialized !== "object" || serialized === null || !("model" in serialized) || serialized.model !== config.deployment) throw new SessionFailure("not-configured");
           }
+          check();
           const attempt = requests.length + 1;
           if (attempt > options.maxTurns) throw new SessionFailure("turn-limit");
-          const permit = await options.authorizeDispatch({ runId, caseRevision, endpoint: config.endpoint,
-            deployment: config.deployment, modelId: config.modelId, attempt, maxOutputTokens: options.maxOutputTokens }, controller.signal);
+          const permit = await options.authorizeDispatch({ runId, caseRevision, endpoint,
+            deployment: isSubscription(config) ? "" : config.deployment, modelId: config.modelId, attempt, maxOutputTokens: options.maxOutputTokens,
+            provider: isSubscription(config) ? "chatgpt-subscription" : "azure-openai-responses", outputLimitEnforced: !isSubscription(config) }, controller.signal);
           check();
           if (!permit || !isId(permit.approvalId) || !Number.isSafeInteger(permit.expiresAt) || permit.expiresAt <= Date.now()) throw new SessionFailure("not-configured");
           const row = { attempt, approvalId: permit.approvalId, transportStarted: false, status: null as number | null, requestId: null as string | null };
@@ -270,7 +319,7 @@ export function createOperationalRunner(options: OperationalRunnerOptions, open:
                 || !(latest.data instanceof Uint8Array) || sha(latest.data) !== expected.sha256) throw new SessionFailure("provider");
             }
             // Verify the SDK's serialized payload too; a resize/substitution must not silently change the evidence SHA.
-            const body = JSON.parse(typeof dispatchInit.body === "string" ? dispatchInit.body : "null") as { input?: { content?: { type?: string; image_url?: string }[] }[] } | null;
+            const body = serialized as { input?: { content?: { type?: string; image_url?: string }[] }[] } | null;
             const urls = body?.input?.flatMap((message) => Array.isArray(message.content) ? message.content.filter((part) => part.type === "input_image").map((part) => part.image_url) : []) ?? [];
             if (urls.length !== resolved.length || urls.some((url, index) => {
               const expected = resolved[index]!; const prefix = `data:${expected.mimeType};base64,`;
@@ -285,7 +334,7 @@ export function createOperationalRunner(options: OperationalRunnerOptions, open:
           assertPhotoExecution();
           sentImages = resolved.map((image) => ({ photoRefSha256: sha(image.photoRef), sha256: image.sha256, mimeType: image.mimeType }));
           row.transportStarted = true; // Invocation evidence, not proof of provider processing or billing.
-          const response = await (options.transport ?? fetch)(ticket ? actual.href : request, { ...dispatchInit, signal: controller.signal, redirect: "error" });
+          const response = await (options.transport ?? fetch)(ticket || isSubscription(config) ? actual.href : request, { ...dispatchInit, signal: controller.signal, redirect: "error" });
           row.status = response.status;
           const id = response.headers.get("x-request-id") ?? response.headers.get("apim-request-id");
           if (id && /^[A-Za-z0-9_-]{1,100}$/.test(id)) row.requestId = id;
@@ -295,9 +344,21 @@ export function createOperationalRunner(options: OperationalRunnerOptions, open:
           throw dispatchFailure;
         }
       };
-      const runner = createAzureRunner({ enabled: true, modelId: config.modelId, maxTurns: options.maxTurns,
-        maxOutputTokens: options.maxOutputTokens, transport, photos: options.photos ? photos : undefined,
-        env: { AZURE_OPENAI_API_KEY: config.apiKey, AZURE_OPENAI_BASE_URL: config.endpoint,
+      const common = { enabled: true, modelId: config.modelId, maxTurns: options.maxTurns,
+        maxOutputTokens: options.maxOutputTokens, transport, photos: options.photos ? photos : undefined };
+      const runner = isSubscription(config)
+        ? createSubscriptionRunner({ ...common, authPath: config.authPath }, async (facts, settings) => {
+          let credentials;
+          try { credentials = subscriptionCredentials(config, check); }
+          catch (error) { if (error instanceof SubscriptionConfigurationError) throw new SessionFailure("not-configured"); throw error; }
+          const owned = await open(facts, { ...settings, credentials });
+          try {
+            check();
+            if (owned.session.model?.api !== "openai-codex-responses") throw new SessionFailure("not-configured");
+            return owned;
+          } catch (error) { await owned.close(); throw error; }
+        })
+        : createAzureRunner({ ...common, env: { AZURE_OPENAI_API_KEY: config.apiKey, AZURE_OPENAI_BASE_URL: config.endpoint,
           AZURE_OPENAI_DEPLOYMENT_NAME_MAP: `${config.modelId}=${config.deployment}`, AZURE_OPENAI_API_VERSION: config.apiVersion } }, open);
       try { return await runner(facts, controller.signal, resources); }
       catch (error) { throw dispatchFailure ?? error; }
@@ -306,7 +367,7 @@ export function createOperationalRunner(options: OperationalRunnerOptions, open:
       const result = await Promise.race([work.interrupted, run()]); check(); assertPhotoExecution();
       usage = usageOf(result.execution?.usage); outcome = "success"; return result;
     } catch (error) {
-      const failure = parent?.failure ?? work.failure ?? (error instanceof SessionFailure ? error : new SessionFailure(error instanceof AzureConfigurationError ? "not-configured" : "provider"));
+      const failure = parent?.failure ?? work.failure ?? (error instanceof SessionFailure ? error : new SessionFailure(error instanceof AzureConfigurationError || error instanceof SubscriptionConfigurationError ? "not-configured" : "provider"));
       outcome = failure.code; throw failure;
     } finally {
       work.close(); // Also blocks late continuations of callbacks which ignored their AbortSignal.

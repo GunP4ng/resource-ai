@@ -257,6 +257,22 @@ test("authority changes during authorization, audit or final async photo checks 
   }
 });
 
+test("an authority configuration cannot redirect a photo ticket to a different Azure deployment", async () => {
+  const f = scopedRunFixture(), changed = { ...config, deployment: "synthetic-other" };
+  const open: typeof openCaseSession = async (facts, settings) => {
+    const owned = await syntheticOpen(facts, settings), stream = owned.session.agent.streamFunction;
+    owned.session.agent.streamFunction = (model, context, settings) => stream(model, context, { ...settings, fetch: (url, init) => {
+      const body = JSON.parse(String(init?.body)); body.model = changed.deployment;
+      return settings!.fetch!(url, { ...init, body: JSON.stringify(body) });
+    } });
+    return owned;
+  };
+  const runner = createOperationalRunner({ ...f.options,
+    photoExecution: { ...f.photoExecution, configuration: () => changed } }, open);
+  await assert.rejects(runner(f.facts, live()), failure("not-configured"));
+  assert.equal(f.authorizations(), 0); assert.equal(f.calls(), 0);
+});
+
 test("no or ambiguous scope mapping refuses photo runs before resolution/configuration/dispatch", async () => {
   for (const ambiguous of [false, true]) {
     const f = scopedRunFixture(), row = { target: config, scope: f.ticket.scope };
@@ -345,7 +361,7 @@ test("operational errors reach the existing O4 mapping for authentication, rate-
   }
   for (const kind of ["timeout", "cancelled"] as const) {
     const f = fixture(), controller = new AbortController();
-    const app = createOperationalApp({ origin, operations: { ...f.options, timeoutMs: 30, configuration: async () => new Promise(() => {}) } });
+    const app = createOperationalApp({ origin, operations: { ...f.options, timeoutMs: 30, configuration: async () => new Promise<null>(() => {}) } });
     try {
       const b = await browser(app), result = b.post("/cases", submission, controller.signal);
       if (kind === "cancelled") setTimeout(() => controller.abort(), 5);
