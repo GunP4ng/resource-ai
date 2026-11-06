@@ -50,7 +50,9 @@ export async function prepareCaseRecord(input: unknown, options: {
   const parsed = parseCaseInput(input); if (!parsed.ok) throw new AssessmentInputError(parsed.issues);
   if (!/^[a-f0-9]{40}$/.test(options.codeRevision) || !["synthetic", "field"].includes(options.dataOrigin.kind)
     || !options.dataOrigin.reference.trim()) throw new Error("case-record:invalid-provenance");
-  const facts = parsed.value, resources = structuredClone(options.resources ?? {}), origin = { ...options.dataOrigin };
+  // Hash the same JSON representation that the offline artifact persists.
+  const resources: DomainResources = JSON.parse(JSON.stringify(options.resources ?? {}));
+  const facts = parsed.value, origin = { ...options.dataOrigin };
   const caseRevision = revision(facts), signal = options.signal; cancelled(signal);
   const domain = createResourceDomain(facts, resources), assessment = domain.assess(), decision = await domain.decide();
   const images: { photoRef: string; sha256: string; mimeType: string }[] = [];

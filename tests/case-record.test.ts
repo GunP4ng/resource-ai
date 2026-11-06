@@ -35,6 +35,15 @@ test("missing and changed snapshots are explicit, never replaced with fabricated
   }
 });
 
+test("record and resource hashes survive JSON storage with optional values omitted", async () => {
+  const result = await prepareCaseRecord(syntheticCase, { ...options(),
+    resources: { assessmentOptions: undefined, processors: undefined } });
+  const restored = JSON.parse(JSON.stringify(result));
+  assert.equal(revision(restored.record.resources), result.record.resourcesSha256);
+  assert.equal(revision(restored.record), result.sha256);
+  assert.deepEqual(restored.record.decision, result.record.decision);
+});
+
 test("same synthetic photo retains SHA while changed process/contamination removes eligibility and changes questions", async () => {
   const bytes = new Uint8Array([1,2,3]);
   const photos: PhotoResolver = async (request) => ({ ...request, data: bytes, sha256: sha(bytes), mimeType: "image/png", approvedForModel: true });
