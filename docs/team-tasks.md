@@ -184,7 +184,13 @@ launcher 기본값은 `RESOURCE_MODEL_RUNNER=subscription`; `local`은 기존 �
 | O1 / #9 | 필터·근거 보존 구현 수용 | 오연석·윤정준: 실제 허가/인수 확인 자료 확보 시 재검증. 디렉터리 등재를 허가나 수탁 의사로 승격하지 않음 |
 | O2 / #10 | 단위·사례 질량·비용 경계 구현 수용 | 오연석·이상협: 독립 `CaseMassReview`와 검토된 실제 견적을 #12 통합 입력에 연결. 질량 보완물 없으면 합계 보류 |
 | O3 / #11 | 계수 검증·배출/크레딧·제외 경계 구현 수용 | 오연석·윤정준: 권리·GWP·경계가 검증된 계수 확보. 미확보 계수는 계속 `unavailable` |
-| O4 / #12 | PR #27 인증·사진·revision 연결 및 P1/P2 수정 재검토 수용 | 오연석·이상협: 실제 로그인·영속 사례·운영 자료, 구독 모델 guarded 사진 경계와 승인된 제공자/목적 매핑, 실제 실행/usage·감사 인계. [재검토 승인](https://github.com/GunP4ng/resource-ai/pull/27#pullrequestreview-5800521446) |
+| O4 / #12 | PR #28 구독 모델 guarded 사진 실행 계약 수용 | 오연석·이상협: 실제 로그인·영속 사례·운영 자료, 승인 계정/제공자/목적·한도, 실제 실행/usage·영속 감사·예약/정산 인계. [PR28 승인](https://github.com/GunP4ng/resource-ai/pull/28#pullrequestreview-5802416900) |
+
+**2026-11-06 PR #28 검토·병합 (`2ee1cb2`).** head `1b1299c`의 명시적 구독 provider/model/account·목적 authority와 read-only credential snapshot, 승인·감사·단일 deadline 아래 사진 실행을 [승인](https://github.com/GunP4ng/resource-ai/pull/28#pullrequestreview-5802416900)했다. Linux/Bun1.4.2 head/main 모두 strict 검사·두 빌드·offline smoke·**412 tests / 0 failures**, main CI `42243089652` 성공. 실제 Node HTTP/Chrome native 생성→사진 동의/업로드→선택/평가303, 실제 SDK 직렬화 이미지 SHA와 저장 SHA 일치, scope 변경·mapping 누락·승인 중 변경 시502/추가 전송0/이전 사례·보고서 보존을 확인했다. local launcher 수정과 default subscription 빈 인증503, 실제 묶음 `/reference`의136가격/31등재업체·계산불가도 유지됐다.
+
+이 검증의 actor·OAuth·1x1PNG·SSE 응답은 합성이다. 실제 계정/외부 모델/현장 사진 인수는0건이며 `liveModelVerified=false`, `outputLimitEnforced=false`다. `maxOutputTokens`는 구독 제공자가 강제하는 사용량 상한이 아니다. 기본 launcher의 사진 실행을 활성화하지 않았고 아래 PR27 당시 Azure 전용 설명은 과거 기록이다. Windows 기존24실패는 작성자 baseline 설명으로 남으며 Windows 통과를 주장하지 않는다.
+
+다음 배분은 #12에서 계속 추적한다. 오연석은 동일 authority를 사용하는 운영 서버 조립·실제 로그인 actor·영속 사례·검토된 ResourceProvider와 실행/실패/usage 화면·정상3분/보류2분 인계를 맡는다. 이상협은 승인 계정/model/provider/purpose 매핑과 한도 아래 실제 구독 성공/취소/실패·usage, 승인된 현장 사진의 질문/판정 변화·철회/만료 증거를 인계한다. H/O는 원자적 예약·동시성/횟수 제한·사후 정산·영속 감사와 지원 OS를 함께 확인한다. 윤정준의 현행성·권리·source snapshot/locator/SHA 인계, 팀장의 계정/한도/매핑·지원 OS 승인·통합 QA·잠금 평가·영상/최종 보고서 책임을 유지한다. #12 OPEN/Oyeonseok, #8 CLOSED/hyeobikong 및 실제 인수 미완료 체크박스·11/20 동결은 그대로다.
 
 O1–O3의 구현 수용은 실제 현장 허가·견적·계수의 확보나 법적 적합성 인증이 아니다. #12의 Azure 통합은 열린 상태로 유지한다. 2026-11-06 O4 변경은 기존 H 어댑터로 로컬 보수적 평가만 연결하며 runner·운영 자료를 공급하지 않는다. 어댑터 없는 `createApp`의 503 동작은 유지한다. 최종 298개 테스트와 소스/패키지 launcher의 실제 제출·질문 갱신·종료, 42개 화면 조합을 검증했고 Astra 최종 검토가 승인됐다. 초기 구현 환경의 loopback 제한은 최종 검증에서 해소됐다.
 
