@@ -184,6 +184,14 @@ export function createApp(dependencies: AppDependencies) {
   const now = dependencies.now ?? Date.now;
   const caseStore = dependencies.caseStore ?? createCaseStore(now, dependencies.photoExecution);
   const preparer = dependencies.preparer;
+  const cancelLease = (lease: Parameters<OCaseStore["rollback"]>[0]) => {
+    try { caseStore.rollback(lease); }
+    catch (error) {
+      // Rollback invalidates the local lease before attempting SQL. A busy or
+      // unavailable database leaves only the existing bounded reservation.
+      if (!(error instanceof CaseConflict) && !(error instanceof RuntimeStorageError)) throw error;
+    }
+  };
   const photoEnabled = !!((dependencies.actorForRequest || dependencies.localAuth) && dependencies.photoStore && dependencies.photoPolicy);
   const checkRequest = (signal: AbortSignal) => { dependencies.checkRequest?.(); signal.throwIfAborted(); };
   const versionOf = (raw: unknown, fallback?: number): number => {
@@ -374,7 +382,7 @@ export function createApp(dependencies: AppDependencies) {
                 || (data.has("model") && (!ticket || data.get("modelBindingId") !== ticket.bindingId || data.get("visible") !== "yes"))) throw new HttpFailure(400, "사진 동의를 확인해 주세요.");
               if (ticket) dependencies.photoExecution!.assertCurrent(ticket);
               const lease = caseStore.begin(snapshot.owner, snapshot.input.caseId, version);
-              const cancel = () => caseStore.rollback(lease);
+              const cancel = () => cancelLease(lease);
               signal.addEventListener("abort", cancel, { once: true });
               if (signal.aborted) cancel();
               let receipt: Awaited<ReturnType<typeof store.put>> | undefined;
@@ -428,7 +436,7 @@ export function createApp(dependencies: AppDependencies) {
           const ticket = input.photoRefs.length ? dependencies.photoExecution?.current() : undefined;
           if (input.photoRefs.length && (input.photoRefs.length > 3 || !ticket || !snapshot || !caseStore.eligible(snapshot, input, ticket))) throw new HttpFailure(sessionFailures.provider.status, sessionFailures.provider.message);
           const lease = caseStore.begin(owner, input.caseId, expected);
-          const cancel = () => caseStore.rollback(lease); signal.addEventListener("abort", cancel, { once: true });
+          const cancel = () => cancelLease(lease); signal.addEventListener("abort", cancel, { once: true });
           try {
             const output = await caseStore.run(lease, input, async runSignal => {
               const output = await preparer.evaluate(structuredClone(input), runSignal);

@@ -11,7 +11,8 @@ import { promisify } from "node:util";
 import { createServer } from "node:http";
 import { once } from "node:events";
 import { createInterface } from "node:readline";
-import { randomInt } from "node:crypto";
+import { randomInt, randomUUID } from "node:crypto";
+import { createPhotoCleanupWorker } from "../scripts/app.ts";
 import { createApp } from "../src/app.ts";
 import { createOperationalApp, type OperationalClock } from "../src/operations.ts";
 import { createCaseStore } from "../src/o-case-store.ts";
@@ -148,18 +149,55 @@ test("unavailable auth storage makes private access and readiness 503 even witho
   for (const path of ["/", "/cases", "/health", "/operations/readiness"]) assert.equal((await app.fetch(get(path, ""))).status, 503);
 });
 
-test("shutdown waits for actual blocked work after cancelling the HTTP response", { timeout: 10000 }, async t => {
-  const f = await fixture(t), entered = deferred(), release = deferred();
-  const app = f.app({ origin, resources: async () => { entered.resolve(); await release.promise; return {}; } });
+for (const stage of ["resources", "runner"] as const) test(`close drains underlying ${stage} work after the cancellation race`, { timeout: 10000 }, async t => {
+  const f = await fixture(t), entered = deferred(), release = deferred(), finished = deferred();
+  const blocked = async () => { entered.resolve(); try { await release.promise; f.db.assertReady(); return {}; } finally { finished.resolve(); } };
+  const app = f.app({ origin, ...(stage === "resources" ? { resources: blocked } : { runner: blocked }) });
   const { caseId: _caseId, ...raw } = syntheticCase;
   const request = app.fetch(post("/cases", f.cookie, raw));
   try {
     await entered.promise; app.dispose(); assert.equal((await request).status, 408);
-    let closed = false; const closing = app.close().then(() => { closed = true; });
-    await Promise.resolve(); assert.equal(closed, false); f.db.assertReady();
-    release.resolve(); await closing; assert.equal(closed, true);
+    const closing = app.close().then(() => "closed" as const);
+    const checkpoint = new Promise<"turn"> (done => setImmediate(() => done("turn")));
+    assert.equal(await Promise.race([closing, checkpoint]), "turn", "close resolved while underlying work was blocked");
+    f.db.assertReady(); release.resolve(); await closing; await finished.promise;
     assert.deepEqual(f.cases.list(`actor:${f.actorId}`), []);
-  } finally { release.resolve(); await request; }
+  } finally { release.resolve(); await finished.promise; await request; await app.close(); }
+});
+
+test("abort under a real SQLite writer lock stays contained and leases recover only after expiry", { timeout: 15000 }, async t => {
+  const root = await mkdtemp(join(tmpdir(), "o-abort-contention-"));
+  t.after(() => rm(root, { recursive: true, force: true }));
+  const moduleURL = (path: string) => JSON.stringify(new URL(path, import.meta.url).href);
+  const source = `
+    import assert from 'node:assert/strict';
+    import {openRuntimeDatabase} from ${moduleURL("../src/o-runtime-db.ts")};
+    import {createCaseStore,CASE_LEASE_MS} from ${moduleURL("../src/o-case-store.ts")};
+    import {createResourceApp} from ${moduleURL("../src/session.ts")};
+    import {syntheticCase} from ${moduleURL("./h-fixtures.ts")};
+    const db=await openRuntimeDatabase(${JSON.stringify(join(root, "state"))});
+    const writer=await openRuntimeDatabase(${JSON.stringify(join(root, "state"))});
+    let at=Date.now(); const cases=createCaseStore(()=>at,undefined,db);
+    let entered,release; const started=new Promise(done=>entered=done), blocked=new Promise(done=>release=done);
+    const app=createResourceApp({origin:${JSON.stringify(origin)},caseStore:cases,actorForRequest:async()=>'owner',resources:async()=>{entered();await blocked;return {};}});
+    const {caseId,...raw}=syntheticCase, abort=new AbortController();
+    const pending=app.fetch(new Request(${JSON.stringify(origin + "/cases")},{method:'POST',headers:{origin:${JSON.stringify(origin)},'content-type':'application/json'},body:JSON.stringify(raw),signal:abort.signal}));
+    await started; writer.database.exec('BEGIN IMMEDIATE');
+    abort.abort(); assert.equal((await pending).status,408);
+    await new Promise(done=>setImmediate(done));
+    const old=db.database.query('SELECT * FROM leases').get(); assert.ok(old); assert.equal(old.owner,'actor:owner');
+    writer.database.exec('ROLLBACK');
+    assert.throws(()=>cases.begin('actor:owner',old.case_id,null));
+    at+=CASE_LEASE_MS+1; const recovered=cases.begin('actor:owner',old.case_id,null);
+    release(); app.dispose(); await app.close();
+    assert.equal(db.database.query('SELECT token FROM leases').get().token,recovered.token);
+    const input={...syntheticCase,caseId:old.case_id};
+    await cases.run(recovered,input,async()=>undefined);
+    cases.commit(recovered,{decision:{state:'needs-information',caseId:input.caseId,questions:['review'],evidence:[]}},()=>{});
+    assert.equal(cases.read('actor:owner',input.caseId).version,1);
+    cases.dispose(); writer.close(); db.close();
+  `;
+  await promisify(execFile)(process.execPath, ["--eval", source], { timeout: 10000 });
 });
 
 test("resource corruption and actual SQLite abort preserve the previous report and recovery path", async t => {
@@ -293,4 +331,72 @@ for (const placement of ["same-owner", "other-owner"] as const) test(`launcher s
     assert.deepEqual(queued(), [failed]); await access(failedPath);
     if (started === "ready") assert.equal(code, 0);
   } finally { lines.close(); if (child.exitCode === null && child.signalCode === null) child.kill("SIGKILL"); await exited; }
+});
+
+async function cleanupFixture(t: { after(fn: () => unknown): void }) {
+  const root = await mkdtemp(join(tmpdir(), "o-cleanup-gate-")), state = join(root, "state");
+  const db = await openRuntimeDatabase(state); let at = Date.now();
+  const cases = createCaseStore(() => at, undefined, db), photosRoot = join(state, "photos");
+  const photos = await createPhotoStore({ root: photosRoot, authorize: cases.authorize, retentionMs: 3600000, maxPhotos: 300, now: () => at });
+  const worker = createPhotoCleanupWorker(db, cases, photos);
+  t.after(async () => { await worker.close(); cases.dispose(); db.close(); await rm(root, { recursive: true, force: true }); });
+  const upload = async (actor: string, id: string) => {
+    const owner = `actor:${actor}`, input = { ...syntheticCase, caseId: id }, lease = cases.begin(owner, id, null);
+    await cases.run(lease, input, async () => undefined);
+    cases.commit(lease, { decision: { state: "needs-information", caseId: id, questions: ["review"], evidence: [] } }, () => {});
+    const receipt = await photos.put(actor, id, pixels(), "image/png", { recordId: id, store: true, model: false, visibleContentReviewed: false, expiresAt: at + 3600000 }, signal());
+    return { owner, input, receipt, path: join(photosRoot, receipt.photoRef + ".json") };
+  };
+  return { root, state, db, cases, photosRoot, worker, upload, time: (value: number) => { at = value; } };
+}
+
+for (const scenario of ["renewed-case", "failed-association-orphan"] as const) test(`actual launcher independently sweeps expired photo for ${scenario}`, { timeout: 15000 }, async t => {
+  const f = await cleanupFixture(t), at = Date.now() - 70 * 60000; f.time(at);
+  const photo = await f.upload("expiry-owner", "expiry-case"), lease = f.cases.begin(photo.owner, photo.input.caseId, 1);
+  if (scenario === "renewed-case") {
+    f.cases.associate(lease, photo.receipt, () => {}); f.time(at + 20 * 60000);
+    const renewed = f.cases.begin(photo.owner, photo.input.caseId, 2);
+    await f.cases.run(renewed, photo.input, async () => undefined);
+    f.cases.commit(renewed, { decision: { state: "needs-information", caseId: photo.input.caseId, questions: ["review"], evidence: [] } }, () => {});
+    const current = f.cases.read(photo.owner, photo.input.caseId); assert.ok(current); assert.ok(current.expires > Date.now());
+  } else {
+    assert.throws(() => f.cases.associate(lease, photo.receipt, () => { throw new Error("association failed before publication"); }));
+    f.cases.rollback(lease); assert.deepEqual(f.cases.read(photo.owner, photo.input.caseId)?.photos, []);
+  }
+  assert.ok(photo.receipt.expiresAt < Date.now()); await access(photo.path);
+  assert.deepEqual(f.cases.pendingCleanup(photo.owner), []);
+  const port = randomInt(40000, 60000), { RESOURCE_RESOURCES_DIR: _resources, ...environment } = process.env;
+  const child = spawn(process.execPath, [fileURLToPath(new URL("../scripts/app.ts", import.meta.url))], { cwd: tmpdir(), timeout: 10000,
+    env: { ...environment, PORT: String(port), RESOURCE_APP_AUTH: "local-operator", RESOURCE_STATE_DIR: f.state, RESOURCE_PRIVATE_PHOTOS: "on", RESOURCE_MODEL_RUNNER: "local" }, stdio: ["ignore", "pipe", "pipe"] });
+  let diagnostic = ""; child.stderr.on("data", chunk => { diagnostic += String(chunk); });
+  const exited = once(child, "exit"), lines = createInterface({ input: child.stdout });
+  try {
+    const started = await Promise.race([new Promise<"ready">(done => lines.on("line", line => { if (line.startsWith("Re:Source app:")) done("ready"); })), exited.then(() => "exited" as const)]);
+    if (started === "ready") child.kill("SIGTERM"); const [code] = await exited;
+    t.diagnostic(`Photo expiry startup port=${port} outcome=${started} exit=${String(code)} stderr=${diagnostic.trim()}`);
+    await assert.rejects(access(photo.path), { code: "ENOENT" });
+    if (scenario === "renewed-case") assert.ok(f.cases.read(photo.owner, photo.input.caseId));
+    assert.deepEqual(f.cases.pendingCleanup(photo.owner), []);
+    if (started === "ready") assert.equal(code, 0);
+  } finally { lines.close(); if (child.exitCode === null && child.signalCode === null) child.kill("SIGKILL"); await exited; }
+});
+
+for (const dimension of ["obligations", "owners"] as const) test(`cleanup makes fair progress beyond its ${dimension} page despite persistent failures`, { timeout: 15000 }, async t => {
+  const f = await cleanupFixture(t), count = dimension === "obligations" ? 10 : 100;
+  const healthy = await f.upload("zz-healthy", "zz-healthy-case");
+  const failed: { owner: string; caseId: string; photoRef: string }[] = [];
+  for (let index = 0; index < count; index++) {
+    const owner = dimension === "obligations" ? healthy.owner : `actor:failure-${String(index).padStart(3, "0")}`;
+    const item = { owner, caseId: `failed-${index}`, photoRef: randomUUID() };
+    await writeFile(join(f.photosRoot, item.photoRef + ".json"), "{unreadable", { mode: 0o600 });
+    f.cases.queueCleanup(item.owner, item.caseId, item.photoRef); failed.push(item);
+  }
+  f.cases.associate(f.cases.begin(healthy.owner, healthy.input.caseId, 1), healthy.receipt, () => {});
+  f.cases.withdraw(healthy.owner, healthy.input.caseId, healthy.receipt.photoRef, true);
+  await f.worker.run(); await access(healthy.path);
+  await f.worker.run();
+  await assert.rejects(access(healthy.path), { code: "ENOENT" });
+  const remaining = f.db.database.query<{ owner: string; caseId: string; photoRef: string }, []>("SELECT owner,case_id AS caseId,photo_ref AS photoRef FROM photo_cleanup ORDER BY owner,case_id").all();
+  assert.deepEqual(remaining, failed.sort((left, right) => left.owner.localeCompare(right.owner) || left.caseId.localeCompare(right.caseId)));
+  for (const item of failed) await access(join(f.photosRoot, item.photoRef + ".json"));
 });

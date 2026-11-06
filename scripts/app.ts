@@ -6,10 +6,12 @@ import { createOperationalApp } from "../src/operations.ts";
 import { createAzureRunner, createSubscriptionRunner } from "../src/session.ts";
 import { createMemoryRuntimeDatabase, openRuntimeDatabase } from "../src/o-runtime-db.ts";
 import { createCaseStore } from "../src/o-case-store.ts";
+import type { CleanupCursor } from "../src/o-case-store.ts";
 import { createLocalAuth } from "../src/o-auth.ts";
 import { createFileResourceProvider } from "../src/o-resources.ts";
 import { createPhotoStore } from "../src/photos.ts";
 import { PhotoStorageError } from "../src/photo-codec.ts";
+import type { RuntimeDatabase } from "../src/o-runtime-db.ts";
 // Run with Bun 1.4.2. Node HTTP keeps launch types within existing dependencies.
 /** Streaming bridge shared by the launcher and task-local synthetic QA harness. */
 export function requestBridge(origin: string, fetchRequest: (request: Request) => Promise<Response>) {
@@ -36,6 +38,52 @@ export function requestBridge(origin: string, fetchRequest: (request: Request) =
       throw error;
     }
   };
+}
+
+/** One serialized cleanup pass, shared by startup and interval scheduling. */
+export function createPhotoCleanupWorker(runtime: RuntimeDatabase, caseStore: ReturnType<typeof createCaseStore>, photoStore: Awaited<ReturnType<typeof createPhotoStore>>) {
+  const cleanupAbort = new AbortController();
+  let cleaning: Promise<void> | undefined;
+  let afterOwner = "";
+  const cursors = new Map<string, CleanupCursor>();
+  const run = (): Promise<void> => {
+    if (cleaning) return cleaning;
+    if (cleanupAbort.signal.aborted) return Promise.resolve();
+    const work = async () => {
+      runtime.assertReady();
+      // Photo retention is independent of renewed cases and association success.
+      await photoStore.purgeExpired();
+      if (cleanupAbort.signal.aborted) return;
+      caseStore.pendingCleanup("expiry-sweep", 1);
+      const ownerPage = () => runtime.database.query<{ owner: string }, [string]>("SELECT DISTINCT owner FROM photo_cleanup WHERE owner>? ORDER BY owner LIMIT 100").all(afterOwner);
+      let owners = ownerPage();
+      if (!owners.length && afterOwner) { afterOwner = ""; owners = ownerPage(); }
+      for (const { owner } of owners) {
+        afterOwner = owner;
+        if (!owner.startsWith("actor:") || cleanupAbort.signal.aborted) continue;
+        let items = caseStore.pendingCleanup(owner, 10, cursors.get(owner));
+        if (!items.length && cursors.has(owner)) { cursors.delete(owner); items = caseStore.pendingCleanup(owner, 10); }
+        let completed = 0;
+        for (const item of items) {
+          if (cleanupAbort.signal.aborted) return;
+          cursors.set(owner, item);
+          try { await photoStore.revoke(owner.slice(6), item.photoRef, cleanupAbort.signal); }
+          catch (error) {
+            if (!(error instanceof PhotoStorageError)) throw error;
+            if (cleanupAbort.signal.aborted) return;
+            console.error("Private photo cleanup deferred; obligation retained.");
+            continue;
+          }
+          caseStore.completeCleanup(owner, item.caseId, item.photoRef);
+          completed++;
+        }
+        if (items.length < 10 || completed === items.length) cursors.delete(owner);
+      }
+    };
+    cleaning = work().catch(() => { if (!cleanupAbort.signal.aborted) console.error("Private photo cleanup deferred; obligations retained."); }).finally(() => { cleaning = undefined; });
+    return cleaning;
+  };
+  return { run, async close() { cleanupAbort.abort(); await cleaning; } };
 }
 
 async function startApp() {
@@ -65,42 +113,9 @@ const runner = mode === "subscription"
 const app = createOperationalApp({ origin, runner, resources, localAuth, caseStore, photoStore,
   photoPolicy: photoStore ? { retentionMs } : undefined,
   runtime: { identity: localAuth ? "local-operator" : "anonymous", storage: localAuth ? "sqlite" : "ephemeral", runner: mode }, timeoutMs: 10000 });
-const cleanupAbort = new AbortController();
-let cleaning: Promise<void> | undefined;
-const cleanup = () => {
-  if (cleaning || !photoStore || cleanupAbort.signal.aborted) return cleaning;
-  const work = async () => {
-    // Queue owners survive case expiry. Bound each pass without inventing an
-    // account/session or clearing an obligation before filesystem confirmation.
-    runtime.assertReady();
-    const owners = runtime.database.query<{ owner: string }, []>("SELECT DISTINCT owner FROM photo_cleanup ORDER BY owner LIMIT 100").all();
-    for (const { owner } of owners) {
-      if (!owner.startsWith("actor:") || cleanupAbort.signal.aborted) continue;
-      for (const item of caseStore.pendingCleanup(owner, 10)) {
-        if (cleanupAbort.signal.aborted) return;
-        try { await photoStore.revoke(owner.slice(6), item.photoRef, cleanupAbort.signal); }
-        catch (error) {
-          if (!(error instanceof PhotoStorageError)) throw error;
-          if (cleanupAbort.signal.aborted) return;
-          console.error("Private photo cleanup deferred; obligation retained.");
-          continue;
-        }
-        caseStore.completeCleanup(owner, item.caseId, item.photoRef);
-      }
-    }
-  };
-  cleaning = work().catch(() => { if (!cleanupAbort.signal.aborted) console.error("Private photo cleanup deferred; obligations retained."); }).finally(() => { cleaning = undefined; });
-  return cleaning;
-};
-// Sweep expired cases even when the queue starts empty; this enqueues their photos.
-if (photoStore) {
-  caseStore.pendingCleanup("startup-sweep", 1);
-  await cleanup();
-}
-const cleanupTimer = photoStore ? setInterval(() => {
-  try { caseStore.pendingCleanup("interval-sweep", 1); void cleanup(); }
-  catch { console.error("Private photo cleanup deferred; storage unavailable."); }
-}, 30000) : undefined;
+const cleanup = photoStore ? createPhotoCleanupWorker(runtime, caseStore, photoStore) : undefined;
+await cleanup?.run();
+const cleanupTimer = cleanup ? setInterval(() => { void cleanup.run(); }, 30000) : undefined;
 cleanupTimer?.unref();
 const handlers = new Set<Promise<void>>();
 const bridge = requestBridge(origin, app.fetch);
@@ -113,7 +128,7 @@ let shuttingDown = false;
 function shutdown(exitCode: number): void {
   if (shuttingDown) return;
   shuttingDown = true;
-  clearInterval(cleanupTimer); cleanupAbort.abort();
+  clearInterval(cleanupTimer); const closingCleanup = cleanup?.close();
   const stopped = new Promise<void>(done => server.close(() => done()));
   app.dispose();
   const deadline = setTimeout(() => {
@@ -124,7 +139,7 @@ function shutdown(exitCode: number): void {
   const finish = async () => {
     await stopped;
     await Promise.allSettled([...handlers]);
-    await app.close(); await cleaning;
+    await app.close(); await closingCleanup;
     caseStore.dispose(); runtime.close();
     clearTimeout(deadline); process.exitCode = exitCode;
   };

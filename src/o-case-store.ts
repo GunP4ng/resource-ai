@@ -68,6 +68,11 @@ export interface CaseSnapshot {
   readonly review: { readonly hash: string; readonly origin: Artifact["record"]["dataOrigin"]; readonly caseRevision: string } | null;
   readonly presentation?: ReportPresentation;
 }
+export interface CleanupCursor {
+  readonly queuedAt: number;
+  readonly caseId: string;
+  readonly photoRef: string;
+}
 interface CaseRow { case_id: string; owner: string; version: number; row_revision: number; notice_generation: number; expires: number; edit_until: number; snapshot: string; review_hash: string | null }
 interface LeaseRow { case_id: string; token: string; owner: string; expected_version: number | null; notice_generation: number; created_at: number; expires: number }
 interface Lease {
@@ -367,10 +372,17 @@ export function createCaseStore(now: () => number = Date.now, photoExecution?: P
         checkGuard(guard);
       });
     },
-    pendingCleanup(owner: string, limit = 100) {
+    pendingCleanup(owner: string, limit = 100, after?: CleanupCursor) {
       requireValid(Number.isInteger(limit) && limit > 0 && limit <= 100, "invalid-cleanup-limit");
-      return transaction(() => { sweep(); return db.query<{ caseId: string; photoRef: string; queuedAt: number }, [string, number]>(
-        "SELECT case_id AS caseId,photo_ref AS photoRef,queued_at AS queuedAt FROM photo_cleanup WHERE owner=? ORDER BY queued_at,case_id,photo_ref LIMIT ?").all(owner, limit); });
+      if (after) requireValid(Value.Check(instant, after.queuedAt) && Value.Check(idSchema, after.caseId) && Value.Check(photoRef, after.photoRef), "invalid-cleanup-cursor");
+      return transaction(() => {
+        sweep();
+        if (after) return db.query<CleanupCursor, [string, number, string, string, number]>(
+          "SELECT case_id AS caseId,photo_ref AS photoRef,queued_at AS queuedAt FROM photo_cleanup WHERE owner=? AND (queued_at,case_id,photo_ref)>(?,?,?) ORDER BY queued_at,case_id,photo_ref LIMIT ?")
+          .all(owner, after.queuedAt, after.caseId, after.photoRef, limit);
+        return db.query<CleanupCursor, [string, number]>(
+          "SELECT case_id AS caseId,photo_ref AS photoRef,queued_at AS queuedAt FROM photo_cleanup WHERE owner=? ORDER BY queued_at,case_id,photo_ref LIMIT ?").all(owner, limit);
+      });
     },
     dispose() {
       if (disposed) return;

@@ -178,20 +178,34 @@ metadata; evaluation stages runtime metadata using `stagePresentation` in the
 active lease. Review labels at render time always come from the saved snapshot.
 
 Application factories expose `settled()` for actual pending work, including work
-that has already lost a response timeout race. The composed factories retain
+that has already lost a response timeout/cancellation race. The assessment adapter
+tracks the underlying resource/runner promise until it settles; a completed HTTP
+race alone is insufficient to drain it. The composed factories retain
 `dispose()` cancellation semantics and add awaited `close()` for owned resources.
 The launcher stops accepting, cancels work, waits for HTTP handlers and pending
 application work, then closes leases/SQLite. Its existing one-second forced exit
 bound remains; it does not close SQLite under still-running work at that bound.
 A successfully published lease has a no-op rollback so `finally` cannot issue a
 new failing database write after the commit marker.
+Abort listeners contain typed storage/contention failures after synchronously
+invalidating the local lease. They do not retry SQL or release another token's
+reservation: an undeleted reservation remains bounded by the existing 65-second
+lease expiry and the normal recovery sweep.
 
 Private photos remain single-process and storage-only under `<state>/photos`.
 There is no model-photo mapping or transmission enablement. Local HTTP withdrawal
 durably denies/queues before returning success; physical deletion is separately
 pending. With photo storage enabled only, startup and 30-second non-overlapping
-passes sweep expiry and process at most 100 owners × 10 obligations per pass,
-including expired cases. A queue entry is removed only after `revoke` confirms
+passes independently run the existing physical photo-expiry sweep, including
+expired files from renewed cases and files never successfully associated with a
+case. The same serialized worker then sweeps case expiry and processes at most
+100 owners × 10 obligations per pass, including expired cases. It advances
+process-local keyset cursors between passes and wraps after the end, so persistent
+failures do not permanently exclude later owners/items. Restart resets only the
+scan position; every durable obligation remains. `pendingCleanup(owner, limit,
+after?)` accepts an optional `{ queuedAt, caseId, photoRef }` cursor, validates it,
+and always applies the supplied owner restriction. Existing two-argument calls
+retain their original behavior. A queue entry is removed only after `revoke` confirms
 physical deletion. Failures retain the obligation; shutdown cancels/drains the
 worker before closing SQLite. Legacy trusted photo integrations retain their
 existing immediate deletion/retry behavior.
