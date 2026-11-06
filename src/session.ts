@@ -5,7 +5,7 @@ import { tmpdir } from "node:os";
 import { basename, dirname, join, resolve } from "node:path";
 import { createAgentSession, createExtensionRuntime, ModelRuntime, SessionManager, SettingsManager } from "@code-yeongyu/senpi";
 import type { AgentSession, ResourceLoader } from "@code-yeongyu/senpi";
-import type { FetchFunction, ImageContent } from "@earendil-works/pi-ai";
+import type { CredentialStore, FetchFunction, ImageContent } from "@earendil-works/pi-ai";
 import { createApp } from "./app.ts";
 import type { AssessmentAdapter, AssessmentEnvelope } from "./app.ts";
 import type { AppDependencies } from "./app.ts";
@@ -264,7 +264,7 @@ function isolatedLoader(): ResourceLoader {
 }
 
 /** Opens an isolated SDK session without prompting or making a model request. */
-export async function openCaseSession(input: CaseInput, options: { readonly provider?: "azure-openai-responses" | "chatgpt-subscription"; readonly modelId?: string; readonly authPath?: string; readonly resources?: DomainResources } = {}) {
+export async function openCaseSession(input: CaseInput, options: { readonly provider?: "azure-openai-responses" | "chatgpt-subscription"; readonly modelId?: string; readonly authPath?: string; readonly credentials?: CredentialStore; readonly resources?: DomainResources } = {}) {
   const facts = checked(input);
   const root = await mkdtemp(join(tmpdir(), "resource-case-"));
   const cwd = join(root, "workspace"), agentDir = join(root, "agent");
@@ -280,7 +280,7 @@ export async function openCaseSession(input: CaseInput, options: { readonly prov
     const provider = options.provider ?? "azure-openai-responses";
     // Subscription credentials belong to the SDK's existing auth store, not the disposable case.
     const authPath = provider === "chatgpt-subscription" ? options.authPath : join(agentDir, "auth.json");
-    const modelRuntime = await ModelRuntime.create({ authPath, agentDir, settingsManager, modelsPath: null, allowModelNetwork: false, refreshOnCreate: false });
+    const modelRuntime = await ModelRuntime.create({ authPath, credentials: options.credentials, agentDir, settingsManager, modelsPath: null, allowModelNetwork: false, refreshOnCreate: false });
     const model = modelRuntime.getModel(provider, options.modelId ?? (provider === "chatgpt-subscription" ? "gpt-6-sol" : "gpt-4.1"));
     if (model === undefined) throw new SessionFailure("not-configured");
     const tools = createCaseTools(facts, options.resources);
