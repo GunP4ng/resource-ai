@@ -184,11 +184,15 @@ launcher 기본값은 `RESOURCE_MODEL_RUNNER=subscription`; `local`은 기존 �
 | O1 / #9 | 필터·근거 보존 구현 수용 | 오연석·윤정준: 실제 허가/인수 확인 자료 확보 시 재검증. 디렉터리 등재를 허가나 수탁 의사로 승격하지 않음 |
 | O2 / #10 | 단위·사례 질량·비용 경계 구현 수용 | 오연석·이상협: 독립 `CaseMassReview`와 검토된 실제 견적을 #12 통합 입력에 연결. 질량 보완물 없으면 합계 보류 |
 | O3 / #11 | 계수 검증·배출/크레딧·제외 경계 구현 수용 | 오연석·윤정준: 권리·GWP·경계가 검증된 계수 확보. 미확보 계수는 계속 `unavailable` |
-| O4 / #12 | 기존 로컬 흐름 수용; PR #27 인증·사진·revision 연결은 수정 요청 | 오연석·이상협: 제공자/목적 동의와 전송 설정 결합, 저장 철회 부분 실패의 정리 재시도·UI를 수정. 실제 제공자/운영 자료 연결은 별도 미완료. [검토](https://github.com/GunP4ng/resource-ai/pull/27#pullrequestreview-5799673974) |
+| O4 / #12 | PR #27 인증·사진·revision 연결 및 P1/P2 수정 재검토 수용 | 오연석·이상협: 실제 로그인·영속 사례·운영 자료, 구독 모델 guarded 사진 경계와 승인된 제공자/목적 매핑, 실제 실행/usage·감사 인계. [재검토 승인](https://github.com/GunP4ng/resource-ai/pull/27#pullrequestreview-5800521446) |
 
 O1–O3의 구현 수용은 실제 현장 허가·견적·계수의 확보나 법적 적합성 인증이 아니다. #12의 Azure 통합은 열린 상태로 유지한다. 2026-11-06 O4 변경은 기존 H 어댑터로 로컬 보수적 평가만 연결하며 runner·운영 자료를 공급하지 않는다. 어댑터 없는 `createApp`의 503 동작은 유지한다. 최종 298개 테스트와 소스/패키지 launcher의 실제 제출·질문 갱신·종료, 42개 화면 조합을 검증했고 Astra 최종 검토가 승인됐다. 초기 구현 환경의 loopback 제한은 최종 검증에서 해소됐다.
 
-**2026-11-06 PR #27 수정 요청, 미병합.** 검토 head `bcb9700`의 strict 검사·두 빌드·offline smoke와 **378 tests / 0 failures**가 통과했다. 실제 네이티브 폼의 생성·잘못된 수정 후 보고서 보존·정상 수정·저장 전용 합성 PNG 미리보기·모델/저장 철회와 desktop/mobile 화면도 확인했다. 그러나 코드 검토에서 저장한 제공자/목적 동의를 현재 전송 scope와 비교하지 않는 경로, 철회 marker 저장 뒤 파일 삭제 실패 시 같은 API 재시도가 정리를 완료하지 못하는 경로를 확인하여 병합을 보류했다. 외부 사진 전송이나 장애 주입으로 재현한 결과는 아니다.
+**2026-11-06 PR #27 재검토·병합 (`ca30725`).** 검토 head `f88f873`의 P1/P2 수정을 [승인](https://github.com/GunP4ng/resource-ai/pull/27#pullrequestreview-5800521446)했다. head와 병합 main 모두 모든 strict 검사·두 빌드·offline smoke·**403 tests / 0 failures**, main CI `42223485970`을 통과했다. 실제 Node HTTP/Chrome native 폼에서 scope 일치의 합성 SDK 이미지 평가, 목적 변경·mapping 누락 시 선택/전송 차단과 재동의, dispatch 승인 중 scope 변경 시 추가 전송 없음·기존 version/질량 보존을 확인했다. 실제 unlink를 marker 저장 뒤 EIO로 실패시켜 JSON 잔존·preview404·pending/재시도를 확인했고, 동일 버튼 재시도로303·JSON 삭제·pending 해제 및 반복303/다른 actor404를 검증했다. desktop1440/mobile390 화면과 익명 local launcher303/report200도 확인했다.
+
+오연석은 #12에서 실제 로그인 검증·영속 사례 저장·검토된 운영 자료와 화면의 실행/실패/usage 인계를 진행한다. 이상협은 [사진 실행 계약](photo-execution-scope.md)을 검토하고 구독 runner의 실제 provider/model에 결합된 guarded 사진 경계와 명시적 provider/purpose 매핑을 인계한다. 현재 authority는 Azure 선택 경로의 기술 계약이며 기본 subscription/local 사진 전송은 비활성이다. H 작성자와 운영 소유자의 정책 승인을 대신하지 않는다. 승인된 현장 사진·실제 제공자 실행·영속 감사/정산과 정상3분/보류2분·live/백업 구분 인수는 미완료이며 #12 OPEN, #8 CLOSED를 유지한다. 기존 담당·11/20 동결·팀장의 통합 QA/잠금 평가/영상·최종 보고서 책임은 그대로다. 이번 검증의 실제 외부 모델 호출은0건이다.
+
+**이전 기록: 2026-11-06 PR #27 첫 검토는 수정 요청, 미병합.** 검토 head `bcb9700`의 strict 검사·두 빌드·offline smoke와 **378 tests / 0 failures**가 통과했다. 실제 네이티브 폼의 생성·잘못된 수정 후 보고서 보존·정상 수정·저장 전용 합성 PNG 미리보기·모델/저장 철회와 desktop/mobile 화면도 확인했다. 그러나 코드 검토에서 저장한 제공자/목적 동의를 현재 전송 scope와 비교하지 않는 경로, 철회 marker 저장 뒤 파일 삭제 실패 시 같은 API 재시도가 정리를 완료하지 못하는 경로를 확인하여 병합을 보류했다. 외부 사진 전송이나 장애 주입으로 재현한 결과는 아니다.
 
 오연석은 #12에서 동의 scope의 선택 가능 조건과 철회 pending/재시도 UI·저장 정리 회귀를 수정하고, 이상협은 실제 dispatch 설정과 동의 scope의 결합·전송 전 검사 계약을 함께 인수한다. 이미 CLOSED인 #8은 재개하지 않고 이번 수정 추적은 OPEN인 #12에 모은다. 실제 로그인·현장 사진·운영 자료·제공자 실행/usage·영속 감사/정산·정상3분/보류2분 시연은 미완료다. 기존 담당·11/20 동결·팀장의 통합 QA와 영상/최종 보고서 책임은 유지한다.
 
