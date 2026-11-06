@@ -204,9 +204,12 @@ export function createCaseStore(now: () => number = Date.now, photoExecution?: P
   };
   const read = (owner: string, id: string) => {
     try {
-      ready(); const record = row(id);
-      if (!record || record.owner !== owner || record.expires <= clock()) return undefined;
-      return restore(record);
+      ready();
+      return db.transaction(() => {
+        const record = row(id);
+        if (!record || record.owner !== owner || record.expires <= clock()) return undefined;
+        return restore(record);
+      }).deferred();
     } catch { throw new RuntimeStorageError(); }
   };
   const check = (lease: Lease) => {

@@ -104,6 +104,31 @@ test("final guard failure rolls back case and staged artifact writes", async () 
   store.rollback(lease);
 }));
 
+test("a concurrent replacement and artifact sweep preserve the reader's committed snapshot", async () => fixture(async f => {
+  const writer = f.store(await f.connect(), () => 1000);
+  let interleave: (() => void) | undefined;
+  const reader = f.store(await f.connect(), () => {
+    const work = interleave; interleave = undefined; work?.(); return 1000;
+  });
+  await seed(writer);
+  const artifact = await prepareCaseRecord(input, { dataOrigin: { kind: "synthetic", reference: "reader-snapshot" },
+    codeRevision: "1".repeat(40), signal: new AbortController().signal, sources: async () => null });
+  const reviewed = writer.begin(owner, input.caseId, 1);
+  await writer.run(reviewed, input, async () => writer.stageResources(artifact));
+  writer.commit(reviewed, assessment, () => undefined);
+  const replacement = writer.begin(owner, input.caseId, 2);
+  await writer.run(replacement, { ...input, massKg: 123 }, async () => undefined);
+  // The existing clock seam schedules another real connection after row selection.
+  interleave = () => {
+    writer.commit(replacement, assessment, () => undefined);
+    writer.pendingCleanup(owner);
+  };
+  const snapshot = reader.read(owner, input.caseId);
+  assert.equal(snapshot?.version, 2);
+  assert.equal(snapshot.review?.hash, artifact.sha256);
+  assert.equal(reader.read(owner, input.caseId)?.input.massKg, 123);
+}));
+
 test("SQL abort and zero affected-row writes never publish success", async () => fixture(async f => {
   const db = await f.connect(), store = f.store(db); await seed(store); const before = store.read(owner, input.caseId);
   for (const action of ["ABORT", "IGNORE"]) {
