@@ -196,6 +196,12 @@ launcher 기본값은 `RESOURCE_MODEL_RUNNER=subscription`; `local`은 기존 �
 
 병합 main `2bf8579`도 동일 strict 검사·두 빌드·offline smoke·521개 테스트와 실제 HTTP 읽기 회귀를 통과했다. main CI `42254698501` 성공을 별도로 확인했다.
 
+**2026-11-07 O4 설치 인계 로컬 구현·검증 완료 (미병합).** `o-artifact.ts check|install`은 기존 private state의 활성 username→actor와 현재 소유 사례·정확한 입력 revision·편집 기한을 확인하고, 기존 validator로 검증한 `{record,sha256}` bytes만 private resources 경로에 설치한다. 설치는 재평가가 아니며 명시적 인증 `/answers`와 `baseVersion`으로 재평가해야 저장 결과에 반영된다. 승인/live/과금 완료를 뜻하지 않는다. 사례·보관·세션·사진 권한·lease는 바꾸지 않고 runner도 호출하지 않는다. [명령·동시성·복구 경계](o-runtime-integration.md#http-recovery-and-exact-artifact-installation)를 따른다.
+
+Linux/Bun 1.4.2에서 최종 전체 **549 tests / 0 failures**, strict source/test·O-test 타입검사, extension/app 빌드, offline smoke와 diff-check를 통과했다. 실제 CLI/HTTP/Chrome native 로그인·사례 생성·입력 export·패키지 CLI 설치·명시적 재평가를 확인했다. 설치 직후 기존 보고서 유지, 재평가 후 버전2·정확한 자료 해시·합성 표시·현행성 보류, 잘못된 입력 revision 설치 거부를 확인했다. 스크린샷은 CDP timeout으로 확보하지 못했으며 화면 동작과 접근성 트리만 증거로 남겼다. Astra가 지적한 중단 설치 재시도의 상위 디렉터리 fsync 누락은 6개 실패 회귀를 먼저 확인하고 수정 후 통과시켰으며, Astra 재검토는 이 로컬 변경을 승인했다. 실제 전원 장애 실험이나 현장 인수를 수행했다는 뜻은 아니다.
+
+현장 package는 있다고 전달받았지만 위치가 미정이며 이번 인계에 실제 공급된 파일은 없다. 현행성·권리·견적·독립 질량 검토·허가/인수·승인 계수와 원본/파생 지지 관계는 J/O 공급·검토가 필요하다. H/O는 launcher에 아직 없는 구체적 authorize/reserve/release/settle/영속 audit 의존성을 승인 계정/provider/model/purpose·한도 아래 조립해야 한다. UI trace는 provider request ID가 아니며 usage는 청구가 아니다. 실제 성공/실패/취소·request ID/usage·정산 및 승인 현장 사진 전송/철회/만료 인수는 미완료다. 공통 O 10건 수집과 독립 라벨 30건·18/12 분리의 검증된 인계 manifest도 저장소에 없다. 정상3분/보류2분 합성 경로와 현장·live·백업 영상 인수를 구별하며 **#12 OPEN, #8 CLOSED**를 유지한다.
+
 **2026-11-06 PR #28 검토·병합 (`2ee1cb2`).** head `1b1299c`의 명시적 구독 provider/model/account·목적 authority와 read-only credential snapshot, 승인·감사·단일 deadline 아래 사진 실행을 [승인](https://github.com/GunP4ng/resource-ai/pull/28#pullrequestreview-5802416900)했다. Linux/Bun1.4.2 head/main 모두 strict 검사·두 빌드·offline smoke·**412 tests / 0 failures**, main CI `42243089652` 성공. 실제 Node HTTP/Chrome native 생성→사진 동의/업로드→선택/평가303, 실제 SDK 직렬화 이미지 SHA와 저장 SHA 일치, scope 변경·mapping 누락·승인 중 변경 시502/추가 전송0/이전 사례·보고서 보존을 확인했다. local launcher 수정과 default subscription 빈 인증503, 실제 묶음 `/reference`의136가격/31등재업체·계산불가도 유지됐다.
 
 이 검증의 actor·OAuth·1x1PNG·SSE 응답은 합성이다. 실제 계정/외부 모델/현장 사진 인수는0건이며 `liveModelVerified=false`, `outputLimitEnforced=false`다. `maxOutputTokens`는 구독 제공자가 강제하는 사용량 상한이 아니다. 기본 launcher의 사진 실행을 활성화하지 않았고 아래 PR27 당시 Azure 전용 설명은 과거 기록이다. Windows 기존24실패는 작성자 baseline 설명으로 남으며 Windows 통과를 주장하지 않는다.

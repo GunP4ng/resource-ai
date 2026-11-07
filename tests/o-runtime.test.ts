@@ -260,6 +260,29 @@ test("packaged account CLI provisions from an unrelated working directory", { ti
   finally { db.close(); }
 });
 
+test("packaged artifact CLI requires explicit authenticated reassessment and retains provenance after restart", { timeout: 30000 }, async t => {
+  const f = await fixture(t), root = fileURLToPath(new URL("../", import.meta.url)), resourcesRoot = join(f.root, "artifacts");
+  await mkdir(resourcesRoot, { mode: 0o700 });
+  const resources = await createFileResourceProvider({ root: resourcesRoot, caseStore: f.cases });
+  const app = f.app({ origin, resources }), path = await submit(app, f.cookie);
+  const before = f.cases.read(`actor:${f.actorId}`, path.slice(7)); assert.ok(before);
+  const artifact = await prepareCaseRecord(before.input, { dataOrigin: { kind: "synthetic", reference: "CLI integration only; no field approval" },
+    codeRevision: "f0d907c8d227790f9818dd440ae4bc9e1d400dcc", signal: signal(), sources: createBundledSnapshotReader(root) });
+  const source = join(f.root, "artifact.json"); await writeFile(source, JSON.stringify(artifact), { mode: 0o600 });
+  await promisify(execFile)(process.execPath, ["run", "build:app"], { cwd: root, timeout: 20000 });
+  const result = await promisify(execFile)(process.execPath, [join(root, "dist/app/o-artifact.js"), "install",
+    "--state-dir", join(f.root, "state"), "--resources-dir", resourcesRoot, "--username", "operator",
+    "--case-id", before.input.caseId, "--expected-revision", revision(before.input), "--artifact", source], { cwd: tmpdir(), timeout: 10000 });
+  assert.equal(JSON.parse(result.stdout).status, "installed; reassessment pending");
+  assert.deepEqual(f.cases.read(`actor:${f.actorId}`, before.input.caseId), before);
+  assert.equal((await app.fetch(post(path + "/answers", f.cookie, { baseVersion: before.version, patch: { massKg: before.input.massKg } }))).status, 303);
+  const saved = f.cases.read(`actor:${f.actorId}`, before.input.caseId); assert.equal(saved?.version, before.version + 1); assert.equal(saved?.review?.hash, artifact.sha256);
+  app.dispose(); await app.close(); f.cases.dispose(); f.db.close();
+  const reopened = await openRuntimeDatabase(join(f.root, "state")), recovered = createCaseStore(Date.now, undefined, reopened);
+  try { assert.deepEqual(recovered.read(`actor:${f.actorId}`, before.input.caseId), saved); }
+  finally { recovered.dispose(); reopened.close(); }
+});
+
 test("packaged local operator launcher serves actual HTTP and exits cleanly", { timeout: 30000 }, async t => {
   const f = await fixture(t), root = fileURLToPath(new URL("../", import.meta.url));
   await promisify(execFile)(process.execPath, ["run", "build:app"], { cwd: root, timeout: 20000 });
