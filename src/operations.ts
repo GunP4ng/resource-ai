@@ -178,6 +178,8 @@ interface OperationalRunnerCommon {
   readonly timeoutMs: number;
   readonly maxTurns: number;
   readonly maxOutputTokens: number;
+  /** Direct-run scheduling boundary. An enclosing app's clock/deadline always takes precedence. */
+  readonly clock?: OperationalClock;
   /** Must verify live approval and reserve budget atomically for EACH outbound request. */
   readonly authorizeDispatch: (request: DispatchRequest, signal: AbortSignal) => Promise<DispatchPermit | null>;
   /** Durable, access-controlled sink. A failed start/dispatch write blocks network dispatch. */
@@ -239,7 +241,7 @@ export function createOperationalRunner(options: OperationalRunnerOptions | Subs
   return async (input, signal, resources) => {
     const parsed = parseCaseInput(input);
     if (!parsed.ok) throw new SessionFailure("provider");
-    const parent = requestBudgets.getStore(), clock = parent?.clock ?? monotonicClock;
+    const parent = requestBudgets.getStore(), clock = parent?.clock ?? options.clock ?? monotonicClock;
     const facts = parsed.value, runId = randomUUID(), caseRevision = revision(facts), started = clock.now();
     const ticket = facts.photoRefs.length ? (options.photoTicket?.() ?? options.photoExecution?.current()) : undefined;
     const assertPhotoExecution = () => {
