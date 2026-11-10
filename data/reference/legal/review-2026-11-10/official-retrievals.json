@@ -1,0 +1,306 @@
+{
+  "schemaVersion": 1,
+  "reviewedBy": "OmO j2j3-20261110 (automated source comparison; not human legal approval)",
+  "assessmentDate": "2026-11-10",
+  "scope": "Selected law/annex/notice text only; no site, permit, quality, rights-to-case, quote or factor approval",
+  "runtimeVerifiedThrough": "2026-11-05",
+  "registryUpdated": false,
+  "responses": [
+    {
+      "responseId": "official-response-1",
+      "requestedUrl": "https://www.law.go.kr/법령/폐기물관리법시행규칙",
+      "retrievedAt": "2026-11-10T03:38:15.238Z",
+      "responseUrl": "https://www.law.go.kr/%EB%B2%95%EB%A0%B9/%ED%8F%90%EA%B8%B0%EB%AC%BC%EA%B4%80%EB%A6%AC%EB%B2%95%EC%8B%9C%ED%96%89%EA%B7%9C%EC%B9%99",
+      "status": 200,
+      "headers": {
+        "connection": "Keep-Alive",
+        "content-language": "en-US",
+        "content-length": "1288",
+        "content-type": "text/html;charset=UTF-8",
+        "date": "Tue, 10 Nov 2026 03:38:15 GMT",
+        "keep-alive": "timeout=5, max=10000",
+        "server": "Apache"
+      },
+      "responseSha256": "b1ee4ee9ea0768a84ac69b3052f7d9fd55ab97d8e9cf9d4fa0cd48f7c0194877",
+      "byteLength": 1288,
+      "error": null,
+      "bodyRetention": "Response hash plus selected legal text; portal HTML not redistributed",
+      "manifestSourceId": null
+    },
+    {
+      "responseId": "official-response-2",
+      "requestedUrl": "https://www.law.go.kr/행정규칙/식품용기사용재생원료기준",
+      "retrievedAt": "2026-11-10T03:38:15.238Z",
+      "responseUrl": "https://www.law.go.kr/%ED%96%89%EC%A0%95%EA%B7%9C%EC%B9%99/%EC%8B%9D%ED%92%88%EC%9A%A9%EA%B8%B0%EC%82%AC%EC%9A%A9%EC%9E%AC%EC%83%9D%EC%9B%90%EB%A3%8C%EA%B8%B0%EC%A4%80",
+      "status": 200,
+      "headers": {
+        "connection": "Keep-Alive",
+        "content-language": "en-US",
+        "content-length": "1255",
+        "content-type": "text/html;charset=UTF-8",
+        "date": "Tue, 10 Nov 2026 03:38:15 GMT",
+        "keep-alive": "timeout=5, max=10000",
+        "server": "Apache"
+      },
+      "responseSha256": "b0a295a8c1784d6ce4c71b48e291cf68b54d204a3192fa3f20cc552c904dd4c6",
+      "byteLength": 1255,
+      "error": null,
+      "bodyRetention": "Response hash plus selected legal text; portal HTML not redistributed",
+      "manifestSourceId": null
+    },
+    {
+      "responseId": "official-response-3",
+      "requestedUrl": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=170404737&bylClsCd=110201",
+      "retrievedAt": "2026-11-10T03:38:15.238Z",
+      "responseUrl": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=170404737&bylClsCd=110201",
+      "status": 200,
+      "headers": {
+        "connection": "Keep-Alive",
+        "content-disposition": "attachment; filename=\"%5B%EB%B3%84%ED%91%9C%204%5D%20%ED%8F%90%EA%B8%B0%EB%AC%BC%EC%9D%98%20%EC%A2%85%EB%A5%98%EB%B3%84%20%EC%84%B8%EB%B6%80%EB%B6%84%EB%A5%98%28%EC%A0%9C4%EC%A1%B0%EC%9D%982%EC%A0%9C1%ED%95%AD%20%EA%B4%80%EB%A0%A8%29%28%ED%8F%90%EA%B8%B0%EB%AC%BC%EA%B4%80%EB%A6%AC%EB%B2%95%20%EC%8B%9C%ED%96%89%EA%B7%9C%EC%B9%99%29.pdf\"",
+        "content-transfer-encoding": "binary;",
+        "content-type": "application/pdf;;charset=UTF-8",
+        "date": "Tue, 10 Nov 2026 03:38:15 GMT",
+        "expires": "-1;",
+        "filename-encoding": "UTF-8",
+        "keep-alive": "timeout=5, max=10000",
+        "pragma": "no-cache;",
+        "server": "Apache",
+        "transfer-encoding": "chunked"
+      },
+      "responseSha256": "1144ca217ceb485cfb8bc92a007337c4fb6cab12830a7aed3c6c031c815430a0",
+      "byteLength": 174883,
+      "error": null,
+      "bodyRetention": "Exact bytes already bundled; see matching manifest SHA",
+      "manifestSourceId": "waste-rule-annex4-pdf"
+    },
+    {
+      "responseId": "official-response-4",
+      "requestedUrl": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=170404769&bylClsCd=110201",
+      "retrievedAt": "2026-11-10T03:38:15.238Z",
+      "responseUrl": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=170404769&bylClsCd=110201",
+      "status": 200,
+      "headers": {
+        "connection": "Keep-Alive",
+        "content-disposition": "attachment; filename=\"%5B%EB%B3%84%ED%91%9C%204%EC%9D%982%5D%20%ED%8F%90%EA%B8%B0%EB%AC%BC%EC%9D%98%20%EC%9E%AC%ED%99%9C%EC%9A%A9%20%EC%9C%A0%ED%98%95%EB%B3%84%20%EC%84%B8%EB%B6%80%EB%B6%84%EB%A5%98%28%EC%A0%9C4%EC%A1%B0%EC%9D%982%EC%A0%9C2%ED%95%AD%20%EA%B4%80%EB%A0%A8%29%28%ED%8F%90%EA%B8%B0%EB%AC%BC%EA%B4%80%EB%A6%AC%EB%B2%95%20%EC%8B%9C%ED%96%89%EA%B7%9C%EC%B9%99%29.pdf\"",
+        "content-transfer-encoding": "binary;",
+        "content-type": "application/pdf;;charset=UTF-8",
+        "date": "Tue, 10 Nov 2026 03:38:15 GMT",
+        "expires": "-1;",
+        "filename-encoding": "UTF-8",
+        "keep-alive": "timeout=5, max=10000",
+        "pragma": "no-cache;",
+        "server": "Apache",
+        "transfer-encoding": "chunked"
+      },
+      "responseSha256": "00322ef0f5f4c0e2a616e85e7286a0ae41a4278e76efcdc23980ac42074ab1ed",
+      "byteLength": 119185,
+      "error": null,
+      "bodyRetention": "Exact bytes already bundled; see matching manifest SHA",
+      "manifestSourceId": "legal-290881-annex4-2-pdf"
+    },
+    {
+      "responseId": "official-response-5",
+      "requestedUrl": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=170404781&bylClsCd=110201",
+      "retrievedAt": "2026-11-10T03:38:15.238Z",
+      "responseUrl": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=170404781&bylClsCd=110201",
+      "status": 200,
+      "headers": {
+        "connection": "Keep-Alive",
+        "content-disposition": "attachment; filename=\"%5B%EB%B3%84%ED%91%9C%204%EC%9D%983%5D%20%ED%8F%90%EA%B8%B0%EB%AC%BC%EC%9D%98%20%EC%A2%85%EB%A5%98%EB%B3%84%20%EC%9E%AC%ED%99%9C%EC%9A%A9%20%EA%B0%80%EB%8A%A5%20%EC%9C%A0%ED%98%95%28%EC%A0%9C4%EC%A1%B0%EC%9D%982%EC%A0%9C3%ED%95%AD%20%EA%B4%80%EB%A0%A8%29%28%ED%8F%90%EA%B8%B0%EB%AC%BC%EA%B4%80%EB%A6%AC%EB%B2%95%20%EC%8B%9C%ED%96%89%EA%B7%9C%EC%B9%99%29.pdf\"",
+        "content-transfer-encoding": "binary;",
+        "content-type": "application/pdf;;charset=UTF-8",
+        "date": "Tue, 10 Nov 2026 03:38:15 GMT",
+        "expires": "-1;",
+        "filename-encoding": "UTF-8",
+        "keep-alive": "timeout=5, max=10000",
+        "pragma": "no-cache;",
+        "server": "Apache",
+        "transfer-encoding": "chunked"
+      },
+      "responseSha256": "45ecd6453c9ca337479751841e0d2a79a3bb345b5080a8f9f63a40d05841ad9e",
+      "byteLength": 353680,
+      "error": null,
+      "bodyRetention": "Exact bytes already bundled; see matching manifest SHA",
+      "manifestSourceId": "legal-290881-annex4-3-pdf"
+    },
+    {
+      "responseId": "official-response-6",
+      "requestedUrl": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=170404923&bylClsCd=110201",
+      "retrievedAt": "2026-11-10T03:38:15.238Z",
+      "responseUrl": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=170404923&bylClsCd=110201",
+      "status": 200,
+      "headers": {
+        "connection": "Keep-Alive",
+        "content-disposition": "attachment; filename=\"%5B%EB%B3%84%ED%91%9C%205%EC%9D%983%5D%20%ED%8F%90%EA%B8%B0%EB%AC%BC%EC%9D%98%20%EC%9E%AC%ED%99%9C%EC%9A%A9%20%EA%B8%B0%EC%A4%80%28%EC%A0%9C14%EC%A1%B0%EC%9D%983%EC%A0%9C1%ED%95%AD%20%EA%B4%80%EB%A0%A8%29%28%ED%8F%90%EA%B8%B0%EB%AC%BC%EA%B4%80%EB%A6%AC%EB%B2%95%20%EC%8B%9C%ED%96%89%EA%B7%9C%EC%B9%99%29.pdf\"",
+        "content-transfer-encoding": "binary;",
+        "content-type": "application/pdf;;charset=UTF-8",
+        "date": "Tue, 10 Nov 2026 03:38:15 GMT",
+        "expires": "-1;",
+        "filename-encoding": "UTF-8",
+        "keep-alive": "timeout=5, max=10000",
+        "pragma": "no-cache;",
+        "server": "Apache",
+        "transfer-encoding": "chunked"
+      },
+      "responseSha256": "3d718a601e603ae72aa35fb60db81311c236298b571d579de54f1f5d83c21f1c",
+      "byteLength": 429878,
+      "error": null,
+      "bodyRetention": "Exact bytes already bundled; see matching manifest SHA",
+      "manifestSourceId": "legal-290881-annex5-3-pdf"
+    },
+    {
+      "responseId": "official-response-7",
+      "requestedUrl": "https://www.law.go.kr/LSW/lsRvsDocInfoR.do?lsiSeq=290881",
+      "retrievedAt": "2026-11-10T03:38:15.238Z",
+      "responseUrl": "https://www.law.go.kr/LSW/lsRvsDocInfoR.do?lsiSeq=290881",
+      "status": 200,
+      "headers": {
+        "connection": "Keep-Alive",
+        "content-language": "en-US",
+        "content-length": "4139",
+        "content-type": "text/html;charset=UTF-8",
+        "date": "Tue, 10 Nov 2026 03:38:15 GMT",
+        "keep-alive": "timeout=5, max=10000",
+        "server": "Apache"
+      },
+      "responseSha256": "bf8c77809dd4fa1f808fb8408380e3ba262a73dd31afa595505fff7029aa6cdc",
+      "byteLength": 4139,
+      "error": null,
+      "bodyRetention": "Response hash plus selected legal text; portal HTML not redistributed",
+      "manifestSourceId": null
+    },
+    {
+      "responseId": "official-response-8",
+      "requestedUrl": "https://www.law.go.kr/LSW//lsInfoP.do?lsiSeq=290881&chrClsCd=010202&urlMode=lsInfoP&efYd=20261002&ancYnChk=0",
+      "retrievedAt": "2026-11-10T03:38:49.520Z",
+      "responseUrl": "https://www.law.go.kr/LSW//lsInfoP.do?lsiSeq=290881&chrClsCd=010202&urlMode=lsInfoP&efYd=20261002&ancYnChk=0",
+      "status": 200,
+      "headers": {
+        "connection": "Keep-Alive",
+        "content-language": "en-US",
+        "content-type": "text/html;charset=UTF-8",
+        "date": "Tue, 10 Nov 2026 03:38:49 GMT",
+        "keep-alive": "timeout=5, max=10000",
+        "server": "Apache",
+        "transfer-encoding": "chunked"
+      },
+      "responseSha256": "b38278581c22f540b56858f04b254cdaae07282e2fb8b9f0f9edbc73c48da570",
+      "byteLength": 145683,
+      "error": null,
+      "bodyRetention": "Response hash plus selected legal text; portal HTML not redistributed",
+      "manifestSourceId": null
+    },
+    {
+      "responseId": "official-response-9",
+      "requestedUrl": "https://www.law.go.kr/LSW//admRulInfoP.do?admRulSeq=2100000283168&chrClsCd=010201",
+      "retrievedAt": "2026-11-10T03:38:49.520Z",
+      "responseUrl": "https://www.law.go.kr/LSW//admRulInfoP.do?admRulSeq=2100000283168&chrClsCd=010201",
+      "status": 200,
+      "headers": {
+        "connection": "Keep-Alive",
+        "content-language": "en-US",
+        "content-type": "text/html;charset=UTF-8",
+        "date": "Tue, 10 Nov 2026 03:38:49 GMT",
+        "keep-alive": "timeout=5, max=10000",
+        "server": "Apache",
+        "transfer-encoding": "chunked"
+      },
+      "responseSha256": "3f742a22cf743d313e8fe7a4f771e6a751ae82d2e4e451478e2a2708873d544b",
+      "byteLength": 78248,
+      "error": null,
+      "bodyRetention": "Response hash plus selected legal text; portal HTML not redistributed",
+      "manifestSourceId": null
+    },
+    {
+      "responseId": "official-response-10",
+      "requestedUrl": "https://www.law.go.kr/LSW/lsInfoR.do?lsiSeq=290881&efYd=20261002",
+      "retrievedAt": "2026-11-10T03:39:17.498Z",
+      "responseUrl": "https://www.law.go.kr/LSW/lsInfoR.do?lsiSeq=290881&efYd=20261002",
+      "status": 200,
+      "headers": {
+        "connection": "Keep-Alive",
+        "content-language": "en-US",
+        "content-type": "text/html;charset=UTF-8",
+        "date": "Tue, 10 Nov 2026 03:39:17 GMT",
+        "keep-alive": "timeout=5, max=10000",
+        "server": "Apache",
+        "transfer-encoding": "chunked"
+      },
+      "responseSha256": "68b7b1e6d642ca8e26115020341e51d3d7b6dfd44aa9d1c78d681691f36934d7",
+      "byteLength": 1851031,
+      "error": null,
+      "bodyRetention": "Response hash plus selected legal text; portal HTML not redistributed",
+      "manifestSourceId": null
+    },
+    {
+      "responseId": "official-response-11",
+      "requestedUrl": "https://www.law.go.kr/LSW/admRulInfoR.do?admRulSeq=2100000283168",
+      "retrievedAt": "2026-11-10T03:39:17.498Z",
+      "responseUrl": "https://www.law.go.kr/LSW/admRulInfoR.do?admRulSeq=2100000283168",
+      "status": 200,
+      "headers": {
+        "connection": "Keep-Alive",
+        "content-language": "en-US",
+        "content-type": "text/html;charset=UTF-8",
+        "date": "Tue, 10 Nov 2026 03:39:17 GMT",
+        "keep-alive": "timeout=5, max=10000",
+        "server": "Apache",
+        "transfer-encoding": "chunked"
+      },
+      "responseSha256": "4d1515a193b27e8446887f7b30a426ca47349b0b2d7867e1f74d11640597a5ed",
+      "byteLength": 54086,
+      "error": null,
+      "bodyRetention": "Response hash plus selected legal text; portal HTML not redistributed",
+      "manifestSourceId": null
+    }
+  ],
+  "conclusion": {
+    "law": {
+      "sequence": "290881",
+      "promulgatedOn": "2026-10-01",
+      "effectiveFrom": "2026-10-02",
+      "amendmentNumber": "60",
+      "annexAmendedOn": "2025-12-30",
+      "currentWrapperResponse": "official-response-1",
+      "currentPageResponse": "official-response-8",
+      "substantiveBodyResponse": "official-response-10",
+      "amendmentResponse": "official-response-7",
+      "annexLinksPresent": [
+        {
+          "flSeq": "170404737",
+          "foundInCurrentBody": true
+        },
+        {
+          "flSeq": "170404769",
+          "foundInCurrentBody": true
+        },
+        {
+          "flSeq": "170404781",
+          "foundInCurrentBody": true
+        },
+        {
+          "flSeq": "170404923",
+          "foundInCurrentBody": true
+        }
+      ]
+    },
+    "notice": {
+      "sequence": "2100000283168",
+      "promulgatedOn": "2026-07-27",
+      "effectiveFrom": "2026-07-27",
+      "amendmentNumber": "2026-191",
+      "currentWrapperResponse": "official-response-2",
+      "currentPageResponse": "official-response-9",
+      "substantiveBodyResponse": "official-response-11",
+      "scope": "Used PET beverage bottles, physical recycling for food; manufacturing offcuts, chemical recycling and nonfood uses excluded"
+    },
+    "result": "current-link-and-selected-text-confirmed",
+    "validUntil": null,
+    "limitations": [
+      "No full-law legal opinion or future validity guarantee",
+      "Previous-version annexes not verified",
+      "No actual site/facility/quality/permit evidence",
+      "No operational registry promotion or H/O integration approval"
+    ]
+  }
+}
