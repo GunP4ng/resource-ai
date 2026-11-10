@@ -1,0 +1,12 @@
+{
+  "caseId": "OYS-20261110-003",
+  "description": "SYNTHETIC — newly authored text-only fictional scenario: Clean single-resin PP. No field records, photos or external evidence supplied. Mass is unknown. No legal eligibility, price or emissions factor is asserted.",
+  "photoRefs": [],
+  "process": "Fictional PP component injection moulding produces runners collected separately at the moulding cell.",
+  "polymer": "PP",
+  "contamination": "No contamination is stipulated in this fictional scenario.",
+  "hazardousContact": "no",
+  "massKg": null,
+  "region": "경상북도",
+  "assessmentDate": "2026-11-10"
+}

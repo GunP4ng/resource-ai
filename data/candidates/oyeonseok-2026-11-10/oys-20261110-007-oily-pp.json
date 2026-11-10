@@ -1,0 +1,12 @@
+{
+  "caseId": "OYS-20261110-007",
+  "description": "SYNTHETIC — newly authored text-only fictional scenario: Oil-contaminated PP. No field records, photos or external evidence supplied. Mass is unknown. No legal eligibility, price or emissions factor is asserted.",
+  "photoRefs": [],
+  "process": "Fictional PP machining fixtures are discarded after contact with maintenance oil; oil identity, safety data and residue amount are unknown.",
+  "polymer": "PP",
+  "contamination": "Maintenance oil residue is stipulated; composition and amount are unknown.",
+  "hazardousContact": "unknown",
+  "massKg": null,
+  "region": "울산광역시",
+  "assessmentDate": "2026-11-10"
+}
