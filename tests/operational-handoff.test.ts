@@ -41,6 +41,16 @@ test("a reservation returning after terminal cleanup is queued for recovery and 
   assert.equal(f.recovery[0]?.reason, "late-reservation"); assert.equal(f.recovery[0]?.reservations[0]?.approvalId, "synthetic-1");
 });
 
+test("a duplicate reservation ID requests ledger inspection without refunding the in-flight attempt", async () => {
+  const f = fixture(), hooks = createOperationalHandoff({ ...f.suppliers,
+    reserve: async () => ({ approvalId: "synthetic-1", expiresAt: Date.now() + 60000 }) });
+  await hooks.record(event("start")); await hooks.authorizeDispatch(request(1), signal());
+  await assert.rejects(hooks.authorizeDispatch(request(2), signal()), /invalid-reservation/);
+  assert.equal(f.recovery[0]?.reason, "invalid-reservation"); assert.equal(f.released.length, 0);
+  await hooks.record(event("finish", [1]));
+  assert.equal(f.reconciled[0]?.rows.length, 1); assert.equal(f.released.length, 0);
+});
+
 for (const phase of ["audit", "release", "reconcile", "recovery"] as const) test(`terminal ${phase} failure remains visible and preserves recovery data`, async () => {
   const f = fixture();
   const hooks = createOperationalHandoff({ ...f.suppliers,

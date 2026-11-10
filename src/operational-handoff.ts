@@ -6,7 +6,7 @@ export interface Reservation extends DispatchPermit {
   readonly attempt: number;
 }
 export interface RecoveryTask {
-  readonly reason: "late-reservation" | "terminal-failure";
+  readonly reason: "late-reservation" | "invalid-reservation" | "terminal-failure";
   readonly reservations: readonly Reservation[];
   readonly event: OperationalAudit | null;
 }
@@ -50,9 +50,11 @@ export function createOperationalHandoff(suppliers: OperationalSuppliers) {
         recover("late-reservation", [reservation], run.finish);
         throw new Error("late-reservation");
       }
-      if (!/^[A-Za-z0-9_.-]{1,128}$/.test(reservation.approvalId) || !Number.isSafeInteger(reservation.expiresAt)
+      if (typeof reservation.approvalId !== "string" || !/^[A-Za-z0-9_.-]{1,128}$/.test(reservation.approvalId) || !Number.isSafeInteger(reservation.expiresAt)
         || reservation.expiresAt <= Date.now() || run.reservations.some(row => row.approvalId === reservation.approvalId)) {
-        recover("late-reservation", [reservation], null);
+        // Invalid/duplicate IDs require ledger inspection, not a blind refund:
+        // that ID may already belong to an in-flight attempt.
+        recover("invalid-reservation", [reservation], null);
         throw new Error("invalid-reservation");
       }
       run.reservations.push(reservation);
