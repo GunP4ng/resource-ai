@@ -39,6 +39,7 @@ export interface AppDependencies {
   readonly actorForRequest?: (request: Request, signal: AbortSignal) => Promise<string | { readonly actorId: string; readonly validUntil: number; readonly assertCurrent?: () => void } | null>;
   readonly localAuth?: ReturnType<typeof createLocalAuth>;
   readonly runtime?: ReportPresentation["runtime"];
+  readonly presentationMode?: ReportPresentation["mode"];
   readonly preparer?: {
     prepareSubmit(raw: unknown, format: "json" | "form"): CaseInput;
     prepareAnswer(input: CaseInput, raw: unknown): CaseInput;
@@ -441,9 +442,9 @@ export function createApp(dependencies: AppDependencies) {
             const output = await caseStore.run(lease, input, async runSignal => {
               const output = await preparer.evaluate(structuredClone(input), runSignal);
               privateGuard();
-              caseStore.stagePresentation({ mode: "live", ...(dependencies.runtime ? { runtime: dependencies.runtime } : {}) });
+              caseStore.stagePresentation({ mode: dependencies.presentationMode ?? "live", ...(dependencies.runtime ? { runtime: dependencies.runtime } : {}) });
               return output;
-            }, ticket ?? undefined);
+            }, ticket ?? undefined, privateGuard);
             guard(signal);
             const captured: unknown = structuredClone(output);
             if (Buffer.byteLength(JSON.stringify(captured), "utf8") > 524288) throw new HttpFailure(502, "검토 결과 크기 제한을 초과했습니다.");

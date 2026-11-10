@@ -62,6 +62,22 @@ async function submit(app: ReturnType<typeof createOperationalApp>, cookie: stri
   const path = result.headers.get("location"); assert.ok(path); return path;
 }
 
+test("operation binding captures the actual lease and rechecks the synchronous identity guard", async t => {
+  const f = await fixture(t), lease = f.cases.begin(`actor:${f.actorId}`, syntheticCase.caseId, null);
+  let active = true;
+  try {
+    await f.cases.run(lease, syntheticCase, async () => {
+      const binding = f.cases.currentOperation();
+      assert.equal(binding.actorId, f.actorId); assert.equal(binding.caseId, syntheticCase.caseId);
+      assert.equal(binding.inputRevision, revision(syntheticCase)); assert.equal(binding.artifact, null);
+      assert.ok(Object.isFrozen(binding)); assert.ok(binding.leaseToken);
+      active = false; assert.throws(() => f.cases.currentOperation());
+      assert.equal(binding.actorId, f.actorId);
+    }, undefined, () => { if (!active) throw new Error("synthetic identity revoked"); });
+  } finally { f.cases.rollback(lease); }
+  assert.throws(() => f.cases.currentOperation());
+});
+
 test("native login, create, edit and canonical input export recover the same actor after restart", async t => {
   const f = await fixture(t), app = f.app();
   const loginForm = await app.fetch(get("/login", ""));
