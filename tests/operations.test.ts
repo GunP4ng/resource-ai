@@ -102,14 +102,28 @@ test("rate limiting and invalid request IDs are safely recorded", async () => {
 test("deadline and caller cancellation terminate pending configuration, without later dispatch", async () => {
   for (const code of ["timeout", "cancelled"] as const) {
     const f = fixture(), controller = new AbortController();
+    let now = 0;
+    const timers = new Map<() => void, number>();
+    const clock = { now: () => now, schedule(callback: () => void, delay: number) {
+      timers.set(callback, now + delay); return () => { timers.delete(callback); };
+    } };
+    const entered = Promise.withResolvers<void>();
     let resume: (value: typeof config) => void = () => {};
-    const runner = createOperationalRunner({ ...f.options, timeoutMs: code === "timeout" ? 20 : 1000,
-      configuration: async () => new Promise((resolve) => { resume = resolve; }) });
+    const runner = createOperationalRunner({ ...f.options, clock, timeoutMs: code === "timeout" ? 20 : 1000,
+      configuration: async () => new Promise((resolve) => { resume = resolve; entered.resolve(); }) });
     const result = runner(input, controller.signal);
-    if (code === "cancelled") setTimeout(() => controller.abort(), 20);
+    await entered.promise;
+    if (code === "cancelled") controller.abort();
+    else {
+      // Keep the original 20ms budget: work expires at 18ms with 2ms reserved
+      // for audit. OS scheduling cannot accidentally spend that reserve here.
+      now = 18;
+      for (const [callback, at] of timers) if (at <= now) { timers.delete(callback); callback(); }
+    }
     await assert.rejects(result, failure(code)); resume(config);
-    await new Promise((resolve) => setTimeout(resolve, 10));
+    await new Promise<void>((resolve) => setImmediate(resolve));
     assert.equal(f.calls(), 0); assert.equal(f.records.at(-1)?.outcome, code); assert.equal(f.records.at(-1)?.usage, null);
+    assert.equal(timers.size, 0);
   }
 });
 
