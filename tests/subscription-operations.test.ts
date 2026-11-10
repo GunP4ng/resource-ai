@@ -15,6 +15,8 @@ import { createPhotoStore } from "../src/photos.ts";
 import { decideCase } from "../src/assessment.ts";
 import { syntheticCase } from "./h-fixtures.ts";
 import { openCaseSession, SessionFailure } from "../src/session.ts";
+import { createMemoryRuntimeDatabase } from "../src/o-runtime-db.ts";
+import { createLocalAuth } from "../src/o-auth.ts";
 
 const sha = (value: string | Uint8Array) => createHash("sha256").update(value).digest("hex");
 const scope = { provider: "synthetic subscription operator", purpose: "synthetic photo assessment" };
@@ -49,6 +51,67 @@ function payload(init: RequestInit) {
   return JSON.parse(new Headers(init.headers).get("content-encoding") === "zstd"
     ? zstdDecompressSync(Buffer.from(init.body as ArrayBuffer)).toString() : String(init.body));
 }
+
+test("guarded subscription with local operator auth preserves the SQLite case when identity is disabled during transport", async () => {
+  const f = await fixture(), db = createMemoryRuntimeDatabase(), cases = createCaseStore(Date.now, f.authority, db);
+  const auth = createLocalAuth(db, { origin }), account = await auth.create("synthetic-operator", "synthetic-only long password");
+  const entered = Promise.withResolvers<void>(), release = Promise.withResolvers<void>(), events: OperationalAudit[] = [];
+  let input = syntheticCase, delayed = false, sent = 0;
+  const app = createOperationalApp({ origin, localAuth: auth, caseStore: cases,
+    runtime: { identity: "local-operator", storage: "sqlite", runner: "subscription" },
+    resources: value => { input = value; return {}; }, operations: {
+      provider: "subscription", enabled: true, timeoutMs: 5000, maxTurns: 1, maxOutputTokens: 128,
+      configuration: async () => f.config, authorizeDispatch: async () => ({ approvalId: "synthetic", expiresAt: Date.now() + 60000 }),
+      record: async event => { events.push(event); },
+      transport: async () => { sent++; if (delayed) { entered.resolve(); await release.promise; } return response(input); },
+    } });
+  try {
+    const { caseId: _id, ...fields } = syntheticCase;
+    assert.equal((await app.fetch(post("/cases", fields))).status, 403); assert.equal(sent, 0);
+    const login = await app.fetch(new Request(origin + "/login", { method: "POST", headers: { origin, "content-type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({ username: "synthetic-operator", password: "synthetic-only long password" }) }));
+    assert.equal(login.status, 303);
+    const cookie = login.headers.get("set-cookie")!.split(";")[0]!;
+    const ownedPost = (path: string, value: unknown) => {
+      const request = post(path, value); request.headers.set("cookie", cookie); return request;
+    };
+    const created = await app.fetch(ownedPost("/cases", fields)); assert.equal(created.status, 303);
+    const path = created.headers.get("location")!, id = path.slice(7), previous = cases.read(`actor:${account.actorId}`, id);
+    assert.ok(previous); assert.equal(previous.version, 1);
+    delayed = true;
+    const pending = app.fetch(ownedPost(path + "/answers", { baseVersion: 1, patch: { massKg: 999 } }));
+    await entered.promise; await auth.disable("synthetic-operator"); release.resolve();
+    assert.equal((await pending).status, 403); await app.settled();
+    assert.deepEqual(cases.read(`actor:${account.actorId}`, id), previous);
+    assert.equal(cases.read("actor:another-operator", id), undefined);
+    assert.equal(sent, 2);
+    // Provider success is not publication success, nor evidence of zero usage.
+    assert.equal(events.at(-1)?.phase, "finish"); assert.equal(events.at(-1)?.outcome, "success");
+    assert.equal(events.at(-1)?.usage?.total, 18); assert.equal(events.at(-1)?.requests[0]?.transportStarted, true);
+  } finally { release.resolve(); app.dispose(); await app.close(); cases.dispose(); db.close(); await f.close(); }
+});
+
+test("cancelled HTTP execution stays unsettled through subscription terminal audit and never commits its SQLite candidate", async () => {
+  const f = await fixture(), db = createMemoryRuntimeDatabase(), cases = createCaseStore(Date.now, undefined, db);
+  const auditing = Promise.withResolvers<void>(), release = Promise.withResolvers<void>(), controller = new AbortController();
+  let input = syntheticCase, settled = false;
+  const app = createOperationalApp({ origin, caseStore: cases, actorForRequest: async () => "synthetic-owner",
+    resources: value => { input = value; return {}; }, operations: {
+      provider: "subscription", enabled: true, timeoutMs: 5000, maxTurns: 1, maxOutputTokens: 128, configuration: async () => f.config,
+      authorizeDispatch: async () => ({ approvalId: "synthetic", expiresAt: Date.now() + 60000 }),
+      record: async event => { if (event.phase === "finish") { auditing.resolve(); await release.promise; } },
+      transport: async () => response(input),
+    } });
+  try {
+    const { caseId: _id, ...fields } = syntheticCase;
+    const pending = app.fetch(new Request(post("/cases", fields), { signal: controller.signal }));
+    await auditing.promise; controller.abort(); assert.equal((await pending).status, 408);
+    const drained = app.settled().then(() => { settled = true; });
+    await new Promise(resolve => setTimeout(resolve, 0)); assert.equal(settled, false);
+    release.resolve(); await drained; assert.equal(settled, true);
+    assert.equal(cases.read("actor:synthetic-owner", input.caseId), undefined);
+  } finally { release.resolve(); app.dispose(); await app.close(); cases.dispose(); db.close(); await f.close(); }
+});
 
 test("subscription authority binds an explicit account/model/scope, keeps credentials private and rejects stale/forged tickets", async () => {
   const f = await fixture();
