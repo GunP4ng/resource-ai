@@ -120,6 +120,8 @@ PR #19 검토 당시 앱의 같은 Origin/session `POST /cases`는 실제 HTTP 5
 
 실제 유료 Azure 요청과 현장 사진 인수는 이번 검토에서 0건이다. 기본 launcher는 local-only이며 환경변수만으로 모델 호출을 켜지 않는다. #6/#8/#12와 해당 실제 통합 체크박스를 OPEN으로 유지하며, 11/20 기능 동결·기존 담당자·팀장의 권한/과금 승인 및 통합 QA·녹화 책임을 변경하지 않는다. HTTP504/408/502는 미과금 또는 재시도 안전 증거가 아니다.
 
+**2026-11-10 PR #31 검토·병합 (`3ebddd7`).** [승인 리뷰](https://github.com/GunP4ng/resource-ai/pull/31#pullrequestreview-5840313341)는 head `7776b7a` 기준이다. 테스트 2건만 추가하며 생산 코드와 O/J 계약은 변경하지 않았다. head와 병합 main 모두 Linux/Bun 1.4.2 strict 검사·두 빌드·offline smoke·**523 tests / 0 failures**를 통과했다. 별도 실제 private SQLite·native 로그인 cookie·SDK/합성 transport 실행에서 미인증 403/전송 0, 전송 중 계정 disable 시 403/기존 사례 보존/제공자 success·usage 감사 보존, 취소 408와 terminal audit 완료 전 `settled()` 대기를 확인했다. 실제 제공자 계정·현장 사진·청구/정산 인수는 아니며 #8 CLOSED, 남은 H/O 인수는 #12에서 추적한다.
+
 <a id="h1"></a>
 ### H1 입력 파싱과 추가질문
 
@@ -184,7 +186,7 @@ launcher 기본값은 `RESOURCE_MODEL_RUNNER=subscription`; `local`은 기존 �
 | O1 / #9 | 필터·근거 보존 구현 수용 | 오연석·윤정준: 실제 허가/인수 확인 자료 확보 시 재검증. 디렉터리 등재를 허가나 수탁 의사로 승격하지 않음 |
 | O2 / #10 | 단위·사례 질량·비용 경계 구현 수용 | 오연석·이상협: 독립 `CaseMassReview`와 검토된 실제 견적을 #12 통합 입력에 연결. 질량 보완물 없으면 합계 보류 |
 | O3 / #11 | 계수 검증·배출/크레딧·제외 경계 구현 수용 | 오연석·윤정준: 권리·GWP·경계가 검증된 계수 확보. 미확보 계수는 계속 `unavailable` |
-| O4 / #12 | PR #29 로컬 운영자 로그인·SQLite 사례·정확한 revision 자료 연결 수용 | 오연석·이상협·윤정준: 검토된 현장 package, 승인 계정/제공자/목적·한도, 실제 실행/usage·영속 감사·예약/정산 인계. [PR29 승인](https://github.com/GunP4ng/resource-ai/pull/29#pullrequestreview-5803632425) |
+| O4 / #12 | PR #29 운영자·SQLite·자료 연결과 PR #30 설치 CLI·명시적 재평가·중단 복구 수용 | 오연석·이상협·윤정준: 실제 현장 package 위치·권리/현행성/계보, 승인 계정/provider/model/purpose·한도, 실제 실행/usage·영속 감사·예약/정산 인계. [PR30 승인](https://github.com/GunP4ng/resource-ai/pull/30#pullrequestreview-5840489031) |
 
 **2026-11-06 PR #29 검토·병합 (`2bf8579`).** 최종 검토 head는 `55b0d6a`다. 별도 연결의 갱신·정리 사이에서 사례 행과 아티팩트가 다른 시점을 읽는 결함을 실제 두 SQLite 연결 회귀로 재현한 뒤, `55b0d6a`에서 deferred read transaction으로 수정했다. 수정 head의 모든 strict 검사·두 빌드·offline smoke·**521 tests / 0 failures**, exact-head CI `42253968286`이 통과했다. 실제 HTTP 보고서 읽기 중 갱신·정리에도200/일관된 기존 자료를 반환하고 다음 요청은 새 revision을 읽었다.
 
@@ -196,7 +198,15 @@ launcher 기본값은 `RESOURCE_MODEL_RUNNER=subscription`; `local`은 기존 �
 
 병합 main `2bf8579`도 동일 strict 검사·두 빌드·offline smoke·521개 테스트와 실제 HTTP 읽기 회귀를 통과했다. main CI `42254698501` 성공을 별도로 확인했다.
 
-**2026-11-07 O4 설치 인계 로컬 구현·검증 완료 (미병합).** `o-artifact.ts check|install`은 기존 private state의 활성 username→actor와 현재 소유 사례·정확한 입력 revision·편집 기한을 확인하고, 기존 validator로 검증한 `{record,sha256}` bytes만 private resources 경로에 설치한다. 설치는 재평가가 아니며 명시적 인증 `/answers`와 `baseVersion`으로 재평가해야 저장 결과에 반영된다. 승인/live/과금 완료를 뜻하지 않는다. 사례·보관·세션·사진 권한·lease는 바꾸지 않고 runner도 호출하지 않는다. [명령·동시성·복구 경계](o-runtime-integration.md#http-recovery-and-exact-artifact-installation)를 따른다.
+**2026-11-10 PR #30 검토·병합 (`b7ddaaa`).** [승인 리뷰](https://github.com/GunP4ng/resource-ai/pull/30#pullrequestreview-5840489031)는 head `2abfc48` 기준이다. exact head의 strict 검사·extension/app/account/artifact 빌드·offline smoke·**549 tests / 0 failures**, PR #31 병합 main `3ebddd7`과 실제 결합한 tree의 strict 검사·**551 tests / 0 failures**를 확인했다. 검토자 production 수정은 없었다.
+
+병합 main `b7ddaaa`도 별도 checkout에서 모든 strict 검사·두 빌드·offline smoke·**551 tests / 0 failures**를 통과했다. 검토 head와 병합 결과의 실행 코드·자료 CLI·관련 테스트 bytes가 같아 실제 앱/CLI 증거도 해당 결과에 적용된다.
+
+별도 packaged CLI·실제 HTTP·Chrome native 로그인→생성→입력 export→설치→재평가를 실행했다. 기존 J 원문/인용 snapshot 9개의 bytes/SHA 일치, 설치만으로 보고서 불변, 같은 bytes 재시도·다른 bytes 덮어쓰기 거부, 명시적 재평가 후 exact hash/version을 확인했다. 실제 link 직후 프로세스를 중단하면 두 링크 파일을 loader가 503으로 거부하고 기존 보고서를 보존했다. 문서대로 소유 hidden link를 정리한 뒤 동일 bytes 설치 재시도가 성공했다. 이는 전원 장애 실험이 아니다. desktop 1440/mobile 390 light/dark에서 합성·review-required 표시를 확인했고, 평가일을 2026-11-10으로 수정하면 이전 artifact를 재사용하지 않고 현행성 보류를 유지했다.
+
+다음 배분: 오연석·윤정준은 실제 현장 package의 **위치/입력 revision/권리·현행성/원본-파생 지지 관계**와 견적·독립 질량·허가/인수·계수를 인계한다. 이상협·오연석은 팀장 승인 계정/provider/model/purpose·한도 아래 구체적 원자적 예약·해제·정산·영속 감사 의존성 및 실제 성공/실패/취소/request ID/usage, 승인 현장 사진의 조건 변화·철회·만료를 인수한다. 세 팀원의 10건씩 후보·출처/중복 점검·수집자 외 독립 라벨과 18/12 분리, 팀장의 통합 QA·잠금 평가·영상/최종 보고서는 미완료로 유지한다. #12 OPEN/Oyeonseok, #8 CLOSED/hyeobikong과 11/20 동결을 유지하며 실제 실행·백업 영상 체크박스를 완료로 바꾸지 않는다.
+
+**2026-11-07 O4 설치 인계 로컬 구현·검증 완료 (당시 미병합; 11/10 PR #30 병합).** `o-artifact.ts check|install`은 기존 private state의 활성 username→actor와 현재 소유 사례·정확한 입력 revision·편집 기한을 확인하고, 기존 validator로 검증한 `{record,sha256}` bytes만 private resources 경로에 설치한다. 설치는 재평가가 아니며 명시적 인증 `/answers`와 `baseVersion`으로 재평가해야 저장 결과에 반영된다. 승인/live/과금 완료를 뜻하지 않는다. 사례·보관·세션·사진 권한·lease는 바꾸지 않고 runner도 호출하지 않는다. [명령·동시성·복구 경계](o-runtime-integration.md#http-recovery-and-exact-artifact-installation)를 따른다.
 
 Linux/Bun 1.4.2에서 최종 전체 **549 tests / 0 failures**, strict source/test·O-test 타입검사, extension/app 빌드, offline smoke와 diff-check를 통과했다. 실제 CLI/HTTP/Chrome native 로그인·사례 생성·입력 export·패키지 CLI 설치·명시적 재평가를 확인했다. 설치 직후 기존 보고서 유지, 재평가 후 버전2·정확한 자료 해시·합성 표시·현행성 보류, 잘못된 입력 revision 설치 거부를 확인했다. 스크린샷은 CDP timeout으로 확보하지 못했으며 화면 동작과 접근성 트리만 증거로 남겼다. Astra가 지적한 중단 설치 재시도의 상위 디렉터리 fsync 누락은 6개 실패 회귀를 먼저 확인하고 수정 후 통과시켰으며, Astra 재검토는 이 로컬 변경을 승인했다. 실제 전원 장애 실험이나 현장 인수를 수행했다는 뜻은 아니다.
 
