@@ -124,18 +124,31 @@ copied. This is a Bun bundle with external packages, not a standalone executable
    `GET /cases/:id/input` exports the committed `CaseInput` as JSON, with
    `ETag: "<revision(input)>"` and `Cache-Control: private, no-store`.
    Save the exact bytes/input before requesting an independently reviewed package.
-4. The operator obtains the stable actor ID from the provisioned account's
-   private SQLite `accounts.actor_id` (not the username). Install the existing
-   `prepareCaseRecord` result, unchanged, at:
+4. Use the operator CLI with an existing private state and resources root.
+   It resolves an enabled username to its stable actor ID internally; no manual
+   SQLite lookup or password is needed. Supply the exact exported input revision
+   (ETag without quotes), not the numeric case version or exported file hash:
 
-   ```text
-   <RESOURCE_RESOURCES_DIR>/<actor_id>/<caseId>/<input-revision>.json
+   ```sh
+   bun scripts/o-artifact.ts check --state-dir /absolute/private/resource-state --resources-dir /absolute/private/resource-artifacts --username operator --case-id CASE_ID --expected-revision INPUT_REVISION --artifact /absolute/private/incoming/package.json
+   bun scripts/o-artifact.ts install --state-dir /absolute/private/resource-state --resources-dir /absolute/private/resource-artifacts --username operator --case-id CASE_ID --expected-revision INPUT_REVISION --artifact /absolute/private/incoming/package.json
+   # After build:app, either command also works from another cwd:
+   bun /absolute/checkout/dist/app/o-artifact.js check --state-dir /absolute/private/resource-state --resources-dir /absolute/private/resource-artifacts --username operator --case-id CASE_ID --expected-revision INPUT_REVISION --artifact /absolute/private/incoming/package.json
    ```
 
-   Create each private directory with mode 0700 and write the regular, single-link
-   artifact with mode 0600. The object is exactly `{ record, sha256 }`, not just
-   `record`. Neither the UI nor a model accepts a filesystem path. Do not rewrite
-   another artifact to fit this case, its revision, mass or date.
+   All paths must be absolute/canonical, with no symlink ancestors. Roots and
+   incoming parent must belong to this UID and be 0700; incoming file must be a
+   regular single-link 0600 file, at most 64 MiB. Missing state/database is refused,
+   never provisioned or reset. `check` validates the package and current target
+   without creating directories. `install` creates only private actor/case
+   directories and publishes unchanged `{ record, sha256 }` bytes at
+   `<resources>/<actor_id>/<caseId>/<input-revision>.json` using the loader's
+   existing validator. A different existing file is a conflict; identical bytes
+   are an idempotent success. No runner is called and no case, assessment, version,
+   retention, session, lease or photo authority is changed. Successful JSON output
+   says `installed; reassessment pending` with actor/case/revision/artifact hash;
+   exit 0 means checked/installed, exit 1 has a sanitized error code. Installation
+   establishes neither reevaluation, approval, live execution nor billing.
 5. Explicitly reassess by submitting an unchanged existing field in the native
    correction box, e.g. `{"massKg":100}` only when the exported input has that
    exact mass. The form includes `baseVersion` and explicit photo selection.
@@ -159,6 +172,45 @@ resources and model evaluation. Missing/expired identity is 403, conflict 409,
 cancellation 408, deadline 504 and authentication/storage/resource availability
 failure 503. Failed attempts preserve the last committed report and link to
 owned recovery. No automatic reassessment follows an uncertain/lost response.
+
+The installer rechecks enabled account, ownership, exact current input revision
+and the 30-minute editing window inside a short SQLite IMMEDIATE transaction.
+Publication is synchronous under that writer reservation, so participating case
+corrections, withdrawals and account changes serialize with it. Contention waits
+at most one second, then fails; retry the command after checking current input.
+Expired/closed cases require a new case and a newly bound supplier package, never
+deadline extension or hash rewriting. Later edits remain subject to the runtime's
+exact revision validation. There is no cross-filesystem/SQLite atomic commit:
+an interruption or fsync/commit failure can leave a complete installed file without
+a success receipt. A temporary file is fsynced, linked without overwrite, then
+unlinked before directory fsync/success (destination single-link on success).
+Between link and unlink, the loader can briefly refuse the two-link file. A crash
+there leaves the destination unavailable until the operator removes the hidden
+`.install-*` link after installers stop. Other hidden remnants are ignored by the
+loader. Retry identical bytes after cleanup to confirm; a failure never implies
+that publication was undone.
+Private directories exclude other-UID writers; hostile same-UID filesystem
+replacement and filesystem/hardware durability failures remain outside this boundary.
+
+## Open H/O and field acceptance requirements (#12)
+
+The launcher still supplies a direct runner without concrete authorize, reserve,
+release, settle and durable audit dependencies. H/O must assemble these under the
+approved account/provider/model/purpose and limits, including cancellation and
+terminal-failure recovery. SQLite case leases are not financial reservations.
+UI trace is not a provider request ID; reported usage is not billing. Actual
+provider success/failure/cancellation/request-ID/usage receipts remain pending.
+Model photo transmission stays disabled in the launcher; operational authority
+assembly and approved field-photo withdrawal/expiry acceptance remain pending.
+
+No actual field package has been supplied for this handoff; its location is
+pending. J/O still need current legal coverage, rights, reviewed quotations,
+independent mass review, permits/acceptance, approved factors and original-to-derived
+support. Several originals supporting one derived fact still require a shared
+J/H/O contract decision. There is no verified repository delivery manifest for O's
+ten common cases or the independently labelled 30-case collection and 18/12 split.
+Normal three-minute/held two-minute synthetic demo paths exist; field acceptance,
+live verification and backup recordings remain pending. #12 stays open; #8 stays closed.
 
 ## Integration APIs and lifecycle
 

@@ -66,7 +66,7 @@ async function directory(path: string) {
   requireValid(await realpath(path) === path, "directory-escape"); return info;
 }
 
-async function validate(value: unknown, input: Parameters<ResourceProvider>[0]): Promise<{ artifact: Artifact; resources: DomainResources }> {
+export async function validateResourceArtifact(value: unknown, input: Parameters<ResourceProvider>[0]): Promise<{ artifact: Artifact; resources: DomainResources }> {
   requireValid(Value.Check(artifactSchema, value), "invalid-artifact");
   const artifact = value as Artifact, r = artifact.record;
   const parsed = parseCaseInput(r.input);
@@ -180,7 +180,7 @@ export async function createFileResourceProvider({ root, caseStore }: { readonly
       }
       requireValid(offset === before.size, "changed-size");
       phase = "artifact";
-      const accepted = await validate(JSON.parse(new TextDecoder("utf-8", { fatal: true }).decode(bytes.subarray(0, offset))), input);
+      const accepted = await validateResourceArtifact(JSON.parse(new TextDecoder("utf-8", { fatal: true }).decode(bytes.subarray(0, offset))), input);
       cancelled(signal); phase = "filesystem";
       await recheck();
       const after = await file.stat(), named = await lstat(path); privateEntry(named, false); privateEntry(after, false);

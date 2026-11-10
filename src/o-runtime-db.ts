@@ -40,8 +40,9 @@ const schema = [
     queued_at INTEGER NOT NULL CHECK(queued_at>=0), PRIMARY KEY(owner,case_id,photo_ref)) STRICT`,
 ];
 const normalize = (sql: string) => sql.replace(/\s+/g, " ").trim();
-function configure(database: Database, fresh: boolean) {
-  database.exec("PRAGMA busy_timeout=0; PRAGMA foreign_keys=ON; PRAGMA journal_mode=WAL; PRAGMA synchronous=FULL;");
+function configure(database: Database, fresh: boolean, existingOnly = false) {
+  database.exec("PRAGMA busy_timeout=0; PRAGMA foreign_keys=ON; PRAGMA synchronous=FULL;");
+  if (!existingOnly) database.exec("PRAGMA journal_mode=WAL;");
   if (fresh) database.transaction(() => { for (const sql of schema) database.exec(sql); database.exec("PRAGMA user_version=1"); }).immediate();
   const version = database.query<{ user_version: number }, []>("PRAGMA user_version").get();
   const actual = database.query<{ sql: string }, []>("SELECT sql FROM sqlite_master WHERE name NOT LIKE 'sqlite_%' ORDER BY sql").all().map(row => normalize(row.sql)).sort();
@@ -71,11 +72,11 @@ function optionalFile(path: string): Stats | undefined {
   catch (error) { if (error instanceof Error && "code" in error && error.code === "ENOENT") return undefined; throw error; }
 }
 /** A private directory is the confinement boundary; same-UID hostile processes are outside it. */
-export async function openRuntimeDatabase(absolutePrivateRoot: string): Promise<RuntimeDatabase> {
+export async function openRuntimeDatabase(absolutePrivateRoot: string, options: { readonly existingOnly?: boolean } = {}): Promise<RuntimeDatabase> {
   let database: Database | undefined;
   try {
     if (!isAbsolute(absolutePrivateRoot) || resolve(absolutePrivateRoot) !== absolutePrivateRoot) throw new RuntimeStorageError();
-    mkdirSync(absolutePrivateRoot, { mode: 0o700 });
+    if (!options.existingOnly) mkdirSync(absolutePrivateRoot, { mode: 0o700 });
   } catch (error) {
     if (!(error instanceof Error && "code" in error && error.code === "EEXIST")) throw new RuntimeStorageError();
   }
@@ -83,6 +84,7 @@ export async function openRuntimeDatabase(absolutePrivateRoot: string): Promise<
     const root = absolutePrivateRoot, identity = privatePath(root, true);
     if (realpathSync(root) !== root) throw new RuntimeStorageError();
     const file = join(root, basename), previous = optionalFile(file);
+    if (options.existingOnly && !previous) throw new RuntimeStorageError();
     const sidecars = new Map<string, Stats>();
     for (const suffix of ["-wal", "-shm", "-journal"]) {
       const info = optionalFile(file + suffix); if (info) sidecars.set(suffix, info);
@@ -97,7 +99,7 @@ export async function openRuntimeDatabase(absolutePrivateRoot: string): Promise<
     const fileIdentity = privatePath(file, false);
     database = new Database(file, { strict: true, create: false });
     // SQLite may legitimately recreate sidecars during open/recovery. Re-pin after configuration.
-    configure(database, !previous);
+    configure(database, !previous, options.existingOnly);
     sidecars.clear(); let closed = false;
     const connection = database;
     const assertReady = () => {
