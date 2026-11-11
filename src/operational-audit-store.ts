@@ -97,8 +97,9 @@ export function createOperationalAuditStore(options: {
     if (!Number.isFinite(Date.parse(event.at)) || new Date(event.at).toISOString() !== event.at
       || (event.phase === "finish") !== (event.outcome !== undefined)
       || event.requests.some((row, index) => row.attempt !== index + 1)
-      || new Set(event.requests.map(row => row.approvalId)).size !== event.requests.length
       || (event.phase === "dispatch" && !event.requests.length)) return fail("invalid-audit");
+    // approvalId may name a policy shared by multiple requests. Event identity
+    // is run/phase/attempt; recording evidence must not invent reservation rules.
     return event;
   };
   const validateTask = (value: unknown): RecoveryTask => {

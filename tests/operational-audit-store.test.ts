@@ -58,6 +58,29 @@ test("file audit/outbox survive reopening, preserve unknown usage and deduplicat
   } finally { await f.close(); }
 });
 
+test("a policy approval reused across distinct transport attempts preserves each audit and recovery record", async () => {
+  const f = await fixture();
+  try {
+    const a = f.open(true), start = event("start");
+    const first: OperationalAudit = { ...event("dispatch"), requests: [{ ...event("dispatch").requests[0]!, transportStarted: true, status: 200, requestId: "synthetic-first" }] };
+    const second: OperationalAudit = { ...first, requests: [...first.requests, { ...first.requests[0]!, attempt: 2, transportStarted: false, status: null, requestId: null }] };
+    const finish: OperationalAudit = { ...second, phase: "finish", outcome: "cancelled" };
+    await a.store.appendAudit(start); await a.store.appendAudit(first);
+    await a.store.appendAudit(second); await a.store.appendAudit(finish);
+    await a.store.appendAudit(second); // Exact replay keeps attempt-based identity.
+    assert.deepEqual(a.store.readAudit(start.runId), [start, first, second, finish]);
+    const recovery: RecoveryTask = { reason: "terminal-failure", event: finish, reservations: [
+      { ...task().reservations[0]!, attempt: 1 }, { ...task().reservations[0]!, attempt: 2 },
+    ] };
+    a.store.enqueueRecovery(recovery); const claim = a.store.claimRecovery(100)!;
+    assert.ok(claim); assert.deepEqual(claim.task, recovery); assert.equal(claim.task.event!.usage, null);
+    assert.deepEqual(claim.task.event!.requests.map(row => row.requestId), ["synthetic-first", null]);
+    assert.deepEqual(claim.task.reservations.map(row => row.attempt), [1, 2]);
+    // Duplicate attempt numbers remain invalid; policy reuse is not event replay.
+    await assert.rejects(a.store.appendAudit({ ...second, requests: [first.requests[0]!, first.requests[0]!] }), failure("invalid-audit"));
+  } finally { await f.close(); }
+});
+
 test("separate connections serialize claims and stale acknowledgements cannot erase reclaimed work", async () => {
   const f = await fixture();
   try {
