@@ -1,0 +1,316 @@
+{
+  "scope": "Two H question-omission fixes, same authored10 candidates; not team18 A/B/C or independent performance evaluation",
+  "cycles": [
+    {
+      "stage": "baseline",
+      "sourceHashes": {
+        "src/input.ts": "bc2ec5a2f2c1bb127545a9dc8e143e00382417e33f7b2de7d5813bf3fd7dad13",
+        "src/assessment.ts": "8ed87815dfbe30d783e535831596d1733c51e0366a32daaa3da719ed179f2d20",
+        "src/domain.ts": "78204bd4af524cc33f9edf7e35ea3e6d1743899686bfcf6d88ecc877b663c787",
+        "src/session.ts": "10c408d8d7312bbadff11ec0eaec75c6c3b39428b754d85c6ac70943bac29c81",
+        "scripts/h-candidates.ts": "33cf34b76cb8106bcd5e01b65183e13b7a4d434d57fa1c063c5fd8c70cdb575a"
+      },
+      "manifestSha256": "df62053c3db875ce13a8502d27b9b78e5b731ebfdbaf324cd3969ee8d72e9e68",
+      "caseCount": 10,
+      "rows": [
+        {
+          "candidateId": "HYEOB-20261112-001",
+          "questions": [],
+          "state": "needs-review",
+          "allRoutesUnknown": true
+        },
+        {
+          "candidateId": "HYEOB-20261112-002",
+          "questions": [],
+          "state": "needs-review",
+          "allRoutesUnknown": true
+        },
+        {
+          "candidateId": "HYEOB-20261112-003",
+          "questions": [],
+          "state": "needs-review",
+          "allRoutesUnknown": true
+        },
+        {
+          "candidateId": "HYEOB-20261112-004",
+          "questions": [],
+          "state": "needs-review",
+          "allRoutesUnknown": true
+        },
+        {
+          "candidateId": "HYEOB-20261112-005",
+          "questions": [
+            "유해물질과 접촉했는지 확인할 수 있나요?",
+            "확인된 질량은 몇 kg인가요?",
+            "폐플라스틱이 발생한 지역은 어디인가요?"
+          ],
+          "state": "needs-review",
+          "allRoutesUnknown": true
+        },
+        {
+          "candidateId": "HYEOB-20261112-006",
+          "questions": [],
+          "state": "needs-review",
+          "allRoutesUnknown": true
+        },
+        {
+          "candidateId": "HYEOB-20261112-007",
+          "questions": [],
+          "state": "needs-review",
+          "allRoutesUnknown": true
+        },
+        {
+          "candidateId": "HYEOB-20261112-008",
+          "questions": [],
+          "state": "needs-review",
+          "allRoutesUnknown": true
+        },
+        {
+          "candidateId": "HYEOB-20261112-009",
+          "questions": [
+            "폐플라스틱이 발생한 공정 또는 발생원은 무엇인가요?",
+            "확인된 수지 종류와 이를 확인한 자료(라벨·재질 명세 등)가 있나요?",
+            "오염이나 이물질이 있나요? 확인된 상태를 알려 주세요.",
+            "유해물질과 접촉했는지 확인할 수 있나요?",
+            "확인된 질량은 몇 kg인가요?",
+            "폐플라스틱이 발생한 지역은 어디인가요?"
+          ],
+          "state": "needs-review",
+          "allRoutesUnknown": true
+        },
+        {
+          "candidateId": "HYEOB-20261112-010",
+          "questions": [
+            "폐플라스틱이 발생한 공정 또는 발생원은 무엇인가요?",
+            "확인된 수지 종류와 이를 확인한 자료(라벨·재질 명세 등)가 있나요?",
+            "오염이나 이물질이 있나요? 확인된 상태를 알려 주세요.",
+            "유해물질과 접촉했는지 확인할 수 있나요?",
+            "확인된 질량은 몇 kg인가요?",
+            "폐플라스틱이 발생한 지역은 어디인가요?"
+          ],
+          "state": "needs-review",
+          "allRoutesUnknown": true
+        }
+      ]
+    },
+    {
+      "stage": "cycle1",
+      "sourceHashes": {
+        "src/input.ts": "bc2ec5a2f2c1bb127545a9dc8e143e00382417e33f7b2de7d5813bf3fd7dad13",
+        "src/assessment.ts": "59c0e0d09fc332aee84b603411f28a447cfefebfc107b6f8c090139c13e26d7e",
+        "src/domain.ts": "78204bd4af524cc33f9edf7e35ea3e6d1743899686bfcf6d88ecc877b663c787",
+        "src/session.ts": "10c408d8d7312bbadff11ec0eaec75c6c3b39428b754d85c6ac70943bac29c81",
+        "scripts/h-candidates.ts": "33cf34b76cb8106bcd5e01b65183e13b7a4d434d57fa1c063c5fd8c70cdb575a"
+      },
+      "manifestSha256": "df62053c3db875ce13a8502d27b9b78e5b731ebfdbaf324cd3969ee8d72e9e68",
+      "caseCount": 10,
+      "rows": [
+        {
+          "candidateId": "HYEOB-20261112-001",
+          "questions": [],
+          "state": "needs-review",
+          "allRoutesUnknown": true
+        },
+        {
+          "candidateId": "HYEOB-20261112-002",
+          "questions": [],
+          "state": "needs-review",
+          "allRoutesUnknown": true
+        },
+        {
+          "candidateId": "HYEOB-20261112-003",
+          "questions": [
+            "혼합·다층 또는 라벨 불일치가 보고되었습니다. 층별·구성 수지의 재질 명세, 라벨 확인 자료와 수지별 분리 가능 여부를 확인할 수 있나요?"
+          ],
+          "state": "needs-review",
+          "allRoutesUnknown": true
+        },
+        {
+          "candidateId": "HYEOB-20261112-004",
+          "questions": [],
+          "state": "needs-review",
+          "allRoutesUnknown": true
+        },
+        {
+          "candidateId": "HYEOB-20261112-005",
+          "questions": [
+            "유해물질과 접촉했는지 확인할 수 있나요?",
+            "확인된 질량은 몇 kg인가요?",
+            "폐플라스틱이 발생한 지역은 어디인가요?",
+            "혼합·다층 또는 라벨 불일치가 보고되었습니다. 층별·구성 수지의 재질 명세, 라벨 확인 자료와 수지별 분리 가능 여부를 확인할 수 있나요?"
+          ],
+          "state": "needs-review",
+          "allRoutesUnknown": true
+        },
+        {
+          "candidateId": "HYEOB-20261112-006",
+          "questions": [],
+          "state": "needs-review",
+          "allRoutesUnknown": true
+        },
+        {
+          "candidateId": "HYEOB-20261112-007",
+          "questions": [],
+          "state": "needs-review",
+          "allRoutesUnknown": true
+        },
+        {
+          "candidateId": "HYEOB-20261112-008",
+          "questions": [],
+          "state": "needs-review",
+          "allRoutesUnknown": true
+        },
+        {
+          "candidateId": "HYEOB-20261112-009",
+          "questions": [
+            "폐플라스틱이 발생한 공정 또는 발생원은 무엇인가요?",
+            "확인된 수지 종류와 이를 확인한 자료(라벨·재질 명세 등)가 있나요?",
+            "오염이나 이물질이 있나요? 확인된 상태를 알려 주세요.",
+            "유해물질과 접촉했는지 확인할 수 있나요?",
+            "확인된 질량은 몇 kg인가요?",
+            "폐플라스틱이 발생한 지역은 어디인가요?"
+          ],
+          "state": "needs-review",
+          "allRoutesUnknown": true
+        },
+        {
+          "candidateId": "HYEOB-20261112-010",
+          "questions": [
+            "폐플라스틱이 발생한 공정 또는 발생원은 무엇인가요?",
+            "확인된 수지 종류와 이를 확인한 자료(라벨·재질 명세 등)가 있나요?",
+            "오염이나 이물질이 있나요? 확인된 상태를 알려 주세요.",
+            "유해물질과 접촉했는지 확인할 수 있나요?",
+            "확인된 질량은 몇 kg인가요?",
+            "폐플라스틱이 발생한 지역은 어디인가요?"
+          ],
+          "state": "needs-review",
+          "allRoutesUnknown": true
+        }
+      ]
+    },
+    {
+      "stage": "final",
+      "sourceHashes": {
+        "src/input.ts": "bc2ec5a2f2c1bb127545a9dc8e143e00382417e33f7b2de7d5813bf3fd7dad13",
+        "src/assessment.ts": "b3dc3d141f163c1272de00ecc0c71f8e460d9826d7176d345d3eb57bd7fbe7f6",
+        "src/domain.ts": "78204bd4af524cc33f9edf7e35ea3e6d1743899686bfcf6d88ecc877b663c787",
+        "src/session.ts": "10c408d8d7312bbadff11ec0eaec75c6c3b39428b754d85c6ac70943bac29c81",
+        "scripts/h-candidates.ts": "33cf34b76cb8106bcd5e01b65183e13b7a4d434d57fa1c063c5fd8c70cdb575a"
+      },
+      "manifestSha256": "df62053c3db875ce13a8502d27b9b78e5b731ebfdbaf324cd3969ee8d72e9e68",
+      "caseCount": 10,
+      "rows": [
+        {
+          "candidateId": "HYEOB-20261112-001",
+          "questions": [],
+          "state": "needs-review",
+          "allRoutesUnknown": true
+        },
+        {
+          "candidateId": "HYEOB-20261112-002",
+          "questions": [],
+          "state": "needs-review",
+          "allRoutesUnknown": true
+        },
+        {
+          "candidateId": "HYEOB-20261112-003",
+          "questions": [
+            "혼합·다층 또는 라벨 불일치가 보고되었습니다. 층별·구성 수지의 재질 명세, 라벨 확인 자료와 수지별 분리 가능 여부를 확인할 수 있나요?"
+          ],
+          "state": "needs-review",
+          "allRoutesUnknown": true
+        },
+        {
+          "candidateId": "HYEOB-20261112-004",
+          "questions": [
+            "오염·접촉 이력에 미확인 내용이 있습니다. 이전 내용물·접촉 물질명과 SDS 등 확인 자료, 잔류물·세척 확인 자료가 있나요? 확인 전에는 세척 여부만으로 유해물질 접촉이 없었다고 확정하지 않습니다."
+          ],
+          "state": "needs-review",
+          "allRoutesUnknown": true
+        },
+        {
+          "candidateId": "HYEOB-20261112-005",
+          "questions": [
+            "유해물질과 접촉했는지 확인할 수 있나요?",
+            "확인된 질량은 몇 kg인가요?",
+            "폐플라스틱이 발생한 지역은 어디인가요?",
+            "혼합·다층 또는 라벨 불일치가 보고되었습니다. 층별·구성 수지의 재질 명세, 라벨 확인 자료와 수지별 분리 가능 여부를 확인할 수 있나요?"
+          ],
+          "state": "needs-review",
+          "allRoutesUnknown": true
+        },
+        {
+          "candidateId": "HYEOB-20261112-006",
+          "questions": [],
+          "state": "needs-review",
+          "allRoutesUnknown": true
+        },
+        {
+          "candidateId": "HYEOB-20261112-007",
+          "questions": [],
+          "state": "needs-review",
+          "allRoutesUnknown": true
+        },
+        {
+          "candidateId": "HYEOB-20261112-008",
+          "questions": [
+            "오염·접촉 이력에 미확인 내용이 있습니다. 이전 내용물·접촉 물질명과 SDS 등 확인 자료, 잔류물·세척 확인 자료가 있나요? 확인 전에는 세척 여부만으로 유해물질 접촉이 없었다고 확정하지 않습니다."
+          ],
+          "state": "needs-review",
+          "allRoutesUnknown": true
+        },
+        {
+          "candidateId": "HYEOB-20261112-009",
+          "questions": [
+            "폐플라스틱이 발생한 공정 또는 발생원은 무엇인가요?",
+            "확인된 수지 종류와 이를 확인한 자료(라벨·재질 명세 등)가 있나요?",
+            "오염이나 이물질이 있나요? 확인된 상태를 알려 주세요.",
+            "유해물질과 접촉했는지 확인할 수 있나요?",
+            "확인된 질량은 몇 kg인가요?",
+            "폐플라스틱이 발생한 지역은 어디인가요?"
+          ],
+          "state": "needs-review",
+          "allRoutesUnknown": true
+        },
+        {
+          "candidateId": "HYEOB-20261112-010",
+          "questions": [
+            "폐플라스틱이 발생한 공정 또는 발생원은 무엇인가요?",
+            "확인된 수지 종류와 이를 확인한 자료(라벨·재질 명세 등)가 있나요?",
+            "오염이나 이물질이 있나요? 확인된 상태를 알려 주세요.",
+            "유해물질과 접촉했는지 확인할 수 있나요?",
+            "확인된 질량은 몇 kg인가요?",
+            "폐플라스틱이 발생한 지역은 어디인가요?"
+          ],
+          "state": "needs-review",
+          "allRoutesUnknown": true
+        }
+      ]
+    }
+  ],
+  "focusedTestResults": {
+    "baseline": {
+      "pass": 53,
+      "fail": 2
+    },
+    "cycle1": {
+      "pass": 54,
+      "fail": 1
+    },
+    "final": {
+      "pass": 55,
+      "fail": 0
+    }
+  },
+  "cycle1Affected": [
+    "HYEOB-20261112-003",
+    "HYEOB-20261112-005"
+  ],
+  "cycle2Affected": [
+    "HYEOB-20261112-004",
+    "HYEOB-20261112-008"
+  ],
+  "team18Impact": null,
+  "lockedCasesRead": 0,
+  "claims": "No rate/accuracy or legal eligibility claims. Questions change, all ten remain needs-review due unresolved/currentness evidence."
+}

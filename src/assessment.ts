@@ -68,6 +68,26 @@ const routeChecks: Readonly<Record<RouteAssessment["route"], string>> = {
 const routeKinds = ["reuse", "mechanical-recycling", "other-recovery", "disposal"] as const;
 const unique = (values: readonly string[]): readonly string[] => [...new Set(values)];
 
+/** Ask about explicitly reported ambiguity; never classify material from image appearance. */
+function contextQuestions(facts: CaseInput): readonly string[] {
+  const questions: string[] = [];
+  const reported = (facts.polymer ?? "")
+    .replace(/(?:혼합|다층|복합|블렌드)\s*(?:아님|없음|없다|없습니다)/gu, "")
+    .replace(/\b(?:not|non)[ -]*(?:mixed|multilayer|blended)\b/giu, "");
+  const pairs = reported.matchAll(/\b(PET|HDPE|LDPE|PP|PS|PVC|ABS|PE)\s*[\/+]\s*(PET|HDPE|LDPE|PP|PS|PVC|ABS|PE)\b/giu);
+  const multiple = [...pairs].some(pair => pair[1]!.toUpperCase() !== pair[2]!.toUpperCase());
+  if (multiple || /혼합|다층|복합|블렌드|\b(?:mixed|multilayer|blend)\b/iu.test(reported)
+    || /불일치|상충|일치하지|label\s*(?:conflict|mismatch)/iu.test(reported)) {
+    questions.push("혼합·다층 또는 라벨 불일치가 보고되었습니다. 층별·구성 수지의 재질 명세, 라벨 확인 자료와 수지별 분리 가능 여부를 확인할 수 있나요?");
+  }
+  // A populated answer such as "washed, previous contents unknown" is not a resolved fact.
+  // Ask for records without changing hazardousContact or declaring a hazardous waste code.
+  if (/미확인|불명|모름|알\s*수\s*없|확인(?:되지|하지)\s*않|\b(?:unknown|unconfirmed|uncertain)\b/iu.test(facts.contamination ?? "")) {
+    questions.push("오염·접촉 이력에 미확인 내용이 있습니다. 이전 내용물·접촉 물질명과 SDS 등 확인 자료, 잔류물·세척 확인 자료가 있나요? 확인 전에는 세척 여부만으로 유해물질 접촉이 없었다고 확정하지 않습니다.");
+  }
+  return questions;
+}
+
 /**
  * Re-evaluate explicit facts against J's bundled registry, with no model/network calls.
  * The optional server-owned supplement must bind explicit review findings to this
@@ -83,7 +103,7 @@ export function assessCase(input: CaseInput, options: AssessmentOptions = {}, re
     throw new RangeError("intendedUse는 general-resin 또는 food-container여야 합니다.");
   }
   const facts = parsed.value;
-  const questions = collectMissingQuestions(facts);
+  const questions = unique([...collectMissingQuestions(facts), ...contextQuestions(facts)]);
   // J returns references to its registry records. Do not expose mutable registry aliases.
   const legal = structuredClone(lookupLegalEvidence(facts, undefined, { intendedUse }));
   const pendingLegal = structuredClone(pendingLegalSources(facts));

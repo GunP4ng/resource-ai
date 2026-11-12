@@ -1,0 +1,12 @@
+{
+  "caseId": "HYEOB-20261112-005",
+  "description": "SYNTHETIC / 공개 사진을 참고한 시험용 입력: 포장 발포체의 혼합 구성. 아래 공정·수지·오염·접촉·질량·지역은 검증 목적의 가정이며 사진의 실제 현장 사실이 아니다.",
+  "photoRefs": [],
+  "process": "전자제품 포장재 냉간 압축",
+  "polymer": "PE와 기타 수지 혼합",
+  "contamination": "테이프·접착제 부착",
+  "hazardousContact": "unknown",
+  "massKg": null,
+  "region": null,
+  "assessmentDate": "2026-11-12"
+}

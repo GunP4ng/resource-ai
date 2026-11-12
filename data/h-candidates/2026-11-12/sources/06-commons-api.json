@@ -1,0 +1,111 @@
+{
+  "fetchedAt": "2026-11-12T11:42:03.534177+00:00",
+  "endpoint": "https://commons.wikimedia.org/w/api.php",
+  "page": {
+    "pageid": 148691839,
+    "ns": 6,
+    "title": "File:PET Strapping - Opaque.jpg",
+    "index": 4,
+    "imagerepository": "local",
+    "imageinfo": [
+      {
+        "size": 4292069,
+        "width": 4000,
+        "height": 3000,
+        "thumburl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9c/PET_Strapping_-_Opaque.jpg/1280px-PET_Strapping_-_Opaque.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "thumbwidth": 1280,
+        "thumbheight": 960,
+        "responsiveUrls": {
+          "2": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9c/PET_Strapping_-_Opaque.jpg/3840px-PET_Strapping_-_Opaque.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail"
+        },
+        "thumbattribs": {
+          "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9c/PET_Strapping_-_Opaque.jpg/1280px-PET_Strapping_-_Opaque.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+          "decoding": "async",
+          "loading": "lazy",
+          "width": 1280,
+          "height": 960,
+          "srcset": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9c/PET_Strapping_-_Opaque.jpg/3840px-PET_Strapping_-_Opaque.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail 2x"
+        },
+        "url": "https://upload.wikimedia.org/wikipedia/commons/9/9c/PET_Strapping_-_Opaque.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "descriptionurl": "https://commons.wikimedia.org/wiki/File:PET_Strapping_-_Opaque.jpg",
+        "descriptionshorturl": "https://commons.wikimedia.org/w/index.php?curid=148691839",
+        "sha1": "1e7243d3b254f4dd8304941b189d8f39fe718836",
+        "extmetadata": {
+          "DateTime": {
+            "value": "2024-05-24 20:31:18",
+            "source": "mediawiki-metadata",
+            "hidden": ""
+          },
+          "ObjectName": {
+            "value": "PET Strapping - Opaque",
+            "source": "mediawiki-metadata"
+          },
+          "CommonsMetadataExtension": {
+            "value": 1.2,
+            "source": "extension",
+            "hidden": ""
+          },
+          "Categories": {
+            "value": "Plastics|Recycling|CC-Zero|Straps|Self-published work",
+            "source": "commons-categories",
+            "hidden": ""
+          },
+          "Assessments": {
+            "value": "",
+            "source": "commons-categories",
+            "hidden": ""
+          },
+          "ImageDescription": {
+            "value": "PET Chopped Strapping In Gaylord - Opaque",
+            "source": "commons-desc-page"
+          },
+          "DateTimeOriginal": {
+            "value": "2024-05-24",
+            "source": "commons-desc-page"
+          },
+          "Credit": {
+            "value": "<span class=\"int-own-work\" lang=\"en\">Own work</span>",
+            "source": "commons-desc-page"
+          },
+          "Artist": {
+            "value": "<a href=\"//commons.wikimedia.org/w/index.php?title=User:ScrapManagement&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"User:ScrapManagement (page does not exist)\">ScrapManagement</a>",
+            "source": "commons-desc-page"
+          },
+          "LicenseShortName": {
+            "value": "CC0",
+            "source": "commons-desc-page",
+            "hidden": ""
+          },
+          "UsageTerms": {
+            "value": "Creative Commons Zero, Public Domain Dedication",
+            "source": "commons-desc-page"
+          },
+          "AttributionRequired": {
+            "value": "false",
+            "source": "commons-desc-page",
+            "hidden": ""
+          },
+          "LicenseUrl": {
+            "value": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+            "source": "commons-desc-page"
+          },
+          "Copyrighted": {
+            "value": "True",
+            "source": "commons-desc-page",
+            "hidden": ""
+          },
+          "Restrictions": {
+            "value": "",
+            "source": "commons-desc-page",
+            "hidden": ""
+          },
+          "License": {
+            "value": "cc0",
+            "source": "commons-templates",
+            "hidden": ""
+          }
+        }
+      }
+    ]
+  }
+}

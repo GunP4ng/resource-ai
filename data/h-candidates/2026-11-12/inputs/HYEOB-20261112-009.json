@@ -1,0 +1,12 @@
+{
+  "caseId": "HYEOB-20261112-009",
+  "description": "SYNTHETIC / 공개 사진을 참고한 시험용 입력: 발포체 발생원·수지·질량 미확인. 아래 공정·수지·오염·접촉·질량·지역은 검증 목적의 가정이며 사진의 실제 현장 사실이 아니다.",
+  "photoRefs": [],
+  "process": null,
+  "polymer": null,
+  "contamination": null,
+  "hazardousContact": "unknown",
+  "massKg": null,
+  "region": null,
+  "assessmentDate": "2026-11-12"
+}

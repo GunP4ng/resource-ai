@@ -135,6 +135,51 @@ test("arbitrary resin names and blank context stay valid input but do not gain r
   assertHeld(result);
 });
 
+test("asks for composition and label evidence when populated resin input reports a mixture or conflict", () => {
+  for (const polymer of ["PP/PE 다층 (라벨 PP)", "PP+PE", "PE와 기타 수지 혼합", "PP (라벨 PS와 불일치)", "PET/PE multilayer"]) {
+    const input = fixture({ polymer });
+    const before = structuredClone(input);
+    const result = assessCase(input);
+    assert.ok(result.questions.some(q => /층별|구성 수지|재질 명세|라벨.*불일치|수지.*분리/u.test(q)), polymer);
+    assert.deepEqual(input, before);
+    assert.deepEqual(result.candidates.resins, [{ value: polymer, basis: "reported-input" }]);
+    assert.equal(result.candidates.photoInference, "not-performed");
+    assertHeld(result);
+    const decision = decideCase(input);
+    const visible = decision.state === "needs-information" ? decision.questions : decision.state === "needs-review" ? decision.reasons : [];
+    assert.ok(visible.some(line => result.questions.includes(line)), "question must reach the host result");
+  }
+});
+
+test("does not add mixture questions for explicit single resin or a negated mixture description", () => {
+  for (const polymer of ["PP", "HDPE", "단일 PP (다층 아님)", "PP non-mixed"]) {
+    const result = assessCase(fixture({ polymer }));
+    assert.deepEqual(result.questions, [], polymer);
+  }
+});
+
+test("asks for contact and residue evidence when a nonempty contamination answer remains unresolved", () => {
+  for (const contamination of ["세척 완료, 이전 내용물·잔류물은 미확인", "폐유 부착, 접촉 물질과 잔류 정도 미확인", "solvent residue unknown", "오염 여부를 알 수 없음"]) {
+    const input = fixture({ contamination, hazardousContact: "no" });
+    const before = structuredClone(input);
+    const result = assessCase(input);
+    assert.ok(result.questions.some(q => /이전 내용물|접촉 물질명|잔류|SDS/u.test(q)), contamination);
+    assert.deepEqual(input, before); // A question does not rewrite the operator's contact answer.
+    assert.equal(result.candidates.photoInference, "not-performed");
+    assertHeld(result);
+    const decision = decideCase(input);
+    const visible = decision.state === "needs-information" ? decision.questions : decision.state === "needs-review" ? decision.reasons : [];
+    assert.ok(visible.some(line => result.questions.includes(line)), "question must reach the host result");
+  }
+});
+
+test("does not invent contact uncertainty from a clean or explicitly resolved contamination answer", () => {
+  for (const contamination of ["없음", "세척 완료, 이전 내용물 확인됨, 잔류 없음", "폐유 없음, 접촉 이력 확인됨", "SDS 확인 완료, 유해물질 접촉 없음"]) {
+    const result = assessCase(fixture({ contamination, hazardousContact: "no" }));
+    assert.deepEqual(result.questions, [], contamination);
+  }
+});
+
 test("does not mutate frozen input and does not expose aliases to the evidence registry", () => {
   const input = Object.freeze({ ...fixture(), photoRefs: Object.freeze(["synthetic-photo"]) });
   const before = structuredClone(input);

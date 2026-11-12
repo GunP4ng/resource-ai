@@ -1,0 +1,799 @@
+{
+  "schemaVersion": 1,
+  "preparedFor": "hyeobikong",
+  "peerSourceCommit": "2777dfe193fa72cdb399be4c34dcaa820963fad1",
+  "peerPR": "https://github.com/GunP4ng/resource-ai/pull/34",
+  "peerCandidateCount": 10,
+  "status": "preliminary review plus actual H execution observations; independent human labels pending",
+  "modelCalls": 0,
+  "entries": [
+    {
+      "candidateId": "OYS-20261110-001",
+      "sourcePath": "data/candidates/oyeonseok-2026-11-10/oys-20261110-001-pet-trim.json",
+      "inputSha256": "1f1163e501b1ade17ed9207933242a51120bb15584f8e95b6e6d736fe0cd67ff",
+      "proposedGroup": "oys-fiction-001",
+      "technicalObservation": {
+        "candidateId": "OYS-20261110-001",
+        "inputSha256": "1f1163e501b1ade17ed9207933242a51120bb15584f8e95b6e6d736fe0cd67ff",
+        "parsed": true,
+        "observedQuestions": [],
+        "observedDecision": {
+          "state": "needs-review",
+          "caseId": "OYS-20261110-001",
+          "evidence": [],
+          "reasons": [
+            "법령 근거 확인 필요: currentness-unverified (waste-rule-2026-10-02)",
+            "법령 근거 확인 필요: unrelated (legal-290881-annex4-code)",
+            "법령 근거 확인 필요: unrelated (legal-290881-annex4-2-r3-3)",
+            "법령 근거 확인 필요: unrelated (legal-290881-annex4-3-types)",
+            "법령 근거 확인 필요: currentness-unverified (legal-290881-annex5-3-common)",
+            "이 평가일·사례 조건에 사용할 수 있는 검증된 법령 근거가 없습니다.",
+            "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+            "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+            "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+            "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다.",
+            "현장 담당자의 검토와 승인 전에는 반출·계약·처리를 실행할 수 없습니다."
+          ]
+        },
+        "observedCandidates": {
+          "resins": [
+            {
+              "value": "PET",
+              "basis": "reported-input"
+            }
+          ],
+          "wasteCodes": [],
+          "photoInference": "not-performed"
+        },
+        "legalIssues": [
+          {
+            "kind": "currentness-unverified",
+            "sourceId": "waste-rule-2026-10-02"
+          },
+          {
+            "kind": "unrelated",
+            "sourceId": "legal-290881-annex4-code"
+          },
+          {
+            "kind": "unrelated",
+            "sourceId": "legal-290881-annex4-2-r3-3"
+          },
+          {
+            "kind": "unrelated",
+            "sourceId": "legal-290881-annex4-3-types"
+          },
+          {
+            "kind": "currentness-unverified",
+            "sourceId": "legal-290881-annex5-3-common"
+          }
+        ],
+        "allRoutesUnknown": true
+      },
+      "independentHumanLabel": null,
+      "humanReviewer": null,
+      "qualification": null,
+      "split": null,
+      "acceptance": null,
+      "preliminaryReview": {
+        "origin": "AI-assisted preliminary H review, prepared for hyeobikong human confirmation; not independent human label",
+        "finding": "??? PET ??? ?? ???. ???/?? ??/?? ??? ?? ?????? ???? ? ?????? ???? ???.",
+        "focus": "photo/evidence absent; mass24 fictional"
+      }
+    },
+    {
+      "candidateId": "OYS-20261110-002",
+      "sourcePath": "data/candidates/oyeonseok-2026-11-10/oys-20261110-002-hdpe-parison.json",
+      "inputSha256": "0b052aeeb9e97a93699267d68662d8c1b1efee32107f2711d7be6fab78764b2c",
+      "proposedGroup": "oys-fiction-002",
+      "technicalObservation": {
+        "candidateId": "OYS-20261110-002",
+        "inputSha256": "0b052aeeb9e97a93699267d68662d8c1b1efee32107f2711d7be6fab78764b2c",
+        "parsed": true,
+        "observedQuestions": [],
+        "observedDecision": {
+          "state": "needs-review",
+          "caseId": "OYS-20261110-002",
+          "evidence": [],
+          "reasons": [
+            "법령 근거 확인 필요: currentness-unverified (waste-rule-2026-10-02)",
+            "법령 근거 확인 필요: unrelated (legal-290881-annex4-code)",
+            "법령 근거 확인 필요: unrelated (legal-290881-annex4-2-r3-3)",
+            "법령 근거 확인 필요: unrelated (legal-290881-annex4-3-types)",
+            "법령 근거 확인 필요: currentness-unverified (legal-290881-annex5-3-common)",
+            "이 평가일·사례 조건에 사용할 수 있는 검증된 법령 근거가 없습니다.",
+            "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+            "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+            "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+            "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다.",
+            "현장 담당자의 검토와 승인 전에는 반출·계약·처리를 실행할 수 없습니다."
+          ]
+        },
+        "observedCandidates": {
+          "resins": [
+            {
+              "value": "HDPE",
+              "basis": "reported-input"
+            }
+          ],
+          "wasteCodes": [],
+          "photoInference": "not-performed"
+        },
+        "legalIssues": [
+          {
+            "kind": "currentness-unverified",
+            "sourceId": "waste-rule-2026-10-02"
+          },
+          {
+            "kind": "unrelated",
+            "sourceId": "legal-290881-annex4-code"
+          },
+          {
+            "kind": "unrelated",
+            "sourceId": "legal-290881-annex4-2-r3-3"
+          },
+          {
+            "kind": "unrelated",
+            "sourceId": "legal-290881-annex4-3-types"
+          },
+          {
+            "kind": "currentness-unverified",
+            "sourceId": "legal-290881-annex5-3-common"
+          }
+        ],
+        "allRoutesUnknown": true
+      },
+      "independentHumanLabel": null,
+      "humanReviewer": null,
+      "qualification": null,
+      "split": null,
+      "acceptance": null,
+      "preliminaryReview": {
+        "origin": "AI-assisted preliminary H review, prepared for hyeobikong human confirmation; not independent human label",
+        "finding": "HDPE ??? ???? ??18? ?? ????. ??? ?????? ??? ?? ??/?? ??? ????.",
+        "focus": "photo/evidence absent; mass18 fictional"
+      }
+    },
+    {
+      "candidateId": "OYS-20261110-003",
+      "sourcePath": "data/candidates/oyeonseok-2026-11-10/oys-20261110-003-pp-runners.json",
+      "inputSha256": "6c09027b9a767e917d5b3ffc45a437fd8153ff7b8eec3750ddb9f410eb4403b4",
+      "proposedGroup": "oys-fiction-003",
+      "technicalObservation": {
+        "candidateId": "OYS-20261110-003",
+        "inputSha256": "6c09027b9a767e917d5b3ffc45a437fd8153ff7b8eec3750ddb9f410eb4403b4",
+        "parsed": true,
+        "observedQuestions": [
+          "확인된 질량은 몇 kg인가요?"
+        ],
+        "observedDecision": {
+          "state": "needs-review",
+          "caseId": "OYS-20261110-003",
+          "evidence": [],
+          "reasons": [
+            "법령 근거 확인 필요: currentness-unverified (waste-rule-2026-10-02)",
+            "법령 근거 확인 필요: unrelated (legal-290881-annex4-code)",
+            "법령 근거 확인 필요: unrelated (legal-290881-annex4-2-r3-3)",
+            "법령 근거 확인 필요: unrelated (legal-290881-annex4-3-types)",
+            "법령 근거 확인 필요: currentness-unverified (legal-290881-annex5-3-common)",
+            "이 평가일·사례 조건에 사용할 수 있는 검증된 법령 근거가 없습니다.",
+            "확인된 질량은 몇 kg인가요?",
+            "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+            "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+            "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+            "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다.",
+            "현장 담당자의 검토와 승인 전에는 반출·계약·처리를 실행할 수 없습니다."
+          ]
+        },
+        "observedCandidates": {
+          "resins": [
+            {
+              "value": "PP",
+              "basis": "reported-input"
+            }
+          ],
+          "wasteCodes": [],
+          "photoInference": "not-performed"
+        },
+        "legalIssues": [
+          {
+            "kind": "currentness-unverified",
+            "sourceId": "waste-rule-2026-10-02"
+          },
+          {
+            "kind": "unrelated",
+            "sourceId": "legal-290881-annex4-code"
+          },
+          {
+            "kind": "unrelated",
+            "sourceId": "legal-290881-annex4-2-r3-3"
+          },
+          {
+            "kind": "unrelated",
+            "sourceId": "legal-290881-annex4-3-types"
+          },
+          {
+            "kind": "currentness-unverified",
+            "sourceId": "legal-290881-annex5-3-common"
+          }
+        ],
+        "allRoutesUnknown": true
+      },
+      "independentHumanLabel": null,
+      "humanReviewer": null,
+      "qualification": null,
+      "split": null,
+      "acceptance": null,
+      "preliminaryReview": {
+        "origin": "AI-assisted preliminary H review, prepared for hyeobikong human confirmation; not independent human label",
+        "finding": "?? null? ???? kg ?? ??? ????. PP ???? ????? ?? ?????? ??? ??? ???.",
+        "focus": "mass missing"
+      }
+    },
+    {
+      "candidateId": "OYS-20261110-004",
+      "sourcePath": "data/candidates/oyeonseok-2026-11-10/oys-20261110-004-ldpe-film.json",
+      "inputSha256": "7ccbf029c826be106e753dc15997bf608b856a9e893b45497eed4ef533c04d7f",
+      "proposedGroup": "oys-fiction-004",
+      "technicalObservation": {
+        "candidateId": "OYS-20261110-004",
+        "inputSha256": "7ccbf029c826be106e753dc15997bf608b856a9e893b45497eed4ef533c04d7f",
+        "parsed": true,
+        "observedQuestions": [],
+        "observedDecision": {
+          "state": "needs-review",
+          "caseId": "OYS-20261110-004",
+          "evidence": [],
+          "reasons": [
+            "법령 근거 확인 필요: currentness-unverified (waste-rule-2026-10-02)",
+            "법령 근거 확인 필요: unrelated (legal-290881-annex4-code)",
+            "법령 근거 확인 필요: unrelated (legal-290881-annex4-2-r3-3)",
+            "법령 근거 확인 필요: unrelated (legal-290881-annex4-3-types)",
+            "법령 근거 확인 필요: currentness-unverified (legal-290881-annex5-3-common)",
+            "이 평가일·사례 조건에 사용할 수 있는 검증된 법령 근거가 없습니다.",
+            "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+            "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+            "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+            "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다.",
+            "현장 담당자의 검토와 승인 전에는 반출·계약·처리를 실행할 수 없습니다."
+          ]
+        },
+        "observedCandidates": {
+          "resins": [
+            {
+              "value": "LDPE",
+              "basis": "reported-input"
+            }
+          ],
+          "wasteCodes": [],
+          "photoInference": "not-performed"
+        },
+        "legalIssues": [
+          {
+            "kind": "currentness-unverified",
+            "sourceId": "waste-rule-2026-10-02"
+          },
+          {
+            "kind": "unrelated",
+            "sourceId": "legal-290881-annex4-code"
+          },
+          {
+            "kind": "unrelated",
+            "sourceId": "legal-290881-annex4-2-r3-3"
+          },
+          {
+            "kind": "unrelated",
+            "sourceId": "legal-290881-annex4-3-types"
+          },
+          {
+            "kind": "currentness-unverified",
+            "sourceId": "legal-290881-annex5-3-common"
+          }
+        ],
+        "allRoutesUnknown": true
+      },
+      "independentHumanLabel": null,
+      "humanReviewer": null,
+      "qualification": null,
+      "split": null,
+      "acceptance": null,
+      "preliminaryReview": {
+        "origin": "AI-assisted preliminary H review, prepared for hyeobikong human confirmation; not independent human label",
+        "finding": "?? ? LDPE?? ??? ?? ??/??? ??? ????. ??? ??? ?? ?? ??? ???.",
+        "focus": "photo/evidence absent; mass12 fictional"
+      }
+    },
+    {
+      "candidateId": "OYS-20261110-005",
+      "sourcePath": "data/candidates/oyeonseok-2026-11-10/oys-20261110-005-multilayer-pouch.json",
+      "inputSha256": "59144769d4f4936970990eda5b5a9b2732766f849db494b6c236f4b7feef3129",
+      "proposedGroup": "oys-fiction-005",
+      "technicalObservation": {
+        "candidateId": "OYS-20261110-005",
+        "inputSha256": "59144769d4f4936970990eda5b5a9b2732766f849db494b6c236f4b7feef3129",
+        "parsed": true,
+        "observedQuestions": [
+          "유해물질과 접촉했는지 확인할 수 있나요?",
+          "확인된 질량은 몇 kg인가요?",
+          "혼합·다층 또는 라벨 불일치가 보고되었습니다. 층별·구성 수지의 재질 명세, 라벨 확인 자료와 수지별 분리 가능 여부를 확인할 수 있나요?",
+          "오염·접촉 이력에 미확인 내용이 있습니다. 이전 내용물·접촉 물질명과 SDS 등 확인 자료, 잔류물·세척 확인 자료가 있나요? 확인 전에는 세척 여부만으로 유해물질 접촉이 없었다고 확정하지 않습니다."
+        ],
+        "observedDecision": {
+          "state": "needs-review",
+          "caseId": "OYS-20261110-005",
+          "evidence": [],
+          "reasons": [
+            "법령 근거 확인 필요: currentness-unverified (waste-rule-2026-10-02)",
+            "법령 근거 확인 필요: unrelated (legal-290881-annex4-code)",
+            "법령 근거 확인 필요: unrelated (legal-290881-annex4-2-r3-3)",
+            "법령 근거 확인 필요: unrelated (legal-290881-annex4-3-types)",
+            "법령 근거 확인 필요: currentness-unverified (legal-290881-annex5-3-common)",
+            "이 평가일·사례 조건에 사용할 수 있는 검증된 법령 근거가 없습니다.",
+            "유해물질과 접촉했는지 확인할 수 있나요?",
+            "확인된 질량은 몇 kg인가요?",
+            "혼합·다층 또는 라벨 불일치가 보고되었습니다. 층별·구성 수지의 재질 명세, 라벨 확인 자료와 수지별 분리 가능 여부를 확인할 수 있나요?",
+            "오염·접촉 이력에 미확인 내용이 있습니다. 이전 내용물·접촉 물질명과 SDS 등 확인 자료, 잔류물·세척 확인 자료가 있나요? 확인 전에는 세척 여부만으로 유해물질 접촉이 없었다고 확정하지 않습니다.",
+            "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+            "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+            "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+            "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다.",
+            "현장 담당자의 검토와 승인 전에는 반출·계약·처리를 실행할 수 없습니다."
+          ]
+        },
+        "observedCandidates": {
+          "resins": [
+            {
+              "value": "PET/PE multilayer",
+              "basis": "reported-input"
+            }
+          ],
+          "wasteCodes": [],
+          "photoInference": "not-performed"
+        },
+        "legalIssues": [
+          {
+            "kind": "currentness-unverified",
+            "sourceId": "waste-rule-2026-10-02"
+          },
+          {
+            "kind": "unrelated",
+            "sourceId": "legal-290881-annex4-code"
+          },
+          {
+            "kind": "unrelated",
+            "sourceId": "legal-290881-annex4-2-r3-3"
+          },
+          {
+            "kind": "unrelated",
+            "sourceId": "legal-290881-annex4-3-types"
+          },
+          {
+            "kind": "currentness-unverified",
+            "sourceId": "legal-290881-annex5-3-common"
+          }
+        ],
+        "allRoutesUnknown": true
+      },
+      "independentHumanLabel": null,
+      "humanReviewer": null,
+      "qualification": null,
+      "split": null,
+      "acceptance": null,
+      "preliminaryReview": {
+        "origin": "AI-assisted preliminary H review, prepared for hyeobikong human confirmation; not independent human label",
+        "finding": "PET/PE ??? ????????? ????? ??? ??, ??/?? ??? ????. ?? ??/?? ??? ???? ???.",
+        "focus": "mixture/adhesive/contact/mass unresolved"
+      }
+    },
+    {
+      "candidateId": "OYS-20261110-006",
+      "sourcePath": "data/candidates/oyeonseok-2026-11-10/oys-20261110-006-black-label-conflict.json",
+      "inputSha256": "29c76c30e310148b0ab270ef51e2a4fee92d35aab35106560e4ac36d4947bda0",
+      "proposedGroup": "oys-fiction-006",
+      "technicalObservation": {
+        "candidateId": "OYS-20261110-006",
+        "inputSha256": "29c76c30e310148b0ab270ef51e2a4fee92d35aab35106560e4ac36d4947bda0",
+        "parsed": true,
+        "observedQuestions": [
+          "확인된 수지 종류와 이를 확인한 자료(라벨·재질 명세 등)가 있나요?",
+          "오염이나 이물질이 있나요? 확인된 상태를 알려 주세요.",
+          "유해물질과 접촉했는지 확인할 수 있나요?",
+          "확인된 질량은 몇 kg인가요?"
+        ],
+        "observedDecision": {
+          "state": "needs-review",
+          "caseId": "OYS-20261110-006",
+          "evidence": [],
+          "reasons": [
+            "법령 근거 확인 필요: currentness-unverified (waste-rule-2026-10-02)",
+            "법령 근거 확인 필요: unrelated (legal-290881-annex4-code)",
+            "법령 근거 확인 필요: unrelated (legal-290881-annex4-2-r3-3)",
+            "법령 근거 확인 필요: unrelated (legal-290881-annex4-3-types)",
+            "법령 근거 확인 필요: currentness-unverified (legal-290881-annex5-3-common)",
+            "이 평가일·사례 조건에 사용할 수 있는 검증된 법령 근거가 없습니다.",
+            "확인된 수지 종류와 이를 확인한 자료(라벨·재질 명세 등)가 있나요?",
+            "오염이나 이물질이 있나요? 확인된 상태를 알려 주세요.",
+            "유해물질과 접촉했는지 확인할 수 있나요?",
+            "확인된 질량은 몇 kg인가요?",
+            "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+            "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+            "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+            "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다.",
+            "현장 담당자의 검토와 승인 전에는 반출·계약·처리를 실행할 수 없습니다."
+          ]
+        },
+        "observedCandidates": {
+          "resins": [],
+          "wasteCodes": [],
+          "photoInference": "not-performed"
+        },
+        "legalIssues": [
+          {
+            "kind": "currentness-unverified",
+            "sourceId": "waste-rule-2026-10-02"
+          },
+          {
+            "kind": "unrelated",
+            "sourceId": "legal-290881-annex4-code"
+          },
+          {
+            "kind": "unrelated",
+            "sourceId": "legal-290881-annex4-2-r3-3"
+          },
+          {
+            "kind": "unrelated",
+            "sourceId": "legal-290881-annex4-3-types"
+          },
+          {
+            "kind": "currentness-unverified",
+            "sourceId": "legal-290881-annex5-3-common"
+          }
+        ],
+        "allRoutesUnknown": true
+      },
+      "independentHumanLabel": null,
+      "humanReviewer": null,
+      "qualification": null,
+      "split": null,
+      "acceptance": null,
+      "preliminaryReview": {
+        "origin": "AI-assisted preliminary H review, prepared for hyeobikong human confirmation; not independent human label",
+        "finding": "PP/ABS ??? process ??? ?? ???? polymer=null??. ?? ??? ?? ???? ???? PP? ABS? ?? ???? ???.",
+        "focus": "polymer/contamination/contact/mass unresolved"
+      }
+    },
+    {
+      "candidateId": "OYS-20261110-007",
+      "sourcePath": "data/candidates/oyeonseok-2026-11-10/oys-20261110-007-oily-pp.json",
+      "inputSha256": "1fd9200b832cb774fe49f26df99b017f5a22b25ed19564ba5eff4b9dcc672ca8",
+      "proposedGroup": "oys-fiction-007",
+      "technicalObservation": {
+        "candidateId": "OYS-20261110-007",
+        "inputSha256": "1fd9200b832cb774fe49f26df99b017f5a22b25ed19564ba5eff4b9dcc672ca8",
+        "parsed": true,
+        "observedQuestions": [
+          "유해물질과 접촉했는지 확인할 수 있나요?",
+          "확인된 질량은 몇 kg인가요?",
+          "오염·접촉 이력에 미확인 내용이 있습니다. 이전 내용물·접촉 물질명과 SDS 등 확인 자료, 잔류물·세척 확인 자료가 있나요? 확인 전에는 세척 여부만으로 유해물질 접촉이 없었다고 확정하지 않습니다."
+        ],
+        "observedDecision": {
+          "state": "needs-review",
+          "caseId": "OYS-20261110-007",
+          "evidence": [],
+          "reasons": [
+            "법령 근거 확인 필요: currentness-unverified (waste-rule-2026-10-02)",
+            "법령 근거 확인 필요: unrelated (legal-290881-annex4-code)",
+            "법령 근거 확인 필요: unrelated (legal-290881-annex4-2-r3-3)",
+            "법령 근거 확인 필요: unrelated (legal-290881-annex4-3-types)",
+            "법령 근거 확인 필요: currentness-unverified (legal-290881-annex5-3-common)",
+            "이 평가일·사례 조건에 사용할 수 있는 검증된 법령 근거가 없습니다.",
+            "유해물질과 접촉했는지 확인할 수 있나요?",
+            "확인된 질량은 몇 kg인가요?",
+            "오염·접촉 이력에 미확인 내용이 있습니다. 이전 내용물·접촉 물질명과 SDS 등 확인 자료, 잔류물·세척 확인 자료가 있나요? 확인 전에는 세척 여부만으로 유해물질 접촉이 없었다고 확정하지 않습니다.",
+            "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+            "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+            "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+            "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다.",
+            "현장 담당자의 검토와 승인 전에는 반출·계약·처리를 실행할 수 없습니다."
+          ]
+        },
+        "observedCandidates": {
+          "resins": [
+            {
+              "value": "PP",
+              "basis": "reported-input"
+            }
+          ],
+          "wasteCodes": [],
+          "photoInference": "not-performed"
+        },
+        "legalIssues": [
+          {
+            "kind": "currentness-unverified",
+            "sourceId": "waste-rule-2026-10-02"
+          },
+          {
+            "kind": "unrelated",
+            "sourceId": "legal-290881-annex4-code"
+          },
+          {
+            "kind": "unrelated",
+            "sourceId": "legal-290881-annex4-2-r3-3"
+          },
+          {
+            "kind": "unrelated",
+            "sourceId": "legal-290881-annex4-3-types"
+          },
+          {
+            "kind": "currentness-unverified",
+            "sourceId": "legal-290881-annex5-3-common"
+          }
+        ],
+        "allRoutesUnknown": true
+      },
+      "independentHumanLabel": null,
+      "humanReviewer": null,
+      "qualification": null,
+      "split": null,
+      "acceptance": null,
+      "preliminaryReview": {
+        "origin": "AI-assisted preliminary H review, prepared for hyeobikong human confirmation; not independent human label",
+        "finding": "???? ??? ????SDS?????? ??? ?? ?? ??? ????. unknown? no? ??? ???.",
+        "focus": "oil/contact/mass unresolved"
+      }
+    },
+    {
+      "candidateId": "OYS-20261110-008",
+      "sourcePath": "data/candidates/oyeonseok-2026-11-10/oys-20261110-008-solvent-hdpe.json",
+      "inputSha256": "f3833e8d39ff4b96f94c784d69889c59db17390bd2993d6f5e0883aecd842fa9",
+      "proposedGroup": "oys-fiction-008",
+      "technicalObservation": {
+        "candidateId": "OYS-20261110-008",
+        "inputSha256": "f3833e8d39ff4b96f94c784d69889c59db17390bd2993d6f5e0883aecd842fa9",
+        "parsed": true,
+        "observedQuestions": [
+          "확인된 질량은 몇 kg인가요?",
+          "오염·접촉 이력에 미확인 내용이 있습니다. 이전 내용물·접촉 물질명과 SDS 등 확인 자료, 잔류물·세척 확인 자료가 있나요? 확인 전에는 세척 여부만으로 유해물질 접촉이 없었다고 확정하지 않습니다."
+        ],
+        "observedDecision": {
+          "state": "needs-review",
+          "caseId": "OYS-20261110-008",
+          "evidence": [],
+          "reasons": [
+            "유해물질 접촉이 보고되었습니다. 접촉 물질·시험 자료와 지정폐기물 해당 여부를 별도 검토해야 합니다.",
+            "법령 근거 확인 필요: currentness-unverified (waste-rule-2026-10-02)",
+            "법령 근거 확인 필요: unrelated (legal-290881-annex4-code)",
+            "법령 근거 확인 필요: unrelated (legal-290881-annex4-2-r3-3)",
+            "법령 근거 확인 필요: unrelated (legal-290881-annex4-3-types)",
+            "법령 근거 확인 필요: currentness-unverified (legal-290881-annex5-3-common)",
+            "이 평가일·사례 조건에 사용할 수 있는 검증된 법령 근거가 없습니다.",
+            "확인된 질량은 몇 kg인가요?",
+            "오염·접촉 이력에 미확인 내용이 있습니다. 이전 내용물·접촉 물질명과 SDS 등 확인 자료, 잔류물·세척 확인 자료가 있나요? 확인 전에는 세척 여부만으로 유해물질 접촉이 없었다고 확정하지 않습니다.",
+            "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+            "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+            "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+            "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다.",
+            "현장 담당자의 검토와 승인 전에는 반출·계약·처리를 실행할 수 없습니다."
+          ]
+        },
+        "observedCandidates": {
+          "resins": [
+            {
+              "value": "HDPE",
+              "basis": "reported-input"
+            }
+          ],
+          "wasteCodes": [],
+          "photoInference": "not-performed"
+        },
+        "legalIssues": [
+          {
+            "kind": "currentness-unverified",
+            "sourceId": "waste-rule-2026-10-02"
+          },
+          {
+            "kind": "unrelated",
+            "sourceId": "legal-290881-annex4-code"
+          },
+          {
+            "kind": "unrelated",
+            "sourceId": "legal-290881-annex4-2-r3-3"
+          },
+          {
+            "kind": "unrelated",
+            "sourceId": "legal-290881-annex4-3-types"
+          },
+          {
+            "kind": "currentness-unverified",
+            "sourceId": "legal-290881-annex5-3-common"
+          }
+        ],
+        "allRoutesUnknown": true
+      },
+      "independentHumanLabel": null,
+      "humanReviewer": null,
+      "qualification": null,
+      "split": null,
+      "acceptance": null,
+      "preliminaryReview": {
+        "origin": "AI-assisted preliminary H review, prepared for hyeobikong human confirmation; not independent human label",
+        "finding": "?? ?? ?? yes? ?? ?? ??? ????. ???/??/???????? ??? ??? ???? ???? ????? ??? ???? ???.",
+        "focus": "known hazard premise; solvent identity and mass missing"
+      }
+    },
+    {
+      "candidateId": "OYS-20261110-009",
+      "sourcePath": "data/candidates/oyeonseok-2026-11-10/oys-20261110-009-pp-reuse-question.json",
+      "inputSha256": "acadb919168dc522ac98cbbc8ba2b27bd6d2224f0bb4779a689f079768da17b7",
+      "proposedGroup": "oys-fiction-009",
+      "technicalObservation": {
+        "candidateId": "OYS-20261110-009",
+        "inputSha256": "acadb919168dc522ac98cbbc8ba2b27bd6d2224f0bb4779a689f079768da17b7",
+        "parsed": true,
+        "observedQuestions": [
+          "유해물질과 접촉했는지 확인할 수 있나요?",
+          "오염·접촉 이력에 미확인 내용이 있습니다. 이전 내용물·접촉 물질명과 SDS 등 확인 자료, 잔류물·세척 확인 자료가 있나요? 확인 전에는 세척 여부만으로 유해물질 접촉이 없었다고 확정하지 않습니다."
+        ],
+        "observedDecision": {
+          "state": "needs-review",
+          "caseId": "OYS-20261110-009",
+          "evidence": [],
+          "reasons": [
+            "법령 근거 확인 필요: currentness-unverified (waste-rule-2026-10-02)",
+            "법령 근거 확인 필요: unrelated (legal-290881-annex4-code)",
+            "법령 근거 확인 필요: unrelated (legal-290881-annex4-2-r3-3)",
+            "법령 근거 확인 필요: unrelated (legal-290881-annex4-3-types)",
+            "법령 근거 확인 필요: currentness-unverified (legal-290881-annex5-3-common)",
+            "이 평가일·사례 조건에 사용할 수 있는 검증된 법령 근거가 없습니다.",
+            "유해물질과 접촉했는지 확인할 수 있나요?",
+            "오염·접촉 이력에 미확인 내용이 있습니다. 이전 내용물·접촉 물질명과 SDS 등 확인 자료, 잔류물·세척 확인 자료가 있나요? 확인 전에는 세척 여부만으로 유해물질 접촉이 없었다고 확정하지 않습니다.",
+            "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+            "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+            "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+            "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다.",
+            "현장 담당자의 검토와 승인 전에는 반출·계약·처리를 실행할 수 없습니다."
+          ]
+        },
+        "observedCandidates": {
+          "resins": [
+            {
+              "value": "PP",
+              "basis": "reported-input"
+            }
+          ],
+          "wasteCodes": [],
+          "photoInference": "not-performed"
+        },
+        "legalIssues": [
+          {
+            "kind": "currentness-unverified",
+            "sourceId": "waste-rule-2026-10-02"
+          },
+          {
+            "kind": "unrelated",
+            "sourceId": "legal-290881-annex4-code"
+          },
+          {
+            "kind": "unrelated",
+            "sourceId": "legal-290881-annex4-2-r3-3"
+          },
+          {
+            "kind": "unrelated",
+            "sourceId": "legal-290881-annex4-3-types"
+          },
+          {
+            "kind": "currentness-unverified",
+            "sourceId": "legal-290881-annex5-3-common"
+          }
+        ],
+        "allRoutesUnknown": true
+      },
+      "independentHumanLabel": null,
+      "humanReviewer": null,
+      "qualification": null,
+      "split": null,
+      "acceptance": null,
+      "preliminaryReview": {
+        "origin": "AI-assisted preliminary H review, prepared for hyeobikong human confirmation; not independent human label",
+        "finding": "??? ????? ??????????????????? ??? ?? ??/??? ??? ???? ??? ? ??.",
+        "focus": "reuse comparison basis and contact unresolved"
+      }
+    },
+    {
+      "candidateId": "OYS-20261110-010",
+      "sourcePath": "data/candidates/oyeonseok-2026-11-10/oys-20261110-010-pet-missing-basis.json",
+      "inputSha256": "e83d1f30b91e37a38e70a20963a4db2ecb13287aae67a54e10f92b3509d51d2d",
+      "proposedGroup": "oys-fiction-010",
+      "technicalObservation": {
+        "candidateId": "OYS-20261110-010",
+        "inputSha256": "e83d1f30b91e37a38e70a20963a4db2ecb13287aae67a54e10f92b3509d51d2d",
+        "parsed": true,
+        "observedQuestions": [
+          "오염이나 이물질이 있나요? 확인된 상태를 알려 주세요.",
+          "유해물질과 접촉했는지 확인할 수 있나요?",
+          "확인된 질량은 몇 kg인가요?",
+          "폐플라스틱이 발생한 지역은 어디인가요?"
+        ],
+        "observedDecision": {
+          "state": "needs-review",
+          "caseId": "OYS-20261110-010",
+          "evidence": [],
+          "reasons": [
+            "법령 근거 확인 필요: currentness-unverified (waste-rule-2026-10-02)",
+            "법령 근거 확인 필요: unrelated (legal-290881-annex4-code)",
+            "법령 근거 확인 필요: unrelated (legal-290881-annex4-2-r3-3)",
+            "법령 근거 확인 필요: unrelated (legal-290881-annex4-3-types)",
+            "법령 근거 확인 필요: currentness-unverified (legal-290881-annex5-3-common)",
+            "이 평가일·사례 조건에 사용할 수 있는 검증된 법령 근거가 없습니다.",
+            "오염이나 이물질이 있나요? 확인된 상태를 알려 주세요.",
+            "유해물질과 접촉했는지 확인할 수 있나요?",
+            "확인된 질량은 몇 kg인가요?",
+            "폐플라스틱이 발생한 지역은 어디인가요?",
+            "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+            "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+            "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+            "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다.",
+            "현장 담당자의 검토와 승인 전에는 반출·계약·처리를 실행할 수 없습니다."
+          ]
+        },
+        "observedCandidates": {
+          "resins": [
+            {
+              "value": "PET",
+              "basis": "reported-input"
+            }
+          ],
+          "wasteCodes": [],
+          "photoInference": "not-performed"
+        },
+        "legalIssues": [
+          {
+            "kind": "currentness-unverified",
+            "sourceId": "waste-rule-2026-10-02"
+          },
+          {
+            "kind": "unrelated",
+            "sourceId": "legal-290881-annex4-code"
+          },
+          {
+            "kind": "unrelated",
+            "sourceId": "legal-290881-annex4-2-r3-3"
+          },
+          {
+            "kind": "unrelated",
+            "sourceId": "legal-290881-annex4-3-types"
+          },
+          {
+            "kind": "currentness-unverified",
+            "sourceId": "legal-290881-annex5-3-common"
+          }
+        ],
+        "allRoutesUnknown": true
+      },
+      "independentHumanLabel": null,
+      "humanReviewer": null,
+      "qualification": null,
+      "split": null,
+      "acceptance": null,
+      "preliminaryReview": {
+        "origin": "AI-assisted preliminary H review, prepared for hyeobikong human confirmation; not independent human label",
+        "finding": "??????????? ??? ???????? ??? ????. ??? ???? ?? ?? ??? ??? ???? ???.",
+        "focus": "missing facts and quantitative basis"
+      }
+    }
+  ],
+  "JStatus": {
+    "sourceCommit": "84027ad728d212720c77788f39161086baa17ea9",
+    "candidateManifestSupplied": false,
+    "candidateCount": 0,
+    "reason": "J handoff explicitly records 0/10 candidates and no manifest. Ten QA condition variants are one reproduction family; do not fabricate ten independent candidate labels.",
+    "technicalFinding": "New currentness/retrieval evidence does not update runtime verifiedThrough=2026-11-05 automatically. Multisource partial support cannot be imported as a fully approved /facts document under the existing O contract."
+  },
+  "crossCorpusReview": {
+    "HSourceCohorts": 6,
+    "OImaginedGroups": 10,
+    "exactSameCandidateIds": false,
+    "sourceGroupClearance": null,
+    "reason": "No O photo bytes; no same photo match can be asserted. Similar PET/HDPE/PP scenarios are conceptual overlap, not evidence of same site/lot. J/lead must reconcile all30."
+  },
+  "runtimeSourceBase": "ae6456b7e6a23232314a2a47384c4de049f794c8 + this H2 source"
+}

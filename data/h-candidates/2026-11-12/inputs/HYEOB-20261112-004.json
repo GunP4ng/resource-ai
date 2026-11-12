@@ -1,0 +1,12 @@
+{
+  "caseId": "HYEOB-20261112-004",
+  "description": "SYNTHETIC / 공개 사진을 참고한 시험용 입력: 세척 용기의 이전 내용물 미상. 아래 공정·수지·오염·접촉·질량·지역은 검증 목적의 가정이며 사진의 실제 현장 사실이 아니다.",
+  "photoRefs": [],
+  "process": "사용한 용기 세척·압축",
+  "polymer": "HDPE",
+  "contamination": "세척 완료, 이전 내용물·잔류물은 미확인",
+  "hazardousContact": "no",
+  "massKg": 20,
+  "region": "대전",
+  "assessmentDate": "2026-11-12"
+}

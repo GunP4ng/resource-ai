@@ -1,0 +1,12 @@
+{
+  "caseId": "HYEOB-20261112-003",
+  "description": "SYNTHETIC / 공개 사진을 참고한 시험용 입력: PP/PE 다층 포장재 및 라벨 확인. 아래 공정·수지·오염·접촉·질량·지역은 검증 목적의 가정이며 사진의 실제 현장 사실이 아니다.",
+  "photoRefs": [],
+  "process": "포장백 절단",
+  "polymer": "PP/PE 다층 (라벨 PP)",
+  "contamination": "없음",
+  "hazardousContact": "no",
+  "massKg": 40,
+  "region": "충남",
+  "assessmentDate": "2026-11-12"
+}
