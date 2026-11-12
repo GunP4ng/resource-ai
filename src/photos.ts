@@ -215,7 +215,21 @@ export async function createPhotoStore(options: { root: string; authorize: Photo
       try {
         const marker = await open(deniedPath(photoRef), "wx", 0o600);
         try { await marker.sync(); } finally { await marker.close(); }
-      } catch (error) { if ((error as NodeJS.ErrnoException).code !== "EEXIST") throw new PhotoStorageError("unavailable"); }
+      } catch (error) {
+        if ((error as NodeJS.ErrnoException).code !== "EEXIST") throw new PhotoStorageError("unavailable");
+        // A previous attempt may have created the marker but failed its fsync.
+        // Existence denies model use; it is not a durable acknowledgement.
+        const file = deniedPath(photoRef), before = await lstat(file);
+        if (!before.isFile() || before.isSymbolicLink() || before.nlink !== 1 || before.size !== 0) throw new PhotoStorageError("unavailable");
+        const marker = await open(file, constants.O_RDWR | (constants.O_NOFOLLOW ?? 0));
+        try {
+          const opened = await marker.stat();
+          if (!opened.isFile() || opened.nlink !== 1 || opened.size !== 0 || opened.dev !== before.dev || opened.ino !== before.ino) throw new PhotoStorageError("unavailable");
+          await marker.sync();
+          const after = await lstat(file); await ensureRoot();
+          if (!after.isFile() || after.isSymbolicLink() || after.nlink !== 1 || after.size !== 0 || after.dev !== opened.dev || after.ino !== opened.ino) throw new PhotoStorageError("unavailable");
+        } finally { await marker.close(); }
+      }
       const directory = await open(root, constants.O_RDONLY);
       try { await directory.sync(); } finally { await directory.close(); }
     },
