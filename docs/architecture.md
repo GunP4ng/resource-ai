@@ -6,7 +6,7 @@
 
 이는 설계 결정이다. 2026-11-05 작성 당시 저장소는 타입·extension 등록·상태 조회 골격뿐이었다.
 
-**2026-11-12 정정:** 최초 설계안은 Azure OpenAI Responses를 기본으로 삼았다. 2026-11-06 소유자 결정(#8 재범위화, PR #25)으로 기본 실행 공급자는 senpi `chatgpt-subscription` / `gpt-6-sol`이 되었다(`scripts/app.ts`의 `RESOURCE_MODEL_RUNNER` 기본값 `subscription`, `src/session.ts`의 기본 모델). Azure는 `RESOURCE_MODEL_RUNNER=azure`로 고르는 opt-in 경로이고 `local`은 모델 호출 없는 평가다. 현재 main에는 웹 앱(`src/app.ts`, `src/operations.ts`), 도메인 판단·근거 게이트(`src/domain.ts`, `src/assessment.ts`), 비용·탄소 계산(`src/cost.ts`, `src/carbon.ts`, `src/o-calculation.ts`), 로컬 계정·SQLite 사례 저장이 구현되어 있다. MCP 서버는 여전히 없다. 공식 extension은 CLI에서 상태 조회 도구 `resource_project_status` **1개만** 등록한다(`src/extension.ts`의 default export). 판정·업체·비교 도구 3개(`resource_assess_case`, `resource_find_processors`, `resource_compare`)는 앱의 사례별 세션에만 `createCaseTools`로 주입되며 CLI에서 같은 도구로 점검할 수는 없다. 실제 구독 호출 성공·usage 증거는 아직 없다.
+**2026-11-12 정정:** 최초 설계안은 Azure OpenAI Responses를 기본으로 삼았다. 2026-11-06 PR #25(`#8` 재범위화, `253b718`)에서 기본 실행 공급자를 senpi `chatgpt-subscription`으로 바꿨으며 당시 기본 모델은 `gpt-5.5`였다. 이어 PR #26(`90b29e3`)에서 기본 모델을 `gpt-6-sol`로 바꿨다(`scripts/app.ts`의 `RESOURCE_MODEL_RUNNER` 기본값 `subscription`, `src/session.ts`의 기본 모델). Azure는 `RESOURCE_MODEL_RUNNER=azure`로 고르는 opt-in 경로이고 `local`은 모델 호출 없는 평가다. 현재 main에는 웹 앱(`src/app.ts`, `src/operations.ts`), 도메인 판단·근거 게이트(`src/domain.ts`, `src/assessment.ts`), 비용·탄소 계산(`src/cost.ts`, `src/carbon.ts`, `src/o-calculation.ts`), 로컬 계정·SQLite 사례 저장이 구현되어 있다. MCP 서버는 여전히 없다. 공식 extension은 CLI에서 상태 조회 도구 `resource_project_status` **1개만** 등록한다(`src/extension.ts`의 default export). 판정·업체·비교 도구 3개(`resource_assess_case`, `resource_find_processors`, `resource_compare`)는 앱의 사례별 세션에만 `createCaseTools`로 주입되며 CLI에서 같은 도구로 점검할 수는 없다. 실제 구독 호출 성공·usage 증거는 아직 없다.
 
 ## 대안 비교
 
