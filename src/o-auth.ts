@@ -35,6 +35,15 @@ const bunPassword = {
 };
 let cryptoActive = 0;
 let dummyHash: string | undefined;
+// Share an epoch clock across auth instances and in-process database reopen.
+// Wall time can advance expiry; elapsed time prevents a backward wall step from
+// making this process's own attempt windows and sessions appear future-dated.
+let epochOffset = Date.now() - performance.now();
+function authNow() {
+  const elapsed = performance.now();
+  epochOffset = Math.max(epochOffset, Date.now() - elapsed);
+  return Math.floor(epochOffset + elapsed);
+}
 const hash = (value: string) => createHash("sha256").update(value).digest("hex");
 function fail(code: LocalAuthErrorCode): never { throw new LocalAuthError(code); }
 function check(signal?: AbortSignal, guard?: AuthGuard) {
@@ -79,7 +88,7 @@ export function createLocalAuth(runtime: RuntimeDatabase, options: { origin: str
   } catch { fail("unavailable"); }
   const db = runtime.database;
   const now = () => {
-    const value = (options.now ?? Date.now)();
+    const value = (options.now ?? authNow)();
     if (!Number.isSafeInteger(value) || value < 0 || value > Number.MAX_SAFE_INTEGER - LOCAL_AUTH_LIMITS.sessionMs) fail("unavailable");
     return value;
   };

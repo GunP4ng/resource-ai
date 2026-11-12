@@ -1,0 +1,12 @@
+{
+  "caseId": "OYS-20261110-004",
+  "description": "SYNTHETIC — newly authored text-only fictional scenario: Clean single-resin LDPE. No field records, photos or external evidence supplied. massKg=12 is a fictional scenario parameter, not a measured value. No legal eligibility, price or emissions factor is asserted.",
+  "photoRefs": [],
+  "process": "Fictional LDPE film extrusion produces roll-edge trim before printing or adhesive application.",
+  "polymer": "LDPE",
+  "contamination": "No contamination is stipulated in this fictional scenario.",
+  "hazardousContact": "no",
+  "massKg": 12,
+  "region": "전라북도",
+  "assessmentDate": "2026-11-10"
+}

@@ -1,5 +1,10 @@
 # O4 local operator runtime
 
+The explicit operational assembly, strict config contract, durable request-quota
+journal and recovery commands are documented in [O4 operational handoff](o-operational-handoff.md).
+O owns implementation checks, app execution evidence and the implementation PR.
+The team lead owns integrated acceptance and submission materials.
+
 This implements the next O-owned #12 wiring after PR27. It does not claim
 enterprise SSO, approved field data, live provider execution or integrated
 acceptance. Defaults keep the existing anonymous ephemeral launcher.
@@ -29,9 +34,9 @@ authentication and presentation dependencies to `createApp`. This changes
 neither `CaseInput`/`DecisionResult` nor runner policy, photo execution mappings,
 model dispatch, audit or billing contracts.
 
-These are integration changes for review, not a claim of human H
-approval. Subscription model-photo transmission remains disabled. H retains
-the actual provider/model mapping and guarded photo boundary.
+These are integration changes for review, not a claim of human H approval.
+Operational mode shares one explicit subscription model-photo authority; H
+retains the actual approved provider/model/account/purpose policy.
 
 ## Implementation and acceptance
 
@@ -80,8 +85,9 @@ fail startup; storage errors never select a memory fallback.
 | `RESOURCE_APP_AUTH` | `anonymous` (default), `local-operator` |
 | `RESOURCE_STATE_DIR` | Required absolute, canonical private root in local mode; forbidden in anonymous mode |
 | `RESOURCE_RESOURCES_DIR` | Optional absolute curated root; local mode required; directories 0700 and files 0600 |
-| `RESOURCE_PRIVATE_PHOTOS` | `off` (default), `on`; local mode required; storage only |
-| `RESOURCE_MODEL_RUNNER` | Existing `subscription` (default), `azure`, `local` |
+| `RESOURCE_PRIVATE_PHOTOS` | `off` (default), `on`; local authentication required; model use additionally needs the explicit operational mapping |
+| `RESOURCE_MODEL_RUNNER` | Existing `subscription` (default), `azure`, `local`; explicit `operational` requires the separate handoff contract |
+| `RESOURCE_OPERATIONAL_CONFIG` | Required private absolute config only in operational mode; presence alone never enables execution |
 | `PORT` | Existing loopback port; default 3000 |
 
 Use dedicated operator-owned roots. The database opener creates a missing final
@@ -194,14 +200,14 @@ replacement and filesystem/hardware durability failures remain outside this boun
 
 ## Open H/O and field acceptance requirements (#12)
 
-The launcher still supplies a direct runner without concrete authorize, reserve,
-release, settle and durable audit dependencies. H/O must assemble these under the
-approved account/provider/model/purpose and limits, including cancellation and
-terminal-failure recovery. SQLite case leases are not financial reservations.
+The explicit operational launcher now supplies authorization, durable technical
+request reservations, release/consumption/uncertainty recovery and audit under
+operator-supplied policy. Other modes preserve their direct/local runners.
+SQLite case leases and request quotas are not financial reservations.
 UI trace is not a provider request ID; reported usage is not billing. Actual
 provider success/failure/cancellation/request-ID/usage receipts remain pending.
-Model photo transmission stays disabled in the launcher; operational authority
-assembly and approved field-photo withdrawal/expiry acceptance remain pending.
+Model photo transmission requires the explicit operational mapping and live
+consent; approved field-photo acceptance remains pending.
 
 No actual field package has been supplied for this handoff; its location is
 pending. J/O still need current legal coverage, rights, reviewed quotations,
@@ -236,7 +242,9 @@ race alone is insufficient to drain it. The composed factories retain
 `dispose()` cancellation semantics and add awaited `close()` for owned resources.
 The launcher stops accepting, cancels work, waits for HTTP handlers and pending
 application work, then closes leases/SQLite. Its existing one-second forced exit
-bound remains; it does not close SQLite under still-running work at that bound.
+bound remains outside operational mode; operational mode uses its explicit
+shutdown grace. An incomplete drain exits nonzero and never closes SQLite under
+still-running callbacks at that bound.
 A successfully published lease has a no-op rollback so `finally` cannot issue a
 new failing database write after the commit marker.
 Abort listeners contain typed storage/contention failures after synchronously
@@ -244,8 +252,8 @@ invalidating the local lease. They do not retry SQL or release another token's
 reservation: an undeleted reservation remains bounded by the existing 65-second
 lease expiry and the normal recovery sweep.
 
-Private photos remain single-process and storage-only under `<state>/photos`.
-There is no model-photo mapping or transmission enablement. Local HTTP withdrawal
+Private photos remain single-process under `<state>/photos`. Operational mode
+alone assembles the explicit model-photo mapping and guarded transport. Local HTTP withdrawal
 durably denies/queues before returning success; physical deletion is separately
 pending. With photo storage enabled only, startup and 30-second non-overlapping
 passes independently run the existing physical photo-expiry sweep, including
@@ -283,9 +291,10 @@ tests, helpers, account CLI and `qa-o4.ts`, with no suppressed library checks.
 `RESOURCE_MODEL_RUNNER=local bun run demo:o` generates normal/held/review HTML,
 then drives a real temporary SQLite/native correction/restart handler flow with
 an ephemeral demonstration account. The state is removed afterwards. Generated
-HTML is neither actual network/browser QA nor a recording. O owns this change's
-full-suite/smoke and actual HTTP/browser checks, including light/dark desktop
-and mobile comparisons. The lead owns integrated acceptance and final videos.
+HTML is neither actual network/browser QA nor a recording. O owns component
+verification, smoke, complete-suite and actual HTTP/browser checks,
+desktop/mobile light/dark QA and the implementation PR.
+The lead owns integrated acceptance and final videos.
 Local QA uses synthetic accounts, pixels and artifacts with the local runner;
 it cannot establish field approval, live execution or billing evidence.
 
@@ -294,6 +303,7 @@ review, permits/acceptance, approved factors, current legal coverage and
 original-to-derived provenance still need a real supplier. Declared `field`
 origin is not approval. Existing evidence binding cannot express several
 originals jointly supporting one derived fact; J/H/O must explicitly resolve
-that boundary. H retains real provider execution and durable audit/billing;
+that boundary. H retains actual provider approval/receipts and billing; O's
+journal retains technical request quotas and sanitized audit evidence.
 execution trace is not provider request ID, reported usage is not billing, and
 missing usage is unavailable while a supplied string `0` remains zero.

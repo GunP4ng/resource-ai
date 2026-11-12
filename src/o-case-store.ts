@@ -77,7 +77,14 @@ interface CaseRow { case_id: string; owner: string; version: number; row_revisio
 interface LeaseRow { case_id: string; token: string; owner: string; expected_version: number | null; notice_generation: number; created_at: number; expires: number }
 interface Lease {
   readonly owner: string; readonly caseId: string; readonly base: number | null; readonly token: string; readonly notices: number;
-  readonly controller: AbortController; input?: CaseInput; ticket?: PhotoExecutionTicket; artifact?: Artifact | null; presentation?: ReportPresentation; open: boolean;
+  readonly controller: AbortController; identityGuard?: () => void; input?: CaseInput; ticket?: PhotoExecutionTicket; artifact?: Artifact | null; presentation?: ReportPresentation; open: boolean;
+}
+export interface OperationBinding {
+  readonly leaseToken: string;
+  readonly actorId: string;
+  readonly caseId: string;
+  readonly inputRevision: string;
+  readonly artifact: Readonly<{ hash: string; origin: "synthetic" | "field" }> | null;
 }
 const noGuard = () => undefined;
 const maxSnapshot = 1048576, maxArtifact = 67108864, maxArtifacts = 536870912;
@@ -217,6 +224,7 @@ export function createCaseStore(now: () => number = Date.now, photoExecution?: P
     if (!lease.open || lease.controller.signal.aborted || leases.get(lease.caseId) !== lease || !active
       || active.token !== lease.token || active.owner !== lease.owner || active.expected_version !== lease.base || active.expires <= clock()
       || (current?.version ?? null) !== lease.base || (current && (current.owner !== lease.owner || current.expires <= clock() || current.edit_until <= clock()))) throw new CaseConflict("closed-or-stale-revision");
+    return current;
   };
   const closeLocal = (lease: Lease) => { lease.open = false; lease.controller.abort(); if (leases.get(lease.caseId) === lease) leases.delete(lease.caseId); };
   const rollback = (lease: Lease, guard: () => void = noGuard) => {
@@ -274,6 +282,15 @@ export function createCaseStore(now: () => number = Date.now, photoExecution?: P
     stagePresentation(value: ReportPresentation) { const lease = live(); if (lease.presentation) throw new CaseConflict("presentation-already-staged"); requireValid(Value.Check(presentationSchema, value), "invalid-presentation"); lease.presentation = structuredClone(value); },
     currentPhotoTicket() { const lease = live(); assertTicket(lease.ticket); if (!lease.ticket) throw new CaseConflict("photo-execution-required"); return lease.ticket; },
     currentActor() { const lease = live(); if (!lease.owner.startsWith("actor:")) throw new CaseConflict("no-private-stage"); return lease.owner.slice(6); },
+    currentOperation(): OperationBinding {
+      const lease = context.getStore(); if (!lease) throw new CaseConflict("no-private-stage");
+      const current = check(lease); checkGuard(lease.identityGuard ?? noGuard);
+      if (!lease.owner.startsWith("actor:") || !lease.input) throw new CaseConflict("no-private-stage");
+      // Check the staged selection against the same committed row validated above.
+      if (lease.input.photoRefs.length && (!current || !eligible(restore(current), lease.input, lease.ticket))) throw new CaseConflict("photo-permissions-changed");
+      return Object.freeze({ leaseToken: lease.token, actorId: lease.owner.slice(6), caseId: lease.caseId, inputRevision: revision(lease.input),
+        artifact: lease.artifact ? Object.freeze({ hash: lease.artifact.sha256, origin: lease.artifact.record.dataOrigin.kind }) : null });
+    },
     canResolve(actor: string, caseId: string, ref: string, caseRevision: string) {
       const lease = context.getStore(), snapshot = read(`actor:${actor}`, caseId);
       if (!lease || !snapshot || lease.owner !== `actor:${actor}` || lease.caseId !== caseId || !lease.input) return false;
@@ -293,11 +310,11 @@ export function createCaseStore(now: () => number = Date.now, photoExecution?: P
       });
       const old = leases.get(id); if (old) closeLocal(old); leases.set(id, lease); return lease;
     },
-    run<T>(lease: Lease, input: CaseInput, work: (signal: AbortSignal) => Promise<T>, ticket?: PhotoExecutionTicket) {
+    run<T>(lease: Lease, input: CaseInput, work: (signal: AbortSignal) => Promise<T>, ticket?: PhotoExecutionTicket, identityGuard?: () => void) {
       check(lease); const candidate = parseInput(structuredClone(input)); requireValid(candidate.caseId === lease.caseId, "case-id-mismatch");
       if (candidate.photoRefs.length) assertTicket(ticket);
       if (lease.input) throw new CaseConflict("already-staged");
-      lease.input = candidate; lease.ticket = ticket; return context.run(lease, () => work(lease.controller.signal));
+      lease.input = candidate; lease.ticket = ticket; lease.identityGuard = identityGuard; return context.run(lease, () => work(lease.controller.signal));
     },
     commit(lease: Lease, assessment: AssessmentEnvelope, guard: () => void) {
       const captured = parseAssessment(JSON.parse(bytes(assessment, maxSnapshot)));
