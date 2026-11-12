@@ -58,6 +58,28 @@
           "rawSha256": "72205b1fe062dc15530b28fbdfe0d7e8062105bbdbd8fcfd988c4ce981d75e33",
           "lfSha256": "72205b1fe062dc15530b28fbdfe0d7e8062105bbdbd8fcfd988c4ce981d75e33"
         }
+      },
+      "combined37": {
+        "scripts/h-candidates.ts": {
+          "rawSha256": "33cf34b76cb8106bcd5e01b65183e13b7a4d434d57fa1c063c5fd8c70cdb575a",
+          "lfSha256": "33cf34b76cb8106bcd5e01b65183e13b7a4d434d57fa1c063c5fd8c70cdb575a"
+        },
+        "scripts/h-photo-offline.ts": {
+          "rawSha256": "d3177755672c74cb66187f38a1e26b9087fa5b57acfefaa9ba06d2576bf0de03",
+          "lfSha256": "d3177755672c74cb66187f38a1e26b9087fa5b57acfefaa9ba06d2576bf0de03"
+        },
+        "src/assessment.ts": {
+          "rawSha256": "b3dc3d141f163c1272de00ecc0c71f8e460d9826d7176d345d3eb57bd7fbe7f6",
+          "lfSha256": "b3dc3d141f163c1272de00ecc0c71f8e460d9826d7176d345d3eb57bd7fbe7f6"
+        },
+        "tests/assessment.test.ts": {
+          "rawSha256": "b66e89afcd01e7f1247ffaa0ea9e456a673a3a9ae44ec35b13a923fa8fa1dc05",
+          "lfSha256": "b66e89afcd01e7f1247ffaa0ea9e456a673a3a9ae44ec35b13a923fa8fa1dc05"
+        },
+        "tests/h-candidates.test.ts": {
+          "rawSha256": "72205b1fe062dc15530b28fbdfe0d7e8062105bbdbd8fcfd988c4ce981d75e33",
+          "lfSha256": "72205b1fe062dc15530b28fbdfe0d7e8062105bbdbd8fcfd988c4ce981d75e33"
+        }
       }
     },
     "cachedPackageAndLockMatch": true
@@ -255,5 +277,27 @@
     "policy": "Earlier POSIX permissions/fsync/SIGTERM baseline issues are historical; no new Windows support/physical power-loss claim."
   },
   "sharedConfigOrOtherOwnerChanged": false,
-  "rawSnapshotPolicy": "Folder-local attributes preserve exact JSON/snapshot bytes, allow CRLF line endings, and treat original HTML as byte evidence without rewriting upstream whitespace."
+  "rawSnapshotPolicy": "Folder-local attributes preserve exact JSON/snapshot bytes, allow CRLF line endings, and treat original HTML as byte evidence without rewriting upstream whitespace.",
+  "additionalUpstreamCompatibility": {
+    "PR36": {
+      "head": "e38a02125f824a9ac7023c5d8ef430652bc279d8",
+      "scope": "Documentation correction read; H own handoff now states #8 auto-close is not live acceptance. No PR36 files changed."
+    },
+    "PR37": {
+      "head": "490935cd7c459ac1d5eb9eb67bfecba8ed0b1b2a",
+      "sourceFiles": {
+        "src/evidence-registry.ts": "1a20c32cd6f5ce2885b0a16cabb0276aefcec08ec16c6155127efe8a764df9c6",
+        "tests/legal-registry.test.ts": "845e128be6a259b8a51c63ff3f323da1fc8aa935f1f032df113b107bd83c59bd"
+      },
+      "scope": "Only a separate temporary H33+O34+thisH2+PR37 validation tree. PR37 changes are not in this PR branch.",
+      "strictTypechecksBothBuildsAndSmoke": "pass",
+      "tests": {
+        "pass": 642,
+        "fail": 0,
+        "files": 30,
+        "logSha256": "20cdcff59d56e2115ba8b0a877e738fac1e7af5680fd4f7af4b7ce35b2041b8f",
+        "outputTail": "(pass) real SDK tool round trip uses server reviews and returns only the host comparison [66.09ms]\n(pass) Azure runner rejects non-JSON model output and bounds model tool loops [26.52ms]\n\n 642 pass\n 0 fail\n 319 expect() calls\nRan 642 tests across 30 files. [137.83s]"
+      }
+    }
+  }
 }

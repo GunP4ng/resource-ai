@@ -2,7 +2,7 @@
 
 기준 main은 `74c8c3d9a3bae87b560f72e05068f991ca255265`이며 작업 브랜치는 `hyeobikong/h2-candidate-handoff`다. 기존 H 운영 PR #33과 사진 ZIP PR #35는 별도다. 이 변경은 H의 평가 후보와 질문 개선·재현 자료를 전달하며 기존 PR을 재구현하거나 병합하지 않는다.
 
-근거: [H2 #6](https://github.com/GunP4ng/resource-ai/issues/6), [팀장 최신 배분](https://github.com/GunP4ng/resource-ai/issues/12#issuecomment-6765265158), [담당 업무](team-tasks.md#h2), [평가 계획](evaluation.md). #8은 기술 연결 수용으로 CLOSED이며 실제 H/O 운영 인수는 #12에서 추적한다.
+근거: [H2 #6](https://github.com/GunP4ng/resource-ai/issues/6), [팀장 최신 배분](https://github.com/GunP4ng/resource-ai/issues/12#issuecomment-6765265158), [담당 업무](team-tasks.md#h2), [평가 계획](evaluation.md). #8은 PR25 병합 때 자동 CLOSED 됐으며 실제 구독/H/O 운영 인수는 미완료로 #12에서 추적한다. 이슈 종료를 실제 실행 인수로 해석하지 않는다.
 
 ## 지금 전달하는 실물
 
@@ -31,6 +31,8 @@ H 후보 10건과 사용자가 전달한 700개 이미지 ZIP은 별도 자료�
 - 동일 사진의 공정·오염·접촉 조건 변화, 모델 동의 철회 뒤 모델 접근 거부/preview 보존, 저장 동의 철회 거부, 만료 삭제를 실행했다. 합성 과거 날짜 대조는 기존 J 확인 기한을 갱신하지 않는다.
 - 실제 loopback HTTP/HTML form의 제출303→질문 표시→답변303→해결된 질문 제거, 타 세션404를 확인했다. O 앱 코드는 수정하지 않았다.
 - 합성 인증·권한·응답·usage와 실제 바이트/HTTP 동작을 구분한다. 외부 모델 호출·실제 계정 로그인·현장 사진 접근은 0건이다.
+
+사진 저장소→SDK 직렬화와 사진 없는 HTTP/form은 별도 검사다. 운영 O 앱의 업로드 UI→승인된 실제 모델 전송→보고서까지 완주한 증거는 아니다. O가 앱에 입력할 때는 제공 JSON의 후보 `caseId`를 제출 필드에서 제외하고 서버 발급 caseId/revision과 후보 ID를 매핑한다. JSON 숫자/null/배열을 자동 보정하지 않으며, 사진은 해당 서버 사례의 권한/동의/모델 scope를 거쳐 발급된 photoRef만 연결한다.
 
 ## 사람별 다음 작업과 연결 조건
 
@@ -68,6 +70,8 @@ SDK `maxOutputTokens`가 실제 제공자 강제 과금 상한을 보장한다�
 이번 Linux x64 / Node24.22.2 / Bun1.4.2에서 source/Node/Bun test를 포함한 `bun run typecheck`, `bun run typecheck:o-tests`, H 테스트 tsc, 두 build, smoke, 전체 **558 pass / 0 fail**을 확인했다. [validation.json](../data/h-candidates/2026-11-12/validation.json)에 명령·소스 SHA·증거 파일 해시를 기록한다. 커밋한 정확한 PR head와 CI 결과는 PR에서 확인한다.
 
 PR33의 H `247fb1b`와 PR34의 O `2777dfe`를 `git merge-tree`로만 결합하고 이번 H 변경을 덮은 별도 임시 트리도 검사했다. 동일 strict 검사·H tsc·두 build·smoke와 **637 pass / 0 fail**을 확인했으며, 최종 H 코드5개의 실제 실행 바이트를 두 검사 트리와 대조했다. 실제 브랜치 병합이나 main 변경은 없다. 결합 통과를 운영 공급자·실제 과금·현장 인수로 확대하지 않는다.
+
+게시 중 추가된 PR36(`e38a021`)의 문서 정정과 PR37(`490935c`)의 발췌문→원본 법령 연결 검증도 대조했다. PR37의 J 코드/테스트2개를 별도 임시 결합 트리에만 반영해 strict 검사·H tsc·두 build·smoke와 **642 pass / 0 fail**을 확인했다. 그 J 코드는 이 브랜치에 이식하지 않았으며 H 코드5개는 동일하다. #8 자동 종료와 실제 인수 미완료를 구별하는 문구, 후보 ID와 앱 발급 사례 ID의 대응, 사진 없는 HTTP 검사와 별도 사진/SDK 검사의 경계를 이 H 문서에 명확히 했다.
 
 현재 Windows 기본 Bun은1.4.4이므로 고정1.4.2 검사는 WSL의 Linux 로컬 파일시스템에서 수행했다. 이전 Windows POSIX 권한/fsync/SIGTERM 실패 기록과 이번 검증을 혼동하지 않는다. 이번 변경에서 Windows 네이티브 전체 검사나 전원 장애 인수를 수행하지 않았다.
 

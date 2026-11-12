@@ -52,6 +52,8 @@ RESOURCE_MODEL_RUNNER=local bun scripts/h-photo-offline.ts
 
 기존 저장소·작업 브랜치를 전환하지 않는 별도 clone 예시다. 같은 이름의 폴더가 있으면 새 경로를 사용한다. 출력은 Git 제외 경로인 `artifacts/h-candidates.json`, `artifacts/h-photo-offline.json`이다. 두 스크립트는 기존 실제 인증 파일을 읽지 않는다. 사진 검사는 임시 합성 credential/authority/동의와 주입 SSE 응답만 사용하고 임시 저장소를 정리한다. 실제 외부 모델 호출은 0건이다.
 
+입력 JSON의 `caseId`는 후보 재현 ID다. 실제 앱 `POST /cases`에는 이를 제외한 필드를 보내고 서버가 발급한 caseId·revision과 후보 ID의 대응을 별도로 보존한다. JSON의 숫자/null/배열은 그대로 유지하고 폼 변환과 섞지 않는다. 사진은 앱의 소유권·동의·scope에 맞춰 업로드한 뒤 서버 photoRef를 사용한다. 로컬 PNG 경로를 photoRef로 넣지 않는다.
+
 ```sh
 RESOURCE_MODEL_RUNNER=local bun test --timeout 30000 tests/assessment.test.ts tests/h-candidates.test.ts
 RESOURCE_MODEL_RUNNER=local bun run typecheck
@@ -69,3 +71,4 @@ RESOURCE_MODEL_RUNNER=local bun run smoke
 - 2026-11-12 후보 10건은 현행성 등 미해결 근거 때문에 모두 `needs-review`다. 확인되지 않은 수지·코드·업체·비용·탄소를 생성하지 않는다.
 - 별도 2026-11-05 합성 경계 대조는 동일 사진의 공정·오염·유해접촉 변경에 따른 조건부 코드/검토 이유 차이를 확인한다. 현재 날짜의 법령 승인이나 실제 현장 인수로 사용하지 않는다.
 - 합성 request ID·usage는 합성이라고 표시하고 실제 제공자 request ID·usage는 null이다. 운영 계정·사진 전송 승인 없이 live 실행하지 않는다.
+- 사진 저장소→SDK 직렬화 검사와 사진 없는 HTTP/form 검사는 별도 흐름이다. 운영 O 앱의 실제 사진 업로드부터 제공자 응답까지 통합 인수한 것으로 표시하지 않는다.
