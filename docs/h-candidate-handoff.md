@@ -73,6 +73,14 @@ PR33의 H `247fb1b`와 PR34의 O `2777dfe`를 `git merge-tree`로만 결합하�
 
 게시 중 추가된 PR36(`e38a021`)의 문서 정정과 PR37(`490935c`)의 발췌문→원본 법령 연결 검증도 대조했다. PR37의 J 코드/테스트2개를 별도 임시 결합 트리에만 반영해 strict 검사·H tsc·두 build·smoke와 **642 pass / 0 fail**을 확인했다. 그 J 코드는 이 브랜치에 이식하지 않았으며 H 코드5개는 동일하다. #8 자동 종료와 실제 인수 미완료를 구별하는 문구, 후보 ID와 앱 발급 사례 ID의 대응, 사진 없는 HTTP 검사와 별도 사진/SDK 검사의 경계를 이 H 문서에 명확히 했다.
 
+### 최종 CI의 기존 시간 회귀 실패와 재사용 수정
+
+첫 head `a784560`의 CI는 통과했으나 문서 보완 head `66177e1`의 [CI54](https://github.com/GunP4ng/resource-ai/actions/runs/43243656648)는 557 pass / 1 fail였다. 실패는 변경하지 않았던 main의 `deadline and caller cancellation terminate pending configuration, without later dispatch`이며, H 후보3개 검사는 모두 통과했다. 20ms 벽시계 검사에서 18ms 작업 만료 뒤 종료 감사의 2ms 여유도 소진돼 `timeout` 대신 `provider`가 반환됐다. 감사 예산이 없을 때 provider로 실패하는 정책은 유지한다.
+
+PR33의 기존 `edfe02acb44ceebb99fbe1adaf7ca3397754d6a7`을 `cherry-pick -x`로 재사용했다. `src/operations.ts`의 직접 실행용 선택적 `clock`과 `tests/operations.test.ts`의 수동 시계만 가져왔다. 기본 production monotonic clock과 부모 app deadline 우선, 기존20ms/작업18ms/감사2ms·취소 응답·usage=null·전송0·타이머 정리 기대는 같다. 제한시간 연장, 기대값 완화, skip 또는 실패를 숨기는 재시도는 없다.
+
+실제 main 생산 모듈에 25ms 스케줄링 지연을 주입하면 provider가 되고, 같은 지연과 예산을 제어한 수동 시계 경로는 timeout을 보임을 재현했다. 재사용 후 standalone strict/H tsc·두 build·smoke와 **558 pass / 0 fail**을 다시 확인했다. 기존 결합637/642는 이미 같은 PR33 시계 수정이 포함된 실행이며, standalone H7개와 결합 H6개+기존 O wrapper를 보존한 operations 합성 파일의 SHA를 따로 대조했다. 이번 CI 실패와 수정 전후 증거는 validation.json에 보존한다. GitHub 최종 head 검사 상태는 PR에서 확인한다.
+
 현재 Windows 기본 Bun은1.4.4이므로 고정1.4.2 검사는 WSL의 Linux 로컬 파일시스템에서 수행했다. 이전 Windows POSIX 권한/fsync/SIGTERM 실패 기록과 이번 검증을 혼동하지 않는다. 이번 변경에서 Windows 네이티브 전체 검사나 전원 장애 인수를 수행하지 않았다.
 
 11/20 동결 시 이 코퍼스 버전, 코드/규칙·도구·프롬프트·SDK/lock, source/사진 SHA, 실행 명령과 실패 경계를 함께 고정해 팀장에게 넘긴다. 통합 QA·18건 실험·미열람12건 평가·시연 영상/최종 보고서·최종 제출은 팀장 담당이다. 후속 변경 후 기존 공개/잠금 자료 재실행을 새 독립 평가로 표시하지 않는다.

@@ -299,5 +299,174 @@
         "outputTail": "(pass) real SDK tool round trip uses server reviews and returns only the host comparison [66.09ms]\n(pass) Azure runner rejects non-JSON model output and bounds model tool loops [26.52ms]\n\n 642 pass\n 0 fail\n 319 expect() calls\nRan 642 tests across 30 files. [137.83s]"
       }
     }
+  },
+  "finalCISchedulingRegression": {
+    "failedCI": {
+      "runId": 43243656648,
+      "url": "https://github.com/GunP4ng/resource-ai/actions/runs/43243656648",
+      "head": "66177e10c72de9b4a7584e229b9dfbf1be448a17",
+      "pass": 557,
+      "fail": 1,
+      "failure": "deadline and caller cancellation terminate pending configuration, without later dispatch",
+      "actual": "provider instead of expected timeout at22.83ms"
+    },
+    "cause": "Main20ms wall-clock fixture sometimes exhausts its2ms terminal-audit reserve due scheduling; provider is the correct audit-failure policy. H2 tests3/0 passed.",
+    "reuse": {
+      "originalCommit": "edfe02acb44ceebb99fbe1adaf7ca3397754d6a7",
+      "cherryPickedCommit": "858cfe3",
+      "files": [
+        "src/operations.ts",
+        "tests/operations.test.ts"
+      ],
+      "source": "Existing PR33 H deterministic clock patch reused without reimplementing or importing other PR33 modules"
+    },
+    "preserved": [
+      "20ms total,18ms work,2ms audit",
+      "timeout/cancel expected responses",
+      "zero dispatch after interruption",
+      "usage=null and terminal audit outcome",
+      "empty pending timer map",
+      "enclosing app clock takes precedence",
+      "default production monotonic clock unchanged"
+    ],
+    "controlledPureMainProbe": {
+      "scope": "Exact main production modules vs reused deterministic H fixture clock; synthetic configuration and controlled scheduling, zero external calls",
+      "rows": [
+        {
+          "mode": "baseline",
+          "observed": "provider",
+          "timeoutMs": 20,
+          "workBudgetMs": 18,
+          "auditReserveMs": 2,
+          "injectedSchedulingStallMs": 25,
+          "dispatches": 0,
+          "timerCount": 0,
+          "phases": [
+            "start",
+            "finish"
+          ]
+        },
+        {
+          "mode": "final",
+          "observed": "timeout",
+          "timeoutMs": 20,
+          "workBudgetMs": 18,
+          "auditReserveMs": 2,
+          "injectedSchedulingStallMs": 25,
+          "dispatches": 0,
+          "timerCount": 0,
+          "phases": [
+            "start",
+            "finish"
+          ]
+        }
+      ]
+    },
+    "fixedStandalone": {
+      "pass": 558,
+      "fail": 0,
+      "files": 25,
+      "logSha256": "7900ea702bf5bb24a4d7cdce921d4b0effe240b22affcdb95f458b7035544083",
+      "outputTail": "(pass) real SDK tool round trip uses server reviews and returns only the host comparison [92.68ms]\n(pass) Azure runner rejects non-JSON model output and bounds model tool loops [35.87ms]\n\n 558 pass\n 0 fail\n 301 expect() calls\nRan 558 tests across 25 files. [110.68s]",
+      "allTypechecksBothBuildsSmoke": "pass"
+    },
+    "finalCodeProof": {
+      "allPassed": true,
+      "codeFiles": 7,
+      "snapshots": {
+        "final": {
+          "scripts/h-candidates.ts": {
+            "lfSha256": "33cf34b76cb8106bcd5e01b65183e13b7a4d434d57fa1c063c5fd8c70cdb575a",
+            "executedRawSha256": "33cf34b76cb8106bcd5e01b65183e13b7a4d434d57fa1c063c5fd8c70cdb575a"
+          },
+          "scripts/h-photo-offline.ts": {
+            "lfSha256": "d3177755672c74cb66187f38a1e26b9087fa5b57acfefaa9ba06d2576bf0de03",
+            "executedRawSha256": "d3177755672c74cb66187f38a1e26b9087fa5b57acfefaa9ba06d2576bf0de03"
+          },
+          "src/assessment.ts": {
+            "lfSha256": "b3dc3d141f163c1272de00ecc0c71f8e460d9826d7176d345d3eb57bd7fbe7f6",
+            "executedRawSha256": "b3dc3d141f163c1272de00ecc0c71f8e460d9826d7176d345d3eb57bd7fbe7f6"
+          },
+          "tests/assessment.test.ts": {
+            "lfSha256": "b66e89afcd01e7f1247ffaa0ea9e456a673a3a9ae44ec35b13a923fa8fa1dc05",
+            "executedRawSha256": "b66e89afcd01e7f1247ffaa0ea9e456a673a3a9ae44ec35b13a923fa8fa1dc05"
+          },
+          "tests/h-candidates.test.ts": {
+            "lfSha256": "72205b1fe062dc15530b28fbdfe0d7e8062105bbdbd8fcfd988c4ce981d75e33",
+            "executedRawSha256": "72205b1fe062dc15530b28fbdfe0d7e8062105bbdbd8fcfd988c4ce981d75e33"
+          },
+          "src/operations.ts": {
+            "lfSha256": "bc38f98ef793f08490d25166ce195c94eb4fa300aebb7ddd83eb0588e6427c52",
+            "executedRawSha256": "2535cfc8c7195519c68d62fd88447ed721be845158a724df9e093c02bad30841"
+          },
+          "tests/operations.test.ts": {
+            "lfSha256": "dcbdb6ecf98f4b739d7fa749eb73a98e3eebd13f4fafca317742a9e828d61526",
+            "executedRawSha256": "304a7db257aa0ac33dced08a20840bdda2ea07aec97c9b77eab5677555d5f80d"
+          }
+        },
+        "combined": {
+          "scripts/h-candidates.ts": {
+            "lfSha256": "33cf34b76cb8106bcd5e01b65183e13b7a4d434d57fa1c063c5fd8c70cdb575a",
+            "executedRawSha256": "33cf34b76cb8106bcd5e01b65183e13b7a4d434d57fa1c063c5fd8c70cdb575a"
+          },
+          "scripts/h-photo-offline.ts": {
+            "lfSha256": "d3177755672c74cb66187f38a1e26b9087fa5b57acfefaa9ba06d2576bf0de03",
+            "executedRawSha256": "d3177755672c74cb66187f38a1e26b9087fa5b57acfefaa9ba06d2576bf0de03"
+          },
+          "src/assessment.ts": {
+            "lfSha256": "b3dc3d141f163c1272de00ecc0c71f8e460d9826d7176d345d3eb57bd7fbe7f6",
+            "executedRawSha256": "b3dc3d141f163c1272de00ecc0c71f8e460d9826d7176d345d3eb57bd7fbe7f6"
+          },
+          "tests/assessment.test.ts": {
+            "lfSha256": "b66e89afcd01e7f1247ffaa0ea9e456a673a3a9ae44ec35b13a923fa8fa1dc05",
+            "executedRawSha256": "b66e89afcd01e7f1247ffaa0ea9e456a673a3a9ae44ec35b13a923fa8fa1dc05"
+          },
+          "tests/h-candidates.test.ts": {
+            "lfSha256": "72205b1fe062dc15530b28fbdfe0d7e8062105bbdbd8fcfd988c4ce981d75e33",
+            "executedRawSha256": "72205b1fe062dc15530b28fbdfe0d7e8062105bbdbd8fcfd988c4ce981d75e33"
+          },
+          "src/operations.ts": {
+            "lfSha256": "0f12d063661e5a1b8447ed725d9dd89dda59e305c0e474d652cd8134e002cfdc",
+            "executedRawSha256": "b5d243806a7d096617fa6a2998c56650beedd245ae2d2dfb3636760679970bdf"
+          },
+          "tests/operations.test.ts": {
+            "lfSha256": "dcbdb6ecf98f4b739d7fa749eb73a98e3eebd13f4fafca317742a9e828d61526",
+            "executedRawSha256": "304a7db257aa0ac33dced08a20840bdda2ea07aec97c9b77eab5677555d5f80d"
+          }
+        },
+        "combined37": {
+          "scripts/h-candidates.ts": {
+            "lfSha256": "33cf34b76cb8106bcd5e01b65183e13b7a4d434d57fa1c063c5fd8c70cdb575a",
+            "executedRawSha256": "33cf34b76cb8106bcd5e01b65183e13b7a4d434d57fa1c063c5fd8c70cdb575a"
+          },
+          "scripts/h-photo-offline.ts": {
+            "lfSha256": "d3177755672c74cb66187f38a1e26b9087fa5b57acfefaa9ba06d2576bf0de03",
+            "executedRawSha256": "d3177755672c74cb66187f38a1e26b9087fa5b57acfefaa9ba06d2576bf0de03"
+          },
+          "src/assessment.ts": {
+            "lfSha256": "b3dc3d141f163c1272de00ecc0c71f8e460d9826d7176d345d3eb57bd7fbe7f6",
+            "executedRawSha256": "b3dc3d141f163c1272de00ecc0c71f8e460d9826d7176d345d3eb57bd7fbe7f6"
+          },
+          "tests/assessment.test.ts": {
+            "lfSha256": "b66e89afcd01e7f1247ffaa0ea9e456a673a3a9ae44ec35b13a923fa8fa1dc05",
+            "executedRawSha256": "b66e89afcd01e7f1247ffaa0ea9e456a673a3a9ae44ec35b13a923fa8fa1dc05"
+          },
+          "tests/h-candidates.test.ts": {
+            "lfSha256": "72205b1fe062dc15530b28fbdfe0d7e8062105bbdbd8fcfd988c4ce981d75e33",
+            "executedRawSha256": "72205b1fe062dc15530b28fbdfe0d7e8062105bbdbd8fcfd988c4ce981d75e33"
+          },
+          "src/operations.ts": {
+            "lfSha256": "0f12d063661e5a1b8447ed725d9dd89dda59e305c0e474d652cd8134e002cfdc",
+            "executedRawSha256": "b5d243806a7d096617fa6a2998c56650beedd245ae2d2dfb3636760679970bdf"
+          },
+          "tests/operations.test.ts": {
+            "lfSha256": "dcbdb6ecf98f4b739d7fa749eb73a98e3eebd13f4fafca317742a9e828d61526",
+            "executedRawSha256": "304a7db257aa0ac33dced08a20840bdda2ea07aec97c9b77eab5677555d5f80d"
+          }
+        }
+      },
+      "scope": "Standalone7 match exact H files. Combined6 match H; operations.ts matches the preexisting H/O merge tree, which retains O app callback drain/presentation additions plus the same H runner clock patch.",
+      "combinedTree": "7b520c88ad5bdb68743677dc52c0a6b46b08f1ac"
+    }
   }
 }
