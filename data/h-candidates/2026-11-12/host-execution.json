@@ -6,7 +6,9 @@
     "src/assessment.ts": "b3dc3d141f163c1272de00ecc0c71f8e460d9826d7176d345d3eb57bd7fbe7f6",
     "src/domain.ts": "78204bd4af524cc33f9edf7e35ea3e6d1743899686bfcf6d88ecc877b663c787",
     "src/session.ts": "10c408d8d7312bbadff11ec0eaec75c6c3b39428b754d85c6ac70943bac29c81",
-    "scripts/h-candidates.ts": "33cf34b76cb8106bcd5e01b65183e13b7a4d434d57fa1c063c5fd8c70cdb575a"
+    "src/evidence.ts": "87169c667d4eaf945b2c968f2b9d1f550a15ace892ed7443be26fe570d97a346",
+    "src/evidence-registry.ts": "3767a6eeeba7dd2cb8a68b5834ff6763e2ddb2fbb9e67ca7497c2342a9df29d6",
+    "scripts/h-candidates.ts": "cec88123bfdd195e26133b0fc95ffa7b67f4b25bbcc6fa68076c0f37b6cfe30b"
   },
   "caseCount": 10,
   "sourceGroupCount": 6,

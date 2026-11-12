@@ -253,10 +253,10 @@
   },
   "evidenceFileSha256": {
     "manifest.json": "df62053c3db875ce13a8502d27b9b78e5b731ebfdbaf324cd3969ee8d72e9e68",
-    "host-execution.json": "fee6e84100a0a79a2c17e61582f97c646e957472956c94de50e6a12adab7924f",
+    "host-execution.json": "03678723f9b490aa5826abd21912daabd4b7a6067a4a547b3a513c696e655d47",
     "improvement-cycles.json": "5ecb7d3f29762734969310088efe580a54cbf4012d673af76ab955b1b20fd86c",
-    "peer-review.json": "373d4f9800d8161c6b17b10d807ac9e610d85c715da2a967464a6f8bb4bafc18",
-    "photo-offline-execution.json": "5c871147e010466159d9a0160591c0e9c82f6dc56ac161a9f67ae0a6a7f2b655"
+    "peer-review.json": "91e0e1a5adc4ae16f3281589677df322afc207566f72e3e940b587cb14310633",
+    "photo-offline-execution.json": "d7aaf7d4c561fcbeb9f4dbd94279bdc23f9e49aab2eea09ae876bc09291e0987"
   },
   "scopeBoundary": {
     "HCandidatesPrepared": 10,
@@ -467,6 +467,70 @@
       },
       "scope": "Standalone7 match exact H files. Combined6 match H; operations.ts matches the preexisting H/O merge tree, which retains O app callback drain/presentation additions plus the same H runner clock patch.",
       "combinedTree": "7b520c88ad5bdb68743677dc52c0a6b46b08f1ac"
+    }
+  },
+  "latestIntegratedMain": {
+    "mainSHA": "aef5ceee296b86febdc8c8da7a647a715d47c4f0",
+    "mergedByTeam": [
+      "PR33",
+      "PR37"
+    ],
+    "mergeIntoWorkBranch": "3b296634e7725e3aca936628479d0af13470d9ba",
+    "method": "normal non-forced merge into H work branch, existing histories preserved; local main was not changed",
+    "tests": {
+      "pass": 599,
+      "fail": 0,
+      "files": 27,
+      "logSha256": "336c119df8369ff24e2d615c0d22e2e15075c404aaa1aa28d5791ed8daa6fa13",
+      "outputTail": "(pass) real SDK tool round trip uses server reviews and returns only the host comparison [48.30ms]\n(pass) Azure runner rejects non-JSON model output and bounds model tool loops [25.97ms]\n\n 599 pass\n 0 fail\n 311 expect() calls\nRan 599 tests across 27 files. [95.67s]"
+    },
+    "typecheckSourceNodeBunAndO": "pass",
+    "hTypecheck": "pass",
+    "build": "pass",
+    "buildApp": "pass",
+    "smoke": "pass",
+    "HPlusOtherOwnerDiff": "PR33 clock fix now already in main; current PR diff excludes operations.ts and operations.test.ts. No J/O source authored/changed.",
+    "exactExecutedSourceProof": {
+      "allPassed": true,
+      "sourceFiles": {
+        "src/assessment.ts": {
+          "lfSha256": "b3dc3d141f163c1272de00ecc0c71f8e460d9826d7176d345d3eb57bd7fbe7f6",
+          "executedRawSha256": "b3dc3d141f163c1272de00ecc0c71f8e460d9826d7176d345d3eb57bd7fbe7f6"
+        },
+        "tests/assessment.test.ts": {
+          "lfSha256": "b66e89afcd01e7f1247ffaa0ea9e456a673a3a9ae44ec35b13a923fa8fa1dc05",
+          "executedRawSha256": "b66e89afcd01e7f1247ffaa0ea9e456a673a3a9ae44ec35b13a923fa8fa1dc05"
+        },
+        "tests/h-candidates.test.ts": {
+          "lfSha256": "72205b1fe062dc15530b28fbdfe0d7e8062105bbdbd8fcfd988c4ce981d75e33",
+          "executedRawSha256": "72205b1fe062dc15530b28fbdfe0d7e8062105bbdbd8fcfd988c4ce981d75e33"
+        },
+        "scripts/h-candidates.ts": {
+          "lfSha256": "cec88123bfdd195e26133b0fc95ffa7b67f4b25bbcc6fa68076c0f37b6cfe30b",
+          "executedRawSha256": "cec88123bfdd195e26133b0fc95ffa7b67f4b25bbcc6fa68076c0f37b6cfe30b"
+        },
+        "scripts/h-photo-offline.ts": {
+          "lfSha256": "d3177755672c74cb66187f38a1e26b9087fa5b57acfefaa9ba06d2576bf0de03",
+          "executedRawSha256": "d3177755672c74cb66187f38a1e26b9087fa5b57acfefaa9ba06d2576bf0de03"
+        },
+        "src/operations.ts": {
+          "lfSha256": "bc38f98ef793f08490d25166ce195c94eb4fa300aebb7ddd83eb0588e6427c52",
+          "executedRawSha256": "2535cfc8c7195519c68d62fd88447ed721be845158a724df9e093c02bad30841"
+        },
+        "tests/operations.test.ts": {
+          "lfSha256": "dcbdb6ecf98f4b739d7fa749eb73a98e3eebd13f4fafca317742a9e828d61526",
+          "executedRawSha256": "304a7db257aa0ac33dced08a20840bdda2ea07aec97c9b77eab5677555d5f80d"
+        },
+        "src/evidence-registry.ts": {
+          "lfSha256": "1a20c32cd6f5ce2885b0a16cabb0276aefcec08ec16c6155127efe8a764df9c6",
+          "executedRawSha256": "3767a6eeeba7dd2cb8a68b5834ff6763e2ddb2fbb9e67ca7497c2342a9df29d6"
+        },
+        "src/photos.ts": {
+          "lfSha256": "121141f5516132a583628b6bbd78954a564a23a5e322875079c2bd1063161963",
+          "executedRawSha256": "4e7fec65cf57cdc19ebf7bab30e5d7a0a64f025faef13be15cc9c515c729d9cd"
+        }
+      },
+      "scope": "Exact current H files and inherited main operations/J registry/photo files; only H assessment/test/helpers differ from latest main."
     }
   }
 }

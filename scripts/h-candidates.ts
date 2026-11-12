@@ -72,7 +72,8 @@ export async function verifyHCandidates() {
     }
   } finally { adapter.dispose(); await adapter.settled(); }
   const sourceHashes = Object.fromEntries(await Promise.all([
-    "src/input.ts", "src/assessment.ts", "src/domain.ts", "src/session.ts", "scripts/h-candidates.ts",
+    "src/input.ts", "src/assessment.ts", "src/domain.ts", "src/session.ts",
+    "src/evidence.ts", "src/evidence-registry.ts", "scripts/h-candidates.ts",
   ].map(async file => [file, sha256(await readFile(new URL("../" + file, import.meta.url)))])));
   return { corpusVersion: pack.version, manifestSha256: pack.manifestSha256, sourceHashes,
     caseCount: results.length, sourceGroupCount: new Set(pack.entries.map(item => item.duplicateGroupId)).size,

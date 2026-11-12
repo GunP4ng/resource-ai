@@ -1,8 +1,8 @@
 # H 후보·질문 개선·운영 의존성 인계
 
-기준 main은 `74c8c3d9a3bae87b560f72e05068f991ca255265`이며 작업 브랜치는 `hyeobikong/h2-candidate-handoff`다. 기존 H 운영 PR #33과 사진 ZIP PR #35는 별도다. 이 변경은 H의 평가 후보와 질문 개선·재현 자료를 전달하며 기존 PR을 재구현하거나 병합하지 않는다.
+시작 기준 main은 `74c8c3d9a3bae87b560f72e05068f991ca255265`이며 작업 브랜치는 `hyeobikong/h2-candidate-handoff`다. 게시 중 팀장이 PR33/37을 병합한 최신 main `aef5ceee296b86febdc8c8da7a647a715d47c4f0`을 이 작업 브랜치에 정상 병합해 기존 이력을 보존했다. main 자체에는 커밋/푸시하지 않았다. 사진 ZIP PR35는 별도 자료다. 이 변경은 H의 평가 후보와 질문 개선·재현 자료를 전달하며 승인된 운영 구현을 재구현하지 않는다.
 
-근거: [H2 #6](https://github.com/GunP4ng/resource-ai/issues/6), [팀장 최신 배분](https://github.com/GunP4ng/resource-ai/issues/12#issuecomment-6765265158), [담당 업무](team-tasks.md#h2), [평가 계획](evaluation.md). #8은 PR25 병합 때 자동 CLOSED 됐으며 실제 구독/H/O 운영 인수는 미완료로 #12에서 추적한다. 이슈 종료를 실제 실행 인수로 해석하지 않는다.
+근거: [H2 #6](https://github.com/GunP4ng/resource-ai/issues/6), [PR33 병합 후 팀장 최신 배분](https://github.com/GunP4ng/resource-ai/issues/12#issuecomment-6827498808), [이전 배분](https://github.com/GunP4ng/resource-ai/issues/12#issuecomment-6765265158), [담당 업무](team-tasks.md#h2), [평가 계획](evaluation.md). #8은 PR25 병합 때 자동 CLOSED 됐으며 실제 구독/H/O 운영 인수는 미완료로 #12에서 추적한다. 이슈 종료를 실제 실행 인수로 해석하지 않는다.
 
 ## 지금 전달하는 실물
 
@@ -52,7 +52,7 @@ J의 `docs/j2j3-evidence-20261110` head `84027ad728d212720c77788f39161086baa17ea
 현재 기본 공급자/모델은 `chatgpt-subscription`/`gpt-6-sol`이고 Azure는 선택 경로다. `RESOURCE_MODEL_RUNNER=local`은 실제 모델을 호출하지 않는다. 이 인계의 오프라인 스크립트는 기본 launcher의 실제 운영 승인/한도/감사 연결 완료를 뜻하지 않는다.
 
 - O PR34의 `createOperatorRuntime`은 같은 authority의 사례·사진·guarded runner와 자체 `openOperationJournal.authorizeDispatch/record/wrapTransport`를 조립한다. O의 requestAllowance는 요청 횟수 한도이며 금액 예산이 아니다.
-- H PR33의 `createOperationalHandoff`/`createOperationalAuditStore`/recovery worker는 별도 구현이다. O launcher에 자동 연결된 것으로 보지 않는다. 두 경로를 무조건 중첩해 이중 예약·감사·정산하지 않는다. 운영 공급자 책임 선택은 H/O/팀장 검토가 필요하다.
+- main에 수용된 H PR33의 `createOperationalHandoff`/`createOperationalAuditStore`/recovery worker는 별도 구현이다. O launcher에 자동 연결된 것으로 보지 않는다. 두 경로를 무조건 중첩해 이중 예약·감사·정산하지 않는다. 운영 공급자 책임 선택은 H/O/팀장 검토가 필요하다.
 - 실제 원자적 예약/해제/reconcile, ledger 정책·복구 공급자와 supervisor, private DB/photo 경로 ACL/sidecar/단일 소유권, 용량/보관/장애 인수를 결정해야 한다. tombstone 보존 정책은 바꾸지 않았다.
 - 원본/파생 sourceId·locator·SHA와 부분 지지 관계는 별개다. J의 다중 원문이 fact 일부만 지지하는 묶음을 현 O `evidenceIssue`가 완전 fact로 수용한다고 가정하지 않는다. 공통 계약 변경은 합의 전 수행하지 않는다.
 
@@ -80,6 +80,12 @@ PR33의 H `247fb1b`와 PR34의 O `2777dfe`를 `git merge-tree`로만 결합하�
 PR33의 기존 `edfe02acb44ceebb99fbe1adaf7ca3397754d6a7`을 `cherry-pick -x`로 재사용했다. `src/operations.ts`의 직접 실행용 선택적 `clock`과 `tests/operations.test.ts`의 수동 시계만 가져왔다. 기본 production monotonic clock과 부모 app deadline 우선, 기존20ms/작업18ms/감사2ms·취소 응답·usage=null·전송0·타이머 정리 기대는 같다. 제한시간 연장, 기대값 완화, skip 또는 실패를 숨기는 재시도는 없다.
 
 실제 main 생산 모듈에 25ms 스케줄링 지연을 주입하면 provider가 되고, 같은 지연과 예산을 제어한 수동 시계 경로는 timeout을 보임을 재현했다. 재사용 후 standalone strict/H tsc·두 build·smoke와 **558 pass / 0 fail**을 다시 확인했다. 기존 결합637/642는 이미 같은 PR33 시계 수정이 포함된 실행이며, standalone H7개와 결합 H6개+기존 O wrapper를 보존한 operations 합성 파일의 SHA를 따로 대조했다. 이번 CI 실패와 수정 전후 증거는 validation.json에 보존한다. GitHub 최종 head 검사 상태는 PR에서 확인한다.
+
+### PR33/37 병합 후 최신 main 실제 통합
+
+팀장이 PR37을 `ff22f44`, PR33을 `aef5cee`로 병합한 것을 확인하고, 최신 main을 이 H 브랜치에 정상 병합했다. 승인된 감사/사진/원문 연결 코드를 보존하며, 최신 main 대비 diff에서는 이미 main에 포함된 시계 패치 두 파일이 빠진다. 강제 푸시·main 직접 수정은 없다.
+
+이 실제 통합 소스에서 strict source/Node/Bun/O/H 타입 검사·두 build·smoke·전체 **599 pass / 0 fail**을 다시 확인했다. 후보10건 host 결과, 사진10장/합성 전송17회·HTTP303/303/404·철회/만료, O10건 예비 검토의 H 실행 관측도 현재 코드로 재실행해 증적을 갱신했다. `scripts/h-candidates.ts`는 읽기 전용인 J evidence/registry 구현 SHA도 함께 기록한다. 실행한 H 코드와 상속한 승인 모듈의 SHA를 대조했다. 이전558/637/642 및 실패 CI54는 각 당시 소스의 기록으로 남긴다.
 
 현재 Windows 기본 Bun은1.4.4이므로 고정1.4.2 검사는 WSL의 Linux 로컬 파일시스템에서 수행했다. 이전 Windows POSIX 권한/fsync/SIGTERM 실패 기록과 이번 검증을 혼동하지 않는다. 이번 변경에서 Windows 네이티브 전체 검사나 전원 장애 인수를 수행하지 않았다.
 
