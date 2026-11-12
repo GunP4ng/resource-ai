@@ -1,6 +1,7 @@
 import { creditPolicyNotes, restrictedNet } from "./carbon.ts";
 import type { DecisionResult, Estimate, ScenarioComparison } from "./contracts.ts";
 import { parseDecision } from "./o-decision.ts";
+import { rankScenarios } from "./ranking.ts";
 export interface ReportPresentation {
   readonly mode: "synthetic" | "offline" | "live" | "recording";
   readonly scenarioLabels?: readonly string[];
@@ -86,6 +87,7 @@ ul,ol{margin-block:.4rem}
 li{margin-block:.2rem}
 dl{gap:.35rem;margin-block:.5rem}
 tr{break-inside:avoid}
+section[aria-labelledby="priority-heading"] li{break-inside:avoid}
 thead{display:table-header-group}
 p{margin-block:.5rem;orphans:3;widows:3}
 footer{margin-top:.5rem;padding-top:.25rem}
@@ -138,6 +140,18 @@ function comparisonSummary(scenarios: readonly ScenarioComparison[], labels: rea
     <thead><tr><th scope="col">지표</th>${labels.map((label) => `<th scope="col">${escapeHtml(label)}</th>`).join("")}</tr></thead>
     <tbody>${rows.map((name, index) => `<tr><th scope="row">${name}</th>${scenarios.map((s) => `<td>${metric(metrics(s)[index]![1], references, [], true)}${unavailableNetPolicy(s, metrics(s)[index]![1])}</td>`).join("")}</tr>`).join("")}
     <tr><th scope="row">기준선 / 회피량</th>${scenarios.map((s) => `<td>${baseline(s, references, true)}</td>`).join("")}</tr></tbody></table></div>`;
+}
+function prioritySummary(result: Extract<DecisionResult, { state: "compared" }>, labels: readonly string[], references: EvidenceReferences): string {
+  const priorities = rankScenarios(result.scenarios, result.routes);
+  return `<section aria-labelledby="priority-heading"><h2 id="priority-heading">서버 후보 우선순위</h2>
+    <p>적합성 충족 후보의 사업자 순비용(KRW)과 순배출(kgCO2e)을 작을수록 우선합니다. 같은 기능단위·계산 경계에서 두 지표의 최악값이 상대 최선값 이하이고 하나 이상 엄격히 작을 때만 우월합니다. 우월한 후보부터 제거하며 순위군을 계산합니다.</p>
+    <p>같은 군의 동률·상충·범위 중첩은 우열 불확실로 남깁니다. 가중치나 비용·탄소 환산은 사용하지 않습니다. 군 안의 표시 순서는 입력 순서이며 우선순위가 아닙니다. 자료가 부족한 후보는 순위 보류입니다.</p>
+    <ol>${priorities.map((priority) => {
+      const scenario = result.scenarios[priority.scenarioIndex];
+      if (scenario === undefined) return "";
+      return `<li><strong>${priority.group === null ? "순위 보류" : `${priority.group}순위군`} · ${escapeHtml(labels[priority.scenarioIndex] ?? scenario.routeId)}</strong>
+        <p>${escapeHtml(priority.reason)}</p><div>순비용 ${metric(scenario.netCost, references, [], true)} · 순배출 ${metric(scenario.netEmissions, references, [], true)}</div></li>`;
+    }).join("")}</ol><p>순위는 비교 가능한 후보 안의 조건부 우선순위이며 반출·계약·처리 승인이나 탄소 제거를 뜻하지 않습니다.</p></section>`;
 }
 function sharedAssumptions(values: readonly Metric[]): readonly string[] {
   const available = values.filter((value) => value.state === "available");
@@ -249,6 +263,7 @@ export function renderReport(result: DecisionResult, presentation: ReportPresent
         <p class="notice">${result.humanApproval === "pending" ? "인간 승인 대기" : "인간 승인 기록 있음"} · humanApproval: ${escapeHtml(result.humanApproval)}</p>
         ${comparisonSummary(result.scenarios, labels, references)}
         ${comparisonConditions(result.scenarios, labels)}
+        ${prioritySummary(result, labels, references)}
         <p>우열 불확실 · 동일 조건과 완전한 지표를 확인한 뒤 비교하세요. 음의 순배출은 탄소 제거를 뜻하지 않습니다.</p>
         <h2>경로와 조건</h2>${routeConditions(result, references)}
         <h2>검증된 업체 후보</h2>${processorCandidates(result, references)}

@@ -42,6 +42,8 @@ test("compared report reads function results and preserves pending approval and 
   assert.ok(html.includes("230,000 KRW"));
   assert.ok(html.includes("45 kgCO2e"));
   assert.ok(html.includes("humanApproval: pending"));
+  assert.ok(html.includes("1순위군 · 견적 B · 일괄 청구"));
+  assert.ok(html.includes("2순위군 · 견적 A · 항목별 청구"));
   assert.ok(html.includes("합성 데모 · 모델 호출 없음"));
   assert.ok(html.includes("입력값 고정 계산"));
   const unavailable = renderReport({ ...fixture.result, scenarios: fixture.result.scenarios.map((s) => ({ ...s, netCost: { state: "unavailable", missingInputs: ["quote-missing<script>"] } })), humanApproval: "approved" }, { mode: "live", execution: { traceId: "<trace>", usage: null } });
@@ -50,6 +52,8 @@ test("compared report reads function results and preserves pending approval and 
   assert.ok(unavailable.includes("humanApproval: approved"));
   assert.ok(unavailable.includes("&lt;trace&gt;"));
   assert.ok(unavailable.includes("사용량 미제공"));
+  assert.ok(unavailable.includes("순비용 또는 순배출 자료 부족: 순위 보류"));
+  assert.ok(!unavailable.includes("1순위군"));
 });
 test("externally supplied intervals render with their assumptions; invalid ordering is rejected", async () => {
   const fixture = await demo("normal");
