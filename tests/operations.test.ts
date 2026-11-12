@@ -127,6 +127,49 @@ test("deadline and caller cancellation terminate pending configuration, without 
   }
 });
 
+test("terminal audit completion before or at the absolute deadline distinguishes timeout from audit failure", async () => {
+  for (const scenario of ["before-end", "completes-at-end", "ignores-abort"] as const) {
+    const f = fixture(), configured = Promise.withResolvers<void>(), auditing = Promise.withResolvers<AbortSignal>();
+    const finish = Promise.withResolvers<void>(), timers = new Map<() => void, number>();
+    let now = 0, resume: (value: typeof config) => void = () => {};
+    const clock = { now: () => now, schedule(callback: () => void, delay: number) {
+      timers.set(callback, now + delay); return () => { timers.delete(callback); };
+    } };
+    const tick = (at: number) => {
+      now = at;
+      for (const [callback, due] of timers) if (due <= now) { timers.delete(callback); callback(); }
+    };
+    const runner = createOperationalRunner({ ...f.options, clock, timeoutMs: 20,
+      configuration: async () => new Promise((resolve) => { resume = resolve; configured.resolve(); }),
+      record: async (event, signal) => {
+        await f.options.record(event, signal);
+        if (event.phase === "finish") { assert.ok(signal); auditing.resolve(signal); await finish.promise; }
+      } });
+    const rejected = assert.rejects(runner(input, live()), failure(scenario === "before-end" ? "timeout" : "provider"), scenario);
+    await configured.promise;
+    tick(18); // Same 20ms request: 18ms work, 2ms terminal audit reserve.
+    const auditSignal = await auditing.promise;
+    assert.deepEqual([...timers.values()], [20]);
+    if (scenario === "ignores-abort") tick(20);
+    else {
+      // A callback completing at the deadline cannot win even if its timer has not run.
+      now = scenario === "before-end" ? 19 : 20;
+      finish.resolve();
+    }
+    await rejected;
+    assert.equal(auditSignal.aborted, true);
+    assert.equal(timers.size, 0);
+    assert.equal(f.records.at(-1)?.outcome, "timeout");
+    assert.equal(f.records.at(-1)?.usage, null);
+    assert.deepEqual(f.records.at(-1)?.requests, []);
+    assert.equal(f.calls(), 0); assert.equal(f.authorizations(), 0);
+    finish.resolve(); resume(config); // Late callbacks must not authorize or send a request.
+    await new Promise<void>((resolve) => setImmediate(resolve));
+    assert.equal(f.calls(), 0); assert.equal(f.authorizations(), 0);
+    assert.equal(timers.size, 0);
+  }
+});
+
 test("timeout aborts an in-flight HTTP transport and leaves unknown usage explicit", async () => {
   const f = fixture(); let dispatched = false, aborted = false;
   const runner = createOperationalRunner({ ...f.options, timeoutMs: 500,
