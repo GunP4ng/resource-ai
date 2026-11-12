@@ -451,6 +451,105 @@ test("exact issued scope is enforced independently by direct resolution and tran
   } finally { await f.close(); }
 });
 
+for (const change of ["disabled", "edited", "model-denied", "withdrawn", "expired"] as const) {
+  test(`resolution rejects ${change} between the first authorization snapshot and byte validation`, { timeout: 5000 }, async () => {
+    const f = await fixture(), entered = Promise.withResolvers<void>(), resume = Promise.withResolvers<void>();
+    let checked: Promise<void> | undefined;
+    try {
+      const photo = await f.store.put("owner", facts.caseId, image(), "image/png", f.consent, signal());
+      const current = { ...facts, photoRefs: [photo.photoRef] };
+      f.setCase(current);
+      await f.store.assertCanTransmit("owner", current, signal(), [{ photoRef: photo.photoRef, sha256: photo.sha256 }], photoTicket);
+      const request = f.request(photo.photoRef);
+      let reads = 0;
+      const store = await createPhotoStore({ ...f.options, authorize: async (actor, caseId) => {
+        // Capture an actual old grant; no wall-clock delay or guessed ordering.
+        const access = await f.options.authorize(actor, caseId);
+        if (++reads === 1) { entered.resolve(); await resume.promise; }
+        return access;
+      } });
+      const pending = store.resolver("owner", photoTicket)(request, signal());
+      checked = assert.rejects(pending, failure(change === "expired" ? "unavailable" : "denied"));
+      await entered.promise;
+      if (change === "disabled") f.setRead(false);
+      else if (change === "edited") f.setCase({ ...current, process: "synthetic concurrent edit" });
+      else if (change === "model-denied") f.setModel(false);
+      else if (change === "withdrawn") await f.store.withdrawModel("owner", photo.photoRef, signal());
+      else f.setNow(1500);
+      resume.resolve();
+      await checked;
+      // A new execution gate must reject the same stale request too.
+      await assert.rejects(store.assertCanTransmit("owner", current, signal(), [{ photoRef: photo.photoRef, sha256: photo.sha256 }], photoTicket),
+        failure(change === "expired" ? "unavailable" : "denied"));
+      assert.ok(reads >= 2);
+    } finally {
+      resume.resolve();
+      try { if (checked) await checked; } finally { await f.close(); }
+    }
+  });
+}
+
+for (const interruption of ["file-sync", "directory-sync"] as const) {
+  test(`in-flight resolution stays denied and withdrawal retry reports repeated ${interruption} failure`, { timeout: 5000 }, async () => {
+    const f = await fixture(), originalOpen = fs.open;
+    const entered = Promise.withResolvers<void>(), resume = Promise.withResolvers<void>();
+    let fault: ReturnType<typeof spyOn> | undefined, checked: Promise<void> | undefined, injections = 0;
+    try {
+      const photo = await f.store.put("owner", facts.caseId, image(), "image/png", f.consent, signal());
+      const current = { ...facts, photoRefs: [photo.photoRef] }; f.setCase(current);
+      await f.store.assertCanTransmit("owner", current, signal(), [{ photoRef: photo.photoRef, sha256: photo.sha256 }], photoTicket);
+      let paused = false;
+      const validating = await createPhotoStore({ ...f.options, authorize: async (actor, caseId) => {
+        const grant = await f.options.authorize(actor, caseId);
+        if (!paused) { paused = true; entered.resolve(); await resume.promise; }
+        return grant;
+      } });
+      checked = assert.rejects(validating.resolver("owner", photoTicket)(f.request(photo.photoRef), signal()), failure("denied"));
+      await entered.promise;
+      const marker = join(f.root, `${photo.photoRef}.json.model-denied`);
+      const io = Object.assign(new Error(`synthetic ${interruption} failure`), { code: "EIO" });
+      fault = spyOn(fs, "open").mockImplementation(async (...args) => {
+        const handle = await originalOpen(...args);
+        const inject = args[0] === (interruption === "file-sync" ? marker : f.root);
+        if (!inject) return handle;
+        return new Proxy(handle, { get(target, key) {
+          if (key === "sync") return async () => { injections++; throw io; };
+          const value = Reflect.get(target, key, target);
+          return typeof value === "function" ? value.bind(target) : value;
+        } });
+      });
+      const unavailable = (error: unknown) => failure("unavailable")(error) || error === io;
+      await assert.rejects(f.store.withdrawModel("owner", photo.photoRef, signal()), unavailable);
+      resume.resolve(); await checked;
+      assert.equal((await readFile(marker)).length, 0);
+      const reopened = await createPhotoStore(f.options);
+      await assert.rejects(reopened.withdrawModel("owner", photo.photoRef, signal()), unavailable);
+      assert.equal(injections, 2);
+      fault.mockRestore(); fault = undefined;
+      await reopened.withdrawModel("owner", photo.photoRef, signal());
+      await assert.rejects(reopened.resolver("owner", photoTicket)(f.request(photo.photoRef), signal()), failure("denied"));
+      await assert.rejects(reopened.assertCanTransmit("owner", current, signal(), undefined, photoTicket), failure("denied"));
+      assert.equal((await reopened.read("owner", f.request(photo.photoRef), signal())).receipt.sha256, photo.sha256);
+    } finally {
+      fault?.mockRestore(); resume.resolve();
+      try { if (checked) await checked; } finally { await f.close(); }
+    }
+  });
+}
+
+for (const kind of ["symbolic", "hard"] as const) test(`withdrawal retry refuses a ${kind} link denial marker without changing its target`, async () => {
+  const f = await fixture();
+  try {
+    const photo = await f.store.put("owner", facts.caseId, image(), "image/png", f.consent, signal());
+    const victim = join(f.root, "synthetic-unrelated-file"), marker = join(f.root, `${photo.photoRef}.json.model-denied`);
+    await writeFile(victim, "");
+    if (kind === "symbolic") await symlink(victim, marker); else await link(victim, marker);
+    await assert.rejects(f.store.withdrawModel("owner", photo.photoRef, signal()), failure("unavailable"));
+    assert.equal((await readFile(victim)).length, 0);
+    assert.equal((await f.store.read("owner", f.request(photo.photoRef), signal())).receipt.sha256, photo.sha256);
+  } finally { await f.close(); }
+});
+
 test("expiry deletes inaccessible data and scheduled sweep removes expired files", async () => {
   const f = await fixture(); try {
     const a = await f.store.put("owner", facts.caseId, image(), "image/png", f.consent, signal());

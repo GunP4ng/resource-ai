@@ -51,6 +51,10 @@ export function loadEvidenceRegistry(entries: readonly unknown[]): { readonly ca
     if (!snapshot.includes(entry.quote)) { issues.push({ kind: "quote-not-in-snapshot", sourceId: entry.sourceId }); continue; }
     if (source.license === null) { issues.push({ kind: "reuse-unverified", sourceId: entry.sourceId }); continue; }
     const original = entry.originalSourceId === undefined ? source : sourceManifest.find((item) => item.sourceId === entry.originalSourceId);
+    if (source.derivedFrom !== undefined && (entry.originalSourceId === undefined || original === undefined
+      || original.sourceId === source.sourceId || original.category !== "law" || original.derivedFrom !== undefined)) {
+      issues.push({ kind: "original-unverified", sourceId: entry.sourceId }); continue;
+    }
     if (original === undefined || original.sha256 === null || original.localPath === null) { issues.push({ kind: "snapshot-unavailable", sourceId: entry.sourceId }); continue; }
     if (!original.licenseVerified) { issues.push({ kind: "reuse-unverified", sourceId: entry.sourceId }); continue; }
     if (entry.originalSourceId !== undefined && source.derivedFrom !== original.sha256) { issues.push({ kind: "hash-mismatch", sourceId: entry.sourceId }); continue; }
