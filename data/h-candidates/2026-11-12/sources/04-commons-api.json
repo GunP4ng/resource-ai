@@ -1,0 +1,124 @@
+{
+  "fetchedAt": "2026-11-12T11:41:51.455039+00:00",
+  "endpoint": "https://commons.wikimedia.org/w/api.php",
+  "page": {
+    "pageid": 148341992,
+    "ns": 6,
+    "title": "File:HDPE Jerry Can Bales.jpg",
+    "index": 2,
+    "imagerepository": "local",
+    "imageinfo": [
+      {
+        "size": 4772726,
+        "width": 3000,
+        "height": 4000,
+        "thumburl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/ad/HDPE_Jerry_Can_Bales.jpg/1280px-HDPE_Jerry_Can_Bales.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "thumbwidth": 1280,
+        "thumbheight": 1707,
+        "responsiveUrls": {
+          "2": "https://upload.wikimedia.org/wikipedia/commons/a/ad/HDPE_Jerry_Can_Bales.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled"
+        },
+        "thumbattribs": {
+          "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/ad/HDPE_Jerry_Can_Bales.jpg/1280px-HDPE_Jerry_Can_Bales.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+          "decoding": "async",
+          "loading": "lazy",
+          "width": 1280,
+          "height": 1707,
+          "srcset": "https://upload.wikimedia.org/wikipedia/commons/a/ad/HDPE_Jerry_Can_Bales.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled 2x"
+        },
+        "url": "https://upload.wikimedia.org/wikipedia/commons/a/ad/HDPE_Jerry_Can_Bales.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "descriptionurl": "https://commons.wikimedia.org/wiki/File:HDPE_Jerry_Can_Bales.jpg",
+        "descriptionshorturl": "https://commons.wikimedia.org/w/index.php?curid=148341992",
+        "sha1": "82b2929c30f6885c023541667f0a818d79317dfb",
+        "extmetadata": {
+          "DateTime": {
+            "value": "2024-05-14 14:32:20",
+            "source": "mediawiki-metadata",
+            "hidden": ""
+          },
+          "ObjectName": {
+            "value": "HDPE Jerry Can Bales",
+            "source": "mediawiki-metadata"
+          },
+          "CommonsMetadataExtension": {
+            "value": 1.2,
+            "source": "extension",
+            "hidden": ""
+          },
+          "Categories": {
+            "value": "Plastics|Recycling|Containers|Drums|HDPE|Bales|Taken with OnePlus 8T+ 5G|Self-published work|Files with coordinates missing SDC location of creation",
+            "source": "commons-categories",
+            "hidden": ""
+          },
+          "Assessments": {
+            "value": "",
+            "source": "commons-categories",
+            "hidden": ""
+          },
+          "GPSLatitude": {
+            "value": "28.577507",
+            "source": "commons-desc-page"
+          },
+          "GPSLongitude": {
+            "value": "-81.563016",
+            "source": "commons-desc-page"
+          },
+          "GPSMapDatum": {
+            "value": "WGS-84",
+            "source": "commons-desc-page",
+            "hidden": ""
+          },
+          "ImageDescription": {
+            "value": "Baled plastic for recycling - loose jerry cans must be baled for shipment to a processing facility.",
+            "source": "commons-desc-page"
+          },
+          "DateTimeOriginal": {
+            "value": "2024-05-14",
+            "source": "commons-desc-page"
+          },
+          "Credit": {
+            "value": "<span class=\"int-own-work\" lang=\"en\">Own work</span>",
+            "source": "commons-desc-page"
+          },
+          "Artist": {
+            "value": "<a href=\"//commons.wikimedia.org/w/index.php?title=User:ScrapManagement&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"User:ScrapManagement (page does not exist)\">ScrapManagement</a>",
+            "source": "commons-desc-page"
+          },
+          "LicenseShortName": {
+            "value": "CC BY-SA 4.0",
+            "source": "commons-desc-page",
+            "hidden": ""
+          },
+          "UsageTerms": {
+            "value": "Creative Commons Attribution-Share Alike 4.0",
+            "source": "commons-desc-page"
+          },
+          "AttributionRequired": {
+            "value": "true",
+            "source": "commons-desc-page",
+            "hidden": ""
+          },
+          "LicenseUrl": {
+            "value": "https://creativecommons.org/licenses/by-sa/4.0",
+            "source": "commons-desc-page"
+          },
+          "Copyrighted": {
+            "value": "True",
+            "source": "commons-desc-page",
+            "hidden": ""
+          },
+          "Restrictions": {
+            "value": "",
+            "source": "commons-desc-page",
+            "hidden": ""
+          },
+          "License": {
+            "value": "cc-by-sa-4.0",
+            "source": "commons-templates",
+            "hidden": ""
+          }
+        }
+      }
+    ]
+  }
+}

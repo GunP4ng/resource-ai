@@ -1,0 +1,12 @@
+{
+  "caseId": "HYEOB-20261112-008",
+  "description": "SYNTHETIC / 공개 사진을 참고한 시험용 입력: PP 자투리의 오염 및 접촉 기록. 아래 공정·수지·오염·접촉·질량·지역은 검증 목적의 가정이며 사진의 실제 현장 사실이 아니다.",
+  "photoRefs": [],
+  "process": "사출 퍼지 배출",
+  "polymer": "PP",
+  "contamination": "폐유 부착, 접촉 물질과 잔류 정도 미확인",
+  "hazardousContact": "no",
+  "massKg": 15,
+  "region": "울산",
+  "assessmentDate": "2026-11-12"
+}

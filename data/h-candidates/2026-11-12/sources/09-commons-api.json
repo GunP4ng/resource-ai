@@ -1,0 +1,91 @@
+{
+  "fetchedAt": "2026-11-12T11:47:40.128934+00:00",
+  "endpoint": "https://commons.wikimedia.org/w/api.php",
+  "page": {
+    "pageid": 142557903,
+    "ns": 6,
+    "title": "File:Limbah Styrofoam.jpg",
+    "index": 5,
+    "imagerepository": "local",
+    "imageinfo": [
+      {
+        "size": 4584398,
+        "width": 4032,
+        "height": 2268,
+        "thumburl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/33/Limbah_Styrofoam.jpg/1280px-Limbah_Styrofoam.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "thumbwidth": 1280,
+        "thumbheight": 720,
+        "responsiveUrls": {
+          "2": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/33/Limbah_Styrofoam.jpg/3840px-Limbah_Styrofoam.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail"
+        },
+        "thumbattribs": {
+          "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/33/Limbah_Styrofoam.jpg/1280px-Limbah_Styrofoam.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+          "decoding": "async",
+          "loading": "lazy",
+          "width": 1280,
+          "height": 720,
+          "srcset": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/33/Limbah_Styrofoam.jpg/3840px-Limbah_Styrofoam.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail 2x"
+        },
+        "url": "https://upload.wikimedia.org/wikipedia/commons/3/33/Limbah_Styrofoam.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "descriptionurl": "https://commons.wikimedia.org/wiki/File:Limbah_Styrofoam.jpg",
+        "descriptionshorturl": "https://commons.wikimedia.org/w/index.php?curid=142557903",
+        "sha1": "c5652f1d31f87ffa19748479e5980e496a083be8",
+        "extmetadata": {
+          "DateTime": {
+            "value": "2023-12-21 13:28:11",
+            "source": "mediawiki-metadata",
+            "hidden": ""
+          },
+          "ObjectName": {
+            "value": "Limbah Styrofoam",
+            "source": "mediawiki-metadata"
+          },
+          "ImageDescription": {
+            "value": "styrofoam atau polistirena adalah bahan sintetis yang dibuat manusia",
+            "source": "commons-desc-page"
+          },
+          "DateTimeOriginal": {
+            "value": "2023-12-20 14:58:45",
+            "source": "commons-desc-page"
+          },
+          "Credit": {
+            "value": "<span class=\"int-own-work\" lang=\"en\">Own work</span>",
+            "source": "commons-desc-page"
+          },
+          "Artist": {
+            "value": "Nafisathallah",
+            "source": "commons-desc-page"
+          },
+          "LicenseShortName": {
+            "value": "CC BY 4.0",
+            "source": "commons-desc-page",
+            "hidden": ""
+          },
+          "UsageTerms": {
+            "value": "Creative Commons Attribution 4.0",
+            "source": "commons-desc-page"
+          },
+          "AttributionRequired": {
+            "value": "true",
+            "source": "commons-desc-page",
+            "hidden": ""
+          },
+          "LicenseUrl": {
+            "value": "https://creativecommons.org/licenses/by/4.0",
+            "source": "commons-desc-page"
+          },
+          "Copyrighted": {
+            "value": "True",
+            "source": "commons-desc-page",
+            "hidden": ""
+          },
+          "Restrictions": {
+            "value": "",
+            "source": "commons-desc-page",
+            "hidden": ""
+          }
+        }
+      }
+    ]
+  }
+}

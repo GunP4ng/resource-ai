@@ -1,0 +1,5 @@
+*.json -text whitespace=cr-at-eol
+photos/*.png -text
+sources/** -text whitespace=cr-at-eol
+# Original HTML snapshots retain upstream whitespace and are reviewed as byte evidence.
+sources/*.html -diff

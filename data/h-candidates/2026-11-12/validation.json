@@ -1,0 +1,259 @@
+{
+  "verifiedAt": "2026-11-12T14:54:44.683137+00:00",
+  "baseMain": "74c8c3d9a3bae87b560f72e05068f991ca255265",
+  "environment": {
+    "OS": "Linux x64 WSL local filesystem",
+    "node": "v24.22.2",
+    "bun": "1.4.2",
+    "RESOURCE_MODEL_RUNNER": "local",
+    "realAgentAuthRead": false,
+    "modelCalls": 0,
+    "cachedPackageAndLockMatch": true,
+    "dependencyInstallThisTask": false,
+    "fixedSDK": "2026.11.4-2"
+  },
+  "sourceProof": {
+    "allPassed": true,
+    "snapshots": {
+      "final": {
+        "scripts/h-candidates.ts": {
+          "rawSha256": "33cf34b76cb8106bcd5e01b65183e13b7a4d434d57fa1c063c5fd8c70cdb575a",
+          "lfSha256": "33cf34b76cb8106bcd5e01b65183e13b7a4d434d57fa1c063c5fd8c70cdb575a"
+        },
+        "scripts/h-photo-offline.ts": {
+          "rawSha256": "d3177755672c74cb66187f38a1e26b9087fa5b57acfefaa9ba06d2576bf0de03",
+          "lfSha256": "d3177755672c74cb66187f38a1e26b9087fa5b57acfefaa9ba06d2576bf0de03"
+        },
+        "src/assessment.ts": {
+          "rawSha256": "b3dc3d141f163c1272de00ecc0c71f8e460d9826d7176d345d3eb57bd7fbe7f6",
+          "lfSha256": "b3dc3d141f163c1272de00ecc0c71f8e460d9826d7176d345d3eb57bd7fbe7f6"
+        },
+        "tests/assessment.test.ts": {
+          "rawSha256": "b66e89afcd01e7f1247ffaa0ea9e456a673a3a9ae44ec35b13a923fa8fa1dc05",
+          "lfSha256": "b66e89afcd01e7f1247ffaa0ea9e456a673a3a9ae44ec35b13a923fa8fa1dc05"
+        },
+        "tests/h-candidates.test.ts": {
+          "rawSha256": "72205b1fe062dc15530b28fbdfe0d7e8062105bbdbd8fcfd988c4ce981d75e33",
+          "lfSha256": "72205b1fe062dc15530b28fbdfe0d7e8062105bbdbd8fcfd988c4ce981d75e33"
+        }
+      },
+      "combined": {
+        "scripts/h-candidates.ts": {
+          "rawSha256": "33cf34b76cb8106bcd5e01b65183e13b7a4d434d57fa1c063c5fd8c70cdb575a",
+          "lfSha256": "33cf34b76cb8106bcd5e01b65183e13b7a4d434d57fa1c063c5fd8c70cdb575a"
+        },
+        "scripts/h-photo-offline.ts": {
+          "rawSha256": "d3177755672c74cb66187f38a1e26b9087fa5b57acfefaa9ba06d2576bf0de03",
+          "lfSha256": "d3177755672c74cb66187f38a1e26b9087fa5b57acfefaa9ba06d2576bf0de03"
+        },
+        "src/assessment.ts": {
+          "rawSha256": "b3dc3d141f163c1272de00ecc0c71f8e460d9826d7176d345d3eb57bd7fbe7f6",
+          "lfSha256": "b3dc3d141f163c1272de00ecc0c71f8e460d9826d7176d345d3eb57bd7fbe7f6"
+        },
+        "tests/assessment.test.ts": {
+          "rawSha256": "b66e89afcd01e7f1247ffaa0ea9e456a673a3a9ae44ec35b13a923fa8fa1dc05",
+          "lfSha256": "b66e89afcd01e7f1247ffaa0ea9e456a673a3a9ae44ec35b13a923fa8fa1dc05"
+        },
+        "tests/h-candidates.test.ts": {
+          "rawSha256": "72205b1fe062dc15530b28fbdfe0d7e8062105bbdbd8fcfd988c4ce981d75e33",
+          "lfSha256": "72205b1fe062dc15530b28fbdfe0d7e8062105bbdbd8fcfd988c4ce981d75e33"
+        }
+      }
+    },
+    "cachedPackageAndLockMatch": true
+  },
+  "commands": [
+    {
+      "scope": "main + new H2 handoff",
+      "command": "bun run typecheck",
+      "exitCode": 0,
+      "logSha256": "d51cb351a2d42f5cb1dd22c40f2c2fdbd965bef7a5c29df097658a913b3081cc",
+      "outputTail": "$ tsc --noEmit && tsc --noEmit -p tsconfig.tests.json && tsc --noEmit -p tsconfig.bun-tests.json",
+      "testPass": null,
+      "testFail": null
+    },
+    {
+      "scope": "temporary PR33 + PR34 + new H2 handoff",
+      "command": "bun run typecheck",
+      "exitCode": 0,
+      "logSha256": "d51cb351a2d42f5cb1dd22c40f2c2fdbd965bef7a5c29df097658a913b3081cc",
+      "outputTail": "$ tsc --noEmit && tsc --noEmit -p tsconfig.tests.json && tsc --noEmit -p tsconfig.bun-tests.json",
+      "testPass": null,
+      "testFail": null
+    },
+    {
+      "scope": "main + new H2 handoff",
+      "command": "bun run typecheck:o-tests",
+      "exitCode": 0,
+      "logSha256": "744923f9d3311fdfc4713cf11b9e07217782c449e52da2dd9d64322352e122b4",
+      "outputTail": "$ tsc --noEmit -p tsconfig.o-tests.json",
+      "testPass": null,
+      "testFail": null
+    },
+    {
+      "scope": "temporary PR33 + PR34 + new H2 handoff",
+      "command": "bun run typecheck:o-tests",
+      "exitCode": 0,
+      "logSha256": "744923f9d3311fdfc4713cf11b9e07217782c449e52da2dd9d64322352e122b4",
+      "outputTail": "$ tsc --noEmit -p tsconfig.o-tests.json",
+      "testPass": null,
+      "testFail": null
+    },
+    {
+      "scope": "main + new H2 handoff",
+      "command": "bun node_modules/typescript/bin/tsc --noEmit -p tests/tsconfig.h.json",
+      "exitCode": 0,
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "outputTail": "",
+      "testPass": null,
+      "testFail": null
+    },
+    {
+      "scope": "temporary PR33 + PR34 + new H2 handoff",
+      "command": "bun node_modules/typescript/bin/tsc --noEmit -p tests/tsconfig.h.json",
+      "exitCode": 0,
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "outputTail": "",
+      "testPass": null,
+      "testFail": null
+    },
+    {
+      "scope": "main + new H2 handoff",
+      "command": "bun run build",
+      "exitCode": 0,
+      "logSha256": "d78eca917fb1b7e44253cb74e25f08de6cff039bd836cdbc04a2c3cae382e380",
+      "outputTail": "$ bun build src/extension.ts --target=bun --packages=external --outdir=dist\nBundled 15 modules in 8ms\n\n  extension.js  132.98 KB  (entry point)\n",
+      "testPass": null,
+      "testFail": null
+    },
+    {
+      "scope": "temporary PR33 + PR34 + new H2 handoff",
+      "command": "bun run build",
+      "exitCode": 0,
+      "logSha256": "494b6e5338b6113c74b096df73fb7bab8a8f49a22b979a96d8f1c602e56f3213",
+      "outputTail": "$ bun build src/extension.ts --target=bun --packages=external --outdir=dist\nBundled 15 modules in 6ms\n\n  extension.js  132.98 KB  (entry point)\n",
+      "testPass": null,
+      "testFail": null
+    },
+    {
+      "scope": "main + new H2 handoff",
+      "command": "bun run build:app",
+      "exitCode": 0,
+      "logSha256": "74ccc8571104339772952c388febe5334d2f7da7159c65787208ef1f5bcd66c8",
+      "outputTail": "$ bun build scripts/app.ts scripts/o-account.ts scripts/o-artifact.ts --target=bun --packages=external --outdir=dist/app && bun scripts/package-app-assets.ts\nBundled 36 modules in 10ms\n\n  app.js         0.38 MB    (entry point)\n  o-account.js   24.87 KB   (entry point)\n  o-artifact.js  200.52 KB  (entry point)\n",
+      "testPass": null,
+      "testFail": null
+    },
+    {
+      "scope": "temporary PR33 + PR34 + new H2 handoff",
+      "command": "bun run build:app",
+      "exitCode": 0,
+      "logSha256": "614a23d8b10c217d9678e29646351a29a5115d4e31f25fe702bc7319aef8278d",
+      "outputTail": "Bundled 42 modules in 11ms\n\n  app.js         0.42 MB    (entry point)\n  o-account.js   25.1 KB    (entry point)\n  o-artifact.js  203.51 KB  (entry point)\n  o-journal.js   15.37 KB   (entry point)\n",
+      "testPass": null,
+      "testFail": null
+    },
+    {
+      "scope": "main + new H2 handoff",
+      "command": "bun test --timeout 30000",
+      "exitCode": 0,
+      "logSha256": "c223762d08f4f9021cef5a6b07a759b75a6c24aaec10085cb6ad92a5ff45c7b4",
+      "outputTail": "(pass) real SDK tool round trip uses server reviews and returns only the host comparison [66.04ms]\n(pass) Azure runner rejects non-JSON model output and bounds model tool loops [40.17ms]\n\n 558 pass\n 0 fail\n 301 expect() calls\nRan 558 tests across 25 files. [102.38s]",
+      "testPass": 558,
+      "testFail": 0
+    },
+    {
+      "scope": "temporary PR33 + PR34 + new H2 handoff",
+      "command": "bun test --timeout 30000",
+      "exitCode": 0,
+      "logSha256": "e65ca7ae159ea6ed202920cd56d1c7158febeb407791afbe40f2a8ab8d3ddafd",
+      "outputTail": "(pass) real SDK tool round trip uses server reviews and returns only the host comparison [73.38ms]\n(pass) Azure runner rejects non-JSON model output and bounds model tool loops [31.38ms]\n\n 637 pass\n 0 fail\n 309 expect() calls\nRan 637 tests across 30 files. [142.88s]",
+      "testPass": 637,
+      "testFail": 0
+    },
+    {
+      "scope": "main + new H2 handoff",
+      "command": "bun run smoke",
+      "exitCode": 0,
+      "logSha256": "fc4a846563ff1d72f4ee80294d2adcfada47d01095dd05fa0f1691e127f5d4f4",
+      "outputTail": "$ bun scripts/smoke.ts\nEXTENSION_LOAD_PASS src/extension.ts\nEXTENSION_LOAD_PASS dist/extension.js\nSDK_SELECTION_PASS azure-openai-responses resource_project_status\nSCAFFOLD_ONLY no prompt sent; Azure connectivity and domain behavior untested\nOWNED_SMOKE_RESOURCES_REMOVED",
+      "testPass": null,
+      "testFail": null
+    },
+    {
+      "scope": "temporary PR33 + PR34 + new H2 handoff",
+      "command": "bun run smoke",
+      "exitCode": 0,
+      "logSha256": "fc4a846563ff1d72f4ee80294d2adcfada47d01095dd05fa0f1691e127f5d4f4",
+      "outputTail": "$ bun scripts/smoke.ts\nEXTENSION_LOAD_PASS src/extension.ts\nEXTENSION_LOAD_PASS dist/extension.js\nSDK_SELECTION_PASS azure-openai-responses resource_project_status\nSCAFFOLD_ONLY no prompt sent; Azure connectivity and domain behavior untested\nOWNED_SMOKE_RESOURCES_REMOVED",
+      "testPass": null,
+      "testFail": null
+    }
+  ],
+  "reproductions": {
+    "baselineFocused": {
+      "pass": 53,
+      "fail": 2
+    },
+    "cycle1Focused": {
+      "pass": 54,
+      "fail": 1
+    },
+    "finalFocused": {
+      "pass": 55,
+      "fail": 0
+    },
+    "sharedCandidateTests": {
+      "pass": 3,
+      "fail": 0
+    },
+    "photoSDK": {
+      "publicPhotos": 10,
+      "syntheticTransportCalls": 17,
+      "externalModelCalls": 0,
+      "httpCreate": 303,
+      "httpAnswer": 303,
+      "crossSession": 404,
+      "expiryPurged": 9
+    }
+  },
+  "candidateInputFileSha256": {
+    "inputs/HYEOB-20261112-001.json": "99a243a95f2500e350512a3ffbe53c896b76df41eb2e9be5b97d305cd96f0f40",
+    "inputs/HYEOB-20261112-002.json": "140d4db53120d25db32c3d70a982d2de8cf2e45ac90c934550ed76fff7e76db5",
+    "inputs/HYEOB-20261112-003.json": "e99456505b42ee03d6b8f1e87771791750e1262a43047db72c613e85504a5b07",
+    "inputs/HYEOB-20261112-004.json": "26eb5e7d5d21df9ed16f6c00cab3dba7e5e810bd3b354e5f9851abcd8217e493",
+    "inputs/HYEOB-20261112-005.json": "41f6f74e6551b3aae5449a1a0d11d2d1a37b7291974f9a1bc70618023de404fd",
+    "inputs/HYEOB-20261112-006.json": "aa6104ac7f7461c952fc95b314002860bb01107d59d3814d1e61282d1ac7a87b",
+    "inputs/HYEOB-20261112-007.json": "dd530034e235f514b61ee5a8d585978ead905acdfc04a3530e462a09e18ff320",
+    "inputs/HYEOB-20261112-008.json": "978a57423199674dee21982375171258ab9908701ea6f69934d95afc8ff31dbb",
+    "inputs/HYEOB-20261112-009.json": "65c54b7dcfa5d975474542a5675a7c6bb64850d2a4e320845ad67ccaa5d2498e",
+    "inputs/HYEOB-20261112-010.json": "898699ed96ab28225c9a2bbf9e1c0770fdb571e49af581832a96d92bf46a090f"
+  },
+  "evidenceFileSha256": {
+    "manifest.json": "df62053c3db875ce13a8502d27b9b78e5b731ebfdbaf324cd3969ee8d72e9e68",
+    "host-execution.json": "fee6e84100a0a79a2c17e61582f97c646e957472956c94de50e6a12adab7924f",
+    "improvement-cycles.json": "5ecb7d3f29762734969310088efe580a54cbf4012d673af76ab955b1b20fd86c",
+    "peer-review.json": "373d4f9800d8161c6b17b10d807ac9e610d85c715da2a967464a6f8bb4bafc18",
+    "photo-offline-execution.json": "5c871147e010466159d9a0160591c0e9c82f6dc56ac161a9f67ae0a6a7f2b655"
+  },
+  "scopeBoundary": {
+    "HCandidatesPrepared": 10,
+    "HPhotos": 10,
+    "sourceCohortsProvisional": 6,
+    "OAIassistedPreReviews": 10,
+    "independentHumanLabels": 0,
+    "acceptedFieldCases": 0,
+    "lockedCasesOpened": 0,
+    "team18ExperimentExecuted": false,
+    "realProviderIntegrationAccepted": false,
+    "visualModelInferencePerformed": false
+  },
+  "windows": {
+    "nativeDefaultBun": "1.4.4",
+    "nativeNode": "v24.21.0",
+    "currentNativeFullSuiteRun": false,
+    "policy": "Earlier POSIX permissions/fsync/SIGTERM baseline issues are historical; no new Windows support/physical power-loss claim."
+  },
+  "sharedConfigOrOtherOwnerChanged": false,
+  "rawSnapshotPolicy": "Folder-local attributes preserve exact JSON/snapshot bytes, allow CRLF line endings, and treat original HTML as byte evidence without rewriting upstream whitespace."
+}

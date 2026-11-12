@@ -1,0 +1,12 @@
+{
+  "caseId": "HYEOB-20261112-007",
+  "description": "SYNTHETIC / 공개 사진을 참고한 시험용 입력: HDPE 운반 상자의 재사용 검토. 아래 공정·수지·오염·접촉·질량·지역은 검증 목적의 가정이며 사진의 실제 현장 사실이 아니다.",
+  "photoRefs": [],
+  "process": "사용한 운반 상자 회수·선별",
+  "polymer": "HDPE",
+  "contamination": "없음",
+  "hazardousContact": "no",
+  "massKg": 30,
+  "region": "충남",
+  "assessmentDate": "2026-11-12"
+}
