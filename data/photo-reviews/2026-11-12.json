@@ -1,0 +1,49 @@
+{
+  "archiveCommit": "d083a37592dd144e1e7f778d45430bdeac1764db",
+  "reviewedPreviewCount": 700,
+  "previewMaxWidthPx": 420,
+  "rights": "unverified",
+  "authenticity": "unverified",
+  "approvedForModelTraining": false,
+  "excludedFromCandidateSet": {
+    "plastic": [
+      "plastic_007", "plastic_009", "plastic_010", "plastic_011", "plastic_012", "plastic_013",
+      "plastic_028", "plastic_031", "plastic_033", "plastic_050", "plastic_052", "plastic_054",
+      "plastic_056", "plastic_069", "plastic_075", "plastic_076", "plastic_089", "plastic_091",
+      "plastic_093", "plastic_095", "plastic_099", "plastic_100"
+    ],
+    "metal": [
+      "metal_013", "metal_014", "metal_017", "metal_045", "metal_047", "metal_048",
+      "metal_049", "metal_058", "metal_076", "metal_077", "metal_078", "metal_079",
+      "metal_080", "metal_081", "metal_082", "metal_083", "metal_085", "metal_086"
+    ],
+    "wood": [
+      "wood_001", "wood_003", "wood_007", "wood_013", "wood_016", "wood_019",
+      "wood_024", "wood_025", "wood_026", "wood_028", "wood_029", "wood_043",
+      "wood_044", "wood_046", "wood_049", "wood_050", "wood_052", "wood_062",
+      "wood_069", "wood_076", "wood_079", "wood_091", "wood_099"
+    ],
+    "packaging": [
+      "packaging_001", "packaging_002", "packaging_005", "packaging_010", "packaging_012", "packaging_045",
+      "packaging_046", "packaging_047", "packaging_049", "packaging_051", "packaging_053", "packaging_055",
+      "packaging_056", "packaging_057", "packaging_059", "packaging_060", "packaging_063", "packaging_066",
+      "packaging_071", "packaging_080", "packaging_081", "packaging_084", "packaging_099", "packaging_100"
+    ],
+    "sludge": [
+      "sludge_010", "sludge_014", "sludge_029", "sludge_042", "sludge_047", "sludge_070",
+      "sludge_071", "sludge_072", "sludge_076", "sludge_087", "sludge_091", "sludge_093",
+      "sludge_095", "sludge_099"
+    ],
+    "rubber": [
+      "rubber_006", "rubber_011", "rubber_024", "rubber_025", "rubber_052", "rubber_061",
+      "rubber_070", "rubber_077", "rubber_081", "rubber_082", "rubber_089", "rubber_092",
+      "rubber_097", "rubber_098", "rubber_099", "rubber_100"
+    ],
+    "construction": [
+      "construction_001", "construction_003", "construction_005", "construction_009", "construction_010",
+      "construction_012", "construction_015", "construction_016", "construction_018", "construction_022",
+      "construction_041", "construction_043", "construction_068", "construction_069", "construction_073",
+      "construction_079", "construction_080", "construction_091", "construction_094"
+    ]
+  }
+}
