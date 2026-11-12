@@ -1,10 +1,12 @@
-# 아키텍처: 하나의 senpi 세션, 독립 도메인 도구, Azure 모델
+# 아키텍처: 하나의 senpi 세션, 독립 도메인 도구, 구독 모델 기본
 
 ## 결정
 
-**운영자가 쓰는 작은 앱 + senpi SDK 세션 1개 + 재사용 가능한 도메인 도구 + Azure OpenAI Responses**를 권한다. 같은 도구를 공식 extension으로도 등록하여 개발자가 CLI에서 점검한다. “플러그인만 만드는 제품”도 “Foundry 에이전트와 senpi가 서로 계획하는 이중 에이전트”도 기본안이 아니다.
+**운영자가 쓰는 작은 앱 + senpi SDK 세션 1개 + 재사용 가능한 도메인 도구 + Azure OpenAI Responses**를 권한다. 공식 extension도 함께 둔다. “플러그인만 만드는 제품”도 “Foundry 에이전트와 senpi가 서로 계획하는 이중 에이전트”도 기본안이 아니다.
 
-이는 설계 결정이다. 현재 저장소는 타입·extension 등록·상태 조회 골격뿐이고 웹 앱, 도메인 판단, Azure 호출, MCP 서버는 구현하지 않았다.
+이는 설계 결정이다. 2026-11-05 작성 당시 저장소는 타입·extension 등록·상태 조회 골격뿐이었다.
+
+**2026-11-12 정정:** 위 결정 문장의 Azure OpenAI Responses는 최초 설계안이다. 2026-11-06 소유자 결정(#8 재범위화, PR #25)으로 기본 실행 공급자는 senpi `chatgpt-subscription` / `gpt-6-sol`이 되었다(`scripts/app.ts`의 `RESOURCE_MODEL_RUNNER` 기본값 `subscription`, `src/session.ts`의 기본 모델). Azure는 `RESOURCE_MODEL_RUNNER=azure`로 고르는 opt-in 경로이고 `local`은 모델 호출 없는 평가다. 현재 main에는 웹 앱(`src/app.ts`, `src/operations.ts`), 도메인 판단·근거 게이트(`src/domain.ts`, `src/assessment.ts`), 비용·탄소 계산(`src/cost.ts`, `src/carbon.ts`, `src/o-calculation.ts`), 로컬 계정·SQLite 사례 저장이 구현되어 있다. MCP 서버는 여전히 없다. 공식 extension은 CLI에서 상태 조회 도구 `resource_project_status` **1개만** 등록한다(`src/extension.ts`의 default export). 판정·업체·비교 도구 3개(`resource_assess_case`, `resource_find_processors`, `resource_compare`)는 앱의 사례별 세션에만 `createCaseTools`로 주입되며 CLI에서 같은 도구로 점검할 수는 없다. 실제 구독 호출 성공·usage 증거는 아직 없다.
 
 ## 대안 비교
 
@@ -42,7 +44,7 @@ MCP는 senpi가 지원하는 별도 client/server 경계다. 도구를 등록했
 ```text
 사진 + 설명 + 공정/성상/지역/물량/기준일
   -> 경계 입력 파서 및 누락 질문
-  -> 케이스별 senpi SDK session (Azure OpenAI Responses)
+  -> 케이스별 senpi SDK session (기본 chatgpt-subscription, Azure는 opt-in)
        -> 재질/분류 후보 제안 (확정 아님)
        -> 버전 고정 근거 조회
        -> 재사용/재활용/기타 회수/처분의 조건별 적합성
@@ -98,7 +100,7 @@ MCP는 senpi가 지원하는 별도 client/server 경계다. 도구를 등록했
 - 순비용 또는 순배출이 `unavailable`인 대안은 결측값을 0으로 대체하지 않고 순위 보류와 계산 불가 이유를 함께 표시한다. 비교 가능한 후보가 2개 미만이면 순위를 매기지 않는다. 순위군은 계산 가능한 후보 사이의 상대 순위이며 미확인 후보보다 우월하다는 뜻이 아니다.
 - 보고서는 대안 이름·순위군·순비용·순배출과 우월한 입력 대안 번호를 표시한다. 기존 질문/검토 보류 상태와 인간 승인 대기는 바꾸지 않는다.
 
-- 케이스별 독립 세션, 동시 요청 사이 상태 공유 금지. 사용자 세션/인증 구현은 팀 작업이며 현재 골격에는 없다.
+- 케이스별 독립 세션, 동시 요청 사이 상태 공유 금지. 사용자 세션/인증 구현은 팀 작업이다. (2026-11-12 정정: PR #29에서 로컬 운영자 로그인과 SQLite 사례 보관이 구현됐다. `RESOURCE_APP_AUTH=local-operator`)
 - 사용자 앱에 bash/read/write 등 일반 코딩 도구를 노출하지 않는다. `tools` 허용 목록과 host 권한 검사를 적용한다.
 - `noExtensions`가 내장 extension까지 없애지는 않는다. 앱 전용 `agentDir`, OS 최소권한, 네트워크/파일 권한 제한이 필요하다. 이 설계 자체가 sandbox 구현을 의미하지 않는다.
 - 사진 EXIF·사업장 개인정보·법적 민감 정보를 최소화하고 입력 동의/보관 기간을 정한다. 개발 원본은 개인 공간, 레포에는 허가된 비식별 예시만 둔다.

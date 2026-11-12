@@ -1,6 +1,6 @@
 # Re:Source AI
 
-중소 제조업체 환경 담당자를 위한 **근거 기반 폐플라스틱 의사결정 지원** 설계와 구현 시작 골격.
+중소 제조업체 환경 담당자를 위한 **근거 기반 폐플라스틱 의사결정 지원** 설계와 구현.
 AXR AI Bootcamp Innovation Challenger 2026 Microsoft 주제를 대상으로 한다.
 
 **현재 상태: 로컬 사례·답변·보고서 앱과 도메인 검증이 구현되어 있다. 운영 인증·검토 자료·실제 제공자 검증은 별도 인수 대상이다.**
@@ -8,8 +8,8 @@ O4는 신뢰된 서버 인증을 주입하면 사례 소유권과 비공개 사�
 
 ## 추천 구조
 
-작은 사용자 앱 → 하나의 senpi SDK 세션 → Azure OpenAI 모델 + 독립 도메인 도구 → 출처·조건·불확실성이 있는 비교 보고서.
-도구는 공식 extension으로도 로딩한다. skill/MCP/Foundry 네이티브 조합을 비교한 뒤 이 구조를 택했다.
+작은 사용자 앱 → 하나의 senpi SDK 세션 → 구독 모델(기본 `chatgpt-subscription` / `gpt-6-sol`, Azure는 opt-in) + 독립 도메인 도구 → 출처·조건·불확실성이 있는 비교 보고서.
+판정·업체·비교 도구는 앱의 사례별 세션에만 주입된다. 공식 extension은 CLI용 상태 조회 도구 `resource_project_status` 1개만 등록한다. skill/MCP/Foundry 네이티브 조합을 비교한 뒤 이 구조를 택했다.
 
 ## 시작
 
@@ -26,7 +26,7 @@ bun run smoke
 
 smoke는 소스와 빌드된 extension을 **실제 senpi loader**로 열고, SDK에서 Azure provider와 명시적 도구 선택을 확인한다. 모델에 프롬프트를 보내지 않아 Azure 키나 유료 호출은 필요하지 않다. 생성한 임시 상태는 종료 시 삭제한다. 사용자 global senpi 설정을 사용하지 않는다.
 
-현재 도구 `resource_project_status`는 `stage=scaffold`, `decisionEngine=not-implemented`를 반환한다. 이것을 제품 데모나 성능 결과로 제시하지 않는다.
+현재 도구 `resource_project_status`는 `stage=review-bound-host-comparison`, `decisionEngine=server-reviewed-inputs-required`, `azureLiveVerified=false`를 반환한다(`src/extension.ts`). 등록 진단일 뿐이며 제품 데모나 성능 결과로 제시하지 않는다. (2026-11-12 정정: 이전 문구의 `stage=scaffold`, `decisionEngine=not-implemented`는 초기 골격 값이다.)
 
 도메인 구현을 시작할 때 `src/contracts.ts`부터 합의하고, `data/*.example.json`을 실제 데이터와 구분한다. `.env.example`에는 변수명만 있으며 실제 키를 커밋하지 않는다.
 
@@ -48,7 +48,7 @@ smoke는 소스와 빌드된 extension을 **실제 senpi loader**로 열고, SDK
 테스트는 합성 OAuth와 주입 HTTP/SSE만 사용하며 실제 유료 요청을 보내지 않는다.
 
 O4 인증·사진 통합 API와 제한은 [O 인수 문서](docs/o-handoff.md#o4-application-transaction-and-photo-boundary-2026-11-06)에 있다.
-PR27 사진 모델 동의는 [H 실행 범위 authority](docs/photo-execution-scope.md)의 서버 발급 ticket에 묶인다. 운영 매핑은 기본 제공하지 않으며 `photoPolicy.guardedModel` 문구만으로 사진 전송을 허용하지 않는다. 구독 사진 전송은 계속 비활성 상태다.
+PR27 사진 모델 동의는 [H 실행 범위 authority](docs/photo-execution-scope.md)의 서버 발급 ticket에 묶인다. 운영 매핑은 기본 제공하지 않으며 `photoPolicy.guardedModel` 문구만으로 사진 전송을 허용하지 않는다. 2026-11-12 정정: PR #28(`2ee1cb2`)로 구독 provider/model/account·목적에 묶인 사진 실행 경로(`SubscriptionTarget`, `src/photo-execution.ts`)가 구현됐다. 단 `bun run app` launcher는 사진 실행 authority를 주입하지 않으므로 기본값은 꺼짐이다. `RESOURCE_PRIVATE_PHOTOS=on`은 비공개 사진 저장만 켜며 모델 전송을 허용하지 않는다. 서버 통합자가 승인된 매핑으로 authority를 발급할 때만 켜진다. 실제 계정·현장 사진 실행은 인수되지 않았다.
 네이티브 입력 폼은 사진 없이 사례를 먼저 만들며, 생략된 `photoRefs`는 H의 폼 변환에서 `[]`로 정규화한다. JSON 제출은 여전히 `photoRefs` 배열을 명시해야 한다.
 데스크톱/모바일 담당자는 `bun qa-o4.ts`로 `http://localhost:3001`의 **합성 QA 전용** 앱을 실행할 수 있다.
 이 harness는 고정 가짜 인증과 worktree의 `.qa-o4-photos` 저장소를 사용하며 모델을 호출하지 않는다. 운영 배포에 사용하지 않는다.

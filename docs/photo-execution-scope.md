@@ -9,6 +9,8 @@ available independently. H issue #8 is closed; this work stays under #12.
 
 ## One execution authority
 
+**2026-11-12 correction:** PR #28 (`2ee1cb2`) added a subscription target next to the Azure target described below. `SubscriptionTarget` (`src/photo-execution.ts`) binds `chatgpt-subscription`, the fixed endpoint, model ID and account hash. Subscription photo execution is therefore implemented but opt-in: the default `bun run app` launcher never publishes an authority, so photos are not sent to any model unless a server integrator publishes approved mappings. No live account or field photo run has been accepted.
+
 H owns an in-process execution authority containing a checked Azure
 configuration and explicit target-to-scope mappings. O consumes its issued
 photo ticket rather than maintaining an independent `guardedModel` label.
