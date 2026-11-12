@@ -5,6 +5,8 @@ import { lookupLegalEvidence, pendingLegalSources } from "./evidence.ts";
 import type { EvidenceLookup, PendingLegalLookup } from "./evidence.ts";
 import { collectMissingQuestions, parseCaseInput } from "./input.ts";
 import type { InputIssue } from "./input.ts";
+import { assertPhotoObservations, photoObservationQuestions } from "./photo-observations.ts";
+import type { PhotoObservations } from "./photo-observations.ts";
 import { parseDecision } from "./o-decision.ts";
 import { canonical, evidenceIssue, EvidenceSchema, requireValid, revision, RouteKindSchema, strings, text, unique as uniqueIds, validateDocuments, ValidationError } from "./o-validation.ts";
 import type { EvidenceContext } from "./o-validation.ts";
@@ -36,7 +38,8 @@ export interface CaseAssessment {
   readonly candidates: {
     readonly resins: readonly { readonly value: string; readonly basis: "reported-input" }[];
     readonly wasteCodes: readonly { readonly value: string; readonly state: "conditional"; readonly claim: string; readonly sourceId: string; readonly locator: string; readonly sha256: string }[];
-    readonly photoInference: "not-performed";
+    readonly photoInference: "not-performed" | "unverified-model-observations";
+    readonly photoResins?: readonly { readonly value: string; readonly basis: "unverified-photo"; readonly photoRef: string; readonly sha256: string }[];
   };
   readonly routes: readonly RouteAssessment[];
   readonly questions: readonly string[];
@@ -95,7 +98,7 @@ function contextQuestions(facts: CaseInput): readonly string[] {
  * No absence of a match proves ineligibility; these checks do not invent legal rules.
  * H3 must consume the diagnostics as well as routes before producing DecisionResult.
  */
-export function assessCase(input: CaseInput, options: AssessmentOptions = {}, reviews?: RouteReviewContext): CaseAssessment {
+export function assessCase(input: CaseInput, options: AssessmentOptions = {}, reviews?: RouteReviewContext, photoObservations?: PhotoObservations): CaseAssessment {
   const parsed = parseCaseInput(input);
   if (!parsed.ok) throw new AssessmentInputError(parsed.issues);
   const intendedUse = options.intendedUse;
@@ -103,7 +106,9 @@ export function assessCase(input: CaseInput, options: AssessmentOptions = {}, re
     throw new RangeError("intendedUse는 general-resin 또는 food-container여야 합니다.");
   }
   const facts = parsed.value;
-  const questions = unique([...collectMissingQuestions(facts), ...contextQuestions(facts)]);
+  if (photoObservations !== undefined) assertPhotoObservations(facts, photoObservations);
+  const questions = unique([...collectMissingQuestions(facts), ...contextQuestions(facts),
+    ...(photoObservations === undefined ? [] : photoObservationQuestions(facts, photoObservations))]);
   // J returns references to its registry records. Do not expose mutable registry aliases.
   const legal = structuredClone(lookupLegalEvidence(facts, undefined, { intendedUse }));
   const pendingLegal = structuredClone(pendingLegalSources(facts));
@@ -188,7 +193,9 @@ export function assessCase(input: CaseInput, options: AssessmentOptions = {}, re
         value, state: "conditional" as const, claim: citation.claim, sourceId: record.sourceId, locator: citation.locator, sha256: record.sha256,
       }));
     }),
-    photoInference: "not-performed",
+    photoInference: photoObservations === undefined ? "not-performed" : "unverified-model-observations",
+    ...(photoObservations === undefined ? {} : { photoResins: photoObservations.images.flatMap(image =>
+      image.resinCandidates.map(value => ({ value, basis: "unverified-photo" as const, photoRef: image.photoRef, sha256: image.sha256 }))) }),
   };
   return { caseId: facts.caseId, candidates, routes, questions, legal, pendingLegal, reviewReasons, reviewIssues, requiredChecks, reviewEvidence };
 }
@@ -202,11 +209,11 @@ export const assessRoutes: ResourceDomain["assessRoutes"] = async (input) => ass
  * This synchronous fallback never authorizes comparison. createResourceDomain.decide
  * also validates the server comparison supplements and runs O's async operations.
  */
-export function decideCase(input: CaseInput, proposal?: unknown, options: AssessmentOptions = {}, reviews?: RouteReviewContext): DecisionResult {
+export function decideCase(input: CaseInput, proposal?: unknown, options: AssessmentOptions = {}, reviews?: RouteReviewContext, photoObservations?: PhotoObservations): DecisionResult {
   const parsed = parseCaseInput(input);
   if (!parsed.ok) throw new AssessmentInputError(parsed.issues);
   const facts = parsed.value;
-  const assessment = assessCase(facts, options, reviews);
+  const assessment = assessCase(facts, options, reviews, photoObservations);
   const evidence = [...assessment.legal.evidence, ...assessment.reviewEvidence];
   const rejected: string[] = [];
   if (proposal !== undefined) {

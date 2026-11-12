@@ -1,6 +1,7 @@
 import type { CaseInput, ComparisonInput, DecisionResult, EvidenceRecord, ProcessorCandidate, ResourceDomain, RouteAssessment } from "./contracts.ts";
 import { assessCase, AssessmentInputError, decideCase } from "./assessment.ts";
 import type { AssessmentOptions, RouteReviewContext } from "./assessment.ts";
+import type { PhotoObservations } from "./photo-observations.ts";
 import { parseCaseInput } from "./input.ts";
 import { createProcessorFinder } from "./processors.ts";
 import type { ProcessorContext } from "./processors.ts";
@@ -21,12 +22,12 @@ export interface DomainResources {
 }
 
 /** SDK/UI-independent composition bound to one immutable case revision. */
-export function createResourceDomain(input: CaseInput, resources: DomainResources = {}) {
+export function createResourceDomain(input: CaseInput, resources: DomainResources = {}, photoObservations?: PhotoObservations) {
   const parsed = parseCaseInput(input);
   if (!parsed.ok) throw new AssessmentInputError(parsed.issues);
   const facts = parsed.value;
   const owned = structuredClone(resources);
-  const assess = () => assessCase(facts, owned.assessmentOptions, owned.routeReviews);
+  const assess = () => assessCase(facts, owned.assessmentOptions, owned.routeReviews, photoObservations);
   const find = owned.processors === undefined ? undefined : createProcessorFinder(owned.processors);
   const calculate = owned.calculations === undefined ? undefined : createComparisonCalculator(owned.calculations);
   const assertCase = (value: CaseInput) => requireValid(revision(value) === revision(facts), "case-revision-mismatch");
@@ -64,7 +65,7 @@ export function createResourceDomain(input: CaseInput, resources: DomainResource
     assess,
     async decide(proposal?: unknown): Promise<DecisionResult> {
       const assessment = assess();
-      const fallback = decideCase(facts, undefined, owned.assessmentOptions, owned.routeReviews);
+      const fallback = decideCase(facts, undefined, owned.assessmentOptions, owned.routeReviews, photoObservations);
       const hold = (reason: string): DecisionResult => ({ state: "needs-review", caseId: facts.caseId,
         evidence: fallback.evidence,
         reasons: [...new Set([...(fallback.state === "needs-review" ? fallback.reasons : assessment.questions), reason])] });
