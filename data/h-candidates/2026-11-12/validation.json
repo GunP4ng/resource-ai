@@ -253,10 +253,10 @@
   },
   "evidenceFileSha256": {
     "manifest.json": "df62053c3db875ce13a8502d27b9b78e5b731ebfdbaf324cd3969ee8d72e9e68",
-    "host-execution.json": "03678723f9b490aa5826abd21912daabd4b7a6067a4a547b3a513c696e655d47",
+    "host-execution.json": "82b505759db1fbb091578c385715910e1b706e738e2b272fd3ca692b9c6618c8",
     "improvement-cycles.json": "5ecb7d3f29762734969310088efe580a54cbf4012d673af76ab955b1b20fd86c",
-    "peer-review.json": "91e0e1a5adc4ae16f3281589677df322afc207566f72e3e940b587cb14310633",
-    "photo-offline-execution.json": "d7aaf7d4c561fcbeb9f4dbd94279bdc23f9e49aab2eea09ae876bc09291e0987"
+    "peer-review.json": "c7737ebbe6e9a6d4ebc9c1f221f6a688d4235b3c9fecbbbddc667c4d9910d824",
+    "photo-offline-execution.json": "4897d812af82ea0bc19dc2a87a55bdcdc4f4fcc4b3a6479f9ac91efacf5a882b"
   },
   "scopeBoundary": {
     "HCandidatesPrepared": 10,
@@ -470,6 +470,76 @@
     }
   },
   "latestIntegratedMain": {
+    "mainSHA": "ae6456b7e6a23232314a2a47384c4de049f794c8",
+    "mergedByTeam": [
+      "PR33",
+      "PR37",
+      "PR39",
+      "PR34"
+    ],
+    "mergeIntoWorkBranch": "01acf2c69943cbd75de5e5e5429a81de1721de51",
+    "method": "normal non-forced merge into H work branch, no direct main writes; approved upstream common/O changes inherited without H-authored edits",
+    "tests": {
+      "pass": 653,
+      "fail": 0,
+      "files": 31,
+      "logSha256": "9c100604bfa2ded51e34868b4a768d4c02187aa104a93632d5c657a23cafccc7",
+      "outputTail": "(pass) real SDK tool round trip uses server reviews and returns only the host comparison [81.40ms]\n(pass) Azure runner rejects non-JSON model output and bounds model tool loops [38.51ms]\n\n 653 pass\n 0 fail\n 319 expect() calls\nRan 653 tests across 31 files. [127.29s]"
+    },
+    "allStrictTypechecksHtscBuildAppBuildSmoke": "pass",
+    "photoSDK": {
+      "publicPhotos": 10,
+      "syntheticTransportCalls": 17,
+      "externalModelCalls": 0
+    },
+    "exactExecutedSourceProof": {
+      "allPassed": true,
+      "sourceFiles": {
+        "src/assessment.ts": {
+          "lfSha256": "b3dc3d141f163c1272de00ecc0c71f8e460d9826d7176d345d3eb57bd7fbe7f6",
+          "executedRawSha256": "b3dc3d141f163c1272de00ecc0c71f8e460d9826d7176d345d3eb57bd7fbe7f6"
+        },
+        "tests/assessment.test.ts": {
+          "lfSha256": "b66e89afcd01e7f1247ffaa0ea9e456a673a3a9ae44ec35b13a923fa8fa1dc05",
+          "executedRawSha256": "b66e89afcd01e7f1247ffaa0ea9e456a673a3a9ae44ec35b13a923fa8fa1dc05"
+        },
+        "tests/h-candidates.test.ts": {
+          "lfSha256": "72205b1fe062dc15530b28fbdfe0d7e8062105bbdbd8fcfd988c4ce981d75e33",
+          "executedRawSha256": "72205b1fe062dc15530b28fbdfe0d7e8062105bbdbd8fcfd988c4ce981d75e33"
+        },
+        "scripts/h-candidates.ts": {
+          "lfSha256": "cec88123bfdd195e26133b0fc95ffa7b67f4b25bbcc6fa68076c0f37b6cfe30b",
+          "executedRawSha256": "cec88123bfdd195e26133b0fc95ffa7b67f4b25bbcc6fa68076c0f37b6cfe30b"
+        },
+        "scripts/h-photo-offline.ts": {
+          "lfSha256": "d3177755672c74cb66187f38a1e26b9087fa5b57acfefaa9ba06d2576bf0de03",
+          "executedRawSha256": "d3177755672c74cb66187f38a1e26b9087fa5b57acfefaa9ba06d2576bf0de03"
+        },
+        "src/operations.ts": {
+          "lfSha256": "0f12d063661e5a1b8447ed725d9dd89dda59e305c0e474d652cd8134e002cfdc",
+          "executedRawSha256": "b5d243806a7d096617fa6a2998c56650beedd245ae2d2dfb3636760679970bdf"
+        },
+        "tests/operations.test.ts": {
+          "lfSha256": "dcbdb6ecf98f4b739d7fa749eb73a98e3eebd13f4fafca317742a9e828d61526",
+          "executedRawSha256": "304a7db257aa0ac33dced08a20840bdda2ea07aec97c9b77eab5677555d5f80d"
+        },
+        "src/evidence-registry.ts": {
+          "lfSha256": "1a20c32cd6f5ce2885b0a16cabb0276aefcec08ec16c6155127efe8a764df9c6",
+          "executedRawSha256": "3767a6eeeba7dd2cb8a68b5834ff6763e2ddb2fbb9e67ca7497c2342a9df29d6"
+        },
+        "src/photos.ts": {
+          "lfSha256": "121141f5516132a583628b6bbd78954a564a23a5e322875079c2bd1063161963",
+          "executedRawSha256": "4e7fec65cf57cdc19ebf7bab30e5d7a0a64f025faef13be15cc9c515c729d9cd"
+        },
+        "src/session.ts": {
+          "lfSha256": "e894e4db3d11127ba24c0e53b5f058b64e2942bdb1a7df4a895b6deaf3c428b0",
+          "executedRawSha256": "be33b33f95495f0df13b79320a125e809243721febce4a7004007acba4186726"
+        }
+      },
+      "scope": "Exact current H files and inherited main operations/J registry/photo files; only H assessment/test/helpers differ from latest main."
+    }
+  },
+  "earlierIntegratedMain": {
     "mainSHA": "aef5ceee296b86febdc8c8da7a647a715d47c4f0",
     "mergedByTeam": [
       "PR33",
@@ -532,5 +602,11 @@
       },
       "scope": "Exact current H files and inherited main operations/J registry/photo files; only H assessment/test/helpers differ from latest main."
     }
+  },
+  "archiveCrossComparison": {
+    "HPhotosCompared": 10,
+    "archiveRowsCompared": 700,
+    "exactMatches": [],
+    "scope": "Exact original/rendition SHA only; PNG reencoding/resize and visual/semantic matches not cleared. Does not grant source rights, model consent or candidate acceptance."
   }
 }

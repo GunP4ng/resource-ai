@@ -795,5 +795,5 @@
     "sourceGroupClearance": null,
     "reason": "No O photo bytes; no same photo match can be asserted. Similar PET/HDPE/PP scenarios are conceptual overlap, not evidence of same site/lot. J/lead must reconcile all30."
   },
-  "runtimeSourceBase": "aef5ceee296b86febdc8c8da7a647a715d47c4f0 + this H2 source"
+  "runtimeSourceBase": "ae6456b7e6a23232314a2a47384c4de049f794c8 + this H2 source"
 }
