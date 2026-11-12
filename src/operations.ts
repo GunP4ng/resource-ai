@@ -70,6 +70,7 @@ export function createOperationalApp(options: {
   readonly actorForRequest?: AppDependencies["actorForRequest"];
   readonly localAuth?: AppDependencies["localAuth"];
   readonly runtime?: AppDependencies["runtime"];
+  readonly presentationMode?: AppDependencies["presentationMode"];
   readonly clock?: OperationalClock;
   readonly caseStore?: OCaseStore;
   readonly photoPolicy?: AppDependencies["photoPolicy"];
@@ -80,6 +81,10 @@ export function createOperationalApp(options: {
   const photoExecution = enabled ? options.operations?.photoExecution : undefined;
   const caseStore = options.caseStore ?? createCaseStore(Date.now, photoExecution);
   const actor = () => caseStore.currentActor();
+  const callbacks = new Set<Promise<unknown>>();
+  const track = <T>(pending: Promise<T>): Promise<T> => {
+    callbacks.add(pending); void pending.then(() => callbacks.delete(pending), () => callbacks.delete(pending)); return pending;
+  };
   const binding: OperationalRunnerOptions["photos"] = options.photoStore ? {
     resolve: (request, signal, ticket) => {
       if (!caseStore.canResolve(actor(), request.caseId, request.photoRef, request.caseRevision)) throw new SessionFailure("provider");
@@ -90,7 +95,11 @@ export function createOperationalApp(options: {
       return options.photoStore!.assertCanTransmit(actor(), input, signal, expected, ticket);
     },
   } : options.operations?.photos;
-  const runner = enabled ? createOperationalRunner({ ...options.operations!, photos: binding,
+  const operational = options.operations;
+  const runner = operational?.enabled === true ? createOperationalRunner({ ...operational, photos: binding,
+    record: (event, signal) => track(operational.record(event, signal)),
+    authorizeDispatch: (request, signal) => track(operational.authorizeDispatch(request, signal)),
+    transport: (request, init) => track((operational.transport ?? fetch)(request, init)),
     photoTicket: () => caseStore.currentPhotoTicket() }, open) : options.runner;
   // Set once at fetch entry. Every later stage consumes this same absolute budget.
   const timeoutMs = options.timeoutMs ?? (enabled ? options.operations!.timeoutMs + 1500 : 10_000);
@@ -101,7 +110,7 @@ export function createOperationalApp(options: {
     photoPolicy: options.photoPolicy,
     committed: () => requestBudgets.getStore()?.commit(),
     actorForRequest: options.actorForRequest,
-    localAuth: options.localAuth, runtime: options.runtime,
+    localAuth: options.localAuth, runtime: options.runtime, presentationMode: options.presentationMode,
     checkRequest: () => requestBudgets.getStore()?.check(),
     resources: async (input, signal) => {
       requestBudgets.getStore()?.check();
@@ -142,9 +151,9 @@ export function createOperationalApp(options: {
           { status: failure?.code === "timeout" ? 504 : failure?.code === "cancelled" ? 408 : 502, headers: { "cache-control": "no-store" } });
       } finally { budget.close(); active.delete(budget); }
     },
-    settled: app.settled,
+    async settled() { await app.settled(); while (callbacks.size) await Promise.allSettled([...callbacks]); },
     dispose() { disposed = true; for (const budget of active) budget.stop("cancelled"); app.dispose(); },
-    async close() { await app.close(); if (!options.caseStore) caseStore.dispose(); },
+    async close() { await app.close(); while (callbacks.size) await Promise.allSettled([...callbacks]); if (!options.caseStore) caseStore.dispose(); },
   };
 }
 export interface DispatchRequest {

@@ -79,6 +79,27 @@ describe("local operator authentication with real Argon2 and private SQLite", ()
     two.identity.assertCurrent();
   });
 
+  test("wall clock rollback across in-process reopen preserves native login and current identity", async () => {
+    const { root, db } = await fixture();
+    const auth = createLocalAuth(db, { origin });
+    const actor = await auth.create("operator", password);
+    const first = await auth.login("operator", password, signal());
+    db.close();
+    const wall = spyOn(Date, "now").mockReturnValue(Date.now() - 2000);
+    try {
+      const reopened = await openRuntimeDatabase(root); connections.push(reopened);
+      const restarted = createLocalAuth(reopened, { origin });
+      const current = restarted.resolve(request(first.setCookie), signal());
+      const logged = await restarted.login("operator", password, signal());
+      expect(current?.actorId).toBe(actor.actorId);
+      expect(logged.identity.actorId).toBe(actor.actorId);
+      expect(logged.identity.validUntil).toBeGreaterThan(first.identity.validUntil);
+      expect(restarted.resolve(request(logged.setCookie), signal())?.actorId).toBe(actor.actorId);
+      logged.identity.assertCurrent();
+      expect(restarted.resolve(request(first.setCookie), signal())).toBeNull();
+    } finally { wall.mockRestore(); }
+  });
+
   test("fixed expiry, reset revocation, disabled reset stays disabled, duplicate create does not replace actor", async () => {
     const { auth, db, advance } = await fixture();
     const actor = await auth.create("operator", password);
@@ -98,6 +119,16 @@ describe("local operator authentication with real Argon2 and private SQLite", ()
     await expect(auth.login("operator", password, signal())).rejects.toMatchObject({ code: "denied" });
     await expect(auth.create("operator", password)).rejects.toMatchObject({ code: "denied" });
     expect(db.database.query<{ actor_id: string; disabled: number }, []>("SELECT actor_id,disabled FROM accounts").get()).toEqual({ actor_id: actor.actorId, disabled: 1 });
+  });
+
+  test("future persisted attempt windows and not-yet-valid sessions still fail closed", async () => {
+    const { auth, db, advance } = await fixture();
+    await auth.create("operator", password);
+    const logged = await auth.login("operator", password, signal());
+    advance(-1);
+    expect(auth.resolve(request(logged.setCookie), signal())).toBeNull();
+    await expect(auth.login("operator", password, signal())).rejects.toMatchObject({ code: "unavailable" });
+    expect(db.database.query<{ attempts: number }, []>("SELECT attempts FROM login_limits WHERE key='global'").get()?.attempts).toBe(1);
   });
 
   test("persisted known/unknown attempt limits survive restart and expire", async () => {

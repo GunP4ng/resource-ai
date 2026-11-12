@@ -1,0 +1,12 @@
+{
+  "caseId": "OYS-20261110-002",
+  "description": "SYNTHETIC — newly authored text-only fictional scenario: Clean single-resin HDPE. No field records, photos or external evidence supplied. massKg=18 is a fictional scenario parameter, not a measured value. No legal eligibility, price or emissions factor is asserted.",
+  "photoRefs": [],
+  "process": "Fictional HDPE bottle blow-moulding startup produces separately collected parison offcuts.",
+  "polymer": "HDPE",
+  "contamination": "No contamination is stipulated in this fictional scenario.",
+  "hazardousContact": "no",
+  "massKg": 18,
+  "region": "충청북도",
+  "assessmentDate": "2026-11-10"
+}

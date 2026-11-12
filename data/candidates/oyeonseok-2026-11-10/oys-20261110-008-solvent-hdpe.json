@@ -1,0 +1,12 @@
+{
+  "caseId": "OYS-20261110-008",
+  "description": "SYNTHETIC — newly authored text-only fictional scenario: Hazardous contact scenario. No field records, photos or external evidence supplied. Mass is unknown. No legal eligibility, price or emissions factor is asserted.",
+  "photoRefs": [],
+  "process": "Fictional HDPE dispensing-container rejects arise from an in-plant solvent transfer process. Contact with a hazardous solvent is a scenario assumption; solvent identity and analysis are absent.",
+  "polymer": "HDPE",
+  "contamination": "Solvent residue is stipulated; identity and residual quantity are unknown.",
+  "hazardousContact": "yes",
+  "massKg": null,
+  "region": "인천광역시",
+  "assessmentDate": "2026-11-10"
+}

@@ -1,0 +1,12 @@
+{
+  "caseId": "OYS-20261110-005",
+  "description": "SYNTHETIC — newly authored text-only fictional scenario: Mixed and multilayer resins. No field records, photos or external evidence supplied. Mass is unknown. No legal eligibility, price or emissions factor is asserted.",
+  "photoRefs": [],
+  "process": "Fictional pouch conversion produces laminated PET and PE offcuts; layer proportions and adhesive composition are unknown.",
+  "polymer": "PET/PE multilayer",
+  "contamination": "Laminating adhesive is stipulated; its composition is unknown.",
+  "hazardousContact": "unknown",
+  "massKg": null,
+  "region": "충청남도",
+  "assessmentDate": "2026-11-10"
+}
