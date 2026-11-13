@@ -1,0 +1,1939 @@
+{
+  "schemaVersion": 1,
+  "poolId": "h-zip-screening-20261113",
+  "createdOn": "2026-11-13",
+  "owner": "hyeobikong",
+  "kind": "proposed-photo-screening-pool",
+  "purpose": "H 폐플라스틱 의사결정 지원을 위한30장 검토 후보. 팀 인수30건·독립 사람 라벨·현장 검증 또는 최종10장이 아님.",
+  "baseCommit": "ceb9e48b6db3e1a16b1eb69a65a35da8482b0dc4",
+  "reviewScope": {
+    "archives": 7,
+    "imagesScreened": 700,
+    "contactSheets": 35,
+    "largerOriginalsReviewed": 59,
+    "selectedPublishedImagesReviewedByLead": 30,
+    "omittedImages": 0,
+    "method": "All700 visually screened as20-image sheets by seven named readers;59 originals viewed larger; parent validated exact member/SHA/source mapping and directly viewed all30 publication previews.",
+    "limit": "Not exhaustive original-resolution forensic/privacy clearance or chemical/material ground truth."
+  },
+  "distribution": {
+    "01-plastic": 13,
+    "02-metal": 3,
+    "03-wood": 2,
+    "04-packaging": 7,
+    "05-sludge": 2,
+    "06-rubber": 2,
+    "07-construction": 1
+  },
+  "selectionRules": [
+    "앱의 폐플라스틱 범위 및 누락 정보·질문/보류 검증에 대한 구체적 가치",
+    "형태·수거/분리 상태·부착물의 시각적 다양성과 명료성",
+    "반복 구도·유사 역할은 줄이며 비대상/혼합 사례는 명시적 대비 역할로 구분",
+    "원문 주장과 실제 보이는 관찰, 미상 사실과 사용조건을 분리"
+  ],
+  "rightsSummary": {
+    "reusePermissionVerified": 0,
+    "reusePermissionUnknown": 30,
+    "captureAuthenticityVerified": 0,
+    "captureAuthenticityUnknown": 30,
+    "operatorRequestedScope": "Collection owner requested selection and private GitHub branch review of this30-image pool. This instruction is not a photographer copyright license or field approval.",
+    "repositoryMaintainerAcceptance": null,
+    "modelExecutionEvidence": null,
+    "independentHumanLabels": null,
+    "evaluationSplit": null
+  },
+  "entries": [
+    {
+      "rank": 1,
+      "id": "plastic_003",
+      "archive": {
+        "fileName": "01_plastic_100.zip",
+        "member": "폐플라스틱/plastic_003.jpg",
+        "sha256": "b247b22390be695b94c07a04fd606270ceea1511c0224a612483f7edffdb3b41"
+      },
+      "photo": {
+        "id": "plastic_003",
+        "path": "photos/plastic_003.png",
+        "sha256": "9911c32d981bd86902cd8cd37be97976a0e50cfc44eb8832b5642d8136827f52",
+        "bytes": 578563,
+        "width": 1200,
+        "height": 480,
+        "mimeType": "image/png",
+        "sourceSha256": "b247b22390be695b94c07a04fd606270ceea1511c0224a612483f7edffdb3b41",
+        "sourceArchive": "01_plastic_100.zip",
+        "sourceMember": "폐플라스틱/plastic_003.jpg",
+        "changes": "Whole frame resized to fit1200x900 without cropping; decoded and re-encoded with existing H sanitizer to remove metadata. Visible marks/watermarks retained."
+      },
+      "role": "production scrap: segregation and grade confirmation",
+      "selectionReason": "흰색·검은색 성형품과 가지형 조각이 함께 있어 수지·등급 및 색상별 분리 여부를 묻기 좋다.",
+      "visibleObservations": [
+        "Blue totes contain white branching runners, white molded pieces and some black pieces."
+      ],
+      "source": {
+        "title": "Injection Molding Scrap Collection",
+        "pageUrl": "https://shibaura-machine.com/articles/im-2022-01-12-looking-to-reduce-scrap-why-all-electric-injection-molding-machines-are-the-clear-choice/",
+        "imageUrl": "https://shibaura-machine.com/media/pe2fbyio/reduce-scrap.jpg",
+        "imageUrlOmissionReason": null,
+        "claims": "Injection Molding Scrap Collection",
+        "claimLimit": "Source statements and titles are not verified chemistry, hazard, contamination absence, site/lot provenance, mass, legal route or human ground truth.",
+        "publisherAttribution": "Primary publisher attributed by CSV URL; individual photographer and image-specific copyright holder unknown.",
+        "rightsObservation": "No image reuse license established in extracted primary text and inspected HTML matches.",
+        "rightsEvidence": "Manufacturer article discusses reducing injection-molding scrap and compares machine technologies; this does not certify the pictured batch.",
+        "licenseUrl": null,
+        "accessObservation": "functions.webfetch text HTTP 200; HTML inspection HTTP 200. web.run returned no visible payload in this child; no web.run evidence is asserted.",
+        "reusePermission": "unknown",
+        "captureAuthenticity": "unknown"
+      },
+      "privacyObservation": {
+        "observations": "No obvious face in inspected view; signage, labels or background identifiers may remain",
+        "limits": "Larger image displayed, sometimes scaled by reader. This is not exhaustive full-resolution privacy clearance; no OCR or consent verification."
+      },
+      "missingFacts": [
+        "Ask whether colors and grades are segregated before any return-to-process advice.",
+        "Verified resin/grade and composition, additives or composite layers",
+        "Production origin, previous contents/contact and residue characterization",
+        "Batch amount/frequency, holder location and receiver acceptance/contact details"
+      ],
+      "duplicateGrouping": {
+        "visual_group": "production collection",
+        "source_host": "shibaura-machine.com",
+        "rationale": "Chosen for mixed white/black molded forms in bounded production totes; complements uniform black runners.",
+        "uncertainty": "No source host/page or visual cohort is treated as a verified site/lot. Exact CSV SHA values are distinct; resize/semantic near-duplicates remain possible."
+      },
+      "humanLabels": null,
+      "fieldAcceptance": null
+    },
+    {
+      "rank": 2,
+      "id": "plastic_020",
+      "archive": {
+        "fileName": "01_plastic_100.zip",
+        "member": "폐플라스틱/plastic_020.jpg",
+        "sha256": "bcdc3845b9d76312fdf7aab4fae40a894effd2aebc816138a57506ec6832b93b"
+      },
+      "photo": {
+        "id": "plastic_020",
+        "path": "photos/plastic_020.png",
+        "sha256": "e484ac071082c411eaaf969ddb15d8a6b92cb23a58bf16067bfe22f34fb4cef6",
+        "bytes": 1277020,
+        "width": 1200,
+        "height": 600,
+        "mimeType": "image/png",
+        "sourceSha256": "bcdc3845b9d76312fdf7aab4fae40a894effd2aebc816138a57506ec6832b93b",
+        "sourceArchive": "01_plastic_100.zip",
+        "sourceMember": "폐플라스틱/plastic_020.jpg",
+        "changes": "Whole frame resized to fit1200x900 without cropping; decoded and re-encoded with existing H sanitizer to remove metadata. Visible marks/watermarks retained."
+      },
+      "role": "production runners: conditional return to process",
+      "selectionReason": "반복되는 검은 가지형 조각과 포집 공정이 보여 공정 내 재투입 조건·시험자료 질문을 구성할 수 있다.",
+      "visibleObservations": [
+        "Repeated black branching frames stand on a conveyor and collect below it."
+      ],
+      "source": {
+        "title": "In-Process Recycling of TPE Sprues",
+        "pageUrl": "https://www.kraiburg-tpe.com/en/tpe-basics-process-recycling",
+        "imageUrl": "https://www.kraiburg-tpe.com/sites/default/files/styles/open_graph/public/uploads/bilder/news/2022-11/inprocess-recyclingcorporatebloggrafik.jpg?itok=2IZ_bwuJ",
+        "imageUrlOmissionReason": null,
+        "claims": "In-Process Recycling of TPE Sprues",
+        "claimLimit": "Source statements and titles are not verified chemistry, hazard, contamination absence, site/lot provenance, mass, legal route or human ground truth.",
+        "publisherAttribution": "Primary publisher attributed by CSV URL; individual photographer and image-specific copyright holder unknown.",
+        "rightsObservation": "No image reuse license established in extracted primary text and inspected HTML matches.",
+        "rightsEvidence": "Manufacturer discusses in-process TPE recycling with testing and risk assessment requirements. Its example is not a universal recycled-content rule.",
+        "licenseUrl": null,
+        "accessObservation": "functions.webfetch text HTTP 200; HTML inspection HTTP 200. web.run returned no visible payload in this child; no web.run evidence is asserted.",
+        "reusePermission": "unknown",
+        "captureAuthenticity": "unknown"
+      },
+      "privacyObservation": {
+        "observations": "No obvious face in inspected view; signage, labels or background identifiers may remain",
+        "limits": "Larger image displayed, sometimes scaled by reader. This is not exhaustive full-resolution privacy clearance; no OCR or consent verification."
+      },
+      "missingFacts": [
+        "Useful runner capture case; require material specification and tested regrind limits before routing.",
+        "Verified resin/grade and composition, additives or composite layers",
+        "Production origin, previous contents/contact and residue characterization",
+        "Batch amount/frequency, holder location and receiver acceptance/contact details"
+      ],
+      "duplicateGrouping": {
+        "visual_group": "runners and fragments",
+        "source_host": "www.kraiburg-tpe.com",
+        "rationale": "Uniform repeated runner geometry and conveyor context differs from mixed totes.",
+        "uncertainty": "No source host/page or visual cohort is treated as a verified site/lot. Exact CSV SHA values are distinct; resize/semantic near-duplicates remain possible."
+      },
+      "humanLabels": null,
+      "fieldAcceptance": null
+    },
+    {
+      "rank": 3,
+      "id": "plastic_097",
+      "archive": {
+        "fileName": "01_plastic_100.zip",
+        "member": "폐플라스틱/plastic_097.png",
+        "sha256": "0fe72de3493c9ede3abedadce483d8e1d233a77654f62dea77bd26db9b048677"
+      },
+      "photo": {
+        "id": "plastic_097",
+        "path": "photos/plastic_097.png",
+        "sha256": "c1fcabecd77794e0dbd3028c9e7aa8dc62f3f63fe85d3ad70f5ea7ad4ba57524",
+        "bytes": 1674543,
+        "width": 881,
+        "height": 900,
+        "mimeType": "image/png",
+        "sourceSha256": "0fe72de3493c9ede3abedadce483d8e1d233a77654f62dea77bd26db9b048677",
+        "sourceArchive": "01_plastic_100.zip",
+        "sourceMember": "폐플라스틱/plastic_097.png",
+        "changes": "Whole frame resized to fit1200x900 without cropping; decoded and re-encoded with existing H sanitizer to remove metadata. Visible marks/watermarks retained."
+      },
+      "role": "source-separated collection: verify bin identities",
+      "selectionReason": "여러 상자·봉투로 나눈 수거 상태가 보여 상자 라벨과 실제 배치·수지 일치 여부를 확인하기 좋다.",
+      "visibleObservations": [
+        "Many open cardboard bins contain separately bagged pale, blue and purple fragments plus black frames."
+      ],
+      "source": {
+        "title": "Plastic Scrap Storage in Recycling Facility",
+        "pageUrl": "https://valleyplasticsrecycling.com/services",
+        "imageUrl": "https://valleyplasticsrecycling.com/images/servicios-scrap.png",
+        "imageUrlOmissionReason": null,
+        "claims": "Plastic Scrap Storage in Recycling Facility",
+        "claimLimit": "Source statements and titles are not verified chemistry, hazard, contamination absence, site/lot provenance, mass, legal route or human ground truth.",
+        "publisherAttribution": "Primary publisher attributed by CSV URL; individual photographer and image-specific copyright holder unknown.",
+        "rightsObservation": "Page HTML says copyright 2021 and all rights reserved; no photo reuse grant established.",
+        "rightsEvidence": "Recycler describes collection of industrial scrap, toll grinding and laboratory testing, including material identification. No pictured-bin grade is certified.",
+        "licenseUrl": null,
+        "accessObservation": "functions.webfetch text HTTP 200; HTML inspection HTTP 200. web.run returned no visible payload in this child; no web.run evidence is asserted.",
+        "reusePermission": "unknown",
+        "captureAuthenticity": "unknown"
+      },
+      "privacyObservation": {
+        "observations": "Labels and business markings visible; no obvious person in inspected view",
+        "limits": "Larger image displayed, sometimes scaled by reader. This is not exhaustive full-resolution privacy clearance; no OCR or consent verification."
+      },
+      "missingFacts": [
+        "Strong collection and segregation case; ask what each bin label actually certifies.",
+        "Verified resin/grade and composition, additives or composite layers",
+        "Production origin, previous contents/contact and residue characterization",
+        "Batch amount/frequency, holder location and receiver acceptance/contact details"
+      ],
+      "duplicateGrouping": {
+        "visual_group": "collection organization",
+        "source_host": "valleyplasticsrecycling.com",
+        "rationale": "Multiple separately bagged bins permit a bin-identity question, rather than assuming a single mixed lot.",
+        "uncertainty": "No source host/page or visual cohort is treated as a verified site/lot. Exact CSV SHA values are distinct; resize/semantic near-duplicates remain possible."
+      },
+      "humanLabels": null,
+      "fieldAcceptance": null
+    },
+    {
+      "rank": 4,
+      "id": "plastic_039",
+      "archive": {
+        "fileName": "01_plastic_100.zip",
+        "member": "폐플라스틱/plastic_039.jpg",
+        "sha256": "c694ffe65d36882bc80bfea66405ca448e0ec294788fe031652e415d87daf688"
+      },
+      "photo": {
+        "id": "plastic_039",
+        "path": "photos/plastic_039.png",
+        "sha256": "bd8d7571bef53d40a4df85b5b471ab10c7d7f231a16d99b732098c4a45abd434",
+        "bytes": 1558104,
+        "width": 1200,
+        "height": 900,
+        "mimeType": "image/png",
+        "sourceSha256": "c694ffe65d36882bc80bfea66405ca448e0ec294788fe031652e415d87daf688",
+        "sourceArchive": "01_plastic_100.zip",
+        "sourceMember": "폐플라스틱/plastic_039.jpg",
+        "changes": "Whole frame resized to fit1200x900 without cropping; decoded and re-encoded with existing H sanitizer to remove metadata. Visible marks/watermarks retained."
+      },
+      "role": "startup or purge masses: hold for history",
+      "selectionReason": "주름과 가는 끈이 있는 회색 덩어리는 퍼지·시동 이력 질문에 적합하며 열이력과 조성은 사진으로 확정하지 않는다.",
+      "visibleObservations": [
+        "Gray block-like masses have rippled tops, raised necks and thin strands on pallets."
+      ],
+      "source": {
+        "title": "Post-Industrial Plastic Clumps",
+        "pageUrl": "https://vecoplan.com/de/material/kunststoffe-post-industrial/anfahrbrocken-und-klumpen",
+        "imageUrl": "https://vecoplan.com/sites/default/files/styles/original/public/2021-05/material-postindustrial-startuplumpsclumps-009.jpg?itok=ocVg2MQY",
+        "imageUrlOmissionReason": null,
+        "claims": "Post-Industrial Plastic Clumps",
+        "claimLimit": "Source statements and titles are not verified chemistry, hazard, contamination absence, site/lot provenance, mass, legal route or human ground truth.",
+        "publisherAttribution": "Primary publisher attributed by CSV URL; individual photographer and image-specific copyright holder unknown.",
+        "rightsObservation": "No image reuse license established in extracted primary text and inspected HTML matches.",
+        "rightsEvidence": "Sparse extracted primary text identifies startup lumps/clumps and contact information; detailed batch claims could not be established.",
+        "licenseUrl": null,
+        "accessObservation": "functions.webfetch text HTTP 200; HTML inspection HTTP 200. web.run returned no visible payload in this child; no web.run evidence is asserted.",
+        "reusePermission": "unknown",
+        "captureAuthenticity": "unknown"
+      },
+      "privacyObservation": {
+        "observations": "No obvious face in inspected view; signage, labels or background identifiers may remain",
+        "limits": "Larger image displayed, sometimes scaled by reader. This is not exhaustive full-resolution privacy clearance; no OCR or consent verification."
+      },
+      "missingFacts": [
+        "Strong startup or purge discussion case; hold until batch history and composition are known.",
+        "Verified resin/grade and composition, additives or composite layers",
+        "Production origin, previous contents/contact and residue characterization",
+        "Batch amount/frequency, holder location and receiver acceptance/contact details"
+      ],
+      "duplicateGrouping": {
+        "visual_group": "purge-like masses",
+        "source_host": "vecoplan.com",
+        "rationale": "Blocky rippled masses add startup/purge morphology absent from flakes and profiles.",
+        "uncertainty": "No source host/page or visual cohort is treated as a verified site/lot. Exact CSV SHA values are distinct; resize/semantic near-duplicates remain possible."
+      },
+      "humanLabels": null,
+      "fieldAcceptance": null
+    },
+    {
+      "rank": 5,
+      "id": "plastic_025",
+      "archive": {
+        "fileName": "01_plastic_100.zip",
+        "member": "폐플라스틱/plastic_025.jpg",
+        "sha256": "cb694b099969301ff9121c829ced02ce1b69ec996265ae7a9ca80711afe2cc2a"
+      },
+      "photo": {
+        "id": "plastic_025",
+        "path": "photos/plastic_025.png",
+        "sha256": "a2e036f446187947796dc113fc5a363f55460d1ad974b08aa4dfbdf296040531",
+        "bytes": 1733863,
+        "width": 1200,
+        "height": 900,
+        "mimeType": "image/png",
+        "sourceSha256": "cb694b099969301ff9121c829ced02ce1b69ec996265ae7a9ca80711afe2cc2a",
+        "sourceArchive": "01_plastic_100.zip",
+        "sourceMember": "폐플라스틱/plastic_025.jpg",
+        "changes": "Whole frame resized to fit1200x900 without cropping; decoded and re-encoded with existing H sanitizer to remove metadata. Visible marks/watermarks retained."
+      },
+      "role": "profile offcuts: films and seals separation",
+      "selectionReason": "보호필름·인쇄·검은 띠가 붙은 프로파일 조각으로 기재와 부착물 분리 질문을 만든다.",
+      "visibleObservations": [
+        "White profile cuttings with protective printed film sit in a woven sack."
+      ],
+      "source": {
+        "title": "Schüco PVC Frame Offcuts",
+        "pageUrl": "https://www.evmh.be/products.html",
+        "imageUrl": "https://www.evmh.be/img/products/a_pvc_ind_offcuts.jpg",
+        "imageUrlOmissionReason": null,
+        "claims": "Schüco PVC Frame Offcuts",
+        "claimLimit": "Source statements and titles are not verified chemistry, hazard, contamination absence, site/lot provenance, mass, legal route or human ground truth.",
+        "publisherAttribution": "Primary publisher attributed by CSV URL; individual photographer and image-specific copyright holder unknown.",
+        "rightsObservation": "HTML copyright metadata names evmh srl; no photo reuse grant established.",
+        "rightsEvidence": "Supplier page lists many polymer classes and examples of recycled/traded materials. This does not establish the chemistry of photographed profiles.",
+        "licenseUrl": null,
+        "accessObservation": "functions.webfetch text HTTP 200; HTML inspection HTTP 200. web.run returned no visible payload in this child; no web.run evidence is asserted.",
+        "reusePermission": "unknown",
+        "captureAuthenticity": "unknown"
+      },
+      "privacyObservation": {
+        "observations": "No obvious face in inspected view; signage, labels or background identifiers may remain",
+        "limits": "Larger image displayed, sometimes scaled by reader. This is not exhaustive full-resolution privacy clearance; no OCR or consent verification."
+      },
+      "missingFacts": [
+        "Film and printed branding create a useful separation question before profile recycling.",
+        "Verified resin/grade and composition, additives or composite layers",
+        "Production origin, previous contents/contact and residue characterization",
+        "Batch amount/frequency, holder location and receiver acceptance/contact details"
+      ],
+      "duplicateGrouping": {
+        "visual_group": "profiles and offcuts",
+        "source_host": "www.evmh.be",
+        "rationale": "Profiles expose printed films and black seals, a preparation issue absent from bare runners.",
+        "uncertainty": "No source host/page or visual cohort is treated as a verified site/lot. Exact CSV SHA values are distinct; resize/semantic near-duplicates remain possible."
+      },
+      "humanLabels": null,
+      "fieldAcceptance": null
+    },
+    {
+      "rank": 6,
+      "id": "plastic_041",
+      "archive": {
+        "fileName": "01_plastic_100.zip",
+        "member": "폐플라스틱/plastic_041.jpg",
+        "sha256": "5e53b6566fae6e34dcb7d9da67bd3e443b708e99d3d38d5491284cdb0f2a87d6"
+      },
+      "photo": {
+        "id": "plastic_041",
+        "path": "photos/plastic_041.png",
+        "sha256": "6d0b5f13fe54768bee699fd672631fed532d4b99230c60d95cf99a49e536d4a3",
+        "bytes": 2044297,
+        "width": 1199,
+        "height": 900,
+        "mimeType": "image/png",
+        "sourceSha256": "5e53b6566fae6e34dcb7d9da67bd3e443b708e99d3d38d5491284cdb0f2a87d6",
+        "sourceArchive": "01_plastic_100.zip",
+        "sourceMember": "폐플라스틱/plastic_041.jpg",
+        "changes": "Whole frame resized to fit1200x900 without cropping; decoded and re-encoded with existing H sanitizer to remove metadata. Visible marks/watermarks retained."
+      },
+      "role": "pipe offcuts: hold for service and residue facts",
+      "selectionReason": "여러 색·직경의 절단 파이프와 표면 흔적이 있어 이전 용도·잔류물·부착물·표기 확인을 요구한다.",
+      "visibleObservations": [
+        "Overlapping white, gray and orange pipe pieces show broken edges and surface dirt-like marks."
+      ],
+      "source": {
+        "title": "PVC Pipe Off‑Cuts Pile",
+        "pageUrl": "https://constructionplasticsrecyclingscheme.com.au/locations",
+        "imageUrl": "https://images.squarespace-cdn.com/content/v1/64508ef04c074f6f4df9e774/833427d7-8a7b-4a7d-a045-0186daceec3d/50109900PI05.jpg",
+        "imageUrlOmissionReason": null,
+        "claims": "PVC Pipe Off‑Cuts Pile",
+        "claimLimit": "Source statements and titles are not verified chemistry, hazard, contamination absence, site/lot provenance, mass, legal route or human ground truth.",
+        "publisherAttribution": "Primary publisher attributed by CSV URL; individual photographer and image-specific copyright holder unknown.",
+        "rightsObservation": "No image reuse license established in extracted primary text and inspected HTML matches.",
+        "rightsEvidence": "Scheme describes collection of PVC offcuts and fittings at partner locations; this does not establish photo geography or applicability to this user.",
+        "licenseUrl": null,
+        "accessObservation": "functions.webfetch text HTTP 200; HTML inspection HTTP 200. web.run returned no visible payload in this child; no web.run evidence is asserted.",
+        "reusePermission": "unknown",
+        "captureAuthenticity": "unknown"
+      },
+      "privacyObservation": {
+        "observations": "No obvious face in inspected view; signage, labels or background identifiers may remain",
+        "limits": "Larger image displayed, sometimes scaled by reader. This is not exhaustive full-resolution privacy clearance; no OCR or consent verification."
+      },
+      "missingFacts": [
+        "Strong conditional route case; ask resin markings, prior service, attachments and residue characterization.",
+        "Verified resin/grade and composition, additives or composite layers",
+        "Production origin, previous contents/contact and residue characterization",
+        "Batch amount/frequency, holder location and receiver acceptance/contact details"
+      ],
+      "duplicateGrouping": {
+        "visual_group": "pipes",
+        "source_host": "constructionplasticsrecyclingscheme.com.au",
+        "rationale": "Pipe service history and visible surface marks make a distinct hold case.",
+        "uncertainty": "No source host/page or visual cohort is treated as a verified site/lot. Exact CSV SHA values are distinct; resize/semantic near-duplicates remain possible."
+      },
+      "humanLabels": null,
+      "fieldAcceptance": null
+    },
+    {
+      "rank": 7,
+      "id": "plastic_085",
+      "archive": {
+        "fileName": "01_plastic_100.zip",
+        "member": "폐플라스틱/plastic_085.jpg",
+        "sha256": "b2fc66ba831d0f10ba231088b8e79cf9f2fc0367463ab7d1b258d83eb8f4f9fd"
+      },
+      "photo": {
+        "id": "plastic_085",
+        "path": "photos/plastic_085.png",
+        "sha256": "07bb27276b357b1777ba5cfb08d713dbf7b6f2ae6e49fa7a1033636df68549f7",
+        "bytes": 1764137,
+        "width": 1200,
+        "height": 800,
+        "mimeType": "image/png",
+        "sourceSha256": "b2fc66ba831d0f10ba231088b8e79cf9f2fc0367463ab7d1b258d83eb8f4f9fd",
+        "sourceArchive": "01_plastic_100.zip",
+        "sourceMember": "폐플라스틱/plastic_085.jpg",
+        "changes": "Whole frame resized to fit1200x900 without cropping; decoded and re-encoded with existing H sanitizer to remove metadata. Visible marks/watermarks retained."
+      },
+      "role": "sheet offcuts: separate substrates and coatings",
+      "selectionReason": "다양한 색과 표면의 판재 자투리를 보며 기재·코팅·보호필름 및 재사용 가능한 치수 구분을 묻는다.",
+      "visibleObservations": [
+        "Large open sacks contain many colored rectangular sheet offcuts in a workshop."
+      ],
+      "source": {
+        "title": "Upcycled Acrylic Scrap Storage",
+        "pageUrl": "https://www.eco-tsuku.net/column/post9995/",
+        "imageUrl": "https://www.eco-tsuku.net/upload/save_image/hazai_03-1350x900.jpg",
+        "imageUrlOmissionReason": null,
+        "claims": "Upcycled Acrylic Scrap Storage",
+        "claimLimit": "Source statements and titles are not verified chemistry, hazard, contamination absence, site/lot provenance, mass, legal route or human ground truth.",
+        "publisherAttribution": "Primary publisher attributed by CSV URL; individual photographer and image-specific copyright holder unknown.",
+        "rightsObservation": "No image reuse license established in extracted primary text and inspected HTML matches.",
+        "rightsEvidence": "Japanese article describes keeping acrylic workshop offcuts for cutting into new goods and notes material-dependent applicability. Exact photographed resin grade remains unverified.",
+        "licenseUrl": null,
+        "accessObservation": "functions.webfetch text HTTP 200; HTML inspection HTTP 200. web.run returned no visible payload in this child; no web.run evidence is asserted.",
+        "reusePermission": "unknown",
+        "captureAuthenticity": "unknown"
+      },
+      "privacyObservation": {
+        "observations": "No obvious face in inspected view; signage, labels or background identifiers may remain",
+        "limits": "Larger image displayed, sometimes scaled by reader. This is not exhaustive full-resolution privacy clearance; no OCR or consent verification."
+      },
+      "missingFacts": [
+        "Source-separated appearance is promising but grade consistency remains a question.",
+        "Verified resin/grade and composition, additives or composite layers",
+        "Production origin, previous contents/contact and residue characterization",
+        "Batch amount/frequency, holder location and receiver acceptance/contact details"
+      ],
+      "duplicateGrouping": {
+        "visual_group": "sheet scraps",
+        "source_host": "www.eco-tsuku.net",
+        "rationale": "Colored sheet offcuts support possible direct reuse after specification checks.",
+        "uncertainty": "No source host/page or visual cohort is treated as a verified site/lot. Exact CSV SHA values are distinct; resize/semantic near-duplicates remain possible."
+      },
+      "humanLabels": null,
+      "fieldAcceptance": null
+    },
+    {
+      "rank": 8,
+      "id": "plastic_099",
+      "archive": {
+        "fileName": "01_plastic_100.zip",
+        "member": "폐플라스틱/plastic_099.jpg",
+        "sha256": "a886cdcf3355474fce00c228b03173c874a29ef0262e8b05d6cc6efab81ebdea"
+      },
+      "photo": {
+        "id": "plastic_099",
+        "path": "photos/plastic_099.png",
+        "sha256": "344b8e7917adf9da8e44ba53bbdce3bae2b450f8ad1b37da17803fb045b751c9",
+        "bytes": 1337081,
+        "width": 1200,
+        "height": 900,
+        "mimeType": "image/png",
+        "sourceSha256": "a886cdcf3355474fce00c228b03173c874a29ef0262e8b05d6cc6efab81ebdea",
+        "sourceArchive": "01_plastic_100.zip",
+        "sourceMember": "폐플라스틱/plastic_099.jpg",
+        "changes": "Whole frame resized to fit1200x900 without cropping; decoded and re-encoded with existing H sanitizer to remove metadata. Visible marks/watermarks retained."
+      },
+      "role": "flexible packaging and strapping: contact-history questions",
+      "selectionReason": "흰 봉투류와 녹색 띠가 다른 통에 담겨 있어 연질 포장재·밴드 분리와 이전 접촉 이력을 확인한다.",
+      "visibleObservations": [
+        "Two green-lined bins separate pale bag-like material from long green strapping-like strips."
+      ],
+      "source": {
+        "title": "Organized Waste Storage Bins",
+        "pageUrl": "https://www.simplot.com/company/news/creative-approach-in-argentina-addresses-waste-management-challenges",
+        "imageUrl": "https://sitecore-web-prod.simplot-cdn.com/-/media/project/global/corporate/simplot-corporate/page-images/news-article-images/2024---plastic-bags-and-strips-storage.jpg?hash=A1DC4EB944DEE487C28435E7E1512E95&rev=ae217f54326a45c499b39717c501ad03",
+        "imageUrlOmissionReason": null,
+        "claims": "Organized Waste Storage Bins",
+        "claimLimit": "Source statements and titles are not verified chemistry, hazard, contamination absence, site/lot provenance, mass, legal route or human ground truth.",
+        "publisherAttribution": "Primary publisher attributed by CSV URL; individual photographer and image-specific copyright holder unknown.",
+        "rightsObservation": "No image reuse license established in extracted primary text and inspected HTML matches.",
+        "rightsEvidence": "Corporate article describes plastic bags/strips and a separate oil-contaminated packaging stream with a vendor treatment example. These are source context, not contamination proven for these exact bins.",
+        "licenseUrl": null,
+        "accessObservation": "functions.webfetch text HTTP 200; HTML inspection HTTP 200. web.run returned no visible payload in this child; no web.run evidence is asserted.",
+        "reusePermission": "unknown",
+        "captureAuthenticity": "unknown"
+      },
+      "privacyObservation": {
+        "observations": "No obvious face in inspected view; signage, labels or background identifiers may remain",
+        "limits": "Larger image displayed, sometimes scaled by reader. This is not exhaustive full-resolution privacy clearance; no OCR or consent verification."
+      },
+      "missingFacts": [
+        "Strong flexible packaging question: ask resin, food or oil contact and local processor acceptance.",
+        "Verified resin/grade and composition, additives or composite layers",
+        "Production origin, previous contents/contact and residue characterization",
+        "Batch amount/frequency, holder location and receiver acceptance/contact details"
+      ],
+      "duplicateGrouping": {
+        "visual_group": "collection organization",
+        "source_host": "www.simplot.com",
+        "rationale": "Flexible bag/strapping-like material differs from the rigid scrap candidates.",
+        "uncertainty": "No source host/page or visual cohort is treated as a verified site/lot. Exact CSV SHA values are distinct; resize/semantic near-duplicates remain possible."
+      },
+      "humanLabels": null,
+      "fieldAcceptance": null
+    },
+    {
+      "rank": 9,
+      "id": "packaging_096",
+      "archive": {
+        "fileName": "04_packaging_100.zip",
+        "member": "폐포장재/packaging_096.jpg",
+        "sha256": "aebc7048e6ec594f45ca15e20a90eda5f170f638ed3d86e88a174d469a9ba67d"
+      },
+      "photo": {
+        "id": "packaging_096",
+        "path": "photos/packaging_096.png",
+        "sha256": "f119188b5f23c3ac1c111a2b477831a94d759397a9981d3abbd2acf5a0557b20",
+        "bytes": 2811937,
+        "width": 1200,
+        "height": 900,
+        "mimeType": "image/png",
+        "sourceSha256": "aebc7048e6ec594f45ca15e20a90eda5f170f638ed3d86e88a174d469a9ba67d",
+        "sourceArchive": "04_packaging_100.zip",
+        "sourceMember": "폐포장재/packaging_096.jpg",
+        "changes": "Whole frame resized to fit1200x900 without cropping; decoded and re-encoded with existing H sanitizer to remove metadata. Visible marks/watermarks retained."
+      },
+      "role": "printed mixed-film hold",
+      "selectionReason": "인쇄 포장과 투명 필름이 한 압축물에 섞여 있어 층·잉크·접착제·내용물 이력 미확인 보류를 다룬다.",
+      "visibleObservations": [
+        "Clear wrinkled film, colored printed pouches and labels are compressed together in tied bales against a gray wall."
+      ],
+      "source": {
+        "title": "Plastic Film Bales Ready for Recycling",
+        "pageUrl": "https://www.recovery-worldwide.com/en/news/pioneering-circularity-in-plastic-film-recycling-how-ab-plasta-and-tomra-are-setting-new-standards-in-the-baltics-4302867.html",
+        "imageUrl": "https://www.recovery-worldwide.com/imgs/2/2/9/5/6/4/5/Bild_1.jpeg.jpeg",
+        "imageUrlOmissionReason": null,
+        "claims": "Plastic Film Bales Ready for Recycling",
+        "claimLimit": "Source statements and titles are not verified chemistry, hazard, contamination absence, site/lot provenance, mass, legal route or human ground truth.",
+        "publisherAttribution": "TOMRA credited on article images; exact individual photographer unknown",
+        "rightsObservation": "unknown; credit is not a reuse grant",
+        "rightsEvidence": [
+          {
+            "receipt": "turn533067view4",
+            "lines": "25-47",
+            "observation": "Article dated 2025-10-28, image credits TOMRA, discussion of variable post-consumer flexible packaging streams. No image reuse grant observed."
+          }
+        ],
+        "licenseUrl": null,
+        "accessObservation": "Source publisher article read; image credits visible. Operator/vendor origin claims retained as claims.",
+        "reusePermission": "unknown",
+        "captureAuthenticity": "unknown"
+      },
+      "privacyObservation": {
+        "observations": [
+          "No prominent person discerned at this inspection scale; printed packaging and site details may still be present"
+        ],
+        "limits": "Thumbnail screening does not constitute full-resolution privacy clearance. Larger-image views are bounded, may be downscaled, and do not clear all labels, personal data, plates, faces, location clues or consent."
+      },
+      "missingFacts": [
+        "Resin/composition and any multilayer, liner, coating, ink or adhesive",
+        "Previous contents, food/chemical contact and contamination records/testing",
+        "Generating process, batch segregation, treatments and storage history",
+        "Quantity and manufacturer/operator context supplied as facts",
+        "Receiver acceptance and applicable route conditions from verified sources; hold until needed facts are available"
+      ],
+      "duplicateGrouping": {
+        "visual_group": "compressed or loose film/mixed packaging",
+        "source_host": "www.recovery-worldwide.com",
+        "rationale": "Prefer this clearer/distinct view over similar baled/piled scenes",
+        "uncertainty": "No source host/page or visual cohort is treated as a verified site/lot. Exact CSV SHA values are distinct; resize/semantic near-duplicates remain possible."
+      },
+      "humanLabels": null,
+      "fieldAcceptance": null
+    },
+    {
+      "rank": 10,
+      "id": "packaging_090",
+      "archive": {
+        "fileName": "04_packaging_100.zip",
+        "member": "폐포장재/packaging_090.jpg",
+        "sha256": "a5298b9c220ba0668b8b9c4b0130d609ac17a58b4f2e12ce7761dde784738d99"
+      },
+      "photo": {
+        "id": "packaging_090",
+        "path": "photos/packaging_090.png",
+        "sha256": "4ba0d0a18248e20855cd99c66d09eb43d9f79626c9f2ef3cd68d01974e74aa76",
+        "bytes": 1461375,
+        "width": 1200,
+        "height": 857,
+        "mimeType": "image/png",
+        "sourceSha256": "a5298b9c220ba0668b8b9c4b0130d609ac17a58b4f2e12ce7761dde784738d99",
+        "sourceArchive": "04_packaging_100.zip",
+        "sourceMember": "폐포장재/packaging_090.jpg",
+        "changes": "Whole frame resized to fit1200x900 without cropping; decoded and re-encoded with existing H sanitizer to remove metadata. Visible marks/watermarks retained."
+      },
+      "role": "foam-family and mixed-form hold",
+      "selectionReason": "흰 성형 완충재와 얇은 시트·끈이 함께 보여 발포체 계열과 부착물 확인을 요청한다.",
+      "visibleObservations": [
+        "A pile combines white molded inserts, thin flexible pale sheets and translucent straps/wrap inside a lined container."
+      ],
+      "source": {
+        "title": "EPE Foam Packaging Waste Accumulation",
+        "pageUrl": "https://www.intcorecycling.com/greenmax-foam-recycling-machine-epe-recycling-solution-for-electronics-manufacturers.html",
+        "imageUrl": "https://www.intcorecycling.com/pics/epe-waste-250212.jpg",
+        "imageUrlOmissionReason": null,
+        "claims": "EPE Foam Packaging Waste Accumulation",
+        "claimLimit": "Source statements and titles are not verified chemistry, hazard, contamination absence, site/lot provenance, mass, legal route or human ground truth.",
+        "publisherAttribution": "INTCO/GREENMAX publisher; individual image photographer unknown",
+        "rightsObservation": "All rights reserved footer; affirmative reuse permission unknown",
+        "rightsEvidence": [
+          {
+            "receipt": "turn456142view0",
+            "lines": "293-304,319",
+            "observation": "Manufacturer calls subject EPE electronics packaging and advertises compaction; footer reserves rights. This does not establish each pictured piece composition."
+          }
+        ],
+        "licenseUrl": null,
+        "accessObservation": "Primary manufacturer article read, including body and footer",
+        "reusePermission": "unknown",
+        "captureAuthenticity": "unknown"
+      },
+      "privacyObservation": {
+        "observations": [
+          "No prominent person discerned at this inspection scale; printed packaging and site details may still be present"
+        ],
+        "limits": "Thumbnail screening does not constitute full-resolution privacy clearance. Larger-image views are bounded, may be downscaled, and do not clear all labels, personal data, plates, faces, location clues or consent."
+      },
+      "missingFacts": [
+        "Resin/composition and any multilayer, liner, coating, ink or adhesive",
+        "Previous contents, food/chemical contact and contamination records/testing",
+        "Generating process, batch segregation, treatments and storage history",
+        "Quantity and manufacturer/operator context supplied as facts",
+        "Receiver acceptance and applicable route conditions from verified sources; hold until needed facts are available"
+      ],
+      "duplicateGrouping": {
+        "visual_group": "foam-like packaging",
+        "source_host": "www.intcorecycling.com",
+        "rationale": "Different foam-like forms from 021; valuable for EPS/EPE ambiguity, not confirmation",
+        "uncertainty": "No source host/page or visual cohort is treated as a verified site/lot. Exact CSV SHA values are distinct; resize/semantic near-duplicates remain possible."
+      },
+      "humanLabels": null,
+      "fieldAcceptance": null
+    },
+    {
+      "rank": 11,
+      "id": "plastic_015",
+      "archive": {
+        "fileName": "01_plastic_100.zip",
+        "member": "폐플라스틱/plastic_015.jpg",
+        "sha256": "a202945fcf1dba504ad15736cf835446a0d4959ffc6c1430275a6763ed9c6e3d"
+      },
+      "photo": {
+        "id": "plastic_015",
+        "path": "photos/plastic_015.png",
+        "sha256": "b9d990a0d1e0f7620e446c5e5d90652242fce2879e26921bfe51f1177d539dbf",
+        "bytes": 2184095,
+        "width": 1001,
+        "height": 900,
+        "mimeType": "image/png",
+        "sourceSha256": "a202945fcf1dba504ad15736cf835446a0d4959ffc6c1430275a6763ed9c6e3d",
+        "sourceArchive": "01_plastic_100.zip",
+        "sourceMember": "폐플라스틱/plastic_015.jpg",
+        "changes": "Whole frame resized to fit1200x900 without cropping; decoded and re-encoded with existing H sanitizer to remove metadata. Visible marks/watermarks retained."
+      },
+      "role": "drums: hold for prior contents and cleaning records",
+      "selectionReason": "라벨이 남은 파란 드럼은 이전 내용물·SDS·배출·세척 기록을 묻는 중요한 보류 사례다.",
+      "visibleObservations": [
+        "Rows of mostly blue drums with caps and many paper labels are stacked outdoors."
+      ],
+      "source": {
+        "title": "HDPE Blue Drums Inventory",
+        "pageUrl": "https://www.fukutomi.com/product-page/hdpe-blue-drums",
+        "imageUrl": "https://static.wixstatic.com/media/97f1fe_bb8f5d71663046d082f1aa70661e8574~mv2.jpg/v1/fill/w_694%2Ch_624%2Cal_c%2Cq_85%2Cenc_avif%2Cquality_auto/97f1fe_bb8f5d71663046d082f1aa70661e8574~mv2.jpg",
+        "imageUrlOmissionReason": null,
+        "claims": "HDPE Blue Drums Inventory",
+        "claimLimit": "Source statements and titles are not verified chemistry, hazard, contamination absence, site/lot provenance, mass, legal route or human ground truth.",
+        "publisherAttribution": "Primary publisher attributed by CSV URL; individual photographer and image-specific copyright holder unknown.",
+        "rightsObservation": "No image reuse license established in extracted primary text and inspected HTML matches.",
+        "rightsEvidence": "Supplier page names HDPE Blue Drums; extracted page shows copyright 2026 Fukutomi Recycling Limited. No former contents or cleaning evidence is supplied.",
+        "licenseUrl": null,
+        "accessObservation": "functions.webfetch text HTTP 200; HTML inspection HTTP 200. web.run returned no visible payload in this child; no web.run evidence is asserted.",
+        "reusePermission": "unknown",
+        "captureAuthenticity": "unknown"
+      },
+      "privacyObservation": {
+        "observations": "Labels and business markings visible; no obvious person in inspected view",
+        "limits": "Larger image displayed, sometimes scaled by reader. This is not exhaustive full-resolution privacy clearance; no OCR or consent verification."
+      },
+      "missingFacts": [
+        "Strong hold example: ask prior contents, drainage, cleaning records and resin identity.",
+        "Verified resin/grade and composition, additives or composite layers",
+        "Production origin, previous contents/contact and residue characterization",
+        "Batch amount/frequency, holder location and receiver acceptance/contact details"
+      ],
+      "duplicateGrouping": {
+        "visual_group": "drum containers",
+        "source_host": "www.fukutomi.com",
+        "rationale": "Intact labeled closed drums support prior-contents hold behavior better than baled drums.",
+        "uncertainty": "No source host/page or visual cohort is treated as a verified site/lot. Exact CSV SHA values are distinct; resize/semantic near-duplicates remain possible."
+      },
+      "humanLabels": null,
+      "fieldAcceptance": null
+    },
+    {
+      "rank": 12,
+      "id": "packaging_021",
+      "archive": {
+        "fileName": "04_packaging_100.zip",
+        "member": "폐포장재/packaging_021.jpg",
+        "sha256": "14aad2a10a37cb7f4e8e4dda6410f8dfac299a046eef39d32669916f4fcfb075"
+      },
+      "photo": {
+        "id": "packaging_021",
+        "path": "photos/packaging_021.png",
+        "sha256": "cbb63b89ba0f67ef89f389687a13af4b6cdd95da0f3cbab4d364cef41f336814",
+        "bytes": 1558813,
+        "width": 1200,
+        "height": 775,
+        "mimeType": "image/png",
+        "sourceSha256": "14aad2a10a37cb7f4e8e4dda6410f8dfac299a046eef39d32669916f4fcfb075",
+        "sourceArchive": "04_packaging_100.zip",
+        "sourceMember": "폐포장재/packaging_021.jpg",
+        "changes": "Whole frame resized to fit1200x900 without cropping; decoded and re-encoded with existing H sanitizer to remove metadata. Visible marks/watermarks retained."
+      },
+      "role": "foam packaging attachment hold",
+      "selectionReason": "테이프·검은 판이 붙은 흰 완충재 더미로 부착물 분리와 수지 확인 질문을 만든다.",
+      "visibleObservations": [
+        "An outdoor heap of white molded boxes and inserts bears red/green tape and a black panel; green container behind."
+      ],
+      "source": {
+        "title": "Styrofoam Packaging Waste Piled High",
+        "pageUrl": "https://www.kgnews.co.kr/news/article.html?no=668267",
+        "imageUrl": "https://www.kgnews.co.kr/data/photos/20210938/art_16323666134271_f80358.jpg",
+        "imageUrlOmissionReason": null,
+        "claims": "Styrofoam Packaging Waste Piled High",
+        "claimLimit": "Source statements and titles are not verified chemistry, hazard, contamination absence, site/lot provenance, mass, legal route or human ground truth.",
+        "publisherAttribution": "황준선 / 경기신문",
+        "rightsObservation": "Publisher prohibits unauthorized republication/redistribution; affirmative permission unknown",
+        "rightsEvidence": [
+          {
+            "receipt": "turn205652view1",
+            "lines": "103-126",
+            "observation": "Article dated 2021-09-23, photographer/reporter credited, publisher restriction visible. Caption location is a source claim only."
+          }
+        ],
+        "licenseUrl": null,
+        "accessObservation": "Primary publisher article read; author/caption and restrictive copyright notice observed",
+        "reusePermission": "unknown",
+        "captureAuthenticity": "unknown"
+      },
+      "privacyObservation": {
+        "observations": [
+          "No prominent person discerned at this inspection scale; printed packaging and site details may still be present"
+        ],
+        "limits": "Thumbnail screening does not constitute full-resolution privacy clearance. Larger-image views are bounded, may be downscaled, and do not clear all labels, personal data, plates, faces, location clues or consent."
+      },
+      "missingFacts": [
+        "Resin/composition and any multilayer, liner, coating, ink or adhesive",
+        "Previous contents, food/chemical contact and contamination records/testing",
+        "Generating process, batch segregation, treatments and storage history",
+        "Quantity and manufacturer/operator context supplied as facts",
+        "Receiver acceptance and applicable route conditions from verified sources; hold until needed facts are available"
+      ],
+      "duplicateGrouping": {
+        "visual_group": "foam-like packaging",
+        "source_host": "www.kgnews.co.kr",
+        "rationale": "Prefer this clearer/distinct view over similar baled/piled scenes",
+        "uncertainty": "No source host/page or visual cohort is treated as a verified site/lot. Exact CSV SHA values are distinct; resize/semantic near-duplicates remain possible."
+      },
+      "humanLabels": null,
+      "fieldAcceptance": null
+    },
+    {
+      "rank": 13,
+      "id": "packaging_013",
+      "archive": {
+        "fileName": "04_packaging_100.zip",
+        "member": "폐포장재/packaging_013.jpg",
+        "sha256": "1b2cf34c5ba15ce00ec9a56c5d24399401d8300a392db2d74dccba084cdbfd1a"
+      },
+      "photo": {
+        "id": "packaging_013",
+        "path": "photos/packaging_013.png",
+        "sha256": "a1c091686ffebf2d22fa35ee284d4b97f58a86b8e2d7c5bdbcb6b54137404faa",
+        "bytes": 2208591,
+        "width": 1200,
+        "height": 900,
+        "mimeType": "image/png",
+        "sourceSha256": "1b2cf34c5ba15ce00ec9a56c5d24399401d8300a392db2d74dccba084cdbfd1a",
+        "sourceArchive": "04_packaging_100.zip",
+        "sourceMember": "폐포장재/packaging_013.jpg",
+        "changes": "Whole frame resized to fit1200x900 without cropping; decoded and re-encoded with existing H sanitizer to remove metadata. Visible marks/watermarks retained."
+      },
+      "role": "printed sack liner/contact hold",
+      "selectionReason": "인쇄와 해진 가장자리가 보이는 압축 자루로 라이너·코팅·이전 내용물 이력을 묻는다.",
+      "visibleObservations": [
+        "White sack-like folded material with blue/red printing and frayed edges fills indoor bale stacks."
+      ],
+      "source": {
+        "title": "Warehouse Storage of PP Big Bag Scrap",
+        "pageUrl": "https://www.cyrkl.com/en/materials/305bee4f-2911-45fb-b4bc-73248ef203fb",
+        "imageUrl": "https://storage.googleapis.com/cyrkl-external-assets/01964310-c6a4-7af3-ac22-9b3b48518f91",
+        "imageUrlOmissionReason": null,
+        "claims": "Warehouse Storage of PP Big Bag Scrap",
+        "claimLimit": "Source statements and titles are not verified chemistry, hazard, contamination absence, site/lot provenance, mass, legal route or human ground truth.",
+        "publisherAttribution": "CYRKL Zdrojová platforma, s.r.o.; image-specific seller/creator unknown",
+        "rightsObservation": "unknown; no image-specific reuse grant established",
+        "rightsEvidence": "Cyrkl page title identifies an offer for PP big-bag scrap but extracted content is sparse publisher details. Footer copyright names Cyrkl; terms URL returns similarly sparse content, no image-specific reuse grant established.",
+        "licenseUrl": "https://www.cyrkl.com/en/terms-and-conditions",
+        "accessObservation": "functions.webfetch returned HTTP 200; readable response retained as access evidence",
+        "reusePermission": "unknown",
+        "captureAuthenticity": "unknown"
+      },
+      "privacyObservation": {
+        "observations": [
+          "No prominent person discerned at this inspection scale; printed packaging and site details may still be present"
+        ],
+        "limits": "Thumbnail screening does not constitute full-resolution privacy clearance. Larger-image views are bounded, may be downscaled, and do not clear all labels, personal data, plates, faces, location clues or consent."
+      },
+      "missingFacts": [
+        "Resin/composition and any multilayer, liner, coating, ink or adhesive",
+        "Previous contents, food/chemical contact and contamination records/testing",
+        "Generating process, batch segregation, treatments and storage history",
+        "Quantity and manufacturer/operator context supplied as facts",
+        "Receiver acceptance and applicable route conditions from verified sources; hold until needed facts are available"
+      ],
+      "duplicateGrouping": {
+        "visual_group": "sacks/fabric-like flexible packaging",
+        "source_host": "www.cyrkl.com",
+        "rationale": "Prefer this clearer/distinct view over similar baled/piled scenes",
+        "uncertainty": "No source host/page or visual cohort is treated as a verified site/lot. Exact CSV SHA values are distinct; resize/semantic near-duplicates remain possible."
+      },
+      "humanLabels": null,
+      "fieldAcceptance": null
+    },
+    {
+      "rank": 14,
+      "id": "packaging_007",
+      "archive": {
+        "fileName": "04_packaging_100.zip",
+        "member": "폐포장재/packaging_007.jpg",
+        "sha256": "401344b2a083d35a981429c0311bd0747ce0f382039e6aa01ce17a835ec4be63"
+      },
+      "photo": {
+        "id": "packaging_007",
+        "path": "photos/packaging_007.png",
+        "sha256": "bc8c822f1b40ec7852ecf1840ef16bcf1539309e17d69f86519daf0c714a3e30",
+        "bytes": 2233322,
+        "width": 1200,
+        "height": 900,
+        "mimeType": "image/png",
+        "sourceSha256": "401344b2a083d35a981429c0311bd0747ce0f382039e6aa01ce17a835ec4be63",
+        "sourceArchive": "04_packaging_100.zip",
+        "sourceMember": "폐포장재/packaging_007.jpg",
+        "changes": "Whole frame resized to fit1200x900 without cropping; decoded and re-encoded with existing H sanitizer to remove metadata. Visible marks/watermarks retained."
+      },
+      "role": "film-storage missing-facts case",
+      "selectionReason": "반투명 필름 압축물의 보관 상태를 비교하되 투명도나 흰색을 단일수지·청결 증거로 쓰지 않는다.",
+      "visibleObservations": [
+        "Translucent white film-like folds fill strapped bales; colored bales sit behind and an orange platform is parked left."
+      ],
+      "source": {
+        "title": "Plastic Film Storage Warehouse",
+        "pageUrl": "https://www.s-d-kunststoffrecycling.de/en/",
+        "imageUrl": "https://www.s-d-kunststoffrecycling.de/files/web/galerie_kunststoff/Lager_WST_5868.jpg",
+        "imageUrlOmissionReason": null,
+        "claims": "Plastic Film Storage Warehouse",
+        "claimLimit": "Source statements and titles are not verified chemistry, hazard, contamination absence, site/lot provenance, mass, legal route or human ground truth.",
+        "publisherAttribution": "S+D Kunststoffrecycling publisher; image creator unknown",
+        "rightsObservation": "unknown; no image-specific reuse grant established",
+        "rightsEvidence": "S+D describes collection/sorting/storage of plastic packaging films. The primary page is readable through webfetch despite earlier web timeout. Observed doubled/en/en terms link returns404; canonical/en terms page contains only contact guidance, no image reuse grant.",
+        "licenseUrl": "https://www.s-d-kunststoffrecycling.de/en/en/terms-of-service",
+        "accessObservation": "functions.webfetch returned HTTP 200; readable response retained as access evidence",
+        "reusePermission": "unknown",
+        "captureAuthenticity": "unknown"
+      },
+      "privacyObservation": {
+        "observations": [
+          "No prominent person discerned at this inspection scale; printed packaging and site details may still be present"
+        ],
+        "limits": "Thumbnail screening does not constitute full-resolution privacy clearance. Larger-image views are bounded, may be downscaled, and do not clear all labels, personal data, plates, faces, location clues or consent."
+      },
+      "missingFacts": [
+        "Resin/composition and any multilayer, liner, coating, ink or adhesive",
+        "Previous contents, food/chemical contact and contamination records/testing",
+        "Generating process, batch segregation, treatments and storage history",
+        "Quantity and manufacturer/operator context supplied as facts",
+        "Receiver acceptance and applicable route conditions from verified sources; hold until needed facts are available"
+      ],
+      "duplicateGrouping": {
+        "visual_group": "compressed or loose film/mixed packaging",
+        "source_host": "www.s-d-kunststoffrecycling.de",
+        "rationale": "Prefer this clearer/distinct view over similar baled/piled scenes",
+        "uncertainty": "No source host/page or visual cohort is treated as a verified site/lot. Exact CSV SHA values are distinct; resize/semantic near-duplicates remain possible."
+      },
+      "humanLabels": null,
+      "fieldAcceptance": null
+    },
+    {
+      "rank": 15,
+      "id": "packaging_048",
+      "archive": {
+        "fileName": "04_packaging_100.zip",
+        "member": "폐포장재/packaging_048.jpg",
+        "sha256": "46febe735b0b78172909688f03070af2cfe5987504bf5b54269dcec7687e4008"
+      },
+      "photo": {
+        "id": "packaging_048",
+        "path": "photos/packaging_048.png",
+        "sha256": "d4ec6480ebaa55a62d590e78af61a0f9eceb91186e9dfea47ffd80667982829c",
+        "bytes": 1413430,
+        "width": 1200,
+        "height": 800,
+        "mimeType": "image/png",
+        "sourceSha256": "46febe735b0b78172909688f03070af2cfe5987504bf5b54269dcec7687e4008",
+        "sourceArchive": "04_packaging_100.zip",
+        "sourceMember": "폐포장재/packaging_048.jpg",
+        "changes": "Whole frame resized to fit1200x900 without cropping; decoded and re-encoded with existing H sanitizer to remove metadata. Visible marks/watermarks retained."
+      },
+      "role": "black/clear film segregation hold",
+      "selectionReason": "검은 시트·투명 필름·띠가 한 압축물에 있어 색·형태별 분리와 상용성 미확인을 드러낸다.",
+      "visibleObservations": [
+        "One bale contains black sheets, clear wrinkled film, pale straps and yellow patches beside a blue press."
+      ],
+      "source": {
+        "title": "MACFAB 150 Vertical Baler with Plastic Film Bale",
+        "pageUrl": "https://www.macfab.com/150-baler.html",
+        "imageUrl": "https://www.macfab.com/images/balers/150-baler/150-BALER-5.jpg",
+        "imageUrlOmissionReason": null,
+        "claims": "MACFAB 150 Vertical Baler with Plastic Film Bale",
+        "claimLimit": "Source statements and titles are not verified chemistry, hazard, contamination absence, site/lot provenance, mass, legal route or human ground truth.",
+        "publisherAttribution": "MACFAB publisher; individual image photographer unknown",
+        "rightsObservation": "unknown; no open image license observed in returned page text",
+        "rightsEvidence": [
+          {
+            "receipt": "turn533067view3",
+            "lines": "21-23,55-57",
+            "observation": "Manufacturer describes baler for cardboard or plastic film and captions a film bale. Capacity claims are not mass of this image."
+          }
+        ],
+        "licenseUrl": null,
+        "accessObservation": "Primary manufacturer page read",
+        "reusePermission": "unknown",
+        "captureAuthenticity": "unknown"
+      },
+      "privacyObservation": {
+        "observations": [
+          "No prominent person discerned at this inspection scale; printed packaging and site details may still be present"
+        ],
+        "limits": "Thumbnail screening does not constitute full-resolution privacy clearance. Larger-image views are bounded, may be downscaled, and do not clear all labels, personal data, plates, faces, location clues or consent."
+      },
+      "missingFacts": [
+        "Resin/composition and any multilayer, liner, coating, ink or adhesive",
+        "Previous contents, food/chemical contact and contamination records/testing",
+        "Generating process, batch segregation, treatments and storage history",
+        "Quantity and manufacturer/operator context supplied as facts",
+        "Receiver acceptance and applicable route conditions from verified sources; hold until needed facts are available"
+      ],
+      "duplicateGrouping": {
+        "visual_group": "compressed or loose film/mixed packaging",
+        "source_host": "www.macfab.com",
+        "rationale": "Simpler black/clear mixture than printed 096; keep only if segregation case adds value",
+        "uncertainty": "No source host/page or visual cohort is treated as a verified site/lot. Exact CSV SHA values are distinct; resize/semantic near-duplicates remain possible."
+      },
+      "humanLabels": null,
+      "fieldAcceptance": null
+    },
+    {
+      "rank": 16,
+      "id": "plastic_058",
+      "archive": {
+        "fileName": "01_plastic_100.zip",
+        "member": "폐플라스틱/plastic_058.jpg",
+        "sha256": "510dbc4aad449aec57ec8f7b5c73f992ddde487e7974ca9e62eeccd13b6a826b"
+      },
+      "photo": {
+        "id": "plastic_058",
+        "path": "photos/plastic_058.png",
+        "sha256": "8590e67d376e14615ad6c257f410087e7797805c8ddf10e024eb5b562467af23",
+        "bytes": 2209699,
+        "width": 900,
+        "height": 900,
+        "mimeType": "image/png",
+        "sourceSha256": "510dbc4aad449aec57ec8f7b5c73f992ddde487e7974ca9e62eeccd13b6a826b",
+        "sourceArchive": "01_plastic_100.zip",
+        "sourceMember": "폐플라스틱/plastic_058.jpg",
+        "changes": "Whole frame resized to fit1200x900 without cropping; decoded and re-encoded with existing H sanitizer to remove metadata. Visible marks/watermarks retained."
+      },
+      "role": "size-reduced mixture: hold for composition testing",
+      "selectionReason": "다색 파쇄 조각은 색·입도만으로 수지를 맞히지 않고 성분·등급 자료를 요구하는 사례다.",
+      "visibleObservations": [
+        "Hand supports a mound of bright blue, yellow, red and green angular flakes."
+      ],
+      "source": {
+        "title": "Multicolored HDPE Regrind Mix",
+        "pageUrl": "https://www.alibaba.com/showroom/hdpe-regrind-mix-color.html",
+        "imageUrl": "https://s.alicdn.com/%40sc04/kf/H9b06764bbb594809a0a430c61cd04d42a/HDPE-Regrind-Mix-Color-Premium-Quality-Resin-Ideal-for-Recycled-Plastic-Products-Fast-Delivery.jpg",
+        "imageUrlOmissionReason": null,
+        "claims": "Multicolored HDPE Regrind Mix",
+        "claimLimit": "Source statements and titles are not verified chemistry, hazard, contamination absence, site/lot provenance, mass, legal route or human ground truth.",
+        "publisherAttribution": "Primary publisher attributed by CSV URL; individual photographer and image-specific copyright holder unknown.",
+        "rightsObservation": "No image reuse license established in extracted primary text and inspected HTML matches.",
+        "rightsEvidence": "Marketplace showroom extraction contains search filters and grade categories rather than an authenticated image-specific product description.",
+        "licenseUrl": null,
+        "accessObservation": "functions.webfetch text HTTP 200; HTML inspection HTTP 200. web.run returned no visible payload in this child; no web.run evidence is asserted.",
+        "reusePermission": "unknown",
+        "captureAuthenticity": "unknown"
+      },
+      "privacyObservation": {
+        "observations": "Person, hand or body part visible; identity and consent unknown",
+        "limits": "Larger image displayed, sometimes scaled by reader. This is not exhaustive full-resolution privacy clearance; no OCR or consent verification."
+      },
+      "missingFacts": [
+        "Strong hidden-composition case: colors cannot verify HDPE or compatibility.",
+        "Verified resin/grade and composition, additives or composite layers",
+        "Production origin, previous contents/contact and residue characterization",
+        "Batch amount/frequency, holder location and receiver acceptance/contact details"
+      ],
+      "duplicateGrouping": {
+        "visual_group": "flakes",
+        "source_host": "www.alibaba.com",
+        "rationale": "Size reduction conceals original forms and demonstrates why color cannot identify resin.",
+        "uncertainty": "No source host/page or visual cohort is treated as a verified site/lot. Exact CSV SHA values are distinct; resize/semantic near-duplicates remain possible."
+      },
+      "humanLabels": null,
+      "fieldAcceptance": null
+    },
+    {
+      "rank": 17,
+      "id": "plastic_076",
+      "archive": {
+        "fileName": "01_plastic_100.zip",
+        "member": "폐플라스틱/plastic_076.webp",
+        "sha256": "f5622bb0dc889ef68d2b73e761aa2ad121587c01ea39985f7a1685fd8e9bac44"
+      },
+      "photo": {
+        "id": "plastic_076",
+        "path": "photos/plastic_076.png",
+        "sha256": "a7ef13cd13a44783d3f9046cd3c80fa2760db7cf3f489f72e19fd8d85965866c",
+        "bytes": 1737127,
+        "width": 1200,
+        "height": 815,
+        "mimeType": "image/png",
+        "sourceSha256": "f5622bb0dc889ef68d2b73e761aa2ad121587c01ea39985f7a1685fd8e9bac44",
+        "sourceArchive": "01_plastic_100.zip",
+        "sourceMember": "폐플라스틱/plastic_076.webp",
+        "changes": "Whole frame resized to fit1200x900 without cropping; decoded and re-encoded with existing H sanitizer to remove metadata. Visible marks/watermarks retained."
+      },
+      "role": "automotive assemblies: hold for dismantling and prior service",
+      "selectionReason": "관구·리브가 있는 회색 조립품은 해체·이전 용도·잔류 이력 질문에 적합하지만 원 출처 상세글은 사라졌다.",
+      "visibleObservations": [
+        "Bin of dusty gray elongated molded pieces includes pipe openings and ribs."
+      ],
+      "source": {
+        "title": "Plastic Radiator Scrap for Recycling",
+        "pageUrl": "https://www.mfrural.com.br/detalhe/639595/compramos-sucata-plastica-de-radiadores-nylon-6-66-pa6-6",
+        "imageUrl": "https://img.mfrural.com.br/api/image?height=521&url=https%3A%2F%2Fs3.amazonaws.com%2Fmfrural-produtos-us%2F441673-639595-67591785-compramos-sucata-plastica-de-radiadores-nylon-6-66-pa6-6-.webp&width=767",
+        "imageUrlOmissionReason": null,
+        "claims": "Plastic Radiator Scrap for Recycling",
+        "claimLimit": "Source statements and titles are not verified chemistry, hazard, contamination absence, site/lot provenance, mass, legal route or human ground truth.",
+        "publisherAttribution": "Original listing seller/image creator unavailable; current marketplace MF Rural content rights are distinct",
+        "rightsObservation": "unknown; no image-specific reuse grant established",
+        "rightsEvidence": "Original MF Rural listing redirects to a broad resin category, so image-specific listing context is unavailable. Terms4.4/4.5 address uploader rights/platform-use authorization;8.1/8.2 reserve content and require permission for copying/reuse. No grant to this reviewer/owner established.",
+        "licenseUrl": "https://www.mfrural.com.br/termos-de-uso",
+        "accessObservation": "functions.webfetch returned HTTP 200; partial tool payload, supplemented by complete-response fetch scan",
+        "reusePermission": "unknown",
+        "captureAuthenticity": "unknown"
+      },
+      "privacyObservation": {
+        "observations": "No obvious face in inspected view; signage, labels or background identifiers may remain",
+        "limits": "Larger image displayed, sometimes scaled by reader. This is not exhaustive full-resolution privacy clearance; no OCR or consent verification."
+      },
+      "missingFacts": [
+        "Radiator title raises a prior-service question; pixels cannot establish resin or residues.",
+        "Verified resin/grade and composition, additives or composite layers",
+        "Production origin, previous contents/contact and residue characterization",
+        "Batch amount/frequency, holder location and receiver acceptance/contact details"
+      ],
+      "duplicateGrouping": {
+        "visual_group": "engineering-plastic claims",
+        "source_host": "www.mfrural.com.br",
+        "rationale": "Radiator-like assemblies add attachment and previous-service uncertainty beyond pipe offcuts.",
+        "uncertainty": "No source host/page or visual cohort is treated as a verified site/lot. Exact CSV SHA values are distinct; resize/semantic near-duplicates remain possible."
+      },
+      "humanLabels": null,
+      "fieldAcceptance": null
+    },
+    {
+      "rank": 18,
+      "id": "plastic_096",
+      "archive": {
+        "fileName": "01_plastic_100.zip",
+        "member": "폐플라스틱/plastic_096.jpg",
+        "sha256": "054b9b2c57b63ec73e94917285f03238a5c66f98455d809d3843b7ce7faac190"
+      },
+      "photo": {
+        "id": "plastic_096",
+        "path": "photos/plastic_096.png",
+        "sha256": "22c125b177cfbdc50c980c4c12d8d08866a2b07ed5bc1a20d067115b6b2d0a2a",
+        "bytes": 2462088,
+        "width": 1200,
+        "height": 900,
+        "mimeType": "image/png",
+        "sourceSha256": "054b9b2c57b63ec73e94917285f03238a5c66f98455d809d3843b7ce7faac190",
+        "sourceArchive": "01_plastic_100.zip",
+        "sourceMember": "폐플라스틱/plastic_096.jpg",
+        "changes": "Whole frame resized to fit1200x900 without cropping; decoded and re-encoded with existing H sanitizer to remove metadata. Visible marks/watermarks retained."
+      },
+      "role": "mixed packaging: hold for contact and contents history",
+      "selectionReason": "작은 병·튜브·마개가 섞인 형태로 이전 내용물·라벨 분리를 묻되 현장 진위나 공급자 성능 주장을 검증값으로 쓰지 않는다.",
+      "visibleObservations": [
+        "Heap of colorful small bottles, tubes and closures fills the frame."
+      ],
+      "source": {
+        "title": "Sorted Hard Plastic Waste for Eco-Aggregate Production",
+        "pageUrl": "https://transmutation.com.au/resin8",
+        "imageUrl": "https://transmutation.com.au/__l5e/assets-v1/c62460f0-9b41-48a9-af51-c1165ebeb3e6/waste-hard-plastics.jpg",
+        "imageUrlOmissionReason": null,
+        "claims": "Sorted Hard Plastic Waste for Eco-Aggregate Production",
+        "claimLimit": "Source statements and titles are not verified chemistry, hazard, contamination absence, site/lot provenance, mass, legal route or human ground truth.",
+        "publisherAttribution": "Transmutation publisher copyright2026; individual image creator unknown",
+        "rightsObservation": "unknown; no image-specific reuse grant established",
+        "rightsEvidence": "Current Transmutation page labels mixed-plastic feed imagery and markets aggregate products. Supplier performance, carbon and standards claims are not independently verified and do not certify the archived image or a user load. Copyright2026 Transmutation; image-specific reuse/authenticity unknown.",
+        "licenseUrl": null,
+        "accessObservation": "functions.webfetch returned HTTP 200; readable response retained as access evidence",
+        "reusePermission": "unknown",
+        "captureAuthenticity": "unknown"
+      },
+      "privacyObservation": {
+        "observations": "No obvious face in inspected view; signage, labels or background identifiers may remain",
+        "limits": "Larger image displayed, sometimes scaled by reader. This is not exhaustive full-resolution privacy clearance; no OCR or consent verification."
+      },
+      "missingFacts": [
+        "Packaging-like forms require prior contents and label separation facts.",
+        "Verified resin/grade and composition, additives or composite layers",
+        "Production origin, previous contents/contact and residue characterization",
+        "Batch amount/frequency, holder location and receiver acceptance/contact details"
+      ],
+      "duplicateGrouping": {
+        "visual_group": "mixed processing and packaging",
+        "source_host": "transmutation.com.au",
+        "rationale": "Household-container-like mixture adds contact and contents questions distinct from industrial scrap.",
+        "uncertainty": "No source host/page or visual cohort is treated as a verified site/lot. Exact CSV SHA values are distinct; resize/semantic near-duplicates remain possible."
+      },
+      "humanLabels": null,
+      "fieldAcceptance": null
+    },
+    {
+      "rank": 19,
+      "id": "packaging_041",
+      "archive": {
+        "fileName": "04_packaging_100.zip",
+        "member": "폐포장재/packaging_041.jpg",
+        "sha256": "22d5c175a7ddc18e00ca87a5a62e27b20123639a4051b990b22c50ab944450e3"
+      },
+      "photo": {
+        "id": "packaging_041",
+        "path": "photos/packaging_041.png",
+        "sha256": "6e9fecefa2d6adca344c99441506ad2cf994956c46514aaba8a0c705c80a745e",
+        "bytes": 1757140,
+        "width": 1200,
+        "height": 801,
+        "mimeType": "image/png",
+        "sourceSha256": "22d5c175a7ddc18e00ca87a5a62e27b20123639a4051b990b22c50ab944450e3",
+        "sourceArchive": "04_packaging_100.zip",
+        "sourceMember": "폐포장재/packaging_041.jpg",
+        "changes": "Whole frame resized to fit1200x900 without cropping; decoded and re-encoded with existing H sanitizer to remove metadata. Visible marks/watermarks retained."
+      },
+      "role": "plastic/nonplastic stream separation contrast",
+      "selectionReason": "골판지와 투명 완충필름이 나란히 있어 포장재라는 이유로 비플라스틱을 같은 흐름에 합치지 않는 경계 사례다.",
+      "visibleObservations": [
+        "A corrugated cardboard bale sits beside translucent bubble/film-like material on a separate pallet."
+      ],
+      "source": {
+        "title": "Warehouse Recycling Bales",
+        "pageUrl": "https://www.olympicpalletcorp.com/products/p/commercial-recycling",
+        "imageUrl": "https://images.squarespace-cdn.com/content/v1/67892fa7c9019b2c6faffad9/9bd1c023-4d14-46d0-9357-9192864a50dd/Homepage%2BPlastic%2BPic%2B1.jpeg",
+        "imageUrlOmissionReason": null,
+        "claims": "Warehouse Recycling Bales",
+        "claimLimit": "Source statements and titles are not verified chemistry, hazard, contamination absence, site/lot provenance, mass, legal route or human ground truth.",
+        "publisherAttribution": "Olympic Pallet Corp page publisher; individual image credit unknown",
+        "rightsObservation": "All rights reserved footer; affirmative reuse permission unknown",
+        "rightsEvidence": [
+          {
+            "receipt": "turn533067view1",
+            "lines": "2,20-26,68",
+            "observation": "Image described as plastic/cardboard services; page lists plastic, office paper and cardboard recycling separately; footer reserves rights."
+          }
+        ],
+        "licenseUrl": null,
+        "accessObservation": "Primary commercial service page read",
+        "reusePermission": "unknown",
+        "captureAuthenticity": "unknown"
+      },
+      "privacyObservation": {
+        "observations": [
+          "No prominent person discerned at this inspection scale; printed packaging and site details may still be present"
+        ],
+        "limits": "Thumbnail screening does not constitute full-resolution privacy clearance. Larger-image views are bounded, may be downscaled, and do not clear all labels, personal data, plates, faces, location clues or consent."
+      },
+      "missingFacts": [
+        "Resin/composition and any multilayer, liner, coating, ink or adhesive",
+        "Previous contents, food/chemical contact and contamination records/testing",
+        "Generating process, batch segregation, treatments and storage history",
+        "Quantity and manufacturer/operator context supplied as facts",
+        "Receiver acceptance and applicable route conditions from verified sources; hold until needed facts are available"
+      ],
+      "duplicateGrouping": {
+        "visual_group": "adjacent or mixed packaging forms",
+        "source_host": "www.olympicpalletcorp.com",
+        "rationale": "Distinct adjacent cardboard/film comparison; cardboard is explicit nonplastic contrast",
+        "uncertainty": "No source host/page or visual cohort is treated as a verified site/lot. Exact CSV SHA values are distinct; resize/semantic near-duplicates remain possible."
+      },
+      "humanLabels": null,
+      "fieldAcceptance": null
+    },
+    {
+      "rank": 20,
+      "id": "plastic_028",
+      "archive": {
+        "fileName": "01_plastic_100.zip",
+        "member": "폐플라스틱/plastic_028.jpg",
+        "sha256": "86008d0038e4493c45b67855779db9c14387d27d4c266a7384ef50cb6b222170"
+      },
+      "photo": {
+        "id": "plastic_028",
+        "path": "photos/plastic_028.png",
+        "sha256": "2d1d283f30ab69bbe6844ee7635fc7503ab8be3e7e77ce223a9a7a8ae6b482fe",
+        "bytes": 1702323,
+        "width": 1200,
+        "height": 808,
+        "mimeType": "image/png",
+        "sourceSha256": "86008d0038e4493c45b67855779db9c14387d27d4c266a7384ef50cb6b222170",
+        "sourceArchive": "01_plastic_100.zip",
+        "sourceMember": "폐플라스틱/plastic_028.jpg",
+        "changes": "Whole frame resized to fit1200x900 without cropping; decoded and re-encoded with existing H sanitizer to remove metadata. Visible marks/watermarks retained."
+      },
+      "role": "composition/layer/scope-unknown manufacturing-strip hold",
+      "selectionReason": "반짝이는 긴 띠의 재질을 화상만으로 확정할 수 없어 공급자 조성·층 구조·기재 명세를 요구하는 보류 사례로 추가했다.",
+      "visibleObservations": [
+        "Two wire cages hold long glossy black and silver-edged strips."
+      ],
+      "source": {
+        "title": "Plastic Extrusion Bins",
+        "pageUrl": "https://www.fm-kunststofftechnik.de/kompetenzen/nachhaltigkeit",
+        "imageUrl": "https://www.fm-kunststofftechnik.de/fileadmin/_processed_/a/1/csm_3_randbeschnitte_b774623222.jpg",
+        "imageUrlOmissionReason": null,
+        "claims": "Plastic Extrusion Bins",
+        "claimLimit": "Source statements and titles are not verified chemistry, hazard, contamination absence, site/lot provenance, mass, legal route or human ground truth.",
+        "publisherAttribution": "fm Kunststofftechnik page publisher; photographer unknown",
+        "rightsObservation": "unknown; no image-specific reuse grant established",
+        "rightsEvidence": "FM Kunststofftechnik describes separated secondary production materials and co-extruded multilayer examples. These are producer claims; the photographed strips are not chemically verified. Imprint section3 retains author copyright and requires explicit consent for reuse of authored material.",
+        "licenseUrl": "https://www.fm-kunststofftechnik.de/impressum",
+        "accessObservation": "functions.webfetch returned HTTP 200; readable response retained as access evidence",
+        "reusePermission": "unknown",
+        "captureAuthenticity": "unknown"
+      },
+      "privacyObservation": {
+        "observations": "No obvious face in inspected view; signage, labels or background identifiers may remain",
+        "limits": "Larger image displayed, sometimes scaled by reader. This is not exhaustive full-resolution privacy clearance; no OCR or consent verification."
+      },
+      "missingFacts": [
+        "Larger view still cannot settle whether the strips include metal or polymer; keep scope unresolved.",
+        "Verified resin/grade and composition, additives or composite layers",
+        "Production origin, previous contents/contact and residue characterization",
+        "Batch amount/frequency, holder location and receiver acceptance/contact details"
+      ],
+      "duplicateGrouping": {
+        "visual_group": "profiles and offcuts",
+        "source_host": "www.fm-kunststofftechnik.de",
+        "rationale": "Not another colored runner/flake: long shiny strips expose a substrate/layer ambiguity distinct from profile025, flat sheet085 and cable028 in metal category.",
+        "uncertainty": "No source host/page or visual cohort is treated as a verified site/lot. Exact CSV SHA values are distinct; resize/semantic near-duplicates remain possible."
+      },
+      "humanLabels": null,
+      "fieldAcceptance": null
+    },
+    {
+      "rank": 21,
+      "id": "metal_028",
+      "archive": {
+        "fileName": "02_metal_100.zip",
+        "member": "금속스크랩/metal_028.jpg",
+        "sha256": "bbe9a7509e395402819a7f8078b8d0e29c8332831572ec71680d3c546a23f5fd"
+      },
+      "photo": {
+        "id": "metal_028",
+        "path": "photos/metal_028.png",
+        "sha256": "085cd15d0ff9488b5c9d876f19496052ead06e309c80624e783a6f73469873d9",
+        "bytes": 1689434,
+        "width": 675,
+        "height": 900,
+        "mimeType": "image/png",
+        "sourceSha256": "bbe9a7509e395402819a7f8078b8d0e29c8332831572ec71680d3c546a23f5fd",
+        "sourceArchive": "02_metal_100.zip",
+        "sourceMember": "금속스크랩/metal_028.jpg",
+        "changes": "Whole frame resized to fit1200x900 without cropping; decoded and re-encoded with existing H sanitizer to remove metadata. Visible marks/watermarks retained."
+      },
+      "role": "mixed-cable-composition-separation-hold",
+      "selectionReason": "피복처럼 보이는 색 띠와 노출된 붉은 가닥이 함께 있어 피복·금속 분리와 조성 확인을 묻는 경계 사례다.",
+      "visibleObservations": [
+        "Reddish exposed fine-strand bundles lie in front of multicolored smooth cable-like lengths; black lengths below."
+      ],
+      "source": {
+        "title": "Copper Cable Recycling Operation",
+        "pageUrl": "https://metallolomgroup.ru/",
+        "imageUrl": "https://metallolomgroup.ru/images/gallery/1.jpg",
+        "imageUrlOmissionReason": null,
+        "claims": "Copper Cable Recycling Operation",
+        "claimLimit": "Source statements and titles are not verified chemistry, hazard, contamination absence, site/lot provenance, mass, legal route or human ground truth.",
+        "publisherAttribution": "No individual photographer credit located in returned page text; site identifies itself as MetallolomGroup.",
+        "rightsObservation": "unknown",
+        "rightsEvidence": [
+          "Gallery contains exact CSV URL https://metallolomgroup.ru/images/gallery/1.jpg.",
+          "Page describes scrap and cable collection services; those are website claims, not image-verified properties.",
+          "No image reuse grant found in retrieved page text."
+        ],
+        "licenseUrl": null,
+        "accessObservation": "Readable primary homepage via functions.webfetch. Exact CSV image URL appears in site gallery. web.run attempts returned no readable content or source IDs.",
+        "reusePermission": "unknown",
+        "captureAuthenticity": "unknown"
+      },
+      "privacyObservation": {
+        "observations": "No person or clearly readable personal identifier noticed at reviewed scale; background and obscured surfaces were not cleared.",
+        "limits": "Thumbnail screening is not full-resolution privacy clearance. Larger original displayed, but not an exhaustive zoom/OCR/privacy audit; small labels, faces, embedded data and obscured/background detail remain unresolved."
+      },
+      "missingFacts": [
+        "Producer-confirmed jacket polymer and additives",
+        "Metal/plastic fraction and separation status",
+        "Prior contact and contamination history",
+        "Actual process, quantity, supplier and applicable route facts"
+      ],
+      "duplicateGrouping": {
+        "visual_group": "wire-and-cable",
+        "source_host": "metallolomgroup.ru",
+        "rationale": "Preferred over reddish strand/tube scenes 022-027 and 059-067 because covered and exposed forms coexist. Exact or near duplication not exhaustively tested.",
+        "uncertainty": "No source host/page or visual cohort is treated as a verified site/lot. Exact CSV SHA values are distinct; resize/semantic near-duplicates remain possible."
+      },
+      "humanLabels": null,
+      "fieldAcceptance": null
+    },
+    {
+      "rank": 22,
+      "id": "rubber_090",
+      "archive": {
+        "fileName": "06_rubber_100.zip",
+        "member": "폐고무/rubber_090.jpg",
+        "sha256": "f04198f56d80a93e2f50e9aa83af6e699076ac5760a6f72d29a671a26fc315f3"
+      },
+      "photo": {
+        "id": "rubber_090",
+        "path": "photos/rubber_090.png",
+        "sha256": "73b66853575453a5fba181b4445caa57d51e441520f57f994511b4371440b664",
+        "bytes": 1563487,
+        "width": 1200,
+        "height": 800,
+        "mimeType": "image/png",
+        "sourceSha256": "f04198f56d80a93e2f50e9aa83af6e699076ac5760a6f72d29a671a26fc315f3",
+        "sourceArchive": "06_rubber_100.zip",
+        "sourceMember": "폐고무/rubber_090.jpg",
+        "changes": "Whole frame resized to fit1200x900 without cropping; decoded and re-encoded with existing H sanitizer to remove metadata. Visible marks/watermarks retained."
+      },
+      "role": "hold-example",
+      "selectionReason": "금속 연결구가 남은 검은 호스는 해체와 이전 서비스·유체 접촉 이력을 요구하는 조립품 보류 사례다.",
+      "visibleObservations": [
+        "A larger-original view shows tangled used hoses with metal couplings, cut ends, exposed reinforcement and visibly varied condition."
+      ],
+      "source": {
+        "title": "Used Automotive Hoses",
+        "pageUrl": "https://www.yourmechanic.com/article/what-material-for-car-hoses-is-the-strongest-and-most-durable",
+        "imageUrl": "https://res.cloudinary.com/yourmechanic/image/upload/dpr_auto%2Cf_auto%2Cq_auto/v1/article_images/car_hose_material",
+        "imageUrlOmissionReason": null,
+        "claims": "Used Automotive Hoses",
+        "claimLimit": "Source statements and titles are not verified chemistry, hazard, contamination absence, site/lot provenance, mass, legal route or human ground truth.",
+        "publisherAttribution": "unknown; the blocked article response exposed no image credit",
+        "rightsObservation": "unknown",
+        "rightsEvidence": "Primary-page access was attempted directly. The retained response was a CloudFront 403, so the article text, image credit, and page-specific license could not be verified. Direct checks of plausible YourMechanic terms URLs /terms, /terms-of-use, and /terms_of_service also returned CloudFront 403 responses.",
+        "licenseUrl": null,
+        "accessObservation": "The exact primary article URL was directly requested with web.run but returned no retrievable page content. A direct functions.webfetch request returned HTTP 403 from Amazon CloudFront stating that access from this country was blocked.",
+        "reusePermission": "unknown",
+        "captureAuthenticity": "unknown"
+      },
+      "privacyObservation": {
+        "observations": "No clearly identifying person is prominent in the reviewed view.",
+        "limits": "No clearly identifying face was relied on; this visual review still does not establish consent, ownership, location, or full-resolution privacy clearance."
+      },
+      "missingFacts": [
+        "material family and hose construction",
+        "residual contents or service history",
+        "metal fitting removal path"
+      ],
+      "duplicateGrouping": {
+        "visual_group": "mixed-industrial-rubber",
+        "source_host": "www.yourmechanic.com",
+        "rationale": "Distinct decision pattern at rank 1: hold-example; not selected merely as another tire stockpile.",
+        "uncertainty": "No source host/page or visual cohort is treated as a verified site/lot. Exact CSV SHA values are distinct; resize/semantic near-duplicates remain possible."
+      },
+      "humanLabels": null,
+      "fieldAcceptance": null
+    },
+    {
+      "rank": 23,
+      "id": "wood_072",
+      "archive": {
+        "fileName": "03_wood_100.zip",
+        "member": "폐목재/wood_072.jpg",
+        "sha256": "bbd08f3bc1e1d9e56d956ec4a9f21a0e8bff138b2e7dc26c147c3009bbd6dd92"
+      },
+      "photo": {
+        "id": "wood_072",
+        "path": "photos/wood_072.png",
+        "sha256": "bb8f6dead0a222af6cbfb8b6dc1f4694ddb5279f0b8424505ac942fd02dce6b7",
+        "bytes": 2384966,
+        "width": 1200,
+        "height": 800,
+        "mimeType": "image/png",
+        "sourceSha256": "bbd08f3bc1e1d9e56d956ec4a9f21a0e8bff138b2e7dc26c147c3009bbd6dd92",
+        "sourceArchive": "03_wood_100.zip",
+        "sourceMember": "폐목재/wood_072.jpg",
+        "changes": "Whole frame resized to fit1200x900 without cropping; decoded and re-encoded with existing H sanitizer to remove metadata. Visible marks/watermarks retained."
+      },
+      "role": "missing-facts-hold",
+      "selectionReason": "목재형 판·못·띠·벽돌형 조각이 섞여 있어 혼합물과 부착물을 확인하고 플라스틱 단일 흐름 판단을 보류한다.",
+      "visibleObservations": [
+        "A close pile contains rough boards, a flake-textured sheet, protruding bent fasteners, red hollow brick-like pieces, a pipe-like section and a green strap."
+      ],
+      "source": {
+        "title": "Construction Site Wood Debris",
+        "pageUrl": "https://www.capeb.fr/actualites/arrete-rep-une-avancee-majeure-pour-une-gestion-responsable-des-dechets-de-chantier-attendue-par-les-entreprises-artisanales-du-batiment-et-portee-par-la-capeb-il2veu",
+        "imageUrl": "https://www.capeb.fr/www/capeb/media/vosges/image/stock-image-168889580-L.jpg",
+        "imageUrlOmissionReason": null,
+        "claims": "Construction Site Wood Debris",
+        "claimLimit": "Source statements and titles are not verified chemistry, hazard, contamination absence, site/lot provenance, mass, legal route or human ground truth.",
+        "publisherAttribution": "unknown",
+        "rightsObservation": "unknown",
+        "rightsEvidence": [
+          "web.run open source turn0view3, article lines 67-87 discusses construction-waste REP policy; this is source context, not permission or an applicable route for this pictured load."
+        ],
+        "licenseUrl": null,
+        "accessObservation": "Primary CAPEB article opened successfully; 104 lines. Web extraction contains article body but no visible image-specific credit or license.",
+        "reusePermission": "unknown",
+        "captureAuthenticity": "unknown"
+      },
+      "privacyObservation": {
+        "observations": [
+          "No prominent face or personal identifier observed at thumbnail scale; small equipment marks, vehicles or distant details may remain unresolved."
+        ],
+        "limits": [
+          "Thumbnail screen does not constitute full-resolution privacy clearance.",
+          "No identity or consent inference; independent full-resolution and rights screening required before publication.",
+          "Larger view was inspected at tool display resolution; not a forensic review of every original pixel."
+        ]
+      },
+      "missingFacts": [
+        "Actual material composition and any plastic fraction",
+        "Manufacturing process and previous contents/contact history",
+        "Coatings, attachments and contamination evidence",
+        "Load amount and measurement basis",
+        "Generator location, applicable receiving acceptance criteria and authorized route",
+        "Operator-provided supporting evidence; image alone cannot clear a route"
+      ],
+      "duplicateGrouping": {
+        "visual_group": "demolition",
+        "source_host": "www.capeb.fr",
+        "rationale": "Mixed brick-like pieces, pipe-like section, strap and fasteners are more specific than wide generic wood heaps.",
+        "uncertainty": "No source host/page or visual cohort is treated as a verified site/lot. Exact CSV SHA values are distinct; resize/semantic near-duplicates remain possible."
+      },
+      "humanLabels": null,
+      "fieldAcceptance": null
+    },
+    {
+      "rank": 24,
+      "id": "sludge_034",
+      "archive": {
+        "fileName": "05_sludge_100.zip",
+        "member": "공정오니/sludge_034.jpg",
+        "sha256": "e78ee7d9c0421926d5cccad9e0b085dcb7c523464aa479e50a374214212a333a"
+      },
+      "photo": {
+        "id": "sludge_034",
+        "path": "photos/sludge_034.png",
+        "sha256": "78dc01ca95c98374bf133dba63e4faca0a8b02b9cb8167583313f19bfa58baa1",
+        "bytes": 1589188,
+        "width": 1200,
+        "height": 800,
+        "mimeType": "image/png",
+        "sourceSha256": "e78ee7d9c0421926d5cccad9e0b085dcb7c523464aa479e50a374214212a333a",
+        "sourceArchive": "05_sludge_100.zip",
+        "sourceMember": "공정오니/sludge_034.jpg",
+        "changes": "Whole frame resized to fit1200x900 without cropping; decoded and re-encoded with existing H sanitizer to remove metadata. Visible marks/watermarks retained."
+      },
+      "role": "out-of-scope material contrast",
+      "selectionReason": "푸른 성형 케이크처럼 보이는 조각이 자루에 있어 색과 용기만으로 플라스틱으로 분류하지 않는 음성·보류 사례다.",
+      "visibleObservations": [
+        "Blue broken cakes with circular impressions fill a white woven bulk bag; label blurred."
+      ],
+      "source": {
+        "title": "Blue Filter Cake in Bulk Bag",
+        "pageUrl": "https://www.econindustries.com/applications/filter-cake",
+        "imageUrl": "https://www.econindustries.com/wp-content/uploads/2022/04/Filter-cake-blue-scaled.jpg",
+        "imageUrlOmissionReason": null,
+        "claims": "Blue Filter Cake in Bulk Bag",
+        "claimLimit": "Source statements and titles are not verified chemistry, hazard, contamination absence, site/lot provenance, mass, legal route or human ground truth.",
+        "publisherAttribution": "econ industries publisher copyright footer; photographer unknown",
+        "rightsObservation": "unknown; no image-specific reuse grant established",
+        "rightsEvidence": "econ industries describes filter cake from industrial wastewater/other processes and markets treatment technology. Page content does not establish this bag composition or hazards. Footer names econ industries; no image-specific reuse grant found.",
+        "licenseUrl": null,
+        "accessObservation": "functions.webfetch returned HTTP 200; readable response retained as access evidence",
+        "reusePermission": "unknown",
+        "captureAuthenticity": "unknown"
+      },
+      "privacyObservation": {
+        "observations": [
+          "No person discernible in the reviewed view; this is not a privacy clearance.",
+          "Bag label visible but blurred in larger displayed view."
+        ],
+        "limits": "Only the stated displayed views were inspected; thumbnails do not constitute full-resolution privacy clearance. No face identification, OCR, location attribution or consent inference performed."
+      },
+      "missingFacts": [
+        "Verified generating process and batch provenance",
+        "Measured composition, polymer identity if any, additives and mixture proportions",
+        "Contaminants, residues and test/SDS evidence; no absence inferred",
+        "Prior material contact and cleaning history",
+        "Producer contact, quantity and availability with evidence",
+        "Local requirements and receiving facility acceptance; hold until verified"
+      ],
+      "duplicateGrouping": {
+        "visual_group": "bagged-or-lined-contents",
+        "source_host": "www.econindustries.com",
+        "rationale": "Blue impressed cakes differ visibly from brown bagged flakes at 081; nominate at most one bag contrast if final-ten space is scarce.",
+        "uncertainty": "No source host/page or visual cohort is treated as a verified site/lot. Exact CSV SHA values are distinct; resize/semantic near-duplicates remain possible."
+      },
+      "humanLabels": null,
+      "fieldAcceptance": null
+    },
+    {
+      "rank": 25,
+      "id": "construction_079",
+      "archive": {
+        "fileName": "07_construction_100.zip",
+        "member": "건설폐기물/construction_079.jpg",
+        "sha256": "0f884f47d0b0788edb08b27763984434c864f116c67912fcefae510a17b9c0a8"
+      },
+      "photo": {
+        "id": "construction_079",
+        "path": "photos/construction_079.png",
+        "sha256": "8b994e9e983f895824f1b0ec2b011d9a2108638df93c352f8c5234a53e25db0c",
+        "bytes": 1599131,
+        "width": 1199,
+        "height": 900,
+        "mimeType": "image/png",
+        "sourceSha256": "0f884f47d0b0788edb08b27763984434c864f116c67912fcefae510a17b9c0a8",
+        "sourceArchive": "07_construction_100.zip",
+        "sourceMember": "건설폐기물/construction_079.jpg",
+        "changes": "Whole frame resized to fit1200x900 without cropping; decoded and re-encoded with existing H sanitizer to remove metadata. Visible marks/watermarks retained."
+      },
+      "role": "hold example: mixed bay",
+      "selectionReason": "벽으로 나눈 피트의 혼합 조각은 원문상 폐플라스틱·잔재 분별 구역이지만 개별 조성을 확인할 수 없는 혼합 흐름 보류다.",
+      "visibleObservations": [
+        "Concrete-walled sorting bays contain a mixed heap with visible cables, pipes, fabric or sheet-like items and a yellow object."
+      ],
+      "source": {
+        "title": "Industrial Waste Sorting Pits",
+        "pageUrl": "https://www.kk-bisou.co.jp/business/",
+        "imageUrl": "https://www.kk-bisou.co.jp/static/8cb737324fb6b7548fcf55187e6ef422/9e4ea/plastic-store.jpg",
+        "imageUrlOmissionReason": null,
+        "claims": "Industrial Waste Sorting Pits",
+        "claimLimit": "Source statements and titles are not verified chemistry, hazard, contamination absence, site/lot provenance, mass, legal route or human ground truth.",
+        "publisherAttribution": "株式会社鹿児島美掃 publisher copyright2022; individual photographer unknown",
+        "rightsObservation": "unknown; no image-specific reuse grant established",
+        "rightsEvidence": "Primary site identifies 株式会社鹿児島美掃 and labels plastic-store.jpg as waste-plastic/rubble sorting pits. The visible mixed shapes remain composition-unknown. Footer copyright2022 鹿児島美掃; no image-specific license grant established.",
+        "licenseUrl": null,
+        "accessObservation": "functions.webfetch returned HTTP 200; partial tool payload, supplemented by complete-response fetch scan",
+        "reusePermission": "unknown",
+        "captureAuthenticity": "unknown"
+      },
+      "privacyObservation": {
+        "observations": "No clearly identifiable face is visible in the reviewed image.",
+        "limits": "Review used a contact-sheet thumbnail and, for shortlisted images only, a larger local original. Thumbnail review is not full-resolution privacy clearance; no identity, consent, location, or sensitive status was inferred."
+      },
+      "missingFacts": [
+        "plastic presence and resin",
+        "cables or composite fraction",
+        "contamination",
+        "source process",
+        "manual or mechanical sorting plan"
+      ],
+      "duplicateGrouping": {
+        "visual_group": "mixed construction debris",
+        "source_host": "www.kk-bisou.co.jp",
+        "rationale": "Only shortlisted bay-sorting scene with visibly mixed shapes, cables and colored objects that require composition hold.",
+        "uncertainty": "No source host/page or visual cohort is treated as a verified site/lot. Exact CSV SHA values are distinct; resize/semantic near-duplicates remain possible."
+      },
+      "humanLabels": null,
+      "fieldAcceptance": null
+    },
+    {
+      "rank": 26,
+      "id": "metal_001",
+      "archive": {
+        "fileName": "02_metal_100.zip",
+        "member": "금속스크랩/metal_001.jpg",
+        "sha256": "bcbeabfc0e072eb3228d21d58d703995f67b204cde2ce1c483bf05643d942f58"
+      },
+      "photo": {
+        "id": "metal_001",
+        "path": "photos/metal_001.png",
+        "sha256": "36eea3ddce776b56e453bb6e6bd2e9e481063550b5bb2e41f7bbefbd08e20247",
+        "bytes": 1426109,
+        "width": 887,
+        "height": 900,
+        "mimeType": "image/png",
+        "sourceSha256": "bcbeabfc0e072eb3228d21d58d703995f67b204cde2ce1c483bf05643d942f58",
+        "sourceArchive": "02_metal_100.zip",
+        "sourceMember": "금속스크랩/metal_001.jpg",
+        "changes": "Whole frame resized to fit1200x900 without cropping; decoded and re-encoded with existing H sanitizer to remove metadata. Visible marks/watermarks retained."
+      },
+      "role": "nonplastic-process-contact-hold",
+      "selectionReason": "기계 아래 수거통의 가는 금속형 조각은 비플라스틱 대비와 공정·절삭유 접촉 이력 질문을 제공한다.",
+      "visibleObservations": [
+        "Gray chute above a pale wheeled bin of curled silver-gray fragments; extinguisher on wall."
+      ],
+      "source": {
+        "title": "CNC Machine Swarf Collection",
+        "pageUrl": "https://swarfbins.com.au/",
+        "imageUrl": "https://cdn.shopify.com/s/files/1/0690/4859/8801/files/Swarf_Bins_Empyting_from_CNC_Machine.jpg?v=1678692975&width=1500",
+        "imageUrlOmissionReason": null,
+        "claims": "CNC Machine Swarf Collection",
+        "claimLimit": "Source statements and titles are not verified chemistry, hazard, contamination absence, site/lot provenance, mass, legal route or human ground truth.",
+        "publisherAttribution": "No individual photographer credit located in returned page text; page identifies Swarf Bins and Adarsh Australia.",
+        "rightsObservation": "unknown",
+        "rightsEvidence": [
+          "Current site discusses wet bins and coolant collection, supporting the need to ask contact-history questions rather than asserting liquid in this image.",
+          "Exact CSV image URL is not in returned current page text.",
+          "No image reuse grant found in retrieved page text."
+        ],
+        "licenseUrl": null,
+        "accessObservation": "Readable primary product homepage via functions.webfetch; current page shows swarf-bin and machining content but exact CSV image URL was absent. web.run attempts returned no readable content or source IDs.",
+        "reusePermission": "unknown",
+        "captureAuthenticity": "unknown"
+      },
+      "privacyObservation": {
+        "observations": "Text, labels, markings, coin, or vehicle/equipment detail visible: Gray chute above a pale wheeled bin of curled silver-gray fragments; extinguisher on wall.",
+        "limits": "Thumbnail screening is not full-resolution privacy clearance. Larger original displayed, but not an exhaustive zoom/OCR/privacy audit; small labels, faces, embedded data and obscured/background detail remain unresolved."
+      },
+      "missingFacts": [
+        "Producer-confirmed material composition",
+        "Machining process and coolant/lubricant records",
+        "Prior chemical/contact and cleaning history",
+        "Whether any separate waste-plastic stream exists"
+      ],
+      "duplicateGrouping": {
+        "visual_group": "chips-and-swarf",
+        "source_host": "swarfbins.com.au",
+        "rationale": "Preferred over swarf closeups because chute and collection bin preserve process context. Exact or near duplication not exhaustively tested.",
+        "uncertainty": "No source host/page or visual cohort is treated as a verified site/lot. Exact CSV SHA values are distinct; resize/semantic near-duplicates remain possible."
+      },
+      "humanLabels": null,
+      "fieldAcceptance": null
+    },
+    {
+      "rank": 27,
+      "id": "wood_001",
+      "archive": {
+        "fileName": "03_wood_100.zip",
+        "member": "폐목재/wood_001.jpg",
+        "sha256": "11c9a35489b224afa768676d098700f58406d857f288fcd0132fdd19351fb85e"
+      },
+      "photo": {
+        "id": "wood_001",
+        "path": "photos/wood_001.png",
+        "sha256": "892c8b9d0dd22998e3aa126d81e6f1a7dc634ba91441214b8b95771d3c1a69b6",
+        "bytes": 2245236,
+        "width": 1200,
+        "height": 799,
+        "mimeType": "image/png",
+        "sourceSha256": "11c9a35489b224afa768676d098700f58406d857f288fcd0132fdd19351fb85e",
+        "sourceArchive": "03_wood_100.zip",
+        "sourceMember": "폐목재/wood_001.jpg",
+        "changes": "Whole frame resized to fit1200x900 without cropping; decoded and re-encoded with existing H sanitizer to remove metadata. Visible marks/watermarks retained."
+      },
+      "role": "explicit-nonplastic-contrast",
+      "selectionReason": "적재 팔레트는 포장·운반 자재가 곧 폐플라스틱이라는 일반화를 막는 명확한 비플라스틱 대비다.",
+      "visibleObservations": [
+        "Indoor stacks of pale and weathered slatted pallets; loose boards in front and small labels on blocks."
+      ],
+      "source": {
+        "title": "Wooden Pallet Storage and Recycling Preparation",
+        "pageUrl": "https://weima.com/en/shredding-and-recycling-pallets/",
+        "imageUrl": "https://weima.com/wp-content/uploads/2020/11/paletten_stapel_web-e1728451870590.jpg",
+        "imageUrlOmissionReason": null,
+        "claims": "Wooden Pallet Storage and Recycling Preparation",
+        "claimLimit": "Source statements and titles are not verified chemistry, hazard, contamination absence, site/lot provenance, mass, legal route or human ground truth.",
+        "publisherAttribution": "Disclaimer attributes site text, images and graphics copyright to WEIMA Maschinenbau GmbH; image-specific photographer not established.",
+        "rightsObservation": "No open reuse license established; disclaimer reserves site content rights and restricts commercial reuse or distribution.",
+        "rightsEvidence": [
+          "turn0view4 lines 187-204 discusses used wood pallets and shows matching pallet-stack image link 57.",
+          "turn1view0 lines 92-102 contains disclaimer and copyright restrictions; this is not a permission grant."
+        ],
+        "licenseUrl": "https://weima.com/en/disclaimer/",
+        "accessObservation": "Primary WEIMA pallet page opened successfully (602 lines); followed Disclaimer (127 lines).",
+        "reusePermission": "unknown",
+        "captureAuthenticity": "unknown"
+      },
+      "privacyObservation": {
+        "observations": [
+          "Visible product, pallet, container or frame markings/labels need rights and sensitive-text screening. No prominent face observed in the displayed view."
+        ],
+        "limits": [
+          "Thumbnail screen does not constitute full-resolution privacy clearance.",
+          "No identity or consent inference; independent full-resolution and rights screening required before publication.",
+          "Larger view was inspected at tool display resolution; not a forensic review of every original pixel."
+        ]
+      },
+      "missingFacts": [
+        "Actual material composition and any plastic fraction",
+        "Manufacturing process and previous contents/contact history",
+        "Coatings, attachments and contamination evidence",
+        "Load amount and measurement basis",
+        "Generator location, applicable receiving acceptance criteria and authorized route",
+        "Operator-provided supporting evidence; image alone cannot clear a route"
+      ],
+      "duplicateGrouping": {
+        "visual_group": "pallet",
+        "source_host": "weima.com",
+        "rationale": "Indoor recognizable pallet stacks beat repetitive yard heaps for simple contrast; low priority beside stronger plastic examples.",
+        "uncertainty": "No source host/page or visual cohort is treated as a verified site/lot. Exact CSV SHA values are distinct; resize/semantic near-duplicates remain possible."
+      },
+      "humanLabels": null,
+      "fieldAcceptance": null
+    },
+    {
+      "rank": 28,
+      "id": "sludge_010",
+      "archive": {
+        "fileName": "05_sludge_100.zip",
+        "member": "공정오니/sludge_010.jpg",
+        "sha256": "571c35fd670bb277f37e4cb56babfa4e45f2a572192a1688e42c703ad2ff60c7"
+      },
+      "photo": {
+        "id": "sludge_010",
+        "path": "photos/sludge_010.png",
+        "sha256": "dcc4427087f448a5d4ab9a211dc0a4e6de6db7c09b983d3eee81300e7032b2aa",
+        "bytes": 1860756,
+        "width": 1199,
+        "height": 900,
+        "mimeType": "image/png",
+        "sourceSha256": "571c35fd670bb277f37e4cb56babfa4e45f2a572192a1688e42c703ad2ff60c7",
+        "sourceArchive": "05_sludge_100.zip",
+        "sourceMember": "공정오니/sludge_010.jpg",
+        "changes": "Whole frame resized to fit1200x900 without cropping; decoded and re-encoded with existing H sanitizer to remove metadata. Visible marks/watermarks retained."
+      },
+      "role": "hold-and-missing-facts contrast",
+      "selectionReason": "두 컵의 액체·덩어리 상태 차이는 처리 성공·안전성을 사진으로 확정하지 않고 시험조건·성분 자료를 요구하는 보류다.",
+      "visibleObservations": [
+        "Two cups show pale green liquid and coarse green flocs under clearer liquid; white stirring rod."
+      ],
+      "source": {
+        "title": "Paint Dewatering Test",
+        "pageUrl": "https://www.beckart.com/paints-coating",
+        "imageUrl": "https://images.squarespace-cdn.com/content/v1/641dbb7bed87954cd1bb3ea4/e1126dde-ee2e-46b5-936a-5810497efa8c/Paint%2B-%2BJar%2BTesting.jpeg",
+        "imageUrlOmissionReason": null,
+        "claims": "Paint Dewatering Test",
+        "claimLimit": "Source statements and titles are not verified chemistry, hazard, contamination absence, site/lot provenance, mass, legal route or human ground truth.",
+        "publisherAttribution": "Beckart Environmental publisher copyright footer; photographer unknown",
+        "rightsObservation": "unknown; no image-specific reuse grant established",
+        "rightsEvidence": "Beckart describes paint/coating wastewater applications and links the exact cup-test image. Treatment/chemistry claims are vendor statements, not measured sample success or verified hazards. Footer names Beckart; no image reuse grant found.",
+        "licenseUrl": null,
+        "accessObservation": "functions.webfetch returned HTTP 200; readable response retained as access evidence",
+        "reusePermission": "unknown",
+        "captureAuthenticity": "unknown"
+      },
+      "privacyObservation": {
+        "observations": [
+          "No person discernible in the reviewed view; this is not a privacy clearance."
+        ],
+        "limits": "Only the stated displayed views were inspected; thumbnails do not constitute full-resolution privacy clearance. No face identification, OCR, location attribution or consent inference performed."
+      },
+      "missingFacts": [
+        "Verified generating process and batch provenance",
+        "Measured composition, polymer identity if any, additives and mixture proportions",
+        "Contaminants, residues and test/SDS evidence; no absence inferred",
+        "Prior material contact and cleaning history",
+        "Producer contact, quantity and availability with evidence",
+        "Local requirements and receiving facility acceptance; hold until verified"
+      ],
+      "duplicateGrouping": {
+        "visual_group": "sample-or-labeled-comparison",
+        "source_host": "www.beckart.com",
+        "rationale": "Two liquid/solid-looking sample cups add a missing-facts hold role not supplied by bulk cake images.",
+        "uncertainty": "No source host/page or visual cohort is treated as a verified site/lot. Exact CSV SHA values are distinct; resize/semantic near-duplicates remain possible."
+      },
+      "humanLabels": null,
+      "fieldAcceptance": null
+    },
+    {
+      "rank": 29,
+      "id": "rubber_097",
+      "archive": {
+        "fileName": "06_rubber_100.zip",
+        "member": "폐고무/rubber_097.png",
+        "sha256": "12d32d4d64b24e5c963820fd42a2ee3fb66a01e5ba9fa82fa5b083d11b9effca"
+      },
+      "photo": {
+        "id": "rubber_097",
+        "path": "photos/rubber_097.png",
+        "sha256": "400a3a54946d74673a4efffb7570400bb8a72bdf373a167e0fca941c5df9e974",
+        "bytes": 2111997,
+        "width": 1200,
+        "height": 801,
+        "mimeType": "image/png",
+        "sourceSha256": "12d32d4d64b24e5c963820fd42a2ee3fb66a01e5ba9fa82fa5b083d11b9effca",
+        "sourceArchive": "06_rubber_100.zip",
+        "sourceMember": "폐고무/rubber_097.png",
+        "changes": "Whole frame resized to fit1200x900 without cropping; decoded and re-encoded with existing H sanitizer to remove metadata. Visible marks/watermarks retained."
+      },
+      "role": "conditional-route-example",
+      "selectionReason": "두꺼운 롤과 절단 매트 형태는 재사용 조건의 치수·상태·보강재·이전 접촉 이력을 묻는 비플라스틱 조건부 사례다.",
+      "visibleObservations": [
+        "Large used conveyor-belt rolls and rectangular cut mats are laid out on bare ground with weathered surfaces."
+      ],
+      "source": {
+        "title": "Repurposed Conveyor Belt Mats",
+        "pageUrl": "https://www.usbelt.com/post/how-used-conveyor-belt-is-repurposed-into-mats-and-liners",
+        "imageUrl": "https://static.wixstatic.com/media/ebc2f9_96dfdd3b0d414085b76045f8e9b94b5a~mv2.png/v1/fill/w_752%2Ch_502%2Cal_c%2Cq_90%2Cusm_0.66_1.00_0.01%2Cenc_avif%2Cquality_auto/ebc2f9_96dfdd3b0d414085b76045f8e9b94b5a~mv2.png",
+        "imageUrlOmissionReason": null,
+        "claims": "Repurposed Conveyor Belt Mats",
+        "claimLimit": "Source statements and titles are not verified chemistry, hazard, contamination absence, site/lot provenance, mass, legal route or human ground truth.",
+        "publisherAttribution": "U.S. Belt Co. publisher; image creator unknown",
+        "rightsObservation": "unknown; no image-specific reuse grant established",
+        "rightsEvidence": "US Belt describes repurposing used conveyor belts to mats/liners and says condition/dimensions determine fit. Terms reserve site content and require written permission for commercial copying/distribution; no image-specific permission established.",
+        "licenseUrl": "https://www.usbelt.com/terms-and-conditions",
+        "accessObservation": "functions.webfetch returned HTTP 200; readable response retained as access evidence",
+        "reusePermission": "unknown",
+        "captureAuthenticity": "unknown"
+      },
+      "privacyObservation": {
+        "observations": "No clearly identifying person is prominent in the reviewed view.",
+        "limits": "No clearly identifying face was relied on; this visual review still does not establish consent, ownership, location, or full-resolution privacy clearance."
+      },
+      "missingFacts": [
+        "verified material composition",
+        "contamination and prior-use history",
+        "accepted local route and preparation requirements"
+      ],
+      "duplicateGrouping": {
+        "visual_group": "conveyor-belting",
+        "source_host": "www.usbelt.com",
+        "rationale": "Distinct decision pattern at rank 7: conditional-route-example; not selected merely as another tire stockpile.",
+        "uncertainty": "No source host/page or visual cohort is treated as a verified site/lot. Exact CSV SHA values are distinct; resize/semantic near-duplicates remain possible."
+      },
+      "humanLabels": null,
+      "fieldAcceptance": null
+    },
+    {
+      "rank": 30,
+      "id": "metal_084",
+      "archive": {
+        "fileName": "02_metal_100.zip",
+        "member": "금속스크랩/metal_084.png",
+        "sha256": "a5ea9ea5639acbfe63945bb9d82a43e837f474751caf3917fb6e87dff1b022d4"
+      },
+      "photo": {
+        "id": "metal_084",
+        "path": "photos/metal_084.png",
+        "sha256": "22158958929fbf2e902597e4527cc68f74405ad35f1e12062c3a927dd978567d",
+        "bytes": 2407029,
+        "width": 1200,
+        "height": 765,
+        "mimeType": "image/png",
+        "sourceSha256": "a5ea9ea5639acbfe63945bb9d82a43e837f474751caf3917fb6e87dff1b022d4",
+        "sourceArchive": "02_metal_100.zip",
+        "sourceMember": "금속스크랩/metal_084.png",
+        "changes": "Whole frame resized to fit1200x900 without cropping; decoded and re-encoded with existing H sanitizer to remove metadata. Visible marks/watermarks retained."
+      },
+      "role": "sorting-appearance-contrast",
+      "selectionReason": "서로 다른 색·형태가 별도 통에 놓여 있어 분리 외관이 재질 순도나 수용 적합성의 증거가 아님을 비교한다.",
+      "visibleObservations": [
+        "Separate open bins hold reddish strands, gold-colored fittings, gray sheet pieces, and silver profiles; rectangular bales behind."
+      ],
+      "source": {
+        "title": "Nonferrous Scrap Sorting Facility",
+        "pageUrl": "https://www.polylink.ca/",
+        "imageUrl": "https://www.polylink.ca/assets/nonferrous-scrap.png",
+        "imageUrlOmissionReason": null,
+        "claims": "Nonferrous Scrap Sorting Facility",
+        "claimLimit": "Source statements and titles are not verified chemistry, hazard, contamination absence, site/lot provenance, mass, legal route or human ground truth.",
+        "publisherAttribution": "No individual photographer credit located in returned page text; page identifies Polylink Global Inc.",
+        "rightsObservation": "unknown",
+        "rightsEvidence": [
+          "Returned primary page contains exact CSV URL https://www.polylink.ca/assets/nonferrous-scrap.png.",
+          "Page labels section as nonferrous scrap; title is a website claim, not material assay.",
+          "No image reuse grant found in retrieved page text."
+        ],
+        "licenseUrl": null,
+        "accessObservation": "Readable primary homepage via functions.webfetch; exact CSV image URL appears with nonferrous-scrap section. web.run attempts returned no readable content or source IDs.",
+        "reusePermission": "unknown",
+        "captureAuthenticity": "unknown"
+      },
+      "privacyObservation": {
+        "observations": "No person or clearly readable personal identifier noticed at reviewed scale; background and obscured surfaces were not cleared.",
+        "limits": "Thumbnail screening is not full-resolution privacy clearance. Larger original displayed, but not an exhaustive zoom/OCR/privacy audit; small labels, faces, embedded data and obscured/background detail remain unresolved."
+      },
+      "missingFacts": [
+        "Verified composition of each bin",
+        "Mixing and contamination checks",
+        "Process and prior-contact records",
+        "Any actual waste-plastic stream and quantity"
+      ],
+      "duplicateGrouping": {
+        "visual_group": "sorting-context",
+        "source_host": "www.polylink.ca",
+        "rationale": "Preferred over 085 sorting overview and 090-098 bales because separate visible forms remain legible. Exact or near duplication not exhaustively tested.",
+        "uncertainty": "No source host/page or visual cohort is treated as a verified site/lot. Exact CSV SHA values are distinct; resize/semantic near-duplicates remain possible."
+      },
+      "humanLabels": null,
+      "fieldAcceptance": null
+    }
+  ]
+}
