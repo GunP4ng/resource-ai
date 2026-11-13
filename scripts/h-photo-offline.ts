@@ -6,7 +6,8 @@ import { createServer } from "node:http";
 import { zstdDecompressSync } from "node:zlib";
 import type { CredentialStore } from "@earendil-works/pi-ai";
 import type { CaseInput } from "../src/contracts.ts";
-import { assessCase, decideCase } from "../src/assessment.ts";
+import { decideCase } from "../src/assessment.ts";
+import { createResourceDomain } from "../src/domain.ts";
 import { createPhotoStore } from "../src/photos.ts";
 import { createSubscriptionPhotoExecutionAuthority } from "../src/photo-execution.ts";
 import { SUBSCRIPTION_ENDPOINT } from "../src/subscription-configuration.ts";
@@ -43,7 +44,10 @@ try {
   const signal = () => new AbortController().signal;
   const receipts = new Map<string, Awaited<ReturnType<typeof store.put>>>();
   const rows = [];
-  const run = async (input: CaseInput, expectedSha: string) => {
+  const run = async (input: CaseInput, expectedSha: string, observation?: {
+    readonly usable: boolean; readonly resinCandidates: readonly string[];
+  }) => {
+    const before = structuredClone(input), caseRevision = revision(input);
     cases.set(input.caseId, input);
     let sentSha: string | undefined;
     let transportFailure: unknown;
@@ -68,8 +72,12 @@ try {
         visit(request); assert.equal(images.length, 1);
         assert.ok(images[0]!.startsWith("data:image/png;base64,"));
         sentSha = sha256(Buffer.from(images[0]!.split(",")[1]!, "base64")); assert.equal(sentSha, expectedSha);
+        const decision = decideCase(input);
+        const response = observation === undefined ? decision : { decision, photoObservations: { images: [
+          { imageIndex: 0, ...observation, visibleFeatures: ["SYNTHETIC injected observation; not photo inference"] },
+        ] } };
         const item = { type: "message", id: "msg_offline", role: "assistant", status: "completed",
-          content: [{ type: "output_text", text: JSON.stringify(decideCase(input)), annotations: [] }] };
+          content: [{ type: "output_text", text: JSON.stringify(response), annotations: [] }] };
         const events = [{ type: "response.output_item.done", output_index: 0, item },
           { type: "response.completed", response: { id: "resp_offline", status: "completed", output: [item], usage: { input_tokens: 1, output_tokens: 1, total_tokens: 2 } } }];
         return new Response(events.map(event => `data: ${JSON.stringify(event)}\n\n`).join(""),
@@ -81,10 +89,18 @@ try {
     const result = await runner(input, signal()).catch(error => { throw transportFailure ?? error; });
     assert.equal(sentSha, expectedSha);
     const usage = JSON.parse(result.execution!.usage!); assert.deepEqual(usage.imageSha256, [expectedSha]);
-    const assessment = assessCase(input);
-    return { input, caseRevision: revision(input), transmittedImageSha256: sentSha, questions: assessment.questions,
+    const domain = createResourceDomain(input, {}, result.photoObservations);
+    const assessment = domain.assess(), decision = await domain.decide(result.proposal);
+    assert.deepEqual(input, before); assert.equal(revision(input), caseRevision);
+    if (result.photoObservations !== undefined) {
+      assert.equal(result.photoObservations.caseId, input.caseId);
+      assert.equal(result.photoObservations.caseRevision, caseRevision);
+      assert.deepEqual(result.photoObservations.images.map(image => [image.photoRef, image.sha256]), [[input.photoRefs[0], expectedSha]]);
+    }
+    return { input, caseRevision, transmittedImageSha256: sentSha, inputUnchanged: true,
+      photoObservations: result.photoObservations ?? null, assessment, questions: assessment.questions,
       candidates: assessment.candidates, legalIssues: assessment.legal.issues, reviewReasons: assessment.reviewReasons,
-      decision: decideCase(input, result.proposal), execution: result.execution,
+      decision, execution: result.execution,
       providerRequestId: null, realProviderUsage: null, responseOrigin: "synthetic injected SSE, not model inference", usageOrigin: "synthetic fixture counters" };
   };
   for (const entry of pack.entries) {
@@ -116,6 +132,38 @@ try {
   const hazardChanged = await run({ ...historicalInput, hazardousContact: "yes" }, mixedReceipt.sha256);
   assert.equal(hazardChanged.decision.state, "needs-review");
   assert.ok(hazardChanged.reviewReasons.some(reason => reason.includes("유해물질 접촉이 보고")));
+  // Reuse one stored image; these four payloads are synthetic protocol probes.
+  const observationMatrix = [];
+  for (const scenario of [
+    { id: "matching-reported-resin", polymer: "PP", usable: true, resinCandidates: ["PP"], addedQuestions: 0 },
+    { id: "conflicting-resin", polymer: "PP", usable: true, resinCandidates: ["PET"], addedQuestions: 1 },
+    { id: "unknown-reported-resin", polymer: null, usable: true, resinCandidates: ["PET"], addedQuestions: 1 },
+    { id: "unusable-photo", polymer: "PP", usable: false, resinCandidates: [], addedQuestions: 1 },
+  ] as const) {
+    const input = { ...historicalInput, polymer: scenario.polymer };
+    const baseline = createResourceDomain(input).assess();
+    const observed = await run(input, mixedReceipt.sha256, { usable: scenario.usable, resinCandidates: scenario.resinCandidates });
+    const addedQuestions = observed.questions.filter(question => !baseline.questions.includes(question));
+    assert.equal(addedQuestions.length, scenario.addedQuestions);
+    assert.equal(observed.candidates.photoInference, "unverified-model-observations");
+    assert.deepEqual(observed.candidates.resins, baseline.candidates.resins);
+    assert.deepEqual(observed.candidates.wasteCodes, baseline.candidates.wasteCodes);
+    assert.deepEqual(observed.assessment.legal, baseline.legal);
+    assert.deepEqual(observed.assessment.pendingLegal, baseline.pendingLegal);
+    assert.deepEqual(observed.reviewReasons, baseline.reviewReasons);
+    for (const { eligibility } of observed.assessment.routes) {
+      assert.ok(eligibility.state === "unknown");
+      assert.ok(addedQuestions.every(question => eligibility.missingFacts.includes(question)));
+    }
+    switch (observed.decision.state) {
+      case "needs-information": assert.ok(addedQuestions.every(question => observed.decision.state === "needs-information" && observed.decision.questions.includes(question))); break;
+      case "needs-review": assert.ok(addedQuestions.every(question => observed.decision.state === "needs-review" && observed.decision.reasons.includes(question))); break;
+      case "compared": assert.fail("Synthetic observations cannot authorize comparison");
+      default: observed.decision satisfies never;
+    }
+    observationMatrix.push({ scenario: scenario.id, scope: "SYNTHETIC injected observations; no accuracy or acceptance claim",
+      baseline, addedQuestions, ...observed });
+  }
   const first = receipts.get(pack.entries[0]!.candidateId)!, second = receipts.get(pack.entries[1]!.candidateId)!;
   const request = { caseId: first.caseId, caseRevision: revision(cases.get(first.caseId)!), photoRef: first.photoRef };
   await store.withdrawModel(actor, first.photoRef, signal());
@@ -124,6 +172,18 @@ try {
   await store.revoke(actor, second.photoRef, signal());
   await assert.rejects(store.read(actor, { caseId: second.caseId, caseRevision: revision(cases.get(second.caseId)!), photoRef: second.photoRef }, signal()));
   clock += 60_001; const purged = await store.purgeExpired(); assert.equal(purged.removed, 9); assert.equal(purged.unreadable, 0);
+
+  // Persist partial evidence honestly if the subsequent HTTP check fails.
+  const report = { corpusVersion: pack.version, manifestSha256: pack.manifestSha256, provider: "chatgpt-subscription", modelId: "gpt-6-sol",
+    publicPhotos: 10, syntheticScenarioInputs: 10, syntheticTransportCalls: transportCalls, externalModelCalls: 0,
+    realProviderUsage: null, realRequestId: null, photoInference: "not-performed for legacy rows; synthetic observations in observationMatrix",
+    fieldAccuracy: "unclaimed", humanAcceptance: "unclaimed", operationalAcceptance: "unclaimed",
+    boundary: "Real PNG decode/private store/SDK HTTP serialization and loopback app. Synthetic credentials, authority, consent, inputs, SSE responses and counters; no field/provider acceptance or external image access.",
+    lifecycle: { modelWithdrawalDenied: true, previewPreserved: true, storageRevocationDenied: true, expiryPurged: purged.removed },
+    rows, observationMatrix, samePhotoConditionVariants: [single, resolved, hazardous],
+    historicalSyntheticBoundaryControl: { scope: "Explicit 2026-11-05 synthetic control, not current field evidence or approval",
+      sameImageSha256: mixedReceipt.sha256, variants: [historical, processChanged, contaminationChanged, hazardChanged] } };
+  await mkdir(dirname(output), { recursive: true }); await writeFile(output, JSON.stringify({ ...report, complete: false, http: null }, null, 2) + "\n");
 
   // Real loopback HTTP/form round trip through O's unchanged app and the H adapter.
   let app: ReturnType<typeof createResourceApp>;
@@ -142,7 +202,7 @@ try {
       response.end(Buffer.from(await result.arrayBuffer()));
     } catch (error) { response.destroy(error instanceof Error ? error : new Error("offline HTTP bridge failure")); }
   });
-  await new Promise<void>(resolve => server.listen(0, "127.0.0.1", resolve));
+  await new Promise<void>((resolve, reject) => { server.once("error", reject); server.listen(0, "127.0.0.1", resolve); });
   const address = server.address(); assert.ok(address && typeof address !== "string");
   origin = `http://127.0.0.1:${address.port}`; app = createResourceApp({ origin });
   let http;
@@ -161,14 +221,6 @@ try {
     http = { createStatus: created.status, answerStatus: answered.status, otherSessionStatus: inaccessible.status,
       mixedQuestionShown: true, resolvedQuestionRemoved: true, beforeHtmlSha256: sha256(before), afterHtmlSha256: sha256(after) };
   } finally { app.dispose(); await app.close(); await new Promise<void>((resolve, reject) => server.close(error => error ? reject(error) : resolve())); }
-  const report = { corpusVersion: pack.version, manifestSha256: pack.manifestSha256, provider: "chatgpt-subscription", modelId: "gpt-6-sol",
-    publicPhotos: 10, syntheticScenarioInputs: 10, syntheticTransportCalls: transportCalls, externalModelCalls: 0,
-    realProviderUsage: null, realRequestId: null, photoInference: "not-performed",
-    boundary: "Real PNG decode/private store/SDK HTTP serialization and loopback app. Synthetic credentials, authority, consent, inputs, SSE responses and counters; no field/provider acceptance or external image access.",
-    lifecycle: { modelWithdrawalDenied: true, previewPreserved: true, storageRevocationDenied: true, expiryPurged: purged.removed },
-    http, rows, samePhotoConditionVariants: [single, resolved, hazardous],
-    historicalSyntheticBoundaryControl: { scope: "Explicit 2026-11-05 synthetic control, not current field evidence or approval",
-      sameImageSha256: mixedReceipt.sha256, variants: [historical, processChanged, contaminationChanged, hazardChanged] } };
-  await mkdir(dirname(output), { recursive: true }); await writeFile(output, JSON.stringify(report, null, 2) + "\n");
+  await writeFile(output, JSON.stringify({ ...report, complete: true, http }, null, 2) + "\n");
   console.log(JSON.stringify({ output, publicPhotos: 10, syntheticTransportCalls: transportCalls, externalModelCalls: 0, http, lifecycle: report.lifecycle }, null, 2));
 } finally { await rm(root, { recursive: true, force: true }); }
