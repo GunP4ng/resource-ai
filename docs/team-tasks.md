@@ -182,6 +182,14 @@ launcher 기본값은 `RESOURCE_MODEL_RUNNER=subscription`; `local`은 기존 �
 
 ## 오연석 — 업체·비용/탄소·앱/조건부 보고서 화면 구현
 
+**2026-11-13 O 재배분 2차 확인·O4 supplier 선택 구현 인계 (미커밋).** 작업 branch는 `feat/oyeonseok-o4-supplier-selection`, base는 `ceb9e48b6db3e1a16b1eb69a65a35da8482b0dc4`다. O는 기본 `o-journal`과 trusted typed injection 전용 `h-suppliers`의 상호 배타적 서버 조립을 구현했다. 기본 환경 launcher는 O journal을 유지하고 H 선택에서는 journal 디렉터리·lock·DB를 열지 않는다. H의 reserve/해제/aggregate reconcile·실제 H audit store를 한 번만 연결하며 O journal 감사/정산을 중복하지 않는다. `startApp({suppliers:{configuration,open}})`는 명시적 operational mode와 실제 supplier bundle을 요구하며 `RESOURCE_OPERATIONAL_CONFIG`와 동시 사용하지 않는다. 임의 환경 JS loader나 production 기본 supplier는 없다.
+
+H-native config는 기존 실행/정확한 grant/기술 quota 필드를 공유하되 `journalCapacity` 대신 명시적 `budget:{mode,policyReference,budgetReference}`를 사용한다. 실제 financial/request-quota 정책·원자적 quota·durable approval pinning은 주입 ledger의 소유다. 재사용 approval은 동일 설정만 허용하고 재시작/재로드로 소비·미해결 quota를 초기화하지 않는다. O는 actor/case/lease/input/artifact·credential inode·선택 사진/동일 authority ticket을 reserve 전후와 H payload/audit 뒤 마지막 동기 dispatch 경계에서 확인한다. 종료·reload는 실제 H finalize/late reserve·raw transport/supplier·bundle settlement가 끝나기 전에 자원을 닫지 않는다. reload 실패와 recovery enqueue 실패는 admission을 멈추며 종료 중 reload 완료로 재개하지 않는다.
+
+실제 ledger·승인 예산·provider/account/model/purpose 승인과 식별된 private-file guard/독립 recovery supervisor/retention policy·책임자 승인은 여전히 공급되지 않았다. 해당 운영자가 실제 bundle을 공급해야 후속 H 통합이 가능하다. 테스트 공급자는 O 소유 `TEST-ONLY-sqlite-quota-ledger`, `TEST-ONLY-posix-inode-sidecar-guard`, `TEST-ONLY-independent-recovery-connection`, `TEST-ONLY-retain-all-obligations`이며 실제 private disk와 H audit/recovery store를 사용하지만 financial/live 인수 증거는 아니다. Audit capacity와 사진 retention은 감사 보관 승인이 아니다. 독립 supervisor는 프로세스 사망/감사 DB 불가·lost response·만료 예약을 ledger와 recovery-only store로 복구하고 자신의 timeout 뒤 handler도 drain해야 한다. [API·소유권·검증 명령·지원 한계](o-operational-handoff.md#mutually-exclusive-accounting-selection)를 따른다.
+
+O1은 허가/인수 실제 근거, O2는 검토 견적·독립 `CaseMassReview`, O3은 권리/GWP/경계가 검증된 계수가 없다는 기존 차단을 유지한다. 이 기능들의 source/비교/legal/fixture와 O 후보 입력 및 PR35 사진 inventory는 이번 변경에서 수정하지 않았다. O의 [합성 후보10건](o-candidate-handoff.md)은 이미 전달됐고 exposed development 후보이며 J/H의 독립 라벨은 수집자 O가 대신 작성하지 않는다. 전체30건의 인수·중복/출처 검토·18/12 배분은 미완료다. PR35의 **미검토 metadata700 사진은 현장 package나 입력/전송 승인이 아니다**. 현재 field package도 공급되지 않았다. Parent는 전체 suite·실제 HTTP/UI QA·Astra 최종 gate·PR을 맡는다. **#12 OPEN, #8 CLOSED**, 실제 실행/영상 인수 미완료와 11/20 동결은 유지한다.
+
 **2026-11-05 PR #18 재검토·병합 완료 (`32e958d`).** 이전 P1은 근거가 binding된 독립 `CaseMassReview`에 견적 사례 질량을 대조하여 해결했다. 혼합 물량과 모든 견적이 함께 오래된 물량을 가리키는 입력 모두 순비용을 보류한다. P2는 제외한 크레딧의 계산상 0과 근거 있는 0을 구별하고 공개 결과·순배출·회피량·보고서 요약에 경계를 보존한다. head `beb0e1f`의 151개 테스트, 두 타입 검사·두 빌드·격리 SDK smoke 및 이전 두 회귀 입력 재실행이 통과했다. 정상 비용 240,000/230,000원·순배출45, 제외 경계 순배출100, 보류/검토 화면을 실제 데스크톱·390px 브라우저로 확인했다. [재검토 승인](https://github.com/GunP4ng/resource-ai/pull/18#pullrequestreview-5791831191).
 
 | 항목 | 진행 상태 | 다음 작업 |

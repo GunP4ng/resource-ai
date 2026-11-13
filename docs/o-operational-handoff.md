@@ -1,8 +1,9 @@
 # O4 operational runtime handoff
 
-Branch: `feat/oyeonseok-o4-operational-handoff`, base
-`74c8c3d9a3bae87b560f72e05068f991ca255265`. O owns the implementation PR,
-component checks and execution handoff; the team lead owns integrated acceptance
+Branch: `feat/oyeonseok-o4-supplier-selection`, base
+`ceb9e48b6db3e1a16b1eb69a65a35da8482b0dc4`. O owns supplier-selection assembly,
+component checks and this execution handoff. The parent owns whole-suite/real
+HTTP/UI QA, Astra final gate and PR; the team lead owns integrated acceptance
 and final report/video. Keep #12
 open and #8 closed. No provider approval or field package is supplied here.
 
@@ -46,7 +47,95 @@ runtime database's `accounts.actor_id` for that username. The account CLI does
 not print an actor ID; a username is not that ID. Stop this process before operational startup. Runtime state
 must already exist; operational mode cannot provision accounts or use memory.
 
-## Configuration contract
+## Mutually exclusive accounting selection
+
+`createOperatorRuntime` defaults to `{kind:"o-journal"}` and preserves the
+nonoptional `runtime.journal` API for journal callers. The ordinary environment
+launcher remains journal-backed. Explicit `{kind:"h-suppliers",open}` calls the
+trusted `OpenOperatorSuppliers` factory once and assembles H's
+`createOperationalHandoff` directly. This path exposes no journal, does not open
+or inspect `<state>/operations`, and does not use journal transport accounting.
+Unknown/mixed selections, invalid suppliers and selected-backend failures stop
+startup; there is no fallback or environment JavaScript/module loader.
+
+`startApp({suppliers:{configuration,open},transport?})` is the typed server-entry
+API. It requires explicit `RESOURCE_MODEL_RUNNER=operational`, local operator
+identity, existing private state/resources and **unset**
+`RESOURCE_OPERATIONAL_CONFIG`. A deployment entrypoint must supply a real
+operator-reviewed bundle before this API can run operationally. No such bundle,
+ledger approval or provider approval is included in this checkout. The CLI
+command below selects the existing O journal only; it cannot select H.
+
+`parseHOperationalConfiguration` accepts the same explicit execution/grant and
+technical-limit fields as the old O config, **omits `journalCapacity`**, and
+requires `budget:{mode,policyReference,budgetReference}`. Modes are `financial`,
+`request-quota`, or the explicitly synthetic harness mode `test-only`. References
+use the approval-ID syntax and must identify the supplied ledger's actual policy
+and budget. The ledger must durably acknowledge these bindings in
+`activatePolicy(configuration)` and atomically enforce request/concurrency
+limits itself. O adds no parallel counter. A financial policy and its amounts,
+rates/currency/price versions are the supplied ledger's responsibility; a
+request quota and `maxOutputTokens` never establish a monetary cap. `test-only`
+requires an injected synthetic transport. Every injected transport persists
+synthetic presentation; readiness remains `liveModelVerified=false`.
+
+The required `OperatorSupplierBundle` contract is exported from
+`src/o-operational-backend.ts`:
+
+| Implementation / policy | Required identity and responsibility |
+| --- | --- |
+| `ledger.reserve/release/reconcile` | Identified actual ledger, budget mode and policy reference; durable per-attempt reservation IDs distinct from stable O policy `approvalId`; atomic quotas and idempotent aggregate settlement |
+| `store` | Already constructed real `createOperationalAuditStore`; separate file-backed audit and recovery databases; append H audit once and synchronously acknowledge recovery once |
+| `privateFileGuard()` | Identified implementation verifying canonical paths, pinned inode/owner/mode, links, approved parent directories and SQLite sidecars; returns `true` only after checks |
+| `recoverySupervisor.assertReady()` | Identified independent supervisor that can inspect the ledger and use recovery-only storage after web-process/audit loss, including expired/crashed/lost-response reservations |
+| `retention.assertReady()` | Approved retention-policy identity and named responsible owner; unresolved obligations survive archival/deletion; store capacity and photo retention are separate settings |
+| `assertReady`, `activatePolicy`, `settled(runId?)`, `close` | Real readiness, durable approval pinning, complete descendant drain and idempotent application-resource close |
+
+Identity strings alone are insufficient. Startup checks implementations, private
+guard, an actual audit-store read, supervisor/retention readiness and durable
+activation. The factory owns cleanup if it throws before returning its bundle.
+Bundle identities, captured callback implementations and all settings stay
+immutable until restart. The adapter binds callback references to their supplied
+owners; it does not freeze supplier-owned mutable resource/lifecycle state.
+
+The factory receives frozen configuration and `binding(runId)`. Each immutable
+binding contains the random run ID, stable policy approval, exact actor/case/
+lease/input revision, artifact SHA/origin and shared photo ticket. The ledger
+must persist that association before acknowledging a reservation. Terminal and
+late recovery use captured bindings after identity/lease cancellation; bindings
+remain available until H, raw supplier/transport and bundle descendants settle.
+O checks live identity, credentials, grant/source, selected photos and ticket at
+start, before reserve, after authorization, dispatch audit and synchronously
+before actual transport. H retains its account/model/payload/image checks.
+
+H's additive `settled(runId?)` drains authorization/record operations and the
+actual internal finalization promise, including rejected/late work. It does not
+change H reservation, audit, deadline or financial semantics. In particular H
+marks `transportStarted` before invoking O's wrapper: O may refuse the final
+guard with zero underlying calls while H conservatively reconciles unknown
+usage. That is not evidence of a refund. Reserve/release/reconcile and audit
+are owned solely by H on this path; O performs no double audit.
+
+Reload stops admission, drains the selected backend, validates immutable fields,
+delegates durable activation, then publishes grants/validity/approval. Reused
+approval IDs must pin identical configuration and never reset consumed or
+unresolved quota. Backend, target, budgets, suppliers, authority and retention
+require restart. Failure remains stopped; a completing reload cannot undo
+concurrent close. Typed H callers invoke `runtime.reloadConfiguration` with
+H-native configuration; the ordinary journal launcher uses SIGHUP as below.
+
+Close cancels admissions/application requests, serializes against reload and
+drains handlers, app work, actual H finalization/late reserve, raw supplier and
+transport promises, bundle settlement and cleanup before closing resources.
+Failed recovery acknowledgement stops further admission, including a callback
+that incorrectly returns false. An uncooperative continuation keeps close
+pending; the launcher's referenced grace timer exits nonzero without closing
+resources underneath it. The independent supervisor remains responsible after
+process death. Its idempotent handler must track its own raw promises past
+`processOperationalRecovery`'s timeout/cancellation race, and must keep its own
+connections open until those promises finish.
+
+## Existing O journal configuration contract
 
 `readOperationalConfiguration(absolutePath)` reads a JSON object with exactly
 the following keys. Unknown keys fail validation. The config and auth file
@@ -251,6 +340,10 @@ independent evaluation labels. The lead owns recordings and integrated acceptanc
 
 ```sh
 RESOURCE_MODEL_RUNNER=local bun test tests/o-operation-journal.test.ts tests/o-operational-runtime.test.ts tests/o-operational-photos.test.ts tests/o-runtime.test.ts tests/operations.test.ts tests/subscription-operations.test.ts
+RESOURCE_MODEL_RUNNER=local bun test tests/o-operational-suppliers.test.ts tests/operational-handoff.test.ts tests/operational-audit-store.test.ts
+bun run typecheck
+bun run typecheck:o-tests
+bun run build:app
 ```
 
 Tests retain PR31's existing regressions and exercise real private disk SQLite,
@@ -277,3 +370,101 @@ diagnosis was backed by an observed 1,444 ms host-clock rollback and a persisted
 window 1,155 ms ahead. Earlier separate operator403/evaluation502 observations
 were not independently diagnosed; the final complete suite passed, and those
 observations are not claimed to share the proven login cause.
+
+## 2026-11-13 supplier-selection evidence and second assignment check
+
+This worktree remains uncommitted on the branch/base at the top of this file.
+Environment: Linux x64, Bun 1.4.2, installed locked dependencies. No real
+credentials, provider/external requests, data downloads, commits or pushes were
+used. The parent still owns whole-suite, packaged real HTTP/UI verification,
+Astra final gate and PR. Historical test totals above are historical evidence.
+
+The O-owned harness in `tests/o-supplier-fixture.ts` supplies these **test-only**
+implementations, not a production supplier:
+
+| Identity | Actual implementation and owner |
+| --- | --- |
+| `TEST-ONLY-sqlite-quota-ledger` | O test harness: private FULL/WAL SQLite policy pins, per-attempt UUID reservations, technical request/concurrency limits, idempotent release and aggregate settlement; no financial rates |
+| H `createOperationalAuditStore` | Actual H implementation with separate private `audit.sqlite` and `recovery.sqlite` connections; O harness supplies temporary databases |
+| `TEST-ONLY-posix-inode-sidecar-guard` | O harness: canonical paths, pinned file identity, owner/mode/link/parent and WAL/SHM checks |
+| `TEST-ONLY-independent-recovery-connection` | O harness: independently opened recovery-only store and ledger, expired/lost-response inspection, idempotent effect records and raw-handler drain beyond the bounded recovery attempt; also reopened after child/application shutdown |
+| `TEST-ONLY-retain-all-obligations`, owner `O-test-harness` | Explicit harness policy retaining all rows; it implements no production retention/deletion approval |
+
+Tests use native login, private persistent cases/photos/artifacts, real SDK
+serialization and synthetic SSE transport. They prove one backend, single
+accounting/audit invocation, exact immutable lease/run/artifact binding, distinct
+policy/reservation IDs, reported-zero versus null usage, restart quota and
+synthetic disclosure, final dispatch revocation, actual continuation drain,
+independent recovery under audit contention, and reload/close/dispose ordering.
+The real loopback/SIGTERM tests remain intact for a capable host.
+
+Red evidence was observed before the corresponding fixes: new H drain tests
+initially failed with `settled` absent; false recovery acknowledgement
+left admissions open (`403` instead of `503`); dispose/reload reopened admission
+(`408` instead of `503`); queued reloads reopened it during the later activation
+(`403` instead of `503`). Mutation checks additionally removed actual-finalize
+tracking (three failing stall tests) and final O credential guards (one underlying
+call instead of zero). Restoring those mechanisms passed the affected tests.
+An additional supplier-state regression rejected freezing a managed supplier's
+internal lifecycle state; the adapter now pins bound callback references while
+allowing its original close implementation to update its own resource state.
+Task-local logs are `/tmp/o4-h-finalize-red-20261113.log`,
+`/tmp/o4-final-guard-red-20261113.log`,
+`/tmp/o4-final-guard-green-20261113.log`,
+`/tmp/o4-dispose-reload-red-20261113.log`,
+`/tmp/o4-dispose-reload-green-20261113.log`,
+`/tmp/o4-queued-reload-red-20261113.log`, and
+`/tmp/o4-control-final-20261113.log`, and
+`/tmp/o4-supplier-state-red-20261113.log`. These are local artifacts, not provider
+or financial acceptance records. Audit-stall tests observe the actual audit
+AbortSignal before releasing the hold; HTTP completion alone is insufficient.
+
+The sandbox rejects loopback listen. A direct Node probe returned
+`code:'EPERM', errno:-1, syscall:'listen', address:'127.0.0.1'`; Bun's HTTP
+server also reported `EPERM: operation not permitted, listen`. No permission
+workaround or replacement production path was used. Preserved tests requiring
+parent-host execution are the journal normal/held SIGTERM tests, H normal/held
+SIGTERM tests, H HTTP bridge, packaged local-operator launcher and O4 source/
+packaged launcher scenario. Run the unfiltered commands above on that host.
+
+For reproducible checks of all supported focused scenarios in this sandbox,
+after separately recording the unfiltered loopback failures:
+
+```sh
+RESOURCE_MODEL_RUNNER=local bun test tests/o-operational-suppliers.test.ts tests/o-operational-runtime.test.ts tests/o-operational-photos.test.ts tests/o-operation-journal.test.ts tests/o-runtime.test.ts tests/operational-handoff.test.ts tests/operational-audit-store.test.ts tests/operations.test.ts tests/subscription-operations.test.ts -t '^(?!.*(?:HTTP launcher|HTTP bridge|packaged local operator launcher)).*$'
+RESOURCE_MODEL_RUNNER=local bun test tests/processors.test.ts tests/comparison.test.ts tests/carbon.test.ts tests/report.test.ts tests/app.test.ts
+```
+
+Observed results (all counts refer to this working tree, not historical PR totals):
+
+| Check | Result / task-local log |
+| --- | --- |
+| `bun run typecheck`, `bun run typecheck:o-tests`, `bun run build:app`, `bun run build` | Pass with installed Bun 1.4.2 dependencies |
+| Unfiltered nine-file focused suite | 172 pass / 6 loopback failures; `/tmp/o4-focused-final-20261113.log` (before the final added control regressions) |
+| Latest nine-file focused suite, only six loopback tests filtered by the command above | 174 pass / 1 failure / 6 filtered; `/tmp/o4-focused-supported-20261113.log`. The unchanged `journal permissions corruption stops startup before recovering reservations` failed its initial live-grant check, before permission corruption. Do not call this a clean combined run. |
+| Unchanged journal file, isolated recheck | 19 pass / 0 fail; `/tmp/o4-journal-recheck-20261113.log`. The preceding intermittent live-grant failure was not reproduced or assigned a proven cause. Journal implementation and tests were not changed. |
+| Final assembly/control checks after typed reload narrowing | 9 pass / 0 fail; `/tmp/o4-final-assembly-20261113.log` |
+| Explicit late audit/release/reconcile/transport/bundle drain checks | 5 pass / 0 fail; `/tmp/o4-actual-drain-final-20261113.log` |
+| Final pinned-callback/state, photo, selection, drain, reload and recovery-acknowledgement checks | 23 pass / 0 fail; `/tmp/o4-supplier-final-20261113.log` (after the supplier-state fix) |
+| Typed launcher conflict selection after narrowing journal reload | 1 pass / 0 fail; `/tmp/o4-launcher-selection-final-20261113.log` |
+| O1–O4 focused assignment checks | Unfiltered 152 pass / 1 loopback failure (`/tmp/o4-assignment-check-20261113.log`); with only that launcher scenario filtered: 152 pass / 0 fail (`/tmp/o4-assignment-supported-20261113.log`) |
+
+The parent must rerun the unfiltered focused/whole suite and real packaged
+HTTP/UI tests on its loopback-capable host, including the intermittent journal
+startup case. The individual successful rerun does not erase that observation.
+
+The second assignment check re-read O1–O4 ownership and source/test boundaries,
+the unchanged O ten-candidate handoff/manifest, and PR35's unchanged photo
+inventory. The documented read-only candidate validation passed: ten exact
+CaseInputs, distinct IDs/paths, matching actual SHA256s and null independent
+labels/reviewers/split/acceptance. No replacement candidates or independent J/H
+labels were authored. The 700-photo inventory has no approved location, access
+or retention, no accepted field cases and no model-transfer approval. It is not
+a field package or an input grant; its originals were not accessed/downloaded.
+
+O1 still needs actual permit/acceptance evidence. O2 needs reviewed quotes and
+independent `CaseMassReview`. O3 needs rights/GWP/boundary-qualified factors.
+O4's selectable assembly is implemented; actual provider/financial/field
+acceptance, approved private-store guard, independent deployed supervisor and
+retention policy/owner, field package, corpus acceptance and independent labels
+remain external dependencies. Keep **#12 open and #8 closed**.

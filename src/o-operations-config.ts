@@ -14,7 +14,7 @@ const hash = Type.String({ pattern: "^[a-f0-9]{64}$" });
 const integer = (minimum: number, maximum = Number.MAX_SAFE_INTEGER) => Type.Integer({ minimum, maximum });
 const scope = Type.Object({ provider: Type.String({ minLength: 1, maxLength: 200, pattern: "\\S" }), purpose: Type.String({ minLength: 1, maxLength: 500, pattern: "\\S" }) }, strict);
 const target = Type.Object({ provider: Type.Literal("chatgpt-subscription"), endpoint: Type.Literal(SUBSCRIPTION_ENDPOINT), modelId: id, accountIdSha256: hash }, strict);
-const schema = Type.Object({
+const execution = {
   approvalId: id, validFrom: integer(0), validUntil: integer(1),
   grants: Type.Array(Type.Object({ actorId: Type.String({ pattern: "^[A-Za-z0-9_-]{1,100}$" }), caseId: Type.String({ pattern: "^[A-Za-z0-9_-]{1,100}$" }),
     inputRevision: hash, artifactSha256: Type.Union([hash, Type.Null()]) }, strict), { minItems: 1, maxItems: 100 }),
@@ -23,13 +23,27 @@ const schema = Type.Object({
   photos: Type.Object({ enabled: Type.Boolean(), mappings: Type.Array(Type.Object({ target, scope }, strict), { maxItems: 1 }) }, strict),
   requestAllowance: integer(1, 1000000), concurrentRuns: integer(1, 100), permitLifetimeMs: integer(1, 60000),
   runnerTimeoutMs: integer(1, 60000), requestTimeoutMs: integer(2, CASE_LEASE_MS - 1),
-  maxTurns: integer(1, 10), maxOutputTokens: integer(16, 8192), journalCapacity: integer(10, 1000000), shutdownGraceMs: integer(1, 120000),
+  maxTurns: integer(1, 10), maxOutputTokens: integer(16, 8192), shutdownGraceMs: integer(1, 120000),
   acknowledgeUncappedSubscription: Type.Literal(true), acknowledgeRequestQuotaIsNotMoney: Type.Literal(true),
-}, strict);
+};
+const schema = Type.Object({ ...execution, journalCapacity: integer(10, 1000000) }, strict);
+const hSchema = Type.Object({ ...execution, budget: Type.Object({
+  mode: Type.Union([Type.Literal("financial"), Type.Literal("request-quota"), Type.Literal("test-only")]),
+  policyReference: id, budgetReference: id,
+}, strict) }, strict);
 export type OperationalConfiguration = Static<typeof schema>;
+export type HOperationalConfiguration = Static<typeof hSchema>;
+export type ExecutionConfiguration = OperationalConfiguration | HOperationalConfiguration;
 export function parseOperationalConfiguration(raw: unknown): Readonly<OperationalConfiguration> {
   if (!Value.Check(schema, raw)) throw new OperationalConfigurationError();
-  const config = structuredClone(raw), t = config.target, mappings = config.photos.mappings;
+  return checkExecution(structuredClone(raw));
+}
+export function parseHOperationalConfiguration(raw: unknown): Readonly<HOperationalConfiguration> {
+  if (!Value.Check(hSchema, raw)) throw new OperationalConfigurationError();
+  return checkExecution(structuredClone(raw));
+}
+function checkExecution<C extends ExecutionConfiguration>(config: C): Readonly<C> {
+  const t = config.target, mappings = config.photos.mappings;
   if (!isAbsolute(t.authPath) || resolve(t.authPath) !== t.authPath || t.authPath.includes("\0")
     || config.validFrom >= config.validUntil || config.runnerTimeoutMs > config.requestTimeoutMs
     || config.shutdownGraceMs < config.requestTimeoutMs || config.concurrentRuns > config.requestAllowance

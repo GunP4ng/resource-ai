@@ -14,6 +14,7 @@ import { createInterface } from "node:readline";
 import { fileURLToPath } from "node:url";
 import { Database } from "bun:sqlite";
 import { inspectOperationJournal } from "../scripts/o-journal.ts";
+import { processTimeArguments, processTimeEnvironment, runWithProcessTime } from "./o-process-time.ts";
 const binding = { leaseToken: "lease", actorId: "operator", caseId: "case", inputRevision: "a".repeat(64), artifact: null };
 const request = { runId: "run", caseRevision: binding.inputRevision, endpoint: SUBSCRIPTION_ENDPOINT, deployment: "", modelId: "gpt-6-sol",
   attempt: 1, maxOutputTokens: 128, provider: "chatgpt-subscription" as const, outputLimitEnforced: false };
@@ -71,9 +72,10 @@ test("another process lifetime owner cannot recover active reservations", async 
 });
 
 for (const stage of ["reserved", "dispatch", "transport"] as const) test(`SIGKILL after ${stage} releases the kernel lock and recovers only proven uninvoked work`, { timeout: 15000 }, async t => {
+  if (await runWithProcessTime(t, import.meta.url)) return;
   const root = await mkdtemp(join(tmpdir(), "o-crash-")), config = parseOperationalConfiguration(configuration());
   t.after(() => rm(root, { recursive: true, force: true }));
-  const child = spawn(process.execPath, [fileURLToPath(new URL("./o-journal-child.ts", import.meta.url)), root, stage, JSON.stringify(config)], { stdio: ["ignore", "pipe", "pipe"] });
+  const child = spawn(process.execPath, [...processTimeArguments, fileURLToPath(new URL("./o-journal-child.ts", import.meta.url)), root, stage, JSON.stringify(config)], { env: processTimeEnvironment(), stdio: ["ignore", "pipe", "pipe"] });
   const exited = once(child, "exit"), lines = createInterface({ input: child.stdout }); let diagnostic = "";
   child.stderr.on("data", bytes => { diagnostic += String(bytes); });
   try {
