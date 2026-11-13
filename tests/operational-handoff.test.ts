@@ -12,6 +12,37 @@ const request = (attempt = 1): DispatchRequest => ({ runId: "synthetic-run", cas
 const event = (phase: OperationalAudit["phase"], sent: number[] = []): OperationalAudit => ({ phase, runId: "synthetic-run", caseRevision: "a".repeat(64),
   at: new Date().toISOString(), elapsedMs: 1, ...(phase === "finish" ? { outcome: "cancelled" as const } : {}),
   requests: sent.map(attempt => ({ attempt, approvalId: `synthetic-${attempt}`, transportStarted: true, status: null, requestId: null })), usage: null, images: [] });
+
+for (const stage of ["audit", "release", "reconcile", "reserve"] as const) test(`settled waits for actual ${stage} continuation after cancellation`, async () => {
+  // Given a supplier that continues after its caller's cancellation race.
+  const entered = Promise.withResolvers<void>(), unblock = Promise.withResolvers<void>(), f = fixture();
+  const hold = async () => { entered.resolve(); await unblock.promise; };
+  const hooks = createOperationalHandoff({ ...f.suppliers,
+    reserve: async r => { if (stage === "reserve") await hold(); return f.suppliers.reserve(r); },
+    appendAudit: async e => { if (e.phase === "finish" && stage === "audit") await hold(); },
+    release: async r => { if (stage === "release") await hold(); await f.suppliers.release(r); },
+    reconcile: async (e, rows) => { if (stage === "reconcile") await hold(); await f.suppliers.reconcile(e, rows); },
+  });
+  await hooks.record(event("start"));
+  const reserving = hooks.authorizeDispatch(request(), signal());
+  if (stage !== "reserve") await reserving;
+  const controller = new AbortController();
+  const finishing = hooks.record(event("finish", stage === "reconcile" ? [1] : []), controller.signal);
+  await entered.promise;
+  // When the public operation is interrupted, its descendants must still drain.
+  controller.abort();
+  if (stage === "reserve") await finishing; else await assert.rejects(finishing);
+  let drained = false;
+  const settling = hooks.settled("synthetic-run").then(() => { drained = true; });
+  await new Promise<void>(done => setImmediate(done));
+  assert.equal(drained, false);
+  unblock.resolve();
+  await Promise.allSettled([reserving]); await settling;
+  // Then no continuation is abandoned, and late reserve owns a recovery obligation.
+  assert.equal(drained, true);
+  if (stage !== "reserve") assert.equal(f.recovery.some(row => row.reason === "terminal-failure"), true);
+  if (stage === "reserve") assert.equal(f.recovery.some(row => row.reason === "late-reservation"), true);
+});
 function fixture() {
   const released: Reservation[] = [], reconciled: { event: OperationalAudit; rows: readonly Reservation[] }[] = [], recovery: RecoveryTask[] = [];
   const suppliers = { reserve: async (r: DispatchRequest) => ({ approvalId: `synthetic-${r.attempt}`, expiresAt: Date.now() + 60000 }),
