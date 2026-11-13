@@ -1,0 +1,107 @@
+{
+  "schemaVersion": 1,
+  "usage": "review-only; not ResourceProvider /facts or field-approved artifact",
+  "derived": {
+    "sourceId": "j2j3-20261110-conditional-r3-3",
+    "path": "data/reference/legal/review-2026-11-10/conditional-r3-3-fact.txt",
+    "sha256": "ddecf5a228603ec30a5be957c71adb162f2fea4c43497a815b655ccb75d31fb3",
+    "locator": "F1-F4 and conclusion",
+    "state": "needs-review",
+    "caseId": null,
+    "reviewedBy": "OmO source comparison; human legal review unavailable",
+    "reviewedAt": "2026-11-10T03:47:17.565Z",
+    "rights": "Repository publication authorized by owner on 2026-11-10 (scoped J evidence handoff); no field-data permission or site approval. Legal-source rights remain as recorded per original."
+  },
+  "supportMode": "joint-partial-support; no original independently contains the whole derived fact",
+  "supports": [
+    {
+      "derivedLocator": "F1",
+      "original": {
+        "sourceId": "waste-rule-annex4-pdf",
+        "path": "data/reference/legal/annex-4-290881.pdf",
+        "sha256": "1144ca217ceb485cfb8bc92a007337c4fb6cab12830a7aed3c6c031c815430a0",
+        "url": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=170404737&bylClsCd=110201",
+        "locator": "별표 4 제2호 51-03-01, PDF 6쪽",
+        "license": "저작권법 제7조 제1호 비보호저작물 (법령·별표 원문)",
+        "licenseVerified": true
+      },
+      "existingExcerpt": {
+        "sourceId": "legal-290881-annex4-code",
+        "path": "data/reference/legal/annex4-code.txt",
+        "sha256": "24678e53168f2ca4811cafc0d776769114abd95a1670dc61326b93f8ae9f8550",
+        "derivedFrom": "1144ca217ceb485cfb8bc92a007337c4fb6cab12830a7aed3c6c031c815430a0",
+        "quote": "51-03-01 폐합성수지류(폐염화비닐수지류는 제외한다)"
+      },
+      "supportRole": "classification identity",
+      "retrievalResponseId": "official-response-3",
+      "supportsSiteEligibility": false
+    },
+    {
+      "derivedLocator": "F2",
+      "original": {
+        "sourceId": "legal-290881-annex4-2-pdf",
+        "path": "data/reference/legal/annex-4-2-290881.pdf",
+        "sha256": "00322ef0f5f4c0e2a616e85e7286a0ae41a4278e76efcdc23980ac42074ab1ed",
+        "url": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=170404769&bylClsCd=110201",
+        "locator": "별표 4의2 제2호가목3), PDF 1쪽",
+        "license": "저작권법 제7조 제1호 비보호저작물 (법령·별표 원문)",
+        "licenseVerified": true
+      },
+      "existingExcerpt": {
+        "sourceId": "legal-290881-annex4-2-r3-3",
+        "path": "data/reference/legal/annex4-2-r3-3.txt",
+        "sha256": "d6e6ea0416c8568e403bb53507fb2311370e171fd71a1e3097c89dc4640488ed",
+        "derivedFrom": "00322ef0f5f4c0e2a616e85e7286a0ae41a4278e76efcdc23980ac42074ab1ed",
+        "quote": "R-3-3: 분리, 선별, 압축, 감용, 절단, 파쇄, 분쇄, 용융, 반응, 증발ㆍ농축, 증류, 추출 및 열분해 등의 공정을 통해 폐기물을 종이, 금속, 유리, 합성수지, 섬유, 고무, 석유, 석유화학제품 또는 석유대체연료의 원료물질로 제조하는 유형"
+      },
+      "supportRole": "definition of recycling process and output",
+      "retrievalResponseId": "official-response-4",
+      "supportsSiteEligibility": false
+    },
+    {
+      "derivedLocator": "F3",
+      "original": {
+        "sourceId": "legal-290881-annex4-3-pdf",
+        "path": "data/reference/legal/annex-4-3-290881.pdf",
+        "sha256": "45ecd6453c9ca337479751841e0d2a79a3bb345b5080a8f9f63a40d05841ad9e",
+        "url": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=170404781&bylClsCd=110201",
+        "locator": "별표 4의3 제2호 51-03-01, R-3-3 포함 행, PDF 9쪽",
+        "license": "저작권법 제7조 제1호 비보호저작물 (법령·별표 원문)",
+        "licenseVerified": true
+      },
+      "existingExcerpt": {
+        "sourceId": "legal-290881-annex4-3-types",
+        "path": "data/reference/legal/annex4-3-types.txt",
+        "sha256": "e1d02f6101dfbda72d2f15357d0e6d067590303cb45cc76830d6f49fcbbeb0a1",
+        "derivedFrom": "45ecd6453c9ca337479751841e0d2a79a3bb345b5080a8f9f63a40d05841ad9e",
+        "quote": "51-03-01 폐합성수지류(폐염화비닐수지류는 제외한다)\n재활용 유형: R-1, R-2, R-3-2, R-3-3, R-3-4, R-4-4, R-9-3, R-10\n사전 분석ㆍ확인 필요 여부: 해당 없음"
+      },
+      "supportRole": "listing relation between code and type",
+      "retrievalResponseId": "official-response-5",
+      "supportsSiteEligibility": false
+    },
+    {
+      "derivedLocator": "F4",
+      "original": {
+        "sourceId": "legal-290881-annex5-3-pdf",
+        "path": "data/reference/legal/annex-5-3-290881.pdf",
+        "sha256": "3d718a601e603ae72aa35fb60db81311c236298b571d579de54f1f5d83c21f1c",
+        "url": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=170404923&bylClsCd=110201",
+        "locator": "별표 5의3 제1호다목, PDF 1쪽",
+        "license": "저작권법 제7조 제1호 비보호저작물 (법령·별표 원문)",
+        "licenseVerified": true
+      },
+      "existingExcerpt": {
+        "sourceId": "legal-290881-annex5-3-common",
+        "path": "data/reference/legal/annex5-3-common.txt",
+        "sha256": "7a861fed124e6f9ea9e597c2d378c2a5f47ebbb381c17695092b9d283f4a2a31",
+        "derivedFrom": "3d718a601e603ae72aa35fb60db81311c236298b571d579de54f1f5d83c21f1c",
+        "quote": "법 제13조의2에 따라 폐기물을 재활용하는 자(법 제13조의3제1항제2호에 따라 재활용환경성평가를 받아 재활용하는 경우는 제외한다)는 별표 4의3에 따른 폐기물의 종류별 재활용 가능 유형에 해당하는 유형으로 제2호에 따른 재활용 유형별 재활용의 세부기준을 준수하여 재활용해야 한다."
+      },
+      "supportRole": "common duty to meet type-specific standards",
+      "retrievalResponseId": "official-response-6",
+      "supportsSiteEligibility": false
+    }
+  ],
+  "integrationBlocker": "Current O evidenceIssue requires each source to duplicate a full bound fact (docs/o-handoff.md, Separate J/H/O provenance integration limitation); PR30 installer is merged but this review-only package is not its installable schema."
+}

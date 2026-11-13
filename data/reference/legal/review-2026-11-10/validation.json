@@ -1,0 +1,278 @@
+{
+  "schemaVersion": 1,
+  "validatedAt": "2026-11-10T10:51:49.925Z",
+  "baseCommit": "74c8c3d9a3bae87b560f72e05068f991ca255265",
+  "tier": "HEAVY: independent review explicitly required",
+  "changeKind": "Review data and prose only; runtime, tests, installer, model configuration and registry cutoff unchanged",
+  "runtime": "Bun 1.4.4 (38afee6c8), Linux x64 WSL2",
+  "checks": [
+    {
+      "command": "bun install --frozen-lockfile --ignore-scripts",
+      "exitCode": 0,
+      "packages": 247
+    },
+    {
+      "command": "bun test tests/evidence.test.ts tests/legal-registry.test.ts tests/sources.test.ts",
+      "exitCode": 0,
+      "pass": 31,
+      "fail": 0,
+      "expectCalls": 87,
+      "files": 3
+    },
+    {
+      "command": "bun run typecheck",
+      "exitCode": 0,
+      "configurations": 3
+    },
+    {
+      "command": "bun run build",
+      "exitCode": 0,
+      "modules": 15
+    },
+    {
+      "command": "bun run build:app",
+      "exitCode": 0,
+      "modules": 36,
+      "entries": [
+        "app.js",
+        "o-account.js",
+        "o-artifact.js"
+      ]
+    },
+    {
+      "command": "bun run smoke",
+      "exitCode": 0,
+      "signals": [
+        "EXTENSION_LOAD_PASS src/extension.ts",
+        "EXTENSION_LOAD_PASS dist/extension.js",
+        "SDK_SELECTION_PASS azure-openai-responses resource_project_status",
+        "SCAFFOLD_ONLY no prompt sent; Azure connectivity and domain behavior untested",
+        "OWNED_SMOKE_RESOURCES_REMOVED"
+      ]
+    },
+    {
+      "command": "bun scripts/legal-demo.ts data/reference/legal/review-2026-11-10/qa-inputs.json",
+      "exitCode": 0,
+      "artifact": "qa-output.json",
+      "scenarios": [
+        {
+          "label": "current-clean",
+          "date": "2026-11-05",
+          "citations": 5,
+          "state": "needs-review",
+          "issues": []
+        },
+        {
+          "label": "previous-version",
+          "date": "2026-09-30",
+          "citations": 0,
+          "state": "needs-review",
+          "issues": [
+            "out-of-period"
+          ]
+        },
+        {
+          "label": "future-unverified",
+          "date": "2026-11-06",
+          "citations": 0,
+          "state": "needs-review",
+          "issues": [
+            "currentness-unverified"
+          ]
+        },
+        {
+          "label": "different-process",
+          "date": "2026-11-05",
+          "citations": 2,
+          "state": "needs-review",
+          "issues": [
+            "unrelated"
+          ]
+        },
+        {
+          "label": "negated-process",
+          "date": "2026-11-05",
+          "citations": 2,
+          "state": "needs-review",
+          "issues": [
+            "context-ambiguous"
+          ]
+        },
+        {
+          "label": "oil-contamination",
+          "date": "2026-11-05",
+          "citations": 2,
+          "state": "needs-review",
+          "issues": [
+            "unrelated"
+          ]
+        },
+        {
+          "label": "unknown-hazard",
+          "date": "2026-11-05",
+          "citations": 2,
+          "state": "needs-review",
+          "issues": [
+            "hazardous-contact-unconfirmed"
+          ]
+        },
+        {
+          "label": "food-purpose",
+          "date": "2026-11-05",
+          "citations": 7,
+          "state": "needs-review",
+          "issues": []
+        },
+        {
+          "label": "today-unpromoted",
+          "date": "2026-11-10",
+          "citations": 0,
+          "state": "needs-review",
+          "issues": [
+            "currentness-unverified"
+          ]
+        },
+        {
+          "label": "malformed-date",
+          "date": "2026-02-30",
+          "citations": 0,
+          "state": "needs-review",
+          "issues": [
+            "invalid-date"
+          ]
+        }
+      ]
+    },
+    {
+      "command": "sha256sum data/reference/legal/review-2026-11-10/conditional-r3-3-fact.txt data/reference/legal/annex-4-290881.pdf data/reference/legal/annex4-code.txt data/reference/legal/annex-4-2-290881.pdf data/reference/legal/annex4-2-r3-3.txt data/reference/legal/annex-4-3-290881.pdf data/reference/legal/annex4-3-types.txt data/reference/legal/annex-5-3-290881.pdf data/reference/legal/annex5-3-common.txt",
+      "exitCode": 0,
+      "hashChecks": [
+        {
+          "sourceId": "j2j3-20261110-conditional-r3-3",
+          "path": "data/reference/legal/review-2026-11-10/conditional-r3-3-fact.txt",
+          "expected": "ddecf5a228603ec30a5be957c71adb162f2fea4c43497a815b655ccb75d31fb3",
+          "actual": "ddecf5a228603ec30a5be957c71adb162f2fea4c43497a815b655ccb75d31fb3",
+          "pass": true
+        },
+        {
+          "sourceId": "waste-rule-annex4-pdf",
+          "path": "data/reference/legal/annex-4-290881.pdf",
+          "expected": "1144ca217ceb485cfb8bc92a007337c4fb6cab12830a7aed3c6c031c815430a0",
+          "actual": "1144ca217ceb485cfb8bc92a007337c4fb6cab12830a7aed3c6c031c815430a0",
+          "pass": true
+        },
+        {
+          "sourceId": "legal-290881-annex4-code",
+          "path": "data/reference/legal/annex4-code.txt",
+          "expected": "24678e53168f2ca4811cafc0d776769114abd95a1670dc61326b93f8ae9f8550",
+          "actual": "24678e53168f2ca4811cafc0d776769114abd95a1670dc61326b93f8ae9f8550",
+          "pass": true
+        },
+        {
+          "sourceId": "legal-290881-annex4-2-pdf",
+          "path": "data/reference/legal/annex-4-2-290881.pdf",
+          "expected": "00322ef0f5f4c0e2a616e85e7286a0ae41a4278e76efcdc23980ac42074ab1ed",
+          "actual": "00322ef0f5f4c0e2a616e85e7286a0ae41a4278e76efcdc23980ac42074ab1ed",
+          "pass": true
+        },
+        {
+          "sourceId": "legal-290881-annex4-2-r3-3",
+          "path": "data/reference/legal/annex4-2-r3-3.txt",
+          "expected": "d6e6ea0416c8568e403bb53507fb2311370e171fd71a1e3097c89dc4640488ed",
+          "actual": "d6e6ea0416c8568e403bb53507fb2311370e171fd71a1e3097c89dc4640488ed",
+          "pass": true
+        },
+        {
+          "sourceId": "legal-290881-annex4-3-pdf",
+          "path": "data/reference/legal/annex-4-3-290881.pdf",
+          "expected": "45ecd6453c9ca337479751841e0d2a79a3bb345b5080a8f9f63a40d05841ad9e",
+          "actual": "45ecd6453c9ca337479751841e0d2a79a3bb345b5080a8f9f63a40d05841ad9e",
+          "pass": true
+        },
+        {
+          "sourceId": "legal-290881-annex4-3-types",
+          "path": "data/reference/legal/annex4-3-types.txt",
+          "expected": "e1d02f6101dfbda72d2f15357d0e6d067590303cb45cc76830d6f49fcbbeb0a1",
+          "actual": "e1d02f6101dfbda72d2f15357d0e6d067590303cb45cc76830d6f49fcbbeb0a1",
+          "pass": true
+        },
+        {
+          "sourceId": "legal-290881-annex5-3-pdf",
+          "path": "data/reference/legal/annex-5-3-290881.pdf",
+          "expected": "3d718a601e603ae72aa35fb60db81311c236298b571d579de54f1f5d83c21f1c",
+          "actual": "3d718a601e603ae72aa35fb60db81311c236298b571d579de54f1f5d83c21f1c",
+          "pass": true
+        },
+        {
+          "sourceId": "legal-290881-annex5-3-common",
+          "path": "data/reference/legal/annex5-3-common.txt",
+          "expected": "7a861fed124e6f9ea9e597c2d378c2a5f47ebbb381c17695092b9d283f4a2a31",
+          "actual": "7a861fed124e6f9ea9e597c2d378c2a5f47ebbb381c17695092b9d283f4a2a31",
+          "pass": true
+        }
+      ],
+      "relationships": [
+        {
+          "locator": "F1",
+          "pass": true
+        },
+        {
+          "locator": "F2",
+          "pass": true
+        },
+        {
+          "locator": "F3",
+          "pass": true
+        },
+        {
+          "locator": "F4",
+          "pass": true
+        }
+      ]
+    },
+    {
+      "argv": [
+        "bun",
+        "-e",
+        "import {loadEvidenceRegistry} from \"./src/evidence.ts\"; import entries from \"./data/sources/evidence-candidates.json\"; const entry=entries.find(e=>e.sourceId===\"legal-290881-annex4-code\"); const r=loadEvidenceRegistry([{...entry,originalSourceId:\"legal-290881-annex4-2-pdf\"}]); console.log(JSON.stringify(r)); if(r.candidates.length!==0||r.issues[0]?.kind!==\"hash-mismatch\")process.exit(1);"
+      ],
+      "exitCode": 0,
+      "output": {
+        "candidates": [],
+        "issues": [
+          {
+            "kind": "hash-mismatch",
+            "sourceId": "legal-290881-annex4-code"
+          }
+        ]
+      }
+    },
+    {
+      "command": "JSON.parse every shipped JSON file",
+      "pass": true
+    },
+    {
+      "command": "git diff --check",
+      "exitCode": 0
+    }
+  ],
+  "fullSuite": {
+    "run": false,
+    "reason": "Scoped publication uses related tests and common strict/build/smoke checks. Old-main full-suite results are not validation of this base."
+  },
+  "diagnostics": {
+    "tool": "lsp_diagnostics",
+    "status": "unavailable",
+    "reason": "Biome is not installed; JSON parse and strict repository typechecks used. No clean-LSP claim."
+  },
+  "cleanup": {
+    "smoke": "OWNED_SMOKE_RESOURCES_REMOVED",
+    "cli": "Process exited 0; stdout captured, no server or persistent resource created"
+  },
+  "boundaries": [
+    "Selected official retrieval records retain their original 2026-11-10 03:38-03:39 UTC timestamps; no fresh publication HTTP or visual-PDF pass claimed.",
+    "All ten CLI inputs are constructed, not ten independent field candidates.",
+    "No field rights, labels, quotes, masses, permits or factors fabricated.",
+    "Runtime verifiedThrough remains 2026-11-05; selected-source currentness and site applicability are separate."
+  ]
+}
