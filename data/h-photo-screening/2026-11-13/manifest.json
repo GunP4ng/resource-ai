@@ -1,0 +1,264 @@
+{
+  "schemaVersion": 2,
+  "poolId": "h-zip-screening-20261113",
+  "kind": "restricted-photo-candidate-inventory-only",
+  "sourceArchiveInventory": "data/photo-archives/inventory.json",
+  "candidateCount": 30,
+  "repositoryAssetCount": 0,
+  "rightsSummary": {
+    "reusePermissionVerified": 0,
+    "reusePermissionUnknown": 30,
+    "repositoryDistributionAccepted": false,
+    "modelExecutionStatus": "not-performed",
+    "independentHumanLabels": null,
+    "fieldAcceptance": null
+  },
+  "restrictedSharing": {
+    "location": null,
+    "accessPolicy": null,
+    "retentionPolicy": null,
+    "approvalRecorded": false
+  },
+  "entries": [
+    {
+      "id": "plastic_003",
+      "archiveFileName": "01_plastic_100.zip",
+      "archiveMember": "폐플라스틱/plastic_003.jpg",
+      "sourceImageSha256": "b247b22390be695b94c07a04fd606270ceea1511c0224a612483f7edffdb3b41",
+      "reusePermission": "unknown",
+      "repositoryAssetIncluded": false
+    },
+    {
+      "id": "plastic_020",
+      "archiveFileName": "01_plastic_100.zip",
+      "archiveMember": "폐플라스틱/plastic_020.jpg",
+      "sourceImageSha256": "bcdc3845b9d76312fdf7aab4fae40a894effd2aebc816138a57506ec6832b93b",
+      "reusePermission": "unknown",
+      "repositoryAssetIncluded": false
+    },
+    {
+      "id": "plastic_097",
+      "archiveFileName": "01_plastic_100.zip",
+      "archiveMember": "폐플라스틱/plastic_097.png",
+      "sourceImageSha256": "0fe72de3493c9ede3abedadce483d8e1d233a77654f62dea77bd26db9b048677",
+      "reusePermission": "unknown",
+      "repositoryAssetIncluded": false
+    },
+    {
+      "id": "plastic_039",
+      "archiveFileName": "01_plastic_100.zip",
+      "archiveMember": "폐플라스틱/plastic_039.jpg",
+      "sourceImageSha256": "c694ffe65d36882bc80bfea66405ca448e0ec294788fe031652e415d87daf688",
+      "reusePermission": "unknown",
+      "repositoryAssetIncluded": false
+    },
+    {
+      "id": "plastic_025",
+      "archiveFileName": "01_plastic_100.zip",
+      "archiveMember": "폐플라스틱/plastic_025.jpg",
+      "sourceImageSha256": "cb694b099969301ff9121c829ced02ce1b69ec996265ae7a9ca80711afe2cc2a",
+      "reusePermission": "unknown",
+      "repositoryAssetIncluded": false
+    },
+    {
+      "id": "plastic_041",
+      "archiveFileName": "01_plastic_100.zip",
+      "archiveMember": "폐플라스틱/plastic_041.jpg",
+      "sourceImageSha256": "5e53b6566fae6e34dcb7d9da67bd3e443b708e99d3d38d5491284cdb0f2a87d6",
+      "reusePermission": "unknown",
+      "repositoryAssetIncluded": false
+    },
+    {
+      "id": "plastic_085",
+      "archiveFileName": "01_plastic_100.zip",
+      "archiveMember": "폐플라스틱/plastic_085.jpg",
+      "sourceImageSha256": "b2fc66ba831d0f10ba231088b8e79cf9f2fc0367463ab7d1b258d83eb8f4f9fd",
+      "reusePermission": "unknown",
+      "repositoryAssetIncluded": false
+    },
+    {
+      "id": "plastic_099",
+      "archiveFileName": "01_plastic_100.zip",
+      "archiveMember": "폐플라스틱/plastic_099.jpg",
+      "sourceImageSha256": "a886cdcf3355474fce00c228b03173c874a29ef0262e8b05d6cc6efab81ebdea",
+      "reusePermission": "unknown",
+      "repositoryAssetIncluded": false
+    },
+    {
+      "id": "packaging_096",
+      "archiveFileName": "04_packaging_100.zip",
+      "archiveMember": "폐포장재/packaging_096.jpg",
+      "sourceImageSha256": "aebc7048e6ec594f45ca15e20a90eda5f170f638ed3d86e88a174d469a9ba67d",
+      "reusePermission": "unknown",
+      "repositoryAssetIncluded": false
+    },
+    {
+      "id": "packaging_090",
+      "archiveFileName": "04_packaging_100.zip",
+      "archiveMember": "폐포장재/packaging_090.jpg",
+      "sourceImageSha256": "a5298b9c220ba0668b8b9c4b0130d609ac17a58b4f2e12ce7761dde784738d99",
+      "reusePermission": "unknown",
+      "repositoryAssetIncluded": false
+    },
+    {
+      "id": "plastic_015",
+      "archiveFileName": "01_plastic_100.zip",
+      "archiveMember": "폐플라스틱/plastic_015.jpg",
+      "sourceImageSha256": "a202945fcf1dba504ad15736cf835446a0d4959ffc6c1430275a6763ed9c6e3d",
+      "reusePermission": "unknown",
+      "repositoryAssetIncluded": false
+    },
+    {
+      "id": "packaging_021",
+      "archiveFileName": "04_packaging_100.zip",
+      "archiveMember": "폐포장재/packaging_021.jpg",
+      "sourceImageSha256": "14aad2a10a37cb7f4e8e4dda6410f8dfac299a046eef39d32669916f4fcfb075",
+      "reusePermission": "unknown",
+      "repositoryAssetIncluded": false
+    },
+    {
+      "id": "packaging_013",
+      "archiveFileName": "04_packaging_100.zip",
+      "archiveMember": "폐포장재/packaging_013.jpg",
+      "sourceImageSha256": "1b2cf34c5ba15ce00ec9a56c5d24399401d8300a392db2d74dccba084cdbfd1a",
+      "reusePermission": "unknown",
+      "repositoryAssetIncluded": false
+    },
+    {
+      "id": "packaging_007",
+      "archiveFileName": "04_packaging_100.zip",
+      "archiveMember": "폐포장재/packaging_007.jpg",
+      "sourceImageSha256": "401344b2a083d35a981429c0311bd0747ce0f382039e6aa01ce17a835ec4be63",
+      "reusePermission": "unknown",
+      "repositoryAssetIncluded": false
+    },
+    {
+      "id": "packaging_048",
+      "archiveFileName": "04_packaging_100.zip",
+      "archiveMember": "폐포장재/packaging_048.jpg",
+      "sourceImageSha256": "46febe735b0b78172909688f03070af2cfe5987504bf5b54269dcec7687e4008",
+      "reusePermission": "unknown",
+      "repositoryAssetIncluded": false
+    },
+    {
+      "id": "plastic_058",
+      "archiveFileName": "01_plastic_100.zip",
+      "archiveMember": "폐플라스틱/plastic_058.jpg",
+      "sourceImageSha256": "510dbc4aad449aec57ec8f7b5c73f992ddde487e7974ca9e62eeccd13b6a826b",
+      "reusePermission": "unknown",
+      "repositoryAssetIncluded": false
+    },
+    {
+      "id": "plastic_076",
+      "archiveFileName": "01_plastic_100.zip",
+      "archiveMember": "폐플라스틱/plastic_076.webp",
+      "sourceImageSha256": "f5622bb0dc889ef68d2b73e761aa2ad121587c01ea39985f7a1685fd8e9bac44",
+      "reusePermission": "unknown",
+      "repositoryAssetIncluded": false
+    },
+    {
+      "id": "plastic_096",
+      "archiveFileName": "01_plastic_100.zip",
+      "archiveMember": "폐플라스틱/plastic_096.jpg",
+      "sourceImageSha256": "054b9b2c57b63ec73e94917285f03238a5c66f98455d809d3843b7ce7faac190",
+      "reusePermission": "unknown",
+      "repositoryAssetIncluded": false
+    },
+    {
+      "id": "packaging_041",
+      "archiveFileName": "04_packaging_100.zip",
+      "archiveMember": "폐포장재/packaging_041.jpg",
+      "sourceImageSha256": "22d5c175a7ddc18e00ca87a5a62e27b20123639a4051b990b22c50ab944450e3",
+      "reusePermission": "unknown",
+      "repositoryAssetIncluded": false
+    },
+    {
+      "id": "plastic_028",
+      "archiveFileName": "01_plastic_100.zip",
+      "archiveMember": "폐플라스틱/plastic_028.jpg",
+      "sourceImageSha256": "86008d0038e4493c45b67855779db9c14387d27d4c266a7384ef50cb6b222170",
+      "reusePermission": "unknown",
+      "repositoryAssetIncluded": false
+    },
+    {
+      "id": "metal_028",
+      "archiveFileName": "02_metal_100.zip",
+      "archiveMember": "금속스크랩/metal_028.jpg",
+      "sourceImageSha256": "bbe9a7509e395402819a7f8078b8d0e29c8332831572ec71680d3c546a23f5fd",
+      "reusePermission": "unknown",
+      "repositoryAssetIncluded": false
+    },
+    {
+      "id": "rubber_090",
+      "archiveFileName": "06_rubber_100.zip",
+      "archiveMember": "폐고무/rubber_090.jpg",
+      "sourceImageSha256": "f04198f56d80a93e2f50e9aa83af6e699076ac5760a6f72d29a671a26fc315f3",
+      "reusePermission": "unknown",
+      "repositoryAssetIncluded": false
+    },
+    {
+      "id": "wood_072",
+      "archiveFileName": "03_wood_100.zip",
+      "archiveMember": "폐목재/wood_072.jpg",
+      "sourceImageSha256": "bbd08f3bc1e1d9e56d956ec4a9f21a0e8bff138b2e7dc26c147c3009bbd6dd92",
+      "reusePermission": "unknown",
+      "repositoryAssetIncluded": false
+    },
+    {
+      "id": "sludge_034",
+      "archiveFileName": "05_sludge_100.zip",
+      "archiveMember": "공정오니/sludge_034.jpg",
+      "sourceImageSha256": "e78ee7d9c0421926d5cccad9e0b085dcb7c523464aa479e50a374214212a333a",
+      "reusePermission": "unknown",
+      "repositoryAssetIncluded": false
+    },
+    {
+      "id": "construction_079",
+      "archiveFileName": "07_construction_100.zip",
+      "archiveMember": "건설폐기물/construction_079.jpg",
+      "sourceImageSha256": "0f884f47d0b0788edb08b27763984434c864f116c67912fcefae510a17b9c0a8",
+      "reusePermission": "unknown",
+      "repositoryAssetIncluded": false
+    },
+    {
+      "id": "metal_001",
+      "archiveFileName": "02_metal_100.zip",
+      "archiveMember": "금속스크랩/metal_001.jpg",
+      "sourceImageSha256": "bcbeabfc0e072eb3228d21d58d703995f67b204cde2ce1c483bf05643d942f58",
+      "reusePermission": "unknown",
+      "repositoryAssetIncluded": false
+    },
+    {
+      "id": "wood_001",
+      "archiveFileName": "03_wood_100.zip",
+      "archiveMember": "폐목재/wood_001.jpg",
+      "sourceImageSha256": "11c9a35489b224afa768676d098700f58406d857f288fcd0132fdd19351fb85e",
+      "reusePermission": "unknown",
+      "repositoryAssetIncluded": false
+    },
+    {
+      "id": "sludge_010",
+      "archiveFileName": "05_sludge_100.zip",
+      "archiveMember": "공정오니/sludge_010.jpg",
+      "sourceImageSha256": "571c35fd670bb277f37e4cb56babfa4e45f2a572192a1688e42c703ad2ff60c7",
+      "reusePermission": "unknown",
+      "repositoryAssetIncluded": false
+    },
+    {
+      "id": "rubber_097",
+      "archiveFileName": "06_rubber_100.zip",
+      "archiveMember": "폐고무/rubber_097.png",
+      "sourceImageSha256": "12d32d4d64b24e5c963820fd42a2ee3fb66a01e5ba9fa82fa5b083d11b9effca",
+      "reusePermission": "unknown",
+      "repositoryAssetIncluded": false
+    },
+    {
+      "id": "metal_084",
+      "archiveFileName": "02_metal_100.zip",
+      "archiveMember": "금속스크랩/metal_084.png",
+      "sourceImageSha256": "a5ea9ea5639acbfe63945bb9d82a43e837f474751caf3917fb6e87dff1b022d4",
+      "reusePermission": "unknown",
+      "repositoryAssetIncluded": false
+    }
+  ]
+}
