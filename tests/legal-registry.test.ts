@@ -34,7 +34,7 @@ test.each([
   expect(result.issues.some((item) => item.kind === reason)).toBe(true);
 });
 
-test.each(["2026-09-30", "2026-11-06"])("does not extend verified annex coverage to %s", (assessmentDate) => {
+test.each(["2026-09-30", "2026-11-15"])("does not extend verified annex coverage to %s", (assessmentDate) => {
   const result = lookupLegalEvidence({ ...input, assessmentDate });
   expect(result.citations.filter((item) => item.sourceId.startsWith("legal-290881-"))).toEqual([]);
   expect(result.issues.some((item) => item.kind === (assessmentDate < "2026-10-02" ? "out-of-period" : "currentness-unverified"))).toBe(true);

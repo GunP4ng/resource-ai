@@ -20,7 +20,10 @@ test("H candidate handoff preserves ten explicit inputs, photos, source/rights h
   const report = await verifyHCandidates();
   assert.equal(report.caseCount, 10); assert.equal(report.externalModelCalls, 0);
   assert.equal(report.independentLabels, 0); assert.equal(report.fieldAcceptances, 0);
-  assert.ok(report.results.every(row => row.output.decision.state === "needs-review"));
+  assert.deepEqual(report.results.map(row => row.output.decision.state), [
+    "needs-review", "needs-review", "needs-review", "needs-review", "needs-review",
+    "needs-review", "needs-review", "needs-review", "needs-information", "needs-information",
+  ]);
 });
 
 // R: the executable evidence producer owns this serialization contract. Core and

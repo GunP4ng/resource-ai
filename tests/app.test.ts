@@ -311,7 +311,7 @@ test("O4 current-date review keeps correction access without bypassing currentne
   const app = createResourceApp({ origin });
   try {
     const cookie = await session(app.fetch);
-    const path = await submitNative(app.fetch, cookie, { ...nativeFields, polymer: "PP", assessmentDate: "2026-11-06" });
+    const path = await submitNative(app.fetch, cookie, { ...nativeFields, polymer: "PP", assessmentDate: "2026-11-15" });
     assert.match(await ownedPage(app.fetch, cookie, path), /<form\b/);
     assert.equal((await app.fetch(post(path + "/answers", cookie, '{"massKg":100}'))).status, 303);
     const html = await ownedPage(app.fetch, cookie, path);
