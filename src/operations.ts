@@ -5,7 +5,7 @@ import type { FetchFunction } from "@earendil-works/pi-ai";
 import type { CaseInput } from "./contracts.ts";
 import { parseCaseInput } from "./input.ts";
 import { revision } from "./o-validation.ts";
-import { createAzureRunner, createSubscriptionRunner, createResourceApp, openCaseSession, SessionFailure } from "./session.ts";
+import { createAzureRunner, createSubscriptionRunner, createResourceApp, openCaseSession, providerRequestId, SessionFailure } from "./session.ts";
 import type { CaseRunner, PhotoResolver, ResourceProvider, SessionFailureCode } from "./session.ts";
 import type { createPhotoStore } from "./photos.ts";
 import { createCaseStore } from "./o-case-store.ts";
@@ -355,8 +355,8 @@ export function createOperationalRunner(options: OperationalRunnerOptions | Subs
           row.transportStarted = true; // Invocation evidence, not proof of provider processing or billing.
           const response = await (options.transport ?? fetch)(ticket || isSubscription(config) ? actual.href : request, { ...dispatchInit, signal: controller.signal, redirect: "error" });
           row.status = response.status;
-          const id = response.headers.get("x-request-id") ?? response.headers.get("apim-request-id");
-          if (id && /^[A-Za-z0-9_-]{1,100}$/.test(id)) row.requestId = id;
+          const id = providerRequestId(response.headers);
+          if (id) row.requestId = id;
           return response;
         } catch (error) {
           dispatchFailure = error instanceof SessionFailure ? error : new SessionFailure("provider");

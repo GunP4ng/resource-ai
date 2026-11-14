@@ -155,6 +155,20 @@ test("guarded subscription uses the existing SDK, approval and audit gates with 
   } finally { await f.close(); }
 });
 
+test("actual subscription x-oai-request-id is retained in the report and terminal audit", async () => {
+  const f = await fixture(), events: OperationalAudit[] = [];
+  try {
+    const runner = createOperationalRunner({ provider: "subscription", enabled: true, timeoutMs: 5000, maxTurns: 1, maxOutputTokens: 128,
+      configuration: async () => f.config, authorizeDispatch: async () => ({ approvalId: "synthetic", expiresAt: Date.now() + 60000 }),
+      record: async event => { events.push(event); }, transport: async () => {
+        const received = response(); received.headers.delete("x-request-id"); received.headers.set("x-oai-request-id", "synthetic-actual-header"); return received;
+      } });
+    const result = await runner(syntheticCase, signal());
+    assert.equal(result.execution?.traceId, "chatgpt-subscription:synthetic-actual-header");
+    assert.equal(events.at(-1)?.requests[0]?.requestId, "synthetic-actual-header");
+  } finally { await f.close(); }
+});
+
 test("a subscription ticket cannot resolve photos using a different account configuration", async () => {
   const f = await fixture(); let resolutions = 0;
   try {
