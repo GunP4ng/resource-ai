@@ -298,4 +298,4 @@ O001–004의 청정 단일수지 가정도 H001·002 등의 채워진 입력과
 
 검증은 [validation.json](../data/o-reviews/h-candidates-2026-11-13/validation.json)에 실제 실행한 항목만 기록했다. 최초 로컬 검토 당시에는 커밋·푸시·PR을 수행하지 않았다. 이후 사용자의 제출 지시에 따른 현재 저장소 검사는 `publicationChecks`에 별도로 기록한다. 앱 판정·평가·모델 실행이나 사람의 독립 검토 완료를 뜻하지 않는다.
 
-참조: [H 원본·출처 manifest](../data/h-candidates/2026-11-12/manifest.json), [O 후보 인계](o-candidate-handoff.md), [검토 묶음 README](../data/o-reviews/h-candidates-2026-11-13/README.md). 최초 로컬 메모·지정 증거의 경로와 해시는 AI JSON의 `sources`에 당시 이력으로 남기며 해당 로컬 파일은 이 PR에 포함하지 않는다.
+참조: [H 원본·출처 manifest](../data/h-candidates/2026-11-12/manifest.json), [O 후보 인계](o-candidate-handoff.md), [검토 묶음 README](../data/o-reviews/h-candidates-2026-11-13/README.md). 최초 로컬 메모·지정 증거의 파일명과 SHA-256은 AI JSON의 `sources`에 당시 이력으로 남기며 해당 로컬 파일은 이 PR에 포함하지 않는다.

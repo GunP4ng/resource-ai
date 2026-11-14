@@ -753,13 +753,13 @@
       "unchanged": true
     },
     {
-      "path": "/home/yeonbug/.omo/agent/sessions/--mnt-c-Users-yeonbug-Desktop-경진대회--/2026-11-07T07-34-35-917Z_01a1b4ee-428d-7394-8a41-cbeae4869dca-artifacts/local/o-h-review-evidence-20261113.json",
+      "path": "o-h-review-evidence-20261113.json",
       "beforeSHA256": "791b5e187bc1c7d996e4e0b39969fedc76fd03c15a2d6fd0ac129b6be0950c71",
       "afterSHA256": "791b5e187bc1c7d996e4e0b39969fedc76fd03c15a2d6fd0ac129b6be0950c71",
       "unchanged": true
     },
     {
-      "path": "/tmp/o-h-parent-initial-20261113.md",
+      "path": "o-h-parent-initial-20261113.md",
       "beforeSHA256": "0ade9d2fd8706a7ceb8d3df92c7ad486763fd855f9198ca4de108dd6d29f2186",
       "afterSHA256": "0ade9d2fd8706a7ceb8d3df92c7ad486763fd855f9198ca4de108dd6d29f2186",
       "unchanged": true
@@ -1052,7 +1052,8 @@
   },
   "receiptScope": "executedAt/runtime/checks/perCase/nonMutation/gitStatusAtCheck는 기존 Bun 실행 이력이다. parentVerification은 별도 부모 결과다. refinementChecks는 이번 산출물 보완 검사이며 원본 바이트 검사를 반복하지 않는다. refinementChecks의 산출물 해시는 과거 보완 시점이며, 최종 해시는 postGateCorrection.artifactSHA256을 따른다.",
   "parentVerification": {
-    "sourceFile": "/home/yeonbug/.omo/agent/sessions/--mnt-c-Users-yeonbug-Desktop-경진대회--/2026-11-07T07-34-35-917Z_01a1b4ee-428d-7394-8a41-cbeae4869dca-artifacts/local/o-h-source-validation-20261113.json",
+    "sourceFile": "o-h-source-validation-20261113.json",
+    "sourceSHA256": "eb134edc7c68630740b0cb913cd6477b8fd45ead3b270b786a8dc95fa114b609",
     "parser": "parseCaseInput",
     "parserChecksPointer": "/parserChecks",
     "parserPassed": 10,
@@ -1179,9 +1180,9 @@
       }
     ],
     "artifactSHA256": {
-      "docs/o-h-candidate-review.md": "fed22ca1676da1001ba5cc01dbf946921d860606469cfb77b12a2d405a4d5170",
-      "data/o-reviews/h-candidates-2026-11-13/README.md": "25719ce58c0e00e8b32b6318df26f73c8d63a3b79377d3c51c89e6961208d2de",
-      "data/o-reviews/h-candidates-2026-11-13/ai-preliminary-review.json": "818b41e92343262d07657f126e3b1c75194b69c24278be6ec35a4202fbc980d7",
+      "docs/o-h-candidate-review.md": "18fb88b9bd49b3b1e8399b175db66c0763f5c32f8bda27b9f690711c14a648c3",
+      "data/o-reviews/h-candidates-2026-11-13/README.md": "c8888b88aeb2a443ee25c9f823b4f79285420b52fef3e010a05ecb7b5ab34f97",
+      "data/o-reviews/h-candidates-2026-11-13/ai-preliminary-review.json": "c397431a9d0b2f491423365ab462ca96a81852b38c8d585793ab19727c87287e",
       "data/o-reviews/h-candidates-2026-11-13/human-review.json": "0784abbbe3e2160491838cb313a23234b6db2bb7b4c4707360469ca4bf06742e"
     },
     "selfHashExcluded": true,

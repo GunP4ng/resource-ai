@@ -6,24 +6,26 @@
   "sourceCommit": "ceb9e48b6db3e1a16b1eb69a65a35da8482b0dc4",
   "sources": {
     "parentNotes": {
-      "file": "/tmp/o-h-parent-initial-20261113.md",
+      "file": "o-h-parent-initial-20261113.md",
       "sha256": "0ade9d2fd8706a7ceb8d3df92c7ad486763fd855f9198ca4de108dd6d29f2186"
     },
     "filteredEvidence": {
-      "file": "/home/yeonbug/.omo/agent/sessions/--mnt-c-Users-yeonbug-Desktop-경진대회--/2026-11-07T07-34-35-917Z_01a1b4ee-428d-7394-8a41-cbeae4869dca-artifacts/local/o-h-review-evidence-20261113.json",
+      "file": "o-h-review-evidence-20261113.json",
       "sha256": "791b5e187bc1c7d996e4e0b39969fedc76fd03c15a2d6fd0ac129b6be0950c71"
     },
     "manifest": {
       "file": "data/h-candidates/2026-11-12/manifest.json",
       "sha256": "df62053c3db875ce13a8502d27b9b78e5b731ebfdbaf324cd3969ee8d72e9e68"
     },
-    "oComparisonSource": "최초 검토는 지정 filteredEvidence의 /oInputs/0..9/input 및 제공 해시를 사용했다. 제출 시 data/candidates/oyeonseok-2026-11-10/ 원본의 값과 해시를 재확인했으며 groupReview의 oEvidence는 저장소 원본을 가리킨다. sources의 로컬 절대 경로는 번들되지 않은 과거 실행 이력이다.",
+    "oComparisonSource": "최초 검토는 지정 filteredEvidence의 /oInputs/0..9/input 및 제공 해시를 사용했다. 제출 시 data/candidates/oyeonseok-2026-11-10/ 원본의 값과 해시를 재확인했으며 groupReview의 oEvidence는 저장소 원본을 가리킨다. sources의 과거 로컬 자료는 파일명과 SHA-256만 보존하며 저장소에 번들되지 않았다.",
     "astraInputOnlyAssessment": {
-      "file": "/tmp/o-h-candidate-review-20261113-result.txt",
+      "file": "o-h-candidate-review-20261113-result.txt",
+      "sha256": "18e2d358128c916bf26a0f0ab9a84fea725801d06133a93bd32efcefa1a52933",
       "use": "출처 텍스트와 합성 시나리오 구분; 인간 판단·정답 아님"
     },
     "parentInputValidation": {
-      "file": "/home/yeonbug/.omo/agent/sessions/--mnt-c-Users-yeonbug-Desktop-경진대회--/2026-11-07T07-34-35-917Z_01a1b4ee-428d-7394-8a41-cbeae4869dca-artifacts/local/o-h-source-validation-20261113.json",
+      "file": "o-h-source-validation-20261113.json",
+      "sha256": "eb134edc7c68630740b0cb913cd6477b8fd45ead3b270b786a8dc95fa114b609",
       "pointers": [
         "/checks",
         "/parserChecks"
