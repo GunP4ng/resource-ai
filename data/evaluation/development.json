@@ -1,0 +1,384 @@
+{
+  "corpusVersion": "development-v1",
+  "split": "development",
+  "cases": [
+    {
+      "caseId": "HYEOB-20261112-001",
+      "groupId": "commons-clean-hdpe-drum-flakes",
+      "origin": "H",
+      "exposure": "exposed",
+      "stratum": "clean-single-resin",
+      "provenance": {
+        "manifestPath": "data/h-candidates/2026-11-12/manifest.json",
+        "origin": "synthetic-scenario-with-public-photograph",
+        "collector": "hyeobikong"
+      },
+      "sourceHash": "99a243a95f2500e350512a3ffbe53c896b76df41eb2e9be5b97d305cd96f0f40",
+      "split": "development",
+      "inputRef": "../h-candidates/2026-11-12/inputs/HYEOB-20261112-001.json",
+      "rights": {
+        "status": "eligible",
+        "scope": "existing-synthetic-text-only",
+        "photoTransmission": "excluded",
+        "licenseGranted": false
+      }
+    },
+    {
+      "caseId": "HYEOB-20261112-002",
+      "groupId": "commons-flakes-top-plastic",
+      "origin": "H",
+      "exposure": "exposed",
+      "stratum": "clean-single-resin",
+      "provenance": {
+        "manifestPath": "data/h-candidates/2026-11-12/manifest.json",
+        "origin": "synthetic-scenario-with-public-photograph",
+        "collector": "hyeobikong"
+      },
+      "sourceHash": "140d4db53120d25db32c3d70a982d2de8cf2e45ac90c934550ed76fff7e76db5",
+      "split": "development",
+      "inputRef": "../h-candidates/2026-11-12/inputs/HYEOB-20261112-002.json",
+      "rights": {
+        "status": "eligible",
+        "scope": "existing-synthetic-text-only",
+        "photoTransmission": "excluded",
+        "licenseGranted": false
+      }
+    },
+    {
+      "caseId": "HYEOB-20261112-003",
+      "groupId": "scrapmanagement-site-and-lot-review-pending",
+      "origin": "H",
+      "exposure": "exposed",
+      "stratum": "mixed-or-label-conflict",
+      "provenance": {
+        "manifestPath": "data/h-candidates/2026-11-12/manifest.json",
+        "origin": "synthetic-scenario-with-public-photograph",
+        "collector": "hyeobikong"
+      },
+      "sourceHash": "e99456505b42ee03d6b8f1e87771791750e1262a43047db72c613e85504a5b07",
+      "split": "development",
+      "inputRef": "../h-candidates/2026-11-12/inputs/HYEOB-20261112-003.json",
+      "rights": {
+        "status": "eligible",
+        "scope": "existing-synthetic-text-only",
+        "photoTransmission": "excluded",
+        "licenseGranted": false
+      }
+    },
+    {
+      "caseId": "HYEOB-20261112-004",
+      "groupId": "scrapmanagement-site-and-lot-review-pending",
+      "origin": "H",
+      "exposure": "exposed",
+      "stratum": "contamination-or-hazard-unknown",
+      "provenance": {
+        "manifestPath": "data/h-candidates/2026-11-12/manifest.json",
+        "origin": "synthetic-scenario-with-public-photograph",
+        "collector": "hyeobikong"
+      },
+      "sourceHash": "26eb5e7d5d21df9ed16f6c00cab3dba7e5e810bd3b354e5f9851abcd8217e493",
+      "split": "development",
+      "inputRef": "../h-candidates/2026-11-12/inputs/HYEOB-20261112-004.json",
+      "rights": {
+        "status": "eligible",
+        "scope": "existing-synthetic-text-only",
+        "photoTransmission": "excluded",
+        "licenseGranted": false
+      }
+    },
+    {
+      "caseId": "HYEOB-20261112-005",
+      "groupId": "scrapmanagement-site-and-lot-review-pending",
+      "origin": "H",
+      "exposure": "exposed",
+      "stratum": "mixed-or-label-conflict",
+      "provenance": {
+        "manifestPath": "data/h-candidates/2026-11-12/manifest.json",
+        "origin": "synthetic-scenario-with-public-photograph",
+        "collector": "hyeobikong"
+      },
+      "sourceHash": "41f6f74e6551b3aae5449a1a0d11d2d1a37b7291974f9a1bc70618023de404fd",
+      "split": "development",
+      "inputRef": "../h-candidates/2026-11-12/inputs/HYEOB-20261112-005.json",
+      "rights": {
+        "status": "eligible",
+        "scope": "existing-synthetic-text-only",
+        "photoTransmission": "excluded",
+        "licenseGranted": false
+      }
+    },
+    {
+      "caseId": "HYEOB-20261112-006",
+      "groupId": "scrapmanagement-site-and-lot-review-pending",
+      "origin": "H",
+      "exposure": "exposed",
+      "stratum": "processor-mismatch",
+      "provenance": {
+        "manifestPath": "data/h-candidates/2026-11-12/manifest.json",
+        "origin": "synthetic-scenario-with-public-photograph",
+        "collector": "hyeobikong"
+      },
+      "sourceHash": "aa6104ac7f7461c952fc95b314002860bb01107d59d3814d1e61282d1ac7a87b",
+      "split": "development",
+      "inputRef": "../h-candidates/2026-11-12/inputs/HYEOB-20261112-006.json",
+      "rights": {
+        "status": "eligible",
+        "scope": "existing-synthetic-text-only",
+        "photoTransmission": "excluded",
+        "licenseGranted": false
+      }
+    },
+    {
+      "caseId": "HYEOB-20261112-007",
+      "groupId": "scrapmanagement-site-and-lot-review-pending",
+      "origin": "H",
+      "exposure": "exposed",
+      "stratum": "reuse-or-recycling-comparison",
+      "provenance": {
+        "manifestPath": "data/h-candidates/2026-11-12/manifest.json",
+        "origin": "synthetic-scenario-with-public-photograph",
+        "collector": "hyeobikong"
+      },
+      "sourceHash": "dd530034e235f514b61ee5a8d585978ead905acdfc04a3530e462a09e18ff320",
+      "split": "development",
+      "inputRef": "../h-candidates/2026-11-12/inputs/HYEOB-20261112-007.json",
+      "rights": {
+        "status": "eligible",
+        "scope": "existing-synthetic-text-only",
+        "photoTransmission": "excluded",
+        "licenseGranted": false
+      }
+    },
+    {
+      "caseId": "HYEOB-20261112-008",
+      "groupId": "ermell-recycling-machine-20180621",
+      "origin": "H",
+      "exposure": "exposed",
+      "stratum": "contamination-or-hazard-unknown",
+      "provenance": {
+        "manifestPath": "data/h-candidates/2026-11-12/manifest.json",
+        "origin": "synthetic-scenario-with-public-photograph",
+        "collector": "hyeobikong"
+      },
+      "sourceHash": "978a57423199674dee21982375171258ab9908701ea6f69934d95afc8ff31dbb",
+      "split": "development",
+      "inputRef": "../h-candidates/2026-11-12/inputs/HYEOB-20261112-008.json",
+      "rights": {
+        "status": "eligible",
+        "scope": "existing-synthetic-text-only",
+        "photoTransmission": "excluded",
+        "licenseGranted": false
+      }
+    },
+    {
+      "caseId": "HYEOB-20261112-009",
+      "groupId": "nafisathallah-styrofoam-origin-unverified",
+      "origin": "H",
+      "exposure": "exposed",
+      "stratum": "missing-evidence-or-unit",
+      "provenance": {
+        "manifestPath": "data/h-candidates/2026-11-12/manifest.json",
+        "origin": "synthetic-scenario-with-public-photograph",
+        "collector": "hyeobikong"
+      },
+      "sourceHash": "65c54b7dcfa5d975474542a5675a7c6bb64850d2a4e320845ad67ccaa5d2498e",
+      "split": "development",
+      "inputRef": "../h-candidates/2026-11-12/inputs/HYEOB-20261112-009.json",
+      "rights": {
+        "status": "eligible",
+        "scope": "existing-synthetic-text-only",
+        "photoTransmission": "excluded",
+        "licenseGranted": false
+      }
+    },
+    {
+      "caseId": "HYEOB-20261112-010",
+      "groupId": "ka2313-japan-packaging-20231006",
+      "origin": "H",
+      "exposure": "exposed",
+      "stratum": "embedded-instruction",
+      "provenance": {
+        "manifestPath": "data/h-candidates/2026-11-12/manifest.json",
+        "origin": "synthetic-scenario-with-public-photograph",
+        "collector": "hyeobikong"
+      },
+      "sourceHash": "898699ed96ab28225c9a2bbf9e1c0770fdb571e49af581832a96d92bf46a090f",
+      "split": "development",
+      "inputRef": "../h-candidates/2026-11-12/inputs/HYEOB-20261112-010.json",
+      "rights": {
+        "status": "eligible",
+        "scope": "existing-synthetic-text-only",
+        "photoTransmission": "excluded",
+        "licenseGranted": false
+      }
+    },
+    {
+      "caseId": "OYS-20261110-001",
+      "groupId": "oys-fiction-001",
+      "origin": "O",
+      "exposure": "exposed",
+      "stratum": "clean-single-resin",
+      "provenance": {
+        "manifestPath": "data/candidates/oyeonseok-2026-11-10/manifest.json",
+        "origin": "synthetic",
+        "collector": "Oyeonseok handoff track (AI-assisted authorship)"
+      },
+      "sourceHash": "1f1163e501b1ade17ed9207933242a51120bb15584f8e95b6e6d736fe0cd67ff",
+      "split": "development",
+      "inputRef": "../candidates/oyeonseok-2026-11-10/oys-20261110-001-pet-trim.json",
+      "rights": {
+        "status": "eligible",
+        "scope": "existing-synthetic-text-only",
+        "photoTransmission": "excluded",
+        "licenseGranted": false
+      }
+    },
+    {
+      "caseId": "OYS-20261110-002",
+      "groupId": "oys-fiction-002",
+      "origin": "O",
+      "exposure": "exposed",
+      "stratum": "clean-single-resin",
+      "provenance": {
+        "manifestPath": "data/candidates/oyeonseok-2026-11-10/manifest.json",
+        "origin": "synthetic",
+        "collector": "Oyeonseok handoff track (AI-assisted authorship)"
+      },
+      "sourceHash": "0b052aeeb9e97a93699267d68662d8c1b1efee32107f2711d7be6fab78764b2c",
+      "split": "development",
+      "inputRef": "../candidates/oyeonseok-2026-11-10/oys-20261110-002-hdpe-parison.json",
+      "rights": {
+        "status": "eligible",
+        "scope": "existing-synthetic-text-only",
+        "photoTransmission": "excluded",
+        "licenseGranted": false
+      }
+    },
+    {
+      "caseId": "OYS-20261110-003",
+      "groupId": "oys-fiction-003",
+      "origin": "O",
+      "exposure": "exposed",
+      "stratum": "clean-single-resin",
+      "provenance": {
+        "manifestPath": "data/candidates/oyeonseok-2026-11-10/manifest.json",
+        "origin": "synthetic",
+        "collector": "Oyeonseok handoff track (AI-assisted authorship)"
+      },
+      "sourceHash": "6c09027b9a767e917d5b3ffc45a437fd8153ff7b8eec3750ddb9f410eb4403b4",
+      "split": "development",
+      "inputRef": "../candidates/oyeonseok-2026-11-10/oys-20261110-003-pp-runners.json",
+      "rights": {
+        "status": "eligible",
+        "scope": "existing-synthetic-text-only",
+        "photoTransmission": "excluded",
+        "licenseGranted": false
+      }
+    },
+    {
+      "caseId": "OYS-20261110-004",
+      "groupId": "oys-fiction-004",
+      "origin": "O",
+      "exposure": "exposed",
+      "stratum": "clean-single-resin",
+      "provenance": {
+        "manifestPath": "data/candidates/oyeonseok-2026-11-10/manifest.json",
+        "origin": "synthetic",
+        "collector": "Oyeonseok handoff track (AI-assisted authorship)"
+      },
+      "sourceHash": "7ccbf029c826be106e753dc15997bf608b856a9e893b45497eed4ef533c04d7f",
+      "split": "development",
+      "inputRef": "../candidates/oyeonseok-2026-11-10/oys-20261110-004-ldpe-film.json",
+      "rights": {
+        "status": "eligible",
+        "scope": "existing-synthetic-text-only",
+        "photoTransmission": "excluded",
+        "licenseGranted": false
+      }
+    },
+    {
+      "caseId": "OYS-20261110-006",
+      "groupId": "oys-fiction-006",
+      "origin": "O",
+      "exposure": "exposed",
+      "stratum": "mixed-multilayer-black-label-mismatch",
+      "provenance": {
+        "manifestPath": "data/candidates/oyeonseok-2026-11-10/manifest.json",
+        "origin": "synthetic",
+        "collector": "Oyeonseok handoff track (AI-assisted authorship)"
+      },
+      "sourceHash": "29c76c30e310148b0ab270ef51e2a4fee92d35aab35106560e4ac36d4947bda0",
+      "split": "development",
+      "inputRef": "../candidates/oyeonseok-2026-11-10/oys-20261110-006-black-label-conflict.json",
+      "rights": {
+        "status": "eligible",
+        "scope": "existing-synthetic-text-only",
+        "photoTransmission": "excluded",
+        "licenseGranted": false
+      }
+    },
+    {
+      "caseId": "OYS-20261110-008",
+      "groupId": "oys-fiction-008",
+      "origin": "O",
+      "exposure": "exposed",
+      "stratum": "contamination-hazardous-contact-unknown-condition",
+      "provenance": {
+        "manifestPath": "data/candidates/oyeonseok-2026-11-10/manifest.json",
+        "origin": "synthetic",
+        "collector": "Oyeonseok handoff track (AI-assisted authorship)"
+      },
+      "sourceHash": "f3833e8d39ff4b96f94c784d69889c59db17390bd2993d6f5e0883aecd842fa9",
+      "split": "development",
+      "inputRef": "../candidates/oyeonseok-2026-11-10/oys-20261110-008-solvent-hdpe.json",
+      "rights": {
+        "status": "eligible",
+        "scope": "existing-synthetic-text-only",
+        "photoTransmission": "excluded",
+        "licenseGranted": false
+      }
+    },
+    {
+      "caseId": "OYS-20261110-009",
+      "groupId": "oys-fiction-009",
+      "origin": "O",
+      "exposure": "exposed",
+      "stratum": "reuse-recycling-comparison",
+      "provenance": {
+        "manifestPath": "data/candidates/oyeonseok-2026-11-10/manifest.json",
+        "origin": "synthetic",
+        "collector": "Oyeonseok handoff track (AI-assisted authorship)"
+      },
+      "sourceHash": "acadb919168dc522ac98cbbc8ba2b27bd6d2224f0bb4779a689f079768da17b7",
+      "split": "development",
+      "inputRef": "../candidates/oyeonseok-2026-11-10/oys-20261110-009-pp-reuse-question.json",
+      "rights": {
+        "status": "eligible",
+        "scope": "existing-synthetic-text-only",
+        "photoTransmission": "excluded",
+        "licenseGranted": false
+      }
+    },
+    {
+      "caseId": "OYS-20261110-010",
+      "groupId": "oys-fiction-010",
+      "origin": "O",
+      "exposure": "exposed",
+      "stratum": "missing-price-factor-document-unit-basis",
+      "provenance": {
+        "manifestPath": "data/candidates/oyeonseok-2026-11-10/manifest.json",
+        "origin": "synthetic",
+        "collector": "Oyeonseok handoff track (AI-assisted authorship)"
+      },
+      "sourceHash": "e83d1f30b91e37a38e70a20963a4db2ecb13287aae67a54e10f92b3509d51d2d",
+      "split": "development",
+      "inputRef": "../candidates/oyeonseok-2026-11-10/oys-20261110-010-pet-missing-basis.json",
+      "rights": {
+        "status": "eligible",
+        "scope": "existing-synthetic-text-only",
+        "photoTransmission": "excluded",
+        "licenseGranted": false
+      }
+    }
+  ]
+}
