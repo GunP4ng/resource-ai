@@ -1,0 +1,1193 @@
+{
+  "schemaVersion": 1,
+  "status": "passed-local-checks",
+  "executedAt": "2026-11-13T15:25:50.514Z",
+  "runtime": {
+    "name": "Bun",
+    "version": "1.4.2",
+    "used": "Bun.file, Bun.CryptoHasher, Bun shell for read-only git status/diff; no third-party imports"
+  },
+  "sourceCommit": "ceb9e48b6db3e1a16b1eb69a65a35da8482b0dc4",
+  "checks": {
+    "uniqueCaseIDs": 10,
+    "inputHashMatches": 10,
+    "rawManifestEqualities": 10,
+    "rawEvidenceEqualities": 10,
+    "pngHashMatches": 10,
+    "sourceSnapshotHashMatches": 10,
+    "licenseSnapshotHashMatches": 10,
+    "uniquePngByteHashes": 10,
+    "uniqueSourceInputHashDeclarations": 10,
+    "humanCasesAllDecisionsNull": 10,
+    "fullReportedFieldCoverage": [
+      "caseId",
+      "description",
+      "photoRefs",
+      "process",
+      "polymer",
+      "contamination",
+      "hazardousContact",
+      "massKg",
+      "region",
+      "assessmentDate"
+    ],
+    "fullCoreFieldCoverage": [
+      "process",
+      "polymer",
+      "contamination",
+      "hazardousContact",
+      "massKg",
+      "region"
+    ],
+    "sourceFilesUnchanged": 36,
+    "trackedFilesEqualHEAD": true,
+    "changedPathsWithinAllowlist": true
+  },
+  "perCase": [
+    {
+      "caseId": "HYEOB-20261112-001",
+      "inputSHA": "99a243a95f2500e350512a3ffbe53c896b76df41eb2e9be5b97d305cd96f0f40",
+      "inputHashMatchesSuppliedEvidence": true,
+      "rawEqualsManifestInput": true,
+      "rawEqualsEvidenceInput": true,
+      "allowedPhotoMetadataMatchesManifest": true,
+      "reportedFieldsChecked": [
+        "caseId",
+        "description",
+        "photoRefs",
+        "process",
+        "polymer",
+        "contamination",
+        "hazardousContact",
+        "massKg",
+        "region",
+        "assessmentDate"
+      ],
+      "coreFieldsChecked": [
+        "process",
+        "polymer",
+        "contamination",
+        "hazardousContact",
+        "massKg",
+        "region"
+      ],
+      "basicTypesChecked": true,
+      "humanNullFields": [
+        "reviewerIdentity",
+        "reviewerQualification",
+        "reviewTime",
+        "ownLabels",
+        "ownJudgment",
+        "ownEvidence",
+        "acceptance",
+        "split",
+        "priorAIDraftExposure",
+        "consent",
+        "reviewerSignature"
+      ],
+      "allHumanFieldsNull": true,
+      "questionCount": 2,
+      "evidencePointersResolve": true,
+      "modelTransmissionApproval": false,
+      "operatorConsent": false,
+      "hashes": [
+        {
+          "kind": "png",
+          "path": "data/h-candidates/2026-11-12/photos/01.png",
+          "expectedSHA256": "f7f2ae1f0384aaf50ff0053fa6935976a31bf673174f1eb85a83fc05ff8bdbac",
+          "actualSHA256": "f7f2ae1f0384aaf50ff0053fa6935976a31bf673174f1eb85a83fc05ff8bdbac",
+          "matches": true
+        },
+        {
+          "kind": "sourceSnapshot",
+          "path": "data/h-candidates/2026-11-12/sources/01.html",
+          "expectedSHA256": "5f80acf5ca91a44737e6eda320c2987a59c0bd60739d3908935bf33ecbd72a87",
+          "actualSHA256": "5f80acf5ca91a44737e6eda320c2987a59c0bd60739d3908935bf33ecbd72a87",
+          "matches": true
+        },
+        {
+          "kind": "licenseSnapshot",
+          "path": "data/h-candidates/2026-11-12/sources/cc-by-sa-4.0.html",
+          "expectedSHA256": "b462fb0a649a8ec875bba7590abad7dc1e72c0456ddec070cf3a28183689dceb",
+          "actualSHA256": "b462fb0a649a8ec875bba7590abad7dc1e72c0456ddec070cf3a28183689dceb",
+          "matches": true
+        }
+      ]
+    },
+    {
+      "caseId": "HYEOB-20261112-002",
+      "inputSHA": "140d4db53120d25db32c3d70a982d2de8cf2e45ac90c934550ed76fff7e76db5",
+      "inputHashMatchesSuppliedEvidence": true,
+      "rawEqualsManifestInput": true,
+      "rawEqualsEvidenceInput": true,
+      "allowedPhotoMetadataMatchesManifest": true,
+      "reportedFieldsChecked": [
+        "caseId",
+        "description",
+        "photoRefs",
+        "process",
+        "polymer",
+        "contamination",
+        "hazardousContact",
+        "massKg",
+        "region",
+        "assessmentDate"
+      ],
+      "coreFieldsChecked": [
+        "process",
+        "polymer",
+        "contamination",
+        "hazardousContact",
+        "massKg",
+        "region"
+      ],
+      "basicTypesChecked": true,
+      "humanNullFields": [
+        "reviewerIdentity",
+        "reviewerQualification",
+        "reviewTime",
+        "ownLabels",
+        "ownJudgment",
+        "ownEvidence",
+        "acceptance",
+        "split",
+        "priorAIDraftExposure",
+        "consent",
+        "reviewerSignature"
+      ],
+      "allHumanFieldsNull": true,
+      "questionCount": 2,
+      "evidencePointersResolve": true,
+      "modelTransmissionApproval": false,
+      "operatorConsent": false,
+      "hashes": [
+        {
+          "kind": "png",
+          "path": "data/h-candidates/2026-11-12/photos/02.png",
+          "expectedSHA256": "022c677025317270731baa8b08a0217497cc85d3a482bf4bbca91f56aa595a22",
+          "actualSHA256": "022c677025317270731baa8b08a0217497cc85d3a482bf4bbca91f56aa595a22",
+          "matches": true
+        },
+        {
+          "kind": "sourceSnapshot",
+          "path": "data/h-candidates/2026-11-12/sources/02.html",
+          "expectedSHA256": "7a63cb2715936a02ab3222ffb33576918b95178c361b3926c84c19d215e9921d",
+          "actualSHA256": "7a63cb2715936a02ab3222ffb33576918b95178c361b3926c84c19d215e9921d",
+          "matches": true
+        },
+        {
+          "kind": "licenseSnapshot",
+          "path": "data/h-candidates/2026-11-12/sources/cc-by-sa-4.0.html",
+          "expectedSHA256": "b462fb0a649a8ec875bba7590abad7dc1e72c0456ddec070cf3a28183689dceb",
+          "actualSHA256": "b462fb0a649a8ec875bba7590abad7dc1e72c0456ddec070cf3a28183689dceb",
+          "matches": true
+        }
+      ]
+    },
+    {
+      "caseId": "HYEOB-20261112-003",
+      "inputSHA": "e99456505b42ee03d6b8f1e87771791750e1262a43047db72c613e85504a5b07",
+      "inputHashMatchesSuppliedEvidence": true,
+      "rawEqualsManifestInput": true,
+      "rawEqualsEvidenceInput": true,
+      "allowedPhotoMetadataMatchesManifest": true,
+      "reportedFieldsChecked": [
+        "caseId",
+        "description",
+        "photoRefs",
+        "process",
+        "polymer",
+        "contamination",
+        "hazardousContact",
+        "massKg",
+        "region",
+        "assessmentDate"
+      ],
+      "coreFieldsChecked": [
+        "process",
+        "polymer",
+        "contamination",
+        "hazardousContact",
+        "massKg",
+        "region"
+      ],
+      "basicTypesChecked": true,
+      "humanNullFields": [
+        "reviewerIdentity",
+        "reviewerQualification",
+        "reviewTime",
+        "ownLabels",
+        "ownJudgment",
+        "ownEvidence",
+        "acceptance",
+        "split",
+        "priorAIDraftExposure",
+        "consent",
+        "reviewerSignature"
+      ],
+      "allHumanFieldsNull": true,
+      "questionCount": 2,
+      "evidencePointersResolve": true,
+      "modelTransmissionApproval": false,
+      "operatorConsent": false,
+      "hashes": [
+        {
+          "kind": "png",
+          "path": "data/h-candidates/2026-11-12/photos/03.png",
+          "expectedSHA256": "836ce4f3d520db5ce1fa40e265bc4ba794455cbff5c16572a0b3e5a1e75726ea",
+          "actualSHA256": "836ce4f3d520db5ce1fa40e265bc4ba794455cbff5c16572a0b3e5a1e75726ea",
+          "matches": true
+        },
+        {
+          "kind": "sourceSnapshot",
+          "path": "data/h-candidates/2026-11-12/sources/03-commons-api.json",
+          "expectedSHA256": "9c98d5fbd3212798d1c7650303c1ac2690701ecf3f9c683b25ea4bbf434b8223",
+          "actualSHA256": "9c98d5fbd3212798d1c7650303c1ac2690701ecf3f9c683b25ea4bbf434b8223",
+          "matches": true
+        },
+        {
+          "kind": "licenseSnapshot",
+          "path": "data/h-candidates/2026-11-12/sources/cc0-1.0.html",
+          "expectedSHA256": "abb4d48fc8b85de52b377dd105532c6c549f515d492a8e1712bc99e7316a1f12",
+          "actualSHA256": "abb4d48fc8b85de52b377dd105532c6c549f515d492a8e1712bc99e7316a1f12",
+          "matches": true
+        }
+      ]
+    },
+    {
+      "caseId": "HYEOB-20261112-004",
+      "inputSHA": "26eb5e7d5d21df9ed16f6c00cab3dba7e5e810bd3b354e5f9851abcd8217e493",
+      "inputHashMatchesSuppliedEvidence": true,
+      "rawEqualsManifestInput": true,
+      "rawEqualsEvidenceInput": true,
+      "allowedPhotoMetadataMatchesManifest": true,
+      "reportedFieldsChecked": [
+        "caseId",
+        "description",
+        "photoRefs",
+        "process",
+        "polymer",
+        "contamination",
+        "hazardousContact",
+        "massKg",
+        "region",
+        "assessmentDate"
+      ],
+      "coreFieldsChecked": [
+        "process",
+        "polymer",
+        "contamination",
+        "hazardousContact",
+        "massKg",
+        "region"
+      ],
+      "basicTypesChecked": true,
+      "humanNullFields": [
+        "reviewerIdentity",
+        "reviewerQualification",
+        "reviewTime",
+        "ownLabels",
+        "ownJudgment",
+        "ownEvidence",
+        "acceptance",
+        "split",
+        "priorAIDraftExposure",
+        "consent",
+        "reviewerSignature"
+      ],
+      "allHumanFieldsNull": true,
+      "questionCount": 2,
+      "evidencePointersResolve": true,
+      "modelTransmissionApproval": false,
+      "operatorConsent": false,
+      "hashes": [
+        {
+          "kind": "png",
+          "path": "data/h-candidates/2026-11-12/photos/04.png",
+          "expectedSHA256": "5a4de7ef8d75db39aa77a1762394552ed033eb2a0a09b3c6d56c068e4343bcb8",
+          "actualSHA256": "5a4de7ef8d75db39aa77a1762394552ed033eb2a0a09b3c6d56c068e4343bcb8",
+          "matches": true
+        },
+        {
+          "kind": "sourceSnapshot",
+          "path": "data/h-candidates/2026-11-12/sources/04-commons-api.json",
+          "expectedSHA256": "b9d59fac5252e3739ac43a767ca238a8ed5ff7404dcab3adc71f2379f4f5e1db",
+          "actualSHA256": "b9d59fac5252e3739ac43a767ca238a8ed5ff7404dcab3adc71f2379f4f5e1db",
+          "matches": true
+        },
+        {
+          "kind": "licenseSnapshot",
+          "path": "data/h-candidates/2026-11-12/sources/cc-by-sa-4.0.html",
+          "expectedSHA256": "b462fb0a649a8ec875bba7590abad7dc1e72c0456ddec070cf3a28183689dceb",
+          "actualSHA256": "b462fb0a649a8ec875bba7590abad7dc1e72c0456ddec070cf3a28183689dceb",
+          "matches": true
+        }
+      ]
+    },
+    {
+      "caseId": "HYEOB-20261112-005",
+      "inputSHA": "41f6f74e6551b3aae5449a1a0d11d2d1a37b7291974f9a1bc70618023de404fd",
+      "inputHashMatchesSuppliedEvidence": true,
+      "rawEqualsManifestInput": true,
+      "rawEqualsEvidenceInput": true,
+      "allowedPhotoMetadataMatchesManifest": true,
+      "reportedFieldsChecked": [
+        "caseId",
+        "description",
+        "photoRefs",
+        "process",
+        "polymer",
+        "contamination",
+        "hazardousContact",
+        "massKg",
+        "region",
+        "assessmentDate"
+      ],
+      "coreFieldsChecked": [
+        "process",
+        "polymer",
+        "contamination",
+        "hazardousContact",
+        "massKg",
+        "region"
+      ],
+      "basicTypesChecked": true,
+      "humanNullFields": [
+        "reviewerIdentity",
+        "reviewerQualification",
+        "reviewTime",
+        "ownLabels",
+        "ownJudgment",
+        "ownEvidence",
+        "acceptance",
+        "split",
+        "priorAIDraftExposure",
+        "consent",
+        "reviewerSignature"
+      ],
+      "allHumanFieldsNull": true,
+      "questionCount": 2,
+      "evidencePointersResolve": true,
+      "modelTransmissionApproval": false,
+      "operatorConsent": false,
+      "hashes": [
+        {
+          "kind": "png",
+          "path": "data/h-candidates/2026-11-12/photos/05.png",
+          "expectedSHA256": "6b6a8444a70f59b6d8cfda64faeb5ad62f691d537a3c1cbb88ca8d92045f4621",
+          "actualSHA256": "6b6a8444a70f59b6d8cfda64faeb5ad62f691d537a3c1cbb88ca8d92045f4621",
+          "matches": true
+        },
+        {
+          "kind": "sourceSnapshot",
+          "path": "data/h-candidates/2026-11-12/sources/05-commons-api.json",
+          "expectedSHA256": "01879f6cf83e281f30b32766e67c609cffbc3181af4349881cbbd562877b0eff",
+          "actualSHA256": "01879f6cf83e281f30b32766e67c609cffbc3181af4349881cbbd562877b0eff",
+          "matches": true
+        },
+        {
+          "kind": "licenseSnapshot",
+          "path": "data/h-candidates/2026-11-12/sources/cc0-1.0.html",
+          "expectedSHA256": "abb4d48fc8b85de52b377dd105532c6c549f515d492a8e1712bc99e7316a1f12",
+          "actualSHA256": "abb4d48fc8b85de52b377dd105532c6c549f515d492a8e1712bc99e7316a1f12",
+          "matches": true
+        }
+      ]
+    },
+    {
+      "caseId": "HYEOB-20261112-006",
+      "inputSHA": "aa6104ac7f7461c952fc95b314002860bb01107d59d3814d1e61282d1ac7a87b",
+      "inputHashMatchesSuppliedEvidence": true,
+      "rawEqualsManifestInput": true,
+      "rawEqualsEvidenceInput": true,
+      "allowedPhotoMetadataMatchesManifest": true,
+      "reportedFieldsChecked": [
+        "caseId",
+        "description",
+        "photoRefs",
+        "process",
+        "polymer",
+        "contamination",
+        "hazardousContact",
+        "massKg",
+        "region",
+        "assessmentDate"
+      ],
+      "coreFieldsChecked": [
+        "process",
+        "polymer",
+        "contamination",
+        "hazardousContact",
+        "massKg",
+        "region"
+      ],
+      "basicTypesChecked": true,
+      "humanNullFields": [
+        "reviewerIdentity",
+        "reviewerQualification",
+        "reviewTime",
+        "ownLabels",
+        "ownJudgment",
+        "ownEvidence",
+        "acceptance",
+        "split",
+        "priorAIDraftExposure",
+        "consent",
+        "reviewerSignature"
+      ],
+      "allHumanFieldsNull": true,
+      "questionCount": 2,
+      "evidencePointersResolve": true,
+      "modelTransmissionApproval": false,
+      "operatorConsent": false,
+      "hashes": [
+        {
+          "kind": "png",
+          "path": "data/h-candidates/2026-11-12/photos/06.png",
+          "expectedSHA256": "45074da1b43f52fac11e015cf8ae8c209c3b791b5cf8a542edc6315845c6b0ce",
+          "actualSHA256": "45074da1b43f52fac11e015cf8ae8c209c3b791b5cf8a542edc6315845c6b0ce",
+          "matches": true
+        },
+        {
+          "kind": "sourceSnapshot",
+          "path": "data/h-candidates/2026-11-12/sources/06-commons-api.json",
+          "expectedSHA256": "7d6ac5f85ffc587e1c55eb7eb03ebe992097715ed10de216d916b8df529e0eec",
+          "actualSHA256": "7d6ac5f85ffc587e1c55eb7eb03ebe992097715ed10de216d916b8df529e0eec",
+          "matches": true
+        },
+        {
+          "kind": "licenseSnapshot",
+          "path": "data/h-candidates/2026-11-12/sources/cc0-1.0.html",
+          "expectedSHA256": "abb4d48fc8b85de52b377dd105532c6c549f515d492a8e1712bc99e7316a1f12",
+          "actualSHA256": "abb4d48fc8b85de52b377dd105532c6c549f515d492a8e1712bc99e7316a1f12",
+          "matches": true
+        }
+      ]
+    },
+    {
+      "caseId": "HYEOB-20261112-007",
+      "inputSHA": "dd530034e235f514b61ee5a8d585978ead905acdfc04a3530e462a09e18ff320",
+      "inputHashMatchesSuppliedEvidence": true,
+      "rawEqualsManifestInput": true,
+      "rawEqualsEvidenceInput": true,
+      "allowedPhotoMetadataMatchesManifest": true,
+      "reportedFieldsChecked": [
+        "caseId",
+        "description",
+        "photoRefs",
+        "process",
+        "polymer",
+        "contamination",
+        "hazardousContact",
+        "massKg",
+        "region",
+        "assessmentDate"
+      ],
+      "coreFieldsChecked": [
+        "process",
+        "polymer",
+        "contamination",
+        "hazardousContact",
+        "massKg",
+        "region"
+      ],
+      "basicTypesChecked": true,
+      "humanNullFields": [
+        "reviewerIdentity",
+        "reviewerQualification",
+        "reviewTime",
+        "ownLabels",
+        "ownJudgment",
+        "ownEvidence",
+        "acceptance",
+        "split",
+        "priorAIDraftExposure",
+        "consent",
+        "reviewerSignature"
+      ],
+      "allHumanFieldsNull": true,
+      "questionCount": 3,
+      "evidencePointersResolve": true,
+      "modelTransmissionApproval": false,
+      "operatorConsent": false,
+      "hashes": [
+        {
+          "kind": "png",
+          "path": "data/h-candidates/2026-11-12/photos/07.png",
+          "expectedSHA256": "c2b6a9cf5666463496080871bc94ffbefe49013cf982605dafa54cd15c13f0ee",
+          "actualSHA256": "c2b6a9cf5666463496080871bc94ffbefe49013cf982605dafa54cd15c13f0ee",
+          "matches": true
+        },
+        {
+          "kind": "sourceSnapshot",
+          "path": "data/h-candidates/2026-11-12/sources/07-commons-api.json",
+          "expectedSHA256": "18caa0c44d579c057333bdb065a83864816acf3c570006d20eaaf4193a354d9f",
+          "actualSHA256": "18caa0c44d579c057333bdb065a83864816acf3c570006d20eaaf4193a354d9f",
+          "matches": true
+        },
+        {
+          "kind": "licenseSnapshot",
+          "path": "data/h-candidates/2026-11-12/sources/cc0-1.0.html",
+          "expectedSHA256": "abb4d48fc8b85de52b377dd105532c6c549f515d492a8e1712bc99e7316a1f12",
+          "actualSHA256": "abb4d48fc8b85de52b377dd105532c6c549f515d492a8e1712bc99e7316a1f12",
+          "matches": true
+        }
+      ]
+    },
+    {
+      "caseId": "HYEOB-20261112-008",
+      "inputSHA": "978a57423199674dee21982375171258ab9908701ea6f69934d95afc8ff31dbb",
+      "inputHashMatchesSuppliedEvidence": true,
+      "rawEqualsManifestInput": true,
+      "rawEqualsEvidenceInput": true,
+      "allowedPhotoMetadataMatchesManifest": true,
+      "reportedFieldsChecked": [
+        "caseId",
+        "description",
+        "photoRefs",
+        "process",
+        "polymer",
+        "contamination",
+        "hazardousContact",
+        "massKg",
+        "region",
+        "assessmentDate"
+      ],
+      "coreFieldsChecked": [
+        "process",
+        "polymer",
+        "contamination",
+        "hazardousContact",
+        "massKg",
+        "region"
+      ],
+      "basicTypesChecked": true,
+      "humanNullFields": [
+        "reviewerIdentity",
+        "reviewerQualification",
+        "reviewTime",
+        "ownLabels",
+        "ownJudgment",
+        "ownEvidence",
+        "acceptance",
+        "split",
+        "priorAIDraftExposure",
+        "consent",
+        "reviewerSignature"
+      ],
+      "allHumanFieldsNull": true,
+      "questionCount": 3,
+      "evidencePointersResolve": true,
+      "modelTransmissionApproval": false,
+      "operatorConsent": false,
+      "hashes": [
+        {
+          "kind": "png",
+          "path": "data/h-candidates/2026-11-12/photos/08.png",
+          "expectedSHA256": "d3994b710f31efc249d19c6b876f3c93cc80f507d1bc23f967968dcde6ac650a",
+          "actualSHA256": "d3994b710f31efc249d19c6b876f3c93cc80f507d1bc23f967968dcde6ac650a",
+          "matches": true
+        },
+        {
+          "kind": "sourceSnapshot",
+          "path": "data/h-candidates/2026-11-12/sources/08-commons-api.json",
+          "expectedSHA256": "c999df5ce19d6813fff8efdcca5dc41e88bf8ba5e08b943215fafa68925086b3",
+          "actualSHA256": "c999df5ce19d6813fff8efdcca5dc41e88bf8ba5e08b943215fafa68925086b3",
+          "matches": true
+        },
+        {
+          "kind": "licenseSnapshot",
+          "path": "data/h-candidates/2026-11-12/sources/cc-by-sa-4.0.html",
+          "expectedSHA256": "b462fb0a649a8ec875bba7590abad7dc1e72c0456ddec070cf3a28183689dceb",
+          "actualSHA256": "b462fb0a649a8ec875bba7590abad7dc1e72c0456ddec070cf3a28183689dceb",
+          "matches": true
+        }
+      ]
+    },
+    {
+      "caseId": "HYEOB-20261112-009",
+      "inputSHA": "65c54b7dcfa5d975474542a5675a7c6bb64850d2a4e320845ad67ccaa5d2498e",
+      "inputHashMatchesSuppliedEvidence": true,
+      "rawEqualsManifestInput": true,
+      "rawEqualsEvidenceInput": true,
+      "allowedPhotoMetadataMatchesManifest": true,
+      "reportedFieldsChecked": [
+        "caseId",
+        "description",
+        "photoRefs",
+        "process",
+        "polymer",
+        "contamination",
+        "hazardousContact",
+        "massKg",
+        "region",
+        "assessmentDate"
+      ],
+      "coreFieldsChecked": [
+        "process",
+        "polymer",
+        "contamination",
+        "hazardousContact",
+        "massKg",
+        "region"
+      ],
+      "basicTypesChecked": true,
+      "humanNullFields": [
+        "reviewerIdentity",
+        "reviewerQualification",
+        "reviewTime",
+        "ownLabels",
+        "ownJudgment",
+        "ownEvidence",
+        "acceptance",
+        "split",
+        "priorAIDraftExposure",
+        "consent",
+        "reviewerSignature"
+      ],
+      "allHumanFieldsNull": true,
+      "questionCount": 2,
+      "evidencePointersResolve": true,
+      "modelTransmissionApproval": false,
+      "operatorConsent": false,
+      "hashes": [
+        {
+          "kind": "png",
+          "path": "data/h-candidates/2026-11-12/photos/09.png",
+          "expectedSHA256": "3de7cfc5f670b8ffba5605b2978d40f69bccc85ba30fddbbcc30c9a206f5fc15",
+          "actualSHA256": "3de7cfc5f670b8ffba5605b2978d40f69bccc85ba30fddbbcc30c9a206f5fc15",
+          "matches": true
+        },
+        {
+          "kind": "sourceSnapshot",
+          "path": "data/h-candidates/2026-11-12/sources/09-commons-api.json",
+          "expectedSHA256": "a633349bb3709ab162f68cc98d9e0abf217305ce05221dc5043b74431789e7ef",
+          "actualSHA256": "a633349bb3709ab162f68cc98d9e0abf217305ce05221dc5043b74431789e7ef",
+          "matches": true
+        },
+        {
+          "kind": "licenseSnapshot",
+          "path": "data/h-candidates/2026-11-12/sources/cc-by-4.0.html",
+          "expectedSHA256": "8dda1ccec4be91fc80821d4e4fd5c568072b9a3a74b2fdc07c249a27e920ef01",
+          "actualSHA256": "8dda1ccec4be91fc80821d4e4fd5c568072b9a3a74b2fdc07c249a27e920ef01",
+          "matches": true
+        }
+      ]
+    },
+    {
+      "caseId": "HYEOB-20261112-010",
+      "inputSHA": "898699ed96ab28225c9a2bbf9e1c0770fdb571e49af581832a96d92bf46a090f",
+      "inputHashMatchesSuppliedEvidence": true,
+      "rawEqualsManifestInput": true,
+      "rawEqualsEvidenceInput": true,
+      "allowedPhotoMetadataMatchesManifest": true,
+      "reportedFieldsChecked": [
+        "caseId",
+        "description",
+        "photoRefs",
+        "process",
+        "polymer",
+        "contamination",
+        "hazardousContact",
+        "massKg",
+        "region",
+        "assessmentDate"
+      ],
+      "coreFieldsChecked": [
+        "process",
+        "polymer",
+        "contamination",
+        "hazardousContact",
+        "massKg",
+        "region"
+      ],
+      "basicTypesChecked": true,
+      "humanNullFields": [
+        "reviewerIdentity",
+        "reviewerQualification",
+        "reviewTime",
+        "ownLabels",
+        "ownJudgment",
+        "ownEvidence",
+        "acceptance",
+        "split",
+        "priorAIDraftExposure",
+        "consent",
+        "reviewerSignature"
+      ],
+      "allHumanFieldsNull": true,
+      "questionCount": 2,
+      "evidencePointersResolve": true,
+      "modelTransmissionApproval": false,
+      "operatorConsent": false,
+      "hashes": [
+        {
+          "kind": "png",
+          "path": "data/h-candidates/2026-11-12/photos/10.png",
+          "expectedSHA256": "df7fd0014c84838180bfd2e8017ed1b99677de01de9d042aa761674f18dd658c",
+          "actualSHA256": "df7fd0014c84838180bfd2e8017ed1b99677de01de9d042aa761674f18dd658c",
+          "matches": true
+        },
+        {
+          "kind": "sourceSnapshot",
+          "path": "data/h-candidates/2026-11-12/sources/10-commons-api.json",
+          "expectedSHA256": "bd0aae1c41a4033075db4fa53702506948e3311af16f3bbeb4c110d8ea7c1c29",
+          "actualSHA256": "bd0aae1c41a4033075db4fa53702506948e3311af16f3bbeb4c110d8ea7c1c29",
+          "matches": true
+        },
+        {
+          "kind": "licenseSnapshot",
+          "path": "data/h-candidates/2026-11-12/sources/cc-by-sa-4.0.html",
+          "expectedSHA256": "b462fb0a649a8ec875bba7590abad7dc1e72c0456ddec070cf3a28183689dceb",
+          "actualSHA256": "b462fb0a649a8ec875bba7590abad7dc1e72c0456ddec070cf3a28183689dceb",
+          "matches": true
+        }
+      ]
+    }
+  ],
+  "nonMutation": [
+    {
+      "path": "data/h-candidates/2026-11-12/manifest.json",
+      "beforeSHA256": "df62053c3db875ce13a8502d27b9b78e5b731ebfdbaf324cd3969ee8d72e9e68",
+      "afterSHA256": "df62053c3db875ce13a8502d27b9b78e5b731ebfdbaf324cd3969ee8d72e9e68",
+      "unchanged": true
+    },
+    {
+      "path": "/home/yeonbug/.omo/agent/sessions/--mnt-c-Users-yeonbug-Desktop-경진대회--/2026-11-07T07-34-35-917Z_01a1b4ee-428d-7394-8a41-cbeae4869dca-artifacts/local/o-h-review-evidence-20261113.json",
+      "beforeSHA256": "791b5e187bc1c7d996e4e0b39969fedc76fd03c15a2d6fd0ac129b6be0950c71",
+      "afterSHA256": "791b5e187bc1c7d996e4e0b39969fedc76fd03c15a2d6fd0ac129b6be0950c71",
+      "unchanged": true
+    },
+    {
+      "path": "/tmp/o-h-parent-initial-20261113.md",
+      "beforeSHA256": "0ade9d2fd8706a7ceb8d3df92c7ad486763fd855f9198ca4de108dd6d29f2186",
+      "afterSHA256": "0ade9d2fd8706a7ceb8d3df92c7ad486763fd855f9198ca4de108dd6d29f2186",
+      "unchanged": true
+    },
+    {
+      "path": "data/h-candidates/2026-11-12/inputs/HYEOB-20261112-001.json",
+      "beforeSHA256": "99a243a95f2500e350512a3ffbe53c896b76df41eb2e9be5b97d305cd96f0f40",
+      "afterSHA256": "99a243a95f2500e350512a3ffbe53c896b76df41eb2e9be5b97d305cd96f0f40",
+      "unchanged": true
+    },
+    {
+      "path": "data/h-candidates/2026-11-12/photos/01.png",
+      "beforeSHA256": "f7f2ae1f0384aaf50ff0053fa6935976a31bf673174f1eb85a83fc05ff8bdbac",
+      "afterSHA256": "f7f2ae1f0384aaf50ff0053fa6935976a31bf673174f1eb85a83fc05ff8bdbac",
+      "unchanged": true
+    },
+    {
+      "path": "data/h-candidates/2026-11-12/sources/01.html",
+      "beforeSHA256": "5f80acf5ca91a44737e6eda320c2987a59c0bd60739d3908935bf33ecbd72a87",
+      "afterSHA256": "5f80acf5ca91a44737e6eda320c2987a59c0bd60739d3908935bf33ecbd72a87",
+      "unchanged": true
+    },
+    {
+      "path": "data/h-candidates/2026-11-12/sources/cc-by-sa-4.0.html",
+      "beforeSHA256": "b462fb0a649a8ec875bba7590abad7dc1e72c0456ddec070cf3a28183689dceb",
+      "afterSHA256": "b462fb0a649a8ec875bba7590abad7dc1e72c0456ddec070cf3a28183689dceb",
+      "unchanged": true
+    },
+    {
+      "path": "data/h-candidates/2026-11-12/inputs/HYEOB-20261112-002.json",
+      "beforeSHA256": "140d4db53120d25db32c3d70a982d2de8cf2e45ac90c934550ed76fff7e76db5",
+      "afterSHA256": "140d4db53120d25db32c3d70a982d2de8cf2e45ac90c934550ed76fff7e76db5",
+      "unchanged": true
+    },
+    {
+      "path": "data/h-candidates/2026-11-12/photos/02.png",
+      "beforeSHA256": "022c677025317270731baa8b08a0217497cc85d3a482bf4bbca91f56aa595a22",
+      "afterSHA256": "022c677025317270731baa8b08a0217497cc85d3a482bf4bbca91f56aa595a22",
+      "unchanged": true
+    },
+    {
+      "path": "data/h-candidates/2026-11-12/sources/02.html",
+      "beforeSHA256": "7a63cb2715936a02ab3222ffb33576918b95178c361b3926c84c19d215e9921d",
+      "afterSHA256": "7a63cb2715936a02ab3222ffb33576918b95178c361b3926c84c19d215e9921d",
+      "unchanged": true
+    },
+    {
+      "path": "data/h-candidates/2026-11-12/inputs/HYEOB-20261112-003.json",
+      "beforeSHA256": "e99456505b42ee03d6b8f1e87771791750e1262a43047db72c613e85504a5b07",
+      "afterSHA256": "e99456505b42ee03d6b8f1e87771791750e1262a43047db72c613e85504a5b07",
+      "unchanged": true
+    },
+    {
+      "path": "data/h-candidates/2026-11-12/photos/03.png",
+      "beforeSHA256": "836ce4f3d520db5ce1fa40e265bc4ba794455cbff5c16572a0b3e5a1e75726ea",
+      "afterSHA256": "836ce4f3d520db5ce1fa40e265bc4ba794455cbff5c16572a0b3e5a1e75726ea",
+      "unchanged": true
+    },
+    {
+      "path": "data/h-candidates/2026-11-12/sources/03-commons-api.json",
+      "beforeSHA256": "9c98d5fbd3212798d1c7650303c1ac2690701ecf3f9c683b25ea4bbf434b8223",
+      "afterSHA256": "9c98d5fbd3212798d1c7650303c1ac2690701ecf3f9c683b25ea4bbf434b8223",
+      "unchanged": true
+    },
+    {
+      "path": "data/h-candidates/2026-11-12/sources/cc0-1.0.html",
+      "beforeSHA256": "abb4d48fc8b85de52b377dd105532c6c549f515d492a8e1712bc99e7316a1f12",
+      "afterSHA256": "abb4d48fc8b85de52b377dd105532c6c549f515d492a8e1712bc99e7316a1f12",
+      "unchanged": true
+    },
+    {
+      "path": "data/h-candidates/2026-11-12/inputs/HYEOB-20261112-004.json",
+      "beforeSHA256": "26eb5e7d5d21df9ed16f6c00cab3dba7e5e810bd3b354e5f9851abcd8217e493",
+      "afterSHA256": "26eb5e7d5d21df9ed16f6c00cab3dba7e5e810bd3b354e5f9851abcd8217e493",
+      "unchanged": true
+    },
+    {
+      "path": "data/h-candidates/2026-11-12/photos/04.png",
+      "beforeSHA256": "5a4de7ef8d75db39aa77a1762394552ed033eb2a0a09b3c6d56c068e4343bcb8",
+      "afterSHA256": "5a4de7ef8d75db39aa77a1762394552ed033eb2a0a09b3c6d56c068e4343bcb8",
+      "unchanged": true
+    },
+    {
+      "path": "data/h-candidates/2026-11-12/sources/04-commons-api.json",
+      "beforeSHA256": "b9d59fac5252e3739ac43a767ca238a8ed5ff7404dcab3adc71f2379f4f5e1db",
+      "afterSHA256": "b9d59fac5252e3739ac43a767ca238a8ed5ff7404dcab3adc71f2379f4f5e1db",
+      "unchanged": true
+    },
+    {
+      "path": "data/h-candidates/2026-11-12/inputs/HYEOB-20261112-005.json",
+      "beforeSHA256": "41f6f74e6551b3aae5449a1a0d11d2d1a37b7291974f9a1bc70618023de404fd",
+      "afterSHA256": "41f6f74e6551b3aae5449a1a0d11d2d1a37b7291974f9a1bc70618023de404fd",
+      "unchanged": true
+    },
+    {
+      "path": "data/h-candidates/2026-11-12/photos/05.png",
+      "beforeSHA256": "6b6a8444a70f59b6d8cfda64faeb5ad62f691d537a3c1cbb88ca8d92045f4621",
+      "afterSHA256": "6b6a8444a70f59b6d8cfda64faeb5ad62f691d537a3c1cbb88ca8d92045f4621",
+      "unchanged": true
+    },
+    {
+      "path": "data/h-candidates/2026-11-12/sources/05-commons-api.json",
+      "beforeSHA256": "01879f6cf83e281f30b32766e67c609cffbc3181af4349881cbbd562877b0eff",
+      "afterSHA256": "01879f6cf83e281f30b32766e67c609cffbc3181af4349881cbbd562877b0eff",
+      "unchanged": true
+    },
+    {
+      "path": "data/h-candidates/2026-11-12/inputs/HYEOB-20261112-006.json",
+      "beforeSHA256": "aa6104ac7f7461c952fc95b314002860bb01107d59d3814d1e61282d1ac7a87b",
+      "afterSHA256": "aa6104ac7f7461c952fc95b314002860bb01107d59d3814d1e61282d1ac7a87b",
+      "unchanged": true
+    },
+    {
+      "path": "data/h-candidates/2026-11-12/photos/06.png",
+      "beforeSHA256": "45074da1b43f52fac11e015cf8ae8c209c3b791b5cf8a542edc6315845c6b0ce",
+      "afterSHA256": "45074da1b43f52fac11e015cf8ae8c209c3b791b5cf8a542edc6315845c6b0ce",
+      "unchanged": true
+    },
+    {
+      "path": "data/h-candidates/2026-11-12/sources/06-commons-api.json",
+      "beforeSHA256": "7d6ac5f85ffc587e1c55eb7eb03ebe992097715ed10de216d916b8df529e0eec",
+      "afterSHA256": "7d6ac5f85ffc587e1c55eb7eb03ebe992097715ed10de216d916b8df529e0eec",
+      "unchanged": true
+    },
+    {
+      "path": "data/h-candidates/2026-11-12/inputs/HYEOB-20261112-007.json",
+      "beforeSHA256": "dd530034e235f514b61ee5a8d585978ead905acdfc04a3530e462a09e18ff320",
+      "afterSHA256": "dd530034e235f514b61ee5a8d585978ead905acdfc04a3530e462a09e18ff320",
+      "unchanged": true
+    },
+    {
+      "path": "data/h-candidates/2026-11-12/photos/07.png",
+      "beforeSHA256": "c2b6a9cf5666463496080871bc94ffbefe49013cf982605dafa54cd15c13f0ee",
+      "afterSHA256": "c2b6a9cf5666463496080871bc94ffbefe49013cf982605dafa54cd15c13f0ee",
+      "unchanged": true
+    },
+    {
+      "path": "data/h-candidates/2026-11-12/sources/07-commons-api.json",
+      "beforeSHA256": "18caa0c44d579c057333bdb065a83864816acf3c570006d20eaaf4193a354d9f",
+      "afterSHA256": "18caa0c44d579c057333bdb065a83864816acf3c570006d20eaaf4193a354d9f",
+      "unchanged": true
+    },
+    {
+      "path": "data/h-candidates/2026-11-12/inputs/HYEOB-20261112-008.json",
+      "beforeSHA256": "978a57423199674dee21982375171258ab9908701ea6f69934d95afc8ff31dbb",
+      "afterSHA256": "978a57423199674dee21982375171258ab9908701ea6f69934d95afc8ff31dbb",
+      "unchanged": true
+    },
+    {
+      "path": "data/h-candidates/2026-11-12/photos/08.png",
+      "beforeSHA256": "d3994b710f31efc249d19c6b876f3c93cc80f507d1bc23f967968dcde6ac650a",
+      "afterSHA256": "d3994b710f31efc249d19c6b876f3c93cc80f507d1bc23f967968dcde6ac650a",
+      "unchanged": true
+    },
+    {
+      "path": "data/h-candidates/2026-11-12/sources/08-commons-api.json",
+      "beforeSHA256": "c999df5ce19d6813fff8efdcca5dc41e88bf8ba5e08b943215fafa68925086b3",
+      "afterSHA256": "c999df5ce19d6813fff8efdcca5dc41e88bf8ba5e08b943215fafa68925086b3",
+      "unchanged": true
+    },
+    {
+      "path": "data/h-candidates/2026-11-12/inputs/HYEOB-20261112-009.json",
+      "beforeSHA256": "65c54b7dcfa5d975474542a5675a7c6bb64850d2a4e320845ad67ccaa5d2498e",
+      "afterSHA256": "65c54b7dcfa5d975474542a5675a7c6bb64850d2a4e320845ad67ccaa5d2498e",
+      "unchanged": true
+    },
+    {
+      "path": "data/h-candidates/2026-11-12/photos/09.png",
+      "beforeSHA256": "3de7cfc5f670b8ffba5605b2978d40f69bccc85ba30fddbbcc30c9a206f5fc15",
+      "afterSHA256": "3de7cfc5f670b8ffba5605b2978d40f69bccc85ba30fddbbcc30c9a206f5fc15",
+      "unchanged": true
+    },
+    {
+      "path": "data/h-candidates/2026-11-12/sources/09-commons-api.json",
+      "beforeSHA256": "a633349bb3709ab162f68cc98d9e0abf217305ce05221dc5043b74431789e7ef",
+      "afterSHA256": "a633349bb3709ab162f68cc98d9e0abf217305ce05221dc5043b74431789e7ef",
+      "unchanged": true
+    },
+    {
+      "path": "data/h-candidates/2026-11-12/sources/cc-by-4.0.html",
+      "beforeSHA256": "8dda1ccec4be91fc80821d4e4fd5c568072b9a3a74b2fdc07c249a27e920ef01",
+      "afterSHA256": "8dda1ccec4be91fc80821d4e4fd5c568072b9a3a74b2fdc07c249a27e920ef01",
+      "unchanged": true
+    },
+    {
+      "path": "data/h-candidates/2026-11-12/inputs/HYEOB-20261112-010.json",
+      "beforeSHA256": "898699ed96ab28225c9a2bbf9e1c0770fdb571e49af581832a96d92bf46a090f",
+      "afterSHA256": "898699ed96ab28225c9a2bbf9e1c0770fdb571e49af581832a96d92bf46a090f",
+      "unchanged": true
+    },
+    {
+      "path": "data/h-candidates/2026-11-12/photos/10.png",
+      "beforeSHA256": "df7fd0014c84838180bfd2e8017ed1b99677de01de9d042aa761674f18dd658c",
+      "afterSHA256": "df7fd0014c84838180bfd2e8017ed1b99677de01de9d042aa761674f18dd658c",
+      "unchanged": true
+    },
+    {
+      "path": "data/h-candidates/2026-11-12/sources/10-commons-api.json",
+      "beforeSHA256": "bd0aae1c41a4033075db4fa53702506948e3311af16f3bbeb4c110d8ea7c1c29",
+      "afterSHA256": "bd0aae1c41a4033075db4fa53702506948e3311af16f3bbeb4c110d8ea7c1c29",
+      "unchanged": true
+    }
+  ],
+  "gitStatusAtCheck": [
+    "?? data/o-reviews/h-candidates-2026-11-13/README.md",
+    "?? data/o-reviews/h-candidates-2026-11-13/ai-preliminary-review.json",
+    "?? data/o-reviews/h-candidates-2026-11-13/human-review.json",
+    "?? docs/o-h-candidate-review.md"
+  ],
+  "notPerformed": [
+    "사진 픽셀 열람·표시·전송",
+    "외부·웹·라이브·provider 요청",
+    "평가·모델 실행 및 앱 assessment/state 판정",
+    "기존 Bun 단계에서는 parseCaseInput을 호출하지 않았다. 별도 부모 parseCaseInput 10/10은 parentVerification에 귀속한다. 이번 보완에서도 앱 로직 import·실행은 하지 않았다.",
+    "번들에 없는 원본 JPEG 바이트 재해시; H008–010 sourceOriginal 해시도 null",
+    "출처·라이선스 스냅샷 본문 권리 심사·새 승인",
+    "O 원본 파일 재해시, 전체30건 및 raw700 검토",
+    "인간 검토·현장 수용·분류 정답·split 배정",
+    "commit/push/PR/외부 메시지"
+  ],
+  "limits": [
+    "바이트·구조 검사이며 현장 진실·권리 승인·독립성·정답의 검증이 아니다.",
+    "licenseSnapshot 10건은 후보별 대조 횟수이며 공용 파일 재사용을 포함한다.",
+    "원본 입력·manifest·PNG·출처/라이선스 스냅샷과 지정 부모 자료를 수정 전후 재해시했다. 나머지 추적 파일은 git diff --quiet HEAD로 변경 없음을 확인했다.",
+    "gitStatusAtCheck는 validation.json 생성 전 상태다. 영수증 자신의 완성 후 해시를 포함하지 않는다."
+  ],
+  "completionChecks": {
+    "allFiveArtifactsReadable": true,
+    "jsonFilesParsed": 3,
+    "localFileLinksChecked": 24,
+    "onlyFiveAllowedPaths": [
+      "?? data/o-reviews/h-candidates-2026-11-13/README.md",
+      "?? data/o-reviews/h-candidates-2026-11-13/ai-preliminary-review.json",
+      "?? data/o-reviews/h-candidates-2026-11-13/human-review.json",
+      "?? data/o-reviews/h-candidates-2026-11-13/validation.json",
+      "?? docs/o-h-candidate-review.md"
+    ],
+    "sourceCommit": "ceb9e48b6db3e1a16b1eb69a65a35da8482b0dc4",
+    "reportLines": 256,
+    "note": "이전 산출물 구조·링크 검사 이력; 이번 보완 검사는 refinementChecks에 구분한다."
+  },
+  "validationDevelopmentNotes": [
+    "초기 photo 전체 객체 문자열 비교는 동등성 검사에서 중단되어 통과수에 포함하지 않았다. 제공 증거의 허용 키만 재귀 대조하는 최종 검사를 사용했다.",
+    "인간 양식 null 키 개수를 12개로 예상한 초기 검사 오류를 실제 스키마의 명시적 11개 키 검사로 수정했다. 양식의 인간 작성 필드는 변경 없이 전부 null이다.",
+    "O 원본의 추정 경로 조회에서 ENOENT가 발생했다. O 비교는 지정 증거 JSON에 한정하고 O 원본 재해시를 완료했다고 주장하지 않는다."
+  ],
+  "executedAtTimezone": "UTC; same instant 2026-11-14T00:25:50.514+09:00 KST",
+  "refinementChecks": {
+    "status": "passed-artifact-refinement-checks",
+    "checkedAtUTC": "2026-11-13T15:32:15.417333+00:00",
+    "runtime": "Python standard library; read-only git status/diff",
+    "scope": "edited artifacts, local links and source-text locators only; no repeated source-byte hashes or application parser/model execution",
+    "artifactsReadable": 5,
+    "jsonFilesParsed": 3,
+    "localFileLinksChecked": 36,
+    "newSourceTextLocatorsChecked": 14,
+    "inputBindingsAndReportedValuesConsistent": 10,
+    "humanCasesAllElevenFieldsNull": 10,
+    "questionsPerCase": [
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      3,
+      3,
+      2,
+      2
+    ],
+    "reportAndAIFindingsQuestionsAgree": true,
+    "onlyFiveAllowedPaths": [
+      "?? data/o-reviews/h-candidates-2026-11-13/README.md",
+      "?? data/o-reviews/h-candidates-2026-11-13/ai-preliminary-review.json",
+      "?? data/o-reviews/h-candidates-2026-11-13/human-review.json",
+      "?? data/o-reviews/h-candidates-2026-11-13/validation.json",
+      "?? docs/o-h-candidate-review.md"
+    ],
+    "trackedFilesEqualHEAD": true,
+    "artifactSHA256": {
+      "docs/o-h-candidate-review.md": "7b7fcc7c1df915b67f5ae6a3474aa48fa8d75ade64edaca8d6133a98f05a4589",
+      "data/o-reviews/h-candidates-2026-11-13/README.md": "8488ded897c8803c470fcb35d70bd8374e79897752401db7572b0c2a669092a4",
+      "data/o-reviews/h-candidates-2026-11-13/ai-preliminary-review.json": "2ce9629dae6b17ad404184a9094251aea88fa07b0fb05a01d10bc3d931b2b241",
+      "data/o-reviews/h-candidates-2026-11-13/human-review.json": "0784abbbe3e2160491838cb313a23234b6db2bb7b4c4707360469ca4bf06742e"
+    },
+    "selfHashExcluded": "validation.json is updated after this check; no recursive self-hash",
+    "priorSourceByteChecksRepeated": false,
+    "parentParserRepeated": false,
+    "checkedAtKST": "2026-11-14T00:32:15.417333+09:00"
+  },
+  "receiptScope": "executedAt/runtime/checks/perCase/nonMutation/gitStatusAtCheck는 기존 Bun 실행 이력이다. parentVerification은 별도 부모 결과다. refinementChecks는 이번 산출물 보완 검사이며 원본 바이트 검사를 반복하지 않는다. refinementChecks의 산출물 해시는 과거 보완 시점이며, 최종 해시는 postGateCorrection.artifactSHA256을 따른다.",
+  "parentVerification": {
+    "sourceFile": "/home/yeonbug/.omo/agent/sessions/--mnt-c-Users-yeonbug-Desktop-경진대회--/2026-11-07T07-34-35-917Z_01a1b4ee-428d-7394-8a41-cbeae4869dca-artifacts/local/o-h-source-validation-20261113.json",
+    "parser": "parseCaseInput",
+    "parserChecksPointer": "/parserChecks",
+    "parserPassed": 10,
+    "parserTotal": 10,
+    "byteChecksPointer": "/checks",
+    "inputManifestMatches": 10,
+    "pngHashMatches": 10,
+    "sourceSnapshotHashMatches": 10,
+    "licenseSnapshotHashMatches": 10,
+    "executedAt": null,
+    "timingNote": "부모 자료에 실행 시각 없음; 기존 Bun executedAt를 부모 실행 시각으로 사용하지 않음",
+    "notChecked": [
+      "model",
+      "assessment",
+      "ground-truth"
+    ],
+    "rerunDuringRefinement": false
+  },
+  "postGateCorrection": {
+    "status": "passed",
+    "checkedAtUTC": "2026-11-13T15:40:29.263Z",
+    "gate": "Astra APPROVE for local preliminary artifacts only",
+    "nonBlockingCorrection": "H008 question3 now cites /process /polymer /massKg /region in JSON and report",
+    "resolvedPointers": [
+      "/process",
+      "/polymer",
+      "/massKg",
+      "/region"
+    ],
+    "jsonParsed": true,
+    "artifactSHA256": {
+      "docs/o-h-candidate-review.md": "57f35d28c85530f7c0c23b1c4175d91186137be156ad4c3c01ec448e7f052043",
+      "data/o-reviews/h-candidates-2026-11-13/README.md": "8488ded897c8803c470fcb35d70bd8374e79897752401db7572b0c2a669092a4",
+      "data/o-reviews/h-candidates-2026-11-13/ai-preliminary-review.json": "aead15e90f7ca0cdd7a57a34f68d1a3a93c0ae355197647b05dc2f2a37b51fb5",
+      "data/o-reviews/h-candidates-2026-11-13/human-review.json": "0784abbbe3e2160491838cb313a23234b6db2bb7b4c4707360469ca4bf06742e"
+    },
+    "selfHashExcluded": true,
+    "sourceChecksRepeated": false,
+    "humanAcceptance": false,
+    "publication": "not requested; PR deferred by user at this historical check"
+  },
+  "publicationChecks": {
+    "checkedAtUTC": "2026-11-14T13:00:04.434Z",
+    "baseCommit": "cd467b562dd092d1f0e59dd86c4005c25cf724a9",
+    "sourceCommitUnchanged": "ceb9e48b6db3e1a16b1eb69a65a35da8482b0dc4",
+    "assignment": {
+      "issue": 12,
+      "assignee": "Oyeonseok",
+      "teamTasksLines": [
+        303,
+        304
+      ],
+      "collector": "hyeobikong",
+      "requiredIndependentReview": [
+        "윤정준",
+        "오연석"
+      ],
+      "scope": "H 후보10건 AI 예비검토 및 빈 인간 양식 제출; 인간 독립 라벨 완료 아님"
+    },
+    "checks": {
+      "caseCount": 10,
+      "parserPassed": 10,
+      "reportedFields": 100,
+      "coreFields": 60,
+      "humanNullFields": 110,
+      "photoHashes": 10,
+      "sourceHashes": 10,
+      "licenseHashes": 10,
+      "sourceNonMutation": 34,
+      "repoEvidencePointers": 517,
+      "oInputHashes": 10,
+      "markdownLinks": 38
+    },
+    "oInputs": [
+      {
+        "caseId": "OYS-20261110-008",
+        "file": "data/candidates/oyeonseok-2026-11-10/oys-20261110-008-solvent-hdpe.json",
+        "sha256": "f3833e8d39ff4b96f94c784d69889c59db17390bd2993d6f5e0883aecd842fa9"
+      },
+      {
+        "caseId": "OYS-20261110-005",
+        "file": "data/candidates/oyeonseok-2026-11-10/oys-20261110-005-multilayer-pouch.json",
+        "sha256": "59144769d4f4936970990eda5b5a9b2732766f849db494b6c236f4b7feef3129"
+      },
+      {
+        "caseId": "OYS-20261110-001",
+        "file": "data/candidates/oyeonseok-2026-11-10/oys-20261110-001-pet-trim.json",
+        "sha256": "1f1163e501b1ade17ed9207933242a51120bb15584f8e95b6e6d736fe0cd67ff"
+      },
+      {
+        "caseId": "OYS-20261110-006",
+        "file": "data/candidates/oyeonseok-2026-11-10/oys-20261110-006-black-label-conflict.json",
+        "sha256": "29c76c30e310148b0ab270ef51e2a4fee92d35aab35106560e4ac36d4947bda0"
+      },
+      {
+        "caseId": "OYS-20261110-010",
+        "file": "data/candidates/oyeonseok-2026-11-10/oys-20261110-010-pet-missing-basis.json",
+        "sha256": "e83d1f30b91e37a38e70a20963a4db2ecb13287aae67a54e10f92b3509d51d2d"
+      },
+      {
+        "caseId": "OYS-20261110-003",
+        "file": "data/candidates/oyeonseok-2026-11-10/oys-20261110-003-pp-runners.json",
+        "sha256": "6c09027b9a767e917d5b3ffc45a437fd8153ff7b8eec3750ddb9f410eb4403b4"
+      },
+      {
+        "caseId": "OYS-20261110-009",
+        "file": "data/candidates/oyeonseok-2026-11-10/oys-20261110-009-pp-reuse-question.json",
+        "sha256": "acadb919168dc522ac98cbbc8ba2b27bd6d2224f0bb4779a689f079768da17b7"
+      },
+      {
+        "caseId": "OYS-20261110-007",
+        "file": "data/candidates/oyeonseok-2026-11-10/oys-20261110-007-oily-pp.json",
+        "sha256": "1fd9200b832cb774fe49f26df99b017f5a22b25ed19564ba5eff4b9dcc672ca8"
+      },
+      {
+        "caseId": "OYS-20261110-004",
+        "file": "data/candidates/oyeonseok-2026-11-10/oys-20261110-004-ldpe-film.json",
+        "sha256": "7ccbf029c826be106e753dc15997bf608b856a9e893b45497eed4ef533c04d7f"
+      },
+      {
+        "caseId": "OYS-20261110-002",
+        "file": "data/candidates/oyeonseok-2026-11-10/oys-20261110-002-hdpe-parison.json",
+        "sha256": "0b052aeeb9e97a93699267d68662d8c1b1efee32107f2711d7be6fab78764b2c"
+      }
+    ],
+    "artifactSHA256": {
+      "docs/o-h-candidate-review.md": "fed22ca1676da1001ba5cc01dbf946921d860606469cfb77b12a2d405a4d5170",
+      "data/o-reviews/h-candidates-2026-11-13/README.md": "25719ce58c0e00e8b32b6318df26f73c8d63a3b79377d3c51c89e6961208d2de",
+      "data/o-reviews/h-candidates-2026-11-13/ai-preliminary-review.json": "818b41e92343262d07657f126e3b1c75194b69c24278be6ec35a4202fbc980d7",
+      "data/o-reviews/h-candidates-2026-11-13/human-review.json": "0784abbbe3e2160491838cb313a23234b6db2bb7b4c4707360469ca4bf06742e"
+    },
+    "selfHashExcluded": true,
+    "historicalReceipts": "checks/refinementChecks/postGateCorrection은 최초 로컬 실행 당시의 기록과 해시다. 현재 제출 파일의 해시는 publicationChecks.artifactSHA256을 따른다.",
+    "humanAcceptance": false,
+    "raw700Reviewed": false,
+    "externalModelRequests": 0
+  }
+}
