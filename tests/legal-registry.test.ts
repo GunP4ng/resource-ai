@@ -40,6 +40,22 @@ test.each(["2026-09-30", "2026-11-06"])("does not extend verified annex coverage
   expect(result.issues.some((item) => item.kind === (assessmentDate < "2026-10-02" ? "out-of-period" : "currentness-unverified"))).toBe(true);
 });
 
+test("selects the registered 291947 revision at the 2026-11-12 boundary", () => {
+  const result = lookupLegalEvidence({ ...input, assessmentDate: "2026-11-12" }, undefined, { intendedUse: "general-resin" });
+  expect(result.citations.some((item) => item.sourceId === "legal-291947-annex4-code")).toBe(true);
+  expect(result.citations.some((item) => item.sourceId.startsWith("legal-290881-"))).toBe(false);
+  expect(result.citations.find((item) => item.sourceId === "legal-291947-annex4-code")?.originalSha256)
+    .toBe("cbfff5b2561b1ed566142de2d6549c02f86265ba510a987a74e3585a757624b3");
+  expect(result.issues).toEqual([]);
+});
+
+test("keeps dates after the 291947 verification cutoff under review", () => {
+  const result = lookupLegalEvidence({ ...input, assessmentDate: "2026-11-14" });
+  expect(result.citations.filter((item) => item.sourceId.startsWith("legal-291947-"))).toEqual([]);
+  expect(result.issues.some((item) => item.kind === "currentness-unverified"
+    && item.sourceId === "legal-291947-annex4-code")).toBe(true);
+});
+
 test("adds the actual food feedstock condition and keeps the linked notice unresolved", () => {
   const general = lookupLegalEvidence(input, undefined, { intendedUse: "general-resin" });
   const food = lookupLegalEvidence(input, undefined, { intendedUse: "food-container" });

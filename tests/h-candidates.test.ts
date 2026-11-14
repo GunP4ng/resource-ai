@@ -14,13 +14,16 @@ import { sanitizePhoto } from "../src/photo-codec.ts";
 import { parseCaseInput } from "../src/input.ts";
 import { revision } from "../src/o-validation.ts";
 
-test("H candidate handoff preserves ten explicit inputs, photos, source/rights hashes and pending review", async () => {
+test("H candidate handoff preserves ten explicit inputs, photos, source/rights hashes and pending states", async () => {
   const pack = await loadHCandidates();
   assert.equal(new Set(pack.entries.map(row => row.duplicateGroupId)).size, 6);
   const report = await verifyHCandidates();
   assert.equal(report.caseCount, 10); assert.equal(report.externalModelCalls, 0);
   assert.equal(report.independentLabels, 0); assert.equal(report.fieldAcceptances, 0);
-  assert.ok(report.results.every(row => row.output.decision.state === "needs-review"));
+  assert.deepEqual(report.results.map(row => [row.candidateId, row.output.decision.state]), [
+    ...report.results.slice(0, 8).map(row => [row.candidateId, "needs-review"]),
+    ...report.results.slice(8).map(row => [row.candidateId, "needs-information"]),
+  ]);
 });
 
 // R: the executable evidence producer owns this serialization contract. Core and
