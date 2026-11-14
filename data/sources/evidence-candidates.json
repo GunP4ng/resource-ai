@@ -12,7 +12,8 @@
     "siteSpecific": false,
     "reviewedBy": "Codex (국가법령정보센터 원문 대조)",
     "reviewedAt": "2026-11-05T09:31:22Z",
-    "verifiedThrough": "2026-11-05",
+    "verifiedThrough": "2026-11-14",
+    "verificationNote": "2026-11-14 확인: 현행 lsiSeq=291947(2026-11-12 시행·공포, 제70호)의 제4조의2 제1항 원문과 일치. https://www.law.go.kr/LSW/lsInfoR.do?lsiSeq=291947&efYd=20261112&chrClsCd=010202 ; 개정문 https://www.law.go.kr/LSW/lsRvsDocInfoR.do?lsiSeq=291947 ; 상세 docs/legal-currency-20261114.md",
     "reviewRequirements": [
       "일반 조문은 코드·처리경로 적합성의 개별 근거가 아니다."
     ]
@@ -40,7 +41,8 @@
     "siteSpecific": false,
     "reviewedBy": "Codex (PDF 원문 화면 대조; 전문 법률검토 아님)",
     "reviewedAt": "2026-11-05T11:46:53Z",
-    "verifiedThrough": "2026-11-05",
+    "verifiedThrough": "2026-11-14",
+    "verificationNote": "2026-11-14 확인: 현행 291947(2026-11-12 시행·공포) 연결 별표 4(2025-12-30 개정) 제2호 51-03-01은 기존 인용과 동일. https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400799&bylClsCd=110201 ; 상세 docs/legal-currency-20261114.md",
     "requireSafeContext": true,
     "reviewRequirements": [
       "사업장일반폐기물 해당 여부와 지정폐기물 제외를 별도 확인해야 한다."
@@ -69,7 +71,8 @@
     "siteSpecific": false,
     "reviewedBy": "Codex (PDF 원문 화면 대조; 전문 법률검토 아님)",
     "reviewedAt": "2026-11-05T11:46:53Z",
-    "verifiedThrough": "2026-11-05",
+    "verifiedThrough": "2026-11-14",
+    "verificationNote": "2026-11-14 확인: 현행 291947(2026-11-12 시행·공포) 연결 별표 4의2(2025-12-30 개정) 제2호가목3) R-3-3은 기존 인용과 동일. https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400831&bylClsCd=110201 ; 상세 docs/legal-currency-20261114.md",
     "requireSafeContext": true,
     "reviewRequirements": [
       "실제 재활용 공정·산출물·용도가 R-3-3 정의와 일치하는지 확인해야 한다."
@@ -98,7 +101,8 @@
     "siteSpecific": false,
     "reviewedBy": "Codex (PDF 원문 화면 대조; 전문 법률검토 아님)",
     "reviewedAt": "2026-11-05T11:46:53Z",
-    "verifiedThrough": "2026-11-05",
+    "verifiedThrough": "2026-11-14",
+    "verificationNote": "2026-11-14 확인: 현행 291947(2026-11-12 시행·공포) 연결 별표 4의3(2025-12-30 개정) 51-03-01 행의 R-3-3 포함 유형·해당 없음은 기존 인용과 동일. https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400843&bylClsCd=110201 ; 상세 docs/legal-currency-20261114.md",
     "requireSafeContext": true,
     "reviewRequirements": [
       "사업장일반폐기물 해당 여부와 지정폐기물 제외를 별도 확인해야 한다.",
@@ -119,7 +123,8 @@
     "siteSpecific": false,
     "reviewedBy": "Codex (PDF 원문 화면 대조; 전문 법률검토 아님)",
     "reviewedAt": "2026-11-05T11:46:53Z",
-    "verifiedThrough": "2026-11-05",
+    "verifiedThrough": "2026-11-14",
+    "verificationNote": "2026-11-14 확인: 현행 291947(2026-11-12 시행·공포) 연결 별표 5의3(2025-12-30 개정) 제1호다목은 기존 인용과 동일. https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400985&bylClsCd=110201 ; 상세 docs/legal-currency-20261114.md",
     "requireSafeContext": false,
     "reviewRequirements": [
       "재활용환경성평가 예외·금지 및 제한·별표 5의4 준수사항·현행 허가를 확인해야 한다.",
@@ -140,7 +145,8 @@
     "siteSpecific": false,
     "reviewedBy": "Codex (PDF 원문 화면 대조; 전문 법률검토 아님)",
     "reviewedAt": "2026-11-05T11:46:53Z",
-    "verifiedThrough": "2026-11-05",
+    "verifiedThrough": "2026-11-14",
+    "verificationNote": "2026-11-14 확인: 현행 291947(2026-11-12 시행·공포) 연결 별표 5의3(2025-12-30 개정) 제2호나목1)다)(3)의 식품용기 조건은 기존 인용과 동일. https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400985&bylClsCd=110201 ; 상세 docs/legal-currency-20261114.md",
     "requireSafeContext": false,
     "reviewRequirements": [
       "식품용기 재생원료의 적용범위·시설·품질·식약처 인정 증빙 미확인: 적합 판정 보류."
@@ -160,7 +166,8 @@
     "siteSpecific": false,
     "reviewedBy": "Codex (버전 고정 고시 본문 대조; 전문 법률검토 아님)",
     "reviewedAt": "2026-11-05T12:00:28Z",
-    "verifiedThrough": "2026-11-05",
+    "verifiedThrough": "2026-11-14",
+    "verificationNote": "2026-11-14 확인: 현행 고시 admRulSeq=2100000283168(제2026-191호, 2026-07-27 시행·개정) 제3조와 개정 이력 대조, 후속 개정 없음. https://www.law.go.kr/LSW/admRulLsInfoR.do?admRulSeq=2100000283168&joTpYn=Y&languageType=KO&chrClsCd=010201 ; 상세 docs/legal-currency-20261114.md",
     "intendedUse": "food-container",
     "reviewRequirements": [
       "고시 제3조의 PET 병 적용범위를 PP/PE 공정부산물에 확대 적용하지 않아야 한다."

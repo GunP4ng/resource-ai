@@ -1,0 +1,90 @@
+{
+  "corpusVersion": "development-v1",
+  "split": "development",
+  "cases": [
+    {
+      "caseId": "OYS-20261110-006",
+      "groupId": "oys-fiction-006",
+      "origin": "O",
+      "exposure": "exposed",
+      "stratum": "mixed-multilayer-black-label-mismatch",
+      "provenance": {
+        "manifestPath": "data/candidates/oyeonseok-2026-11-10/manifest.json",
+        "origin": "synthetic",
+        "collector": "Oyeonseok handoff track (AI-assisted authorship)"
+      },
+      "sourceHash": "29c76c30e310148b0ab270ef51e2a4fee92d35aab35106560e4ac36d4947bda0",
+      "split": "development",
+      "inputRef": "../candidates/oyeonseok-2026-11-10/oys-20261110-006-black-label-conflict.json",
+      "rights": {
+        "status": "eligible",
+        "scope": "existing-synthetic-text-only",
+        "photoTransmission": "excluded",
+        "licenseGranted": false
+      }
+    },
+    {
+      "caseId": "OYS-20261110-008",
+      "groupId": "oys-fiction-008",
+      "origin": "O",
+      "exposure": "exposed",
+      "stratum": "contamination-hazardous-contact-unknown-condition",
+      "provenance": {
+        "manifestPath": "data/candidates/oyeonseok-2026-11-10/manifest.json",
+        "origin": "synthetic",
+        "collector": "Oyeonseok handoff track (AI-assisted authorship)"
+      },
+      "sourceHash": "f3833e8d39ff4b96f94c784d69889c59db17390bd2993d6f5e0883aecd842fa9",
+      "split": "development",
+      "inputRef": "../candidates/oyeonseok-2026-11-10/oys-20261110-008-solvent-hdpe.json",
+      "rights": {
+        "status": "eligible",
+        "scope": "existing-synthetic-text-only",
+        "photoTransmission": "excluded",
+        "licenseGranted": false
+      }
+    },
+    {
+      "caseId": "OYS-20261110-009",
+      "groupId": "oys-fiction-009",
+      "origin": "O",
+      "exposure": "exposed",
+      "stratum": "reuse-recycling-comparison",
+      "provenance": {
+        "manifestPath": "data/candidates/oyeonseok-2026-11-10/manifest.json",
+        "origin": "synthetic",
+        "collector": "Oyeonseok handoff track (AI-assisted authorship)"
+      },
+      "sourceHash": "acadb919168dc522ac98cbbc8ba2b27bd6d2224f0bb4779a689f079768da17b7",
+      "split": "development",
+      "inputRef": "../candidates/oyeonseok-2026-11-10/oys-20261110-009-pp-reuse-question.json",
+      "rights": {
+        "status": "eligible",
+        "scope": "existing-synthetic-text-only",
+        "photoTransmission": "excluded",
+        "licenseGranted": false
+      }
+    },
+    {
+      "caseId": "OYS-20261110-010",
+      "groupId": "oys-fiction-010",
+      "origin": "O",
+      "exposure": "exposed",
+      "stratum": "missing-price-factor-document-unit-basis",
+      "provenance": {
+        "manifestPath": "data/candidates/oyeonseok-2026-11-10/manifest.json",
+        "origin": "synthetic",
+        "collector": "Oyeonseok handoff track (AI-assisted authorship)"
+      },
+      "sourceHash": "e83d1f30b91e37a38e70a20963a4db2ecb13287aae67a54e10f92b3509d51d2d",
+      "split": "development",
+      "inputRef": "../candidates/oyeonseok-2026-11-10/oys-20261110-010-pet-missing-basis.json",
+      "rights": {
+        "status": "eligible",
+        "scope": "existing-synthetic-text-only",
+        "photoTransmission": "excluded",
+        "licenseGranted": false
+      }
+    }
+  ]
+}
