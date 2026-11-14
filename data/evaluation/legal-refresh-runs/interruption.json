@@ -1,0 +1,33 @@
+{
+  "runId": "c29b5756-56c7-453e-96f5-d179d7b0710d",
+  "reason": "monitor-default-300000ms-deadline",
+  "runnerExit": "terminated by monitor",
+  "completeCases": [
+    "HYEOB-20261112-001",
+    "HYEOB-20261112-002",
+    "HYEOB-20261112-003",
+    "HYEOB-20261112-004",
+    "HYEOB-20261112-005",
+    "HYEOB-20261112-006",
+    "HYEOB-20261112-007",
+    "HYEOB-20261112-008",
+    "HYEOB-20261112-009",
+    "HYEOB-20261112-010",
+    "OYS-20261110-001",
+    "OYS-20261110-002",
+    "OYS-20261110-003",
+    "OYS-20261110-004"
+  ],
+  "remainingCases": [
+    "OYS-20261110-006",
+    "OYS-20261110-008",
+    "OYS-20261110-009",
+    "OYS-20261110-010"
+  ],
+  "recordedProviderCalls": 56,
+  "unloggedInFlightCalls": "unknown; no successful row is fabricated",
+  "originalSourceSha": {
+    "evidenceCandidates": "a796b47200eec49155a87ecd20856788b14f5058bd19d7498f0ea488e5e34186",
+    "manifest": "ef8f0e28b714bce15f7230dcc6b5d40536776f9f81c0896f50f5bd39b67181b2"
+  }
+}

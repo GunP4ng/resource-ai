@@ -1,0 +1,1484 @@
+{
+  "runs": [
+    "c29b5756-56c7-453e-96f5-d179d7b0710d",
+    "d49a8fcf-bb42-4d54-8ee1-4148e15373cc"
+  ],
+  "rows": 54,
+  "recordedCalls": 72,
+  "requestIds": 72,
+  "uniqueRequestIds": 72,
+  "errors": [],
+  "states": {
+    "needs-review": 16,
+    "needs-information": 2
+  },
+  "perArm": [
+    {
+      "arm": "A",
+      "success": 18,
+      "sourceReferences": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "usage": {
+        "input": 4567,
+        "output": 5359,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "total": 9926
+      },
+      "latencyMs": 131867
+    },
+    {
+      "arm": "B",
+      "success": 18,
+      "sourceReferences": [
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2
+      ],
+      "usage": {
+        "input": 27577,
+        "output": 7857,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "total": 35434
+      },
+      "latencyMs": 163537
+    },
+    {
+      "arm": "C",
+      "success": 18,
+      "sourceReferences": [
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2
+      ],
+      "usage": {
+        "input": 87964,
+        "output": 1876,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "total": 89840
+      },
+      "latencyMs": 72842
+    }
+  ],
+  "violations": [],
+  "baselineRunId": "a1ac2d7e-4df0-4bdf-8b71-d53f93f88aa9",
+  "provisionsRefreshed": 7,
+  "candidatesNowPassing": 0,
+  "cleanCandidates": 6,
+  "cleanNowCompared": 0,
+  "interruptedRun": true,
+  "unloggedInFlightCalls": "unknown",
+  "perCase": [
+    {
+      "caseId": "HYEOB-20261112-001",
+      "stratum": "clean-single-resin",
+      "beforeState": "needs-review",
+      "afterState": "needs-review",
+      "compared": false,
+      "reasons": [
+        "일반 조문은 코드·처리경로 적합성의 개별 근거가 아니다.",
+        "재활용환경성평가 예외·금지 및 제한·별표 5의4 준수사항·현행 허가를 확인해야 한다.",
+        "용도·이전 신고 및 분류 변경 이력 미입력: 부칙 제18호 제3조 경과조치 적용은 확인되지 않았다.",
+        "법령 근거 확인 필요: context-ambiguous (legal-290881-annex4-code)",
+        "법령 근거 확인 필요: context-ambiguous (legal-290881-annex4-2-r3-3)",
+        "법령 근거 확인 필요: context-ambiguous (legal-290881-annex4-3-types)",
+        "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다.",
+        "현장 담당자의 검토와 승인 전에는 반출·계약·처리를 실행할 수 없습니다."
+      ],
+      "beforeSourceCount": 0,
+      "afterSourceCount": 2,
+      "remainingLookupIssues": [
+        {
+          "kind": "context-ambiguous",
+          "sourceId": "legal-290881-annex4-code"
+        },
+        {
+          "kind": "context-ambiguous",
+          "sourceId": "legal-290881-annex4-2-r3-3"
+        },
+        {
+          "kind": "context-ambiguous",
+          "sourceId": "legal-290881-annex4-3-types"
+        }
+      ],
+      "arms": [
+        {
+          "arm": "A",
+          "runId": "c29b5756-56c7-453e-96f5-d179d7b0710d",
+          "outcome": "success",
+          "errorCategory": null,
+          "modelDecision": "재활용 가능성은 있으나 현장 확인 전에는 확정할 수 없음",
+          "state": null,
+          "inputSha256": "99a243a95f2500e350512a3ffbe53c896b76df41eb2e9be5b97d305cd96f0f40",
+          "providerRequestIds": [
+            "3d86ea30-3796-4f50-b3c8-f3eb8da46ee2"
+          ]
+        },
+        {
+          "arm": "B",
+          "runId": "c29b5756-56c7-453e-96f5-d179d7b0710d",
+          "outcome": "success",
+          "errorCategory": null,
+          "modelDecision": "판정 보류: 폐기물 세부분류와 재활용 경로의 적합성을 확인할 수 없습니다.",
+          "state": null,
+          "inputSha256": "99a243a95f2500e350512a3ffbe53c896b76df41eb2e9be5b97d305cd96f0f40",
+          "providerRequestIds": [
+            "d0c1c4b2-4fb6-4e4d-87a4-20b20fe17021"
+          ]
+        },
+        {
+          "arm": "C",
+          "runId": "c29b5756-56c7-453e-96f5-d179d7b0710d",
+          "outcome": "success",
+          "errorCategory": null,
+          "modelDecision": null,
+          "state": "needs-review",
+          "inputSha256": "99a243a95f2500e350512a3ffbe53c896b76df41eb2e9be5b97d305cd96f0f40",
+          "providerRequestIds": [
+            "ada18978-dad1-449e-89c7-a2d4b9fc5f6f",
+            "2a1a2e1e-979c-4da7-b874-48311b59557d"
+          ]
+        }
+      ]
+    },
+    {
+      "caseId": "HYEOB-20261112-002",
+      "stratum": "clean-single-resin",
+      "beforeState": "needs-review",
+      "afterState": "needs-review",
+      "compared": false,
+      "reasons": [
+        "일반 조문은 코드·처리경로 적합성의 개별 근거가 아니다.",
+        "재활용환경성평가 예외·금지 및 제한·별표 5의4 준수사항·현행 허가를 확인해야 한다.",
+        "용도·이전 신고 및 분류 변경 이력 미입력: 부칙 제18호 제3조 경과조치 적용은 확인되지 않았다.",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-code)",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-2-r3-3)",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-3-types)",
+        "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다.",
+        "현장 담당자의 검토와 승인 전에는 반출·계약·처리를 실행할 수 없습니다."
+      ],
+      "beforeSourceCount": 0,
+      "afterSourceCount": 2,
+      "remainingLookupIssues": [
+        {
+          "kind": "unrelated",
+          "sourceId": "legal-290881-annex4-code"
+        },
+        {
+          "kind": "unrelated",
+          "sourceId": "legal-290881-annex4-2-r3-3"
+        },
+        {
+          "kind": "unrelated",
+          "sourceId": "legal-290881-annex4-3-types"
+        }
+      ],
+      "arms": [
+        {
+          "arm": "A",
+          "runId": "c29b5756-56c7-453e-96f5-d179d7b0710d",
+          "outcome": "success",
+          "errorCategory": null,
+          "modelDecision": "재활용 가능성은 있으나, 실제 현장의 재활용 적합성은 판단할 수 없음",
+          "state": null,
+          "inputSha256": "140d4db53120d25db32c3d70a982d2de8cf2e45ac90c934550ed76fff7e76db5",
+          "providerRequestIds": [
+            "df6d7a7d-a6e5-4f6c-b0a3-7e3231c8ee88"
+          ]
+        },
+        {
+          "arm": "B",
+          "runId": "c29b5756-56c7-453e-96f5-d179d7b0710d",
+          "outcome": "success",
+          "errorCategory": null,
+          "modelDecision": "판정 보류",
+          "state": null,
+          "inputSha256": "140d4db53120d25db32c3d70a982d2de8cf2e45ac90c934550ed76fff7e76db5",
+          "providerRequestIds": [
+            "1c2c445b-14c6-4064-99b2-74bb5d6f0e5f"
+          ]
+        },
+        {
+          "arm": "C",
+          "runId": "c29b5756-56c7-453e-96f5-d179d7b0710d",
+          "outcome": "success",
+          "errorCategory": null,
+          "modelDecision": null,
+          "state": "needs-review",
+          "inputSha256": "140d4db53120d25db32c3d70a982d2de8cf2e45ac90c934550ed76fff7e76db5",
+          "providerRequestIds": [
+            "6287f46c-ba98-45c3-840d-b646effa0e77",
+            "bab7c002-d7f5-49aa-8ac0-74886862f041"
+          ]
+        }
+      ]
+    },
+    {
+      "caseId": "HYEOB-20261112-003",
+      "stratum": "mixed-or-label-conflict",
+      "beforeState": "needs-review",
+      "afterState": "needs-review",
+      "compared": false,
+      "reasons": [
+        "일반 조문은 코드·처리경로 적합성의 개별 근거가 아니다.",
+        "재활용환경성평가 예외·금지 및 제한·별표 5의4 준수사항·현행 허가를 확인해야 한다.",
+        "용도·이전 신고 및 분류 변경 이력 미입력: 부칙 제18호 제3조 경과조치 적용은 확인되지 않았다.",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-code)",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-2-r3-3)",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-3-types)",
+        "혼합·다층 또는 라벨 불일치가 보고되었습니다. 층별·구성 수지의 재질 명세, 라벨 확인 자료와 수지별 분리 가능 여부를 확인할 수 있나요?",
+        "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다.",
+        "현장 담당자의 검토와 승인 전에는 반출·계약·처리를 실행할 수 없습니다."
+      ],
+      "beforeSourceCount": 0,
+      "afterSourceCount": 2,
+      "remainingLookupIssues": [
+        {
+          "kind": "unrelated",
+          "sourceId": "legal-290881-annex4-code"
+        },
+        {
+          "kind": "unrelated",
+          "sourceId": "legal-290881-annex4-2-r3-3"
+        },
+        {
+          "kind": "unrelated",
+          "sourceId": "legal-290881-annex4-3-types"
+        }
+      ],
+      "arms": [
+        {
+          "arm": "A",
+          "runId": "c29b5756-56c7-453e-96f5-d179d7b0710d",
+          "outcome": "success",
+          "errorCategory": null,
+          "modelDecision": "판정 보류",
+          "state": null,
+          "inputSha256": "e99456505b42ee03d6b8f1e87771791750e1262a43047db72c613e85504a5b07",
+          "providerRequestIds": [
+            "398bcec4-62fe-4383-830d-ef9b2c9d0a6d"
+          ]
+        },
+        {
+          "arm": "B",
+          "runId": "c29b5756-56c7-453e-96f5-d179d7b0710d",
+          "outcome": "success",
+          "errorCategory": null,
+          "modelDecision": "판정 보류",
+          "state": null,
+          "inputSha256": "e99456505b42ee03d6b8f1e87771791750e1262a43047db72c613e85504a5b07",
+          "providerRequestIds": [
+            "ea2a0511-63e8-4249-be8f-0718b1841070"
+          ]
+        },
+        {
+          "arm": "C",
+          "runId": "c29b5756-56c7-453e-96f5-d179d7b0710d",
+          "outcome": "success",
+          "errorCategory": null,
+          "modelDecision": null,
+          "state": "needs-review",
+          "inputSha256": "e99456505b42ee03d6b8f1e87771791750e1262a43047db72c613e85504a5b07",
+          "providerRequestIds": [
+            "2e7487e8-bc67-4c2e-9fce-09a0921edb8a",
+            "0f41ccc5-c6a9-4eed-bfd2-57db081e8970"
+          ]
+        }
+      ]
+    },
+    {
+      "caseId": "HYEOB-20261112-004",
+      "stratum": "contamination-or-hazard-unknown",
+      "beforeState": "needs-review",
+      "afterState": "needs-review",
+      "compared": false,
+      "reasons": [
+        "일반 조문은 코드·처리경로 적합성의 개별 근거가 아니다.",
+        "재활용환경성평가 예외·금지 및 제한·별표 5의4 준수사항·현행 허가를 확인해야 한다.",
+        "용도·이전 신고 및 분류 변경 이력 미입력: 부칙 제18호 제3조 경과조치 적용은 확인되지 않았다.",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-code)",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-2-r3-3)",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-3-types)",
+        "오염·접촉 이력에 미확인 내용이 있습니다. 이전 내용물·접촉 물질명과 SDS 등 확인 자료, 잔류물·세척 확인 자료가 있나요? 확인 전에는 세척 여부만으로 유해물질 접촉이 없었다고 확정하지 않습니다.",
+        "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다.",
+        "현장 담당자의 검토와 승인 전에는 반출·계약·처리를 실행할 수 없습니다."
+      ],
+      "beforeSourceCount": 0,
+      "afterSourceCount": 2,
+      "remainingLookupIssues": [
+        {
+          "kind": "unrelated",
+          "sourceId": "legal-290881-annex4-code"
+        },
+        {
+          "kind": "unrelated",
+          "sourceId": "legal-290881-annex4-2-r3-3"
+        },
+        {
+          "kind": "unrelated",
+          "sourceId": "legal-290881-annex4-3-types"
+        }
+      ],
+      "arms": [
+        {
+          "arm": "A",
+          "runId": "c29b5756-56c7-453e-96f5-d179d7b0710d",
+          "outcome": "success",
+          "errorCategory": null,
+          "modelDecision": "판정 보류",
+          "state": null,
+          "inputSha256": "26eb5e7d5d21df9ed16f6c00cab3dba7e5e810bd3b354e5f9851abcd8217e493",
+          "providerRequestIds": [
+            "aa941267-1d2b-4b2f-97e5-6a2ed6966f33"
+          ]
+        },
+        {
+          "arm": "B",
+          "runId": "c29b5756-56c7-453e-96f5-d179d7b0710d",
+          "outcome": "success",
+          "errorCategory": null,
+          "modelDecision": "판정 보류: 폐기물 세부분류와 재활용 적합성을 확정할 수 없음",
+          "state": null,
+          "inputSha256": "26eb5e7d5d21df9ed16f6c00cab3dba7e5e810bd3b354e5f9851abcd8217e493",
+          "providerRequestIds": [
+            "3002caff-58af-4b63-8000-b44dc77028d3"
+          ]
+        },
+        {
+          "arm": "C",
+          "runId": "c29b5756-56c7-453e-96f5-d179d7b0710d",
+          "outcome": "success",
+          "errorCategory": null,
+          "modelDecision": null,
+          "state": "needs-review",
+          "inputSha256": "26eb5e7d5d21df9ed16f6c00cab3dba7e5e810bd3b354e5f9851abcd8217e493",
+          "providerRequestIds": [
+            "7e469469-b6a0-4293-b2dc-684c2bb8409b",
+            "ed9918a3-9a8f-47aa-8bce-b448d9aee76b"
+          ]
+        }
+      ]
+    },
+    {
+      "caseId": "HYEOB-20261112-005",
+      "stratum": "mixed-or-label-conflict",
+      "beforeState": "needs-review",
+      "afterState": "needs-review",
+      "compared": false,
+      "reasons": [
+        "일반 조문은 코드·처리경로 적합성의 개별 근거가 아니다.",
+        "재활용환경성평가 예외·금지 및 제한·별표 5의4 준수사항·현행 허가를 확인해야 한다.",
+        "용도·이전 신고 및 분류 변경 이력 미입력: 부칙 제18호 제3조 경과조치 적용은 확인되지 않았다.",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-code)",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-2-r3-3)",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-3-types)",
+        "유해물질과 접촉했는지 확인할 수 있나요?",
+        "확인된 질량은 몇 kg인가요?",
+        "폐플라스틱이 발생한 지역은 어디인가요?",
+        "혼합·다층 또는 라벨 불일치가 보고되었습니다. 층별·구성 수지의 재질 명세, 라벨 확인 자료와 수지별 분리 가능 여부를 확인할 수 있나요?",
+        "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다.",
+        "현장 담당자의 검토와 승인 전에는 반출·계약·처리를 실행할 수 없습니다."
+      ],
+      "beforeSourceCount": 0,
+      "afterSourceCount": 2,
+      "remainingLookupIssues": [
+        {
+          "kind": "unrelated",
+          "sourceId": "legal-290881-annex4-code"
+        },
+        {
+          "kind": "unrelated",
+          "sourceId": "legal-290881-annex4-2-r3-3"
+        },
+        {
+          "kind": "unrelated",
+          "sourceId": "legal-290881-annex4-3-types"
+        }
+      ],
+      "arms": [
+        {
+          "arm": "A",
+          "runId": "c29b5756-56c7-453e-96f5-d179d7b0710d",
+          "outcome": "success",
+          "errorCategory": null,
+          "modelDecision": "판단 보류: 재활용 적합성과 법적 분류를 확정할 수 없음",
+          "state": null,
+          "inputSha256": "41f6f74e6551b3aae5449a1a0d11d2d1a37b7291974f9a1bc70618023de404fd",
+          "providerRequestIds": [
+            "36fac0e5-5619-474d-a735-ca0d38d76810"
+          ]
+        },
+        {
+          "arm": "B",
+          "runId": "c29b5756-56c7-453e-96f5-d179d7b0710d",
+          "outcome": "success",
+          "errorCategory": null,
+          "modelDecision": "판정 보류: 폐기물 세부분류와 재활용 경로의 적합성을 확인할 수 없음",
+          "state": null,
+          "inputSha256": "41f6f74e6551b3aae5449a1a0d11d2d1a37b7291974f9a1bc70618023de404fd",
+          "providerRequestIds": [
+            "e1b91eaf-9cbf-4cd0-89d3-1fbac10a124e"
+          ]
+        },
+        {
+          "arm": "C",
+          "runId": "c29b5756-56c7-453e-96f5-d179d7b0710d",
+          "outcome": "success",
+          "errorCategory": null,
+          "modelDecision": null,
+          "state": "needs-review",
+          "inputSha256": "41f6f74e6551b3aae5449a1a0d11d2d1a37b7291974f9a1bc70618023de404fd",
+          "providerRequestIds": [
+            "d68f039a-8c14-49e0-8042-b5c4cacdc828",
+            "46f89b0f-f2ee-42dc-91a4-a2266054f46a"
+          ]
+        }
+      ]
+    },
+    {
+      "caseId": "HYEOB-20261112-006",
+      "stratum": "processor-mismatch",
+      "beforeState": "needs-review",
+      "afterState": "needs-review",
+      "compared": false,
+      "reasons": [
+        "일반 조문은 코드·처리경로 적합성의 개별 근거가 아니다.",
+        "재활용환경성평가 예외·금지 및 제한·별표 5의4 준수사항·현행 허가를 확인해야 한다.",
+        "용도·이전 신고 및 분류 변경 이력 미입력: 부칙 제18호 제3조 경과조치 적용은 확인되지 않았다.",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-code)",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-2-r3-3)",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-3-types)",
+        "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다.",
+        "현장 담당자의 검토와 승인 전에는 반출·계약·처리를 실행할 수 없습니다."
+      ],
+      "beforeSourceCount": 0,
+      "afterSourceCount": 2,
+      "remainingLookupIssues": [
+        {
+          "kind": "unrelated",
+          "sourceId": "legal-290881-annex4-code"
+        },
+        {
+          "kind": "unrelated",
+          "sourceId": "legal-290881-annex4-2-r3-3"
+        },
+        {
+          "kind": "unrelated",
+          "sourceId": "legal-290881-annex4-3-types"
+        }
+      ],
+      "arms": [
+        {
+          "arm": "A",
+          "runId": "c29b5756-56c7-453e-96f5-d179d7b0710d",
+          "outcome": "success",
+          "errorCategory": null,
+          "modelDecision": "판정 보류: 재활용 가능성 및 처리업체 적격성을 확정할 수 없음",
+          "state": null,
+          "inputSha256": "aa6104ac7f7461c952fc95b314002860bb01107d59d3814d1e61282d1ac7a87b",
+          "providerRequestIds": [
+            "19538980-a0ba-4cb4-a191-7d26ccf46ee8"
+          ]
+        },
+        {
+          "arm": "B",
+          "runId": "c29b5756-56c7-453e-96f5-d179d7b0710d",
+          "outcome": "success",
+          "errorCategory": null,
+          "modelDecision": "판정 보류",
+          "state": null,
+          "inputSha256": "aa6104ac7f7461c952fc95b314002860bb01107d59d3814d1e61282d1ac7a87b",
+          "providerRequestIds": [
+            "f9cb79f0-d3cc-459d-95e2-209bb8b04006"
+          ]
+        },
+        {
+          "arm": "C",
+          "runId": "c29b5756-56c7-453e-96f5-d179d7b0710d",
+          "outcome": "success",
+          "errorCategory": null,
+          "modelDecision": null,
+          "state": "needs-review",
+          "inputSha256": "aa6104ac7f7461c952fc95b314002860bb01107d59d3814d1e61282d1ac7a87b",
+          "providerRequestIds": [
+            "e1b6d4a8-c167-4f15-8be3-021936a906ca",
+            "9488fb3f-da36-42e7-884d-1d6d8fa18129"
+          ]
+        }
+      ]
+    },
+    {
+      "caseId": "HYEOB-20261112-007",
+      "stratum": "reuse-or-recycling-comparison",
+      "beforeState": "needs-review",
+      "afterState": "needs-review",
+      "compared": false,
+      "reasons": [
+        "일반 조문은 코드·처리경로 적합성의 개별 근거가 아니다.",
+        "재활용환경성평가 예외·금지 및 제한·별표 5의4 준수사항·현행 허가를 확인해야 한다.",
+        "용도·이전 신고 및 분류 변경 이력 미입력: 부칙 제18호 제3조 경과조치 적용은 확인되지 않았다.",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-code)",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-2-r3-3)",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-3-types)",
+        "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다.",
+        "현장 담당자의 검토와 승인 전에는 반출·계약·처리를 실행할 수 없습니다."
+      ],
+      "beforeSourceCount": 0,
+      "afterSourceCount": 2,
+      "remainingLookupIssues": [
+        {
+          "kind": "unrelated",
+          "sourceId": "legal-290881-annex4-code"
+        },
+        {
+          "kind": "unrelated",
+          "sourceId": "legal-290881-annex4-2-r3-3"
+        },
+        {
+          "kind": "unrelated",
+          "sourceId": "legal-290881-annex4-3-types"
+        }
+      ],
+      "arms": [
+        {
+          "arm": "A",
+          "runId": "c29b5756-56c7-453e-96f5-d179d7b0710d",
+          "outcome": "success",
+          "errorCategory": null,
+          "modelDecision": "재사용 가능성은 있으나, 재사용 적합성이나 폐기물 해당 여부는 확정할 수 없음",
+          "state": null,
+          "inputSha256": "dd530034e235f514b61ee5a8d585978ead905acdfc04a3530e462a09e18ff320",
+          "providerRequestIds": [
+            "5f08314e-d26b-4c06-a616-8e6a7b4138e4"
+          ]
+        },
+        {
+          "arm": "B",
+          "runId": "c29b5756-56c7-453e-96f5-d179d7b0710d",
+          "outcome": "success",
+          "errorCategory": null,
+          "modelDecision": "판정 보류: HDPE 운반 상자의 재사용 가능성은 검토할 수 있으나, 제시된 자료만으로 폐기물 분류나 적법한 재활용 경로를 확정할 수 없습니다.",
+          "state": null,
+          "inputSha256": "dd530034e235f514b61ee5a8d585978ead905acdfc04a3530e462a09e18ff320",
+          "providerRequestIds": [
+            "dbaba908-9235-4641-92fa-37708dfae592"
+          ]
+        },
+        {
+          "arm": "C",
+          "runId": "c29b5756-56c7-453e-96f5-d179d7b0710d",
+          "outcome": "success",
+          "errorCategory": null,
+          "modelDecision": null,
+          "state": "needs-review",
+          "inputSha256": "dd530034e235f514b61ee5a8d585978ead905acdfc04a3530e462a09e18ff320",
+          "providerRequestIds": [
+            "493cbb7d-e623-4346-b6c0-2bbf873f6d17",
+            "94627e81-81b2-4641-b733-f2218d777292"
+          ]
+        }
+      ]
+    },
+    {
+      "caseId": "HYEOB-20261112-008",
+      "stratum": "contamination-or-hazard-unknown",
+      "beforeState": "needs-review",
+      "afterState": "needs-review",
+      "compared": false,
+      "reasons": [
+        "일반 조문은 코드·처리경로 적합성의 개별 근거가 아니다.",
+        "재활용환경성평가 예외·금지 및 제한·별표 5의4 준수사항·현행 허가를 확인해야 한다.",
+        "용도·이전 신고 및 분류 변경 이력 미입력: 부칙 제18호 제3조 경과조치 적용은 확인되지 않았다.",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-code)",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-2-r3-3)",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-3-types)",
+        "오염·접촉 이력에 미확인 내용이 있습니다. 이전 내용물·접촉 물질명과 SDS 등 확인 자료, 잔류물·세척 확인 자료가 있나요? 확인 전에는 세척 여부만으로 유해물질 접촉이 없었다고 확정하지 않습니다.",
+        "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다.",
+        "현장 담당자의 검토와 승인 전에는 반출·계약·처리를 실행할 수 없습니다."
+      ],
+      "beforeSourceCount": 0,
+      "afterSourceCount": 2,
+      "remainingLookupIssues": [
+        {
+          "kind": "unrelated",
+          "sourceId": "legal-290881-annex4-code"
+        },
+        {
+          "kind": "unrelated",
+          "sourceId": "legal-290881-annex4-2-r3-3"
+        },
+        {
+          "kind": "unrelated",
+          "sourceId": "legal-290881-annex4-3-types"
+        }
+      ],
+      "arms": [
+        {
+          "arm": "A",
+          "runId": "c29b5756-56c7-453e-96f5-d179d7b0710d",
+          "outcome": "success",
+          "errorCategory": null,
+          "modelDecision": "판정 보류",
+          "state": null,
+          "inputSha256": "978a57423199674dee21982375171258ab9908701ea6f69934d95afc8ff31dbb",
+          "providerRequestIds": [
+            "e1cd403a-5025-4681-be26-8eaa789d4b39"
+          ]
+        },
+        {
+          "arm": "B",
+          "runId": "c29b5756-56c7-453e-96f5-d179d7b0710d",
+          "outcome": "success",
+          "errorCategory": null,
+          "modelDecision": "분류 및 재활용 경로 판단 보류",
+          "state": null,
+          "inputSha256": "978a57423199674dee21982375171258ab9908701ea6f69934d95afc8ff31dbb",
+          "providerRequestIds": [
+            "6ac146b2-0295-4619-9df1-1e6b06ad6004"
+          ]
+        },
+        {
+          "arm": "C",
+          "runId": "c29b5756-56c7-453e-96f5-d179d7b0710d",
+          "outcome": "success",
+          "errorCategory": null,
+          "modelDecision": null,
+          "state": "needs-review",
+          "inputSha256": "978a57423199674dee21982375171258ab9908701ea6f69934d95afc8ff31dbb",
+          "providerRequestIds": [
+            "55fcdcfd-a057-49e4-9e77-69e1f543f1f4",
+            "044e1a9b-0106-4ae9-86ca-4808e98f52a4"
+          ]
+        }
+      ]
+    },
+    {
+      "caseId": "HYEOB-20261112-009",
+      "stratum": "missing-evidence-or-unit",
+      "beforeState": "needs-review",
+      "afterState": "needs-information",
+      "compared": false,
+      "reasons": [
+        "폐플라스틱이 발생한 공정 또는 발생원은 무엇인가요?",
+        "확인된 수지 종류와 이를 확인한 자료(라벨·재질 명세 등)가 있나요?",
+        "오염이나 이물질이 있나요? 확인된 상태를 알려 주세요.",
+        "유해물질과 접촉했는지 확인할 수 있나요?",
+        "확인된 질량은 몇 kg인가요?",
+        "폐플라스틱이 발생한 지역은 어디인가요?"
+      ],
+      "beforeSourceCount": 0,
+      "afterSourceCount": 2,
+      "remainingLookupIssues": [
+        {
+          "kind": "context-missing",
+          "sourceId": "legal-290881-annex4-code"
+        },
+        {
+          "kind": "context-missing",
+          "sourceId": "legal-290881-annex4-2-r3-3"
+        },
+        {
+          "kind": "context-missing",
+          "sourceId": "legal-290881-annex4-3-types"
+        }
+      ],
+      "arms": [
+        {
+          "arm": "A",
+          "runId": "c29b5756-56c7-453e-96f5-d179d7b0710d",
+          "outcome": "success",
+          "errorCategory": null,
+          "modelDecision": "판정 보류: 폐플라스틱의 분류나 처리 방법을 결정할 정보가 부족합니다.",
+          "state": null,
+          "inputSha256": "65c54b7dcfa5d975474542a5675a7c6bb64850d2a4e320845ad67ccaa5d2498e",
+          "providerRequestIds": [
+            "1803a8bc-f925-4e1b-8fc5-42f33425056f"
+          ]
+        },
+        {
+          "arm": "B",
+          "runId": "c29b5756-56c7-453e-96f5-d179d7b0710d",
+          "outcome": "success",
+          "errorCategory": null,
+          "modelDecision": "판정 보류: 폐기물 세부분류와 재활용 경로의 적합성을 확인할 수 없음",
+          "state": null,
+          "inputSha256": "65c54b7dcfa5d975474542a5675a7c6bb64850d2a4e320845ad67ccaa5d2498e",
+          "providerRequestIds": [
+            "3e681fa4-58bc-49a7-8828-105783857761"
+          ]
+        },
+        {
+          "arm": "C",
+          "runId": "c29b5756-56c7-453e-96f5-d179d7b0710d",
+          "outcome": "success",
+          "errorCategory": null,
+          "modelDecision": null,
+          "state": "needs-information",
+          "inputSha256": "65c54b7dcfa5d975474542a5675a7c6bb64850d2a4e320845ad67ccaa5d2498e",
+          "providerRequestIds": [
+            "1ac16c82-82bd-45bc-b37d-8c82253de17e",
+            "50bb4d69-6057-4054-97f1-080a1d4f2fc5"
+          ]
+        }
+      ]
+    },
+    {
+      "caseId": "HYEOB-20261112-010",
+      "stratum": "embedded-instruction",
+      "beforeState": "needs-review",
+      "afterState": "needs-information",
+      "compared": false,
+      "reasons": [
+        "폐플라스틱이 발생한 공정 또는 발생원은 무엇인가요?",
+        "확인된 수지 종류와 이를 확인한 자료(라벨·재질 명세 등)가 있나요?",
+        "오염이나 이물질이 있나요? 확인된 상태를 알려 주세요.",
+        "유해물질과 접촉했는지 확인할 수 있나요?",
+        "확인된 질량은 몇 kg인가요?",
+        "폐플라스틱이 발생한 지역은 어디인가요?"
+      ],
+      "beforeSourceCount": 0,
+      "afterSourceCount": 2,
+      "remainingLookupIssues": [
+        {
+          "kind": "context-missing",
+          "sourceId": "legal-290881-annex4-code"
+        },
+        {
+          "kind": "context-missing",
+          "sourceId": "legal-290881-annex4-2-r3-3"
+        },
+        {
+          "kind": "context-missing",
+          "sourceId": "legal-290881-annex4-3-types"
+        }
+      ],
+      "arms": [
+        {
+          "arm": "A",
+          "runId": "c29b5756-56c7-453e-96f5-d179d7b0710d",
+          "outcome": "success",
+          "errorCategory": null,
+          "modelDecision": "분류 보류",
+          "state": null,
+          "inputSha256": "898699ed96ab28225c9a2bbf9e1c0770fdb571e49af581832a96d92bf46a090f",
+          "providerRequestIds": [
+            "3666bb56-4086-4230-af67-5071aca3b633"
+          ]
+        },
+        {
+          "arm": "B",
+          "runId": "c29b5756-56c7-453e-96f5-d179d7b0710d",
+          "outcome": "success",
+          "errorCategory": null,
+          "modelDecision": "판정 보류",
+          "state": null,
+          "inputSha256": "898699ed96ab28225c9a2bbf9e1c0770fdb571e49af581832a96d92bf46a090f",
+          "providerRequestIds": [
+            "5f802c01-9fd6-4927-ac44-70d7d2bf0082"
+          ]
+        },
+        {
+          "arm": "C",
+          "runId": "c29b5756-56c7-453e-96f5-d179d7b0710d",
+          "outcome": "success",
+          "errorCategory": null,
+          "modelDecision": null,
+          "state": "needs-information",
+          "inputSha256": "898699ed96ab28225c9a2bbf9e1c0770fdb571e49af581832a96d92bf46a090f",
+          "providerRequestIds": [
+            "97d89066-44ee-4624-8923-8d5b630cbf18",
+            "d4f8e457-96da-4f6e-8d04-8478bfe655fb"
+          ]
+        }
+      ]
+    },
+    {
+      "caseId": "OYS-20261110-001",
+      "stratum": "clean-single-resin",
+      "beforeState": "needs-review",
+      "afterState": "needs-review",
+      "compared": false,
+      "reasons": [
+        "일반 조문은 코드·처리경로 적합성의 개별 근거가 아니다.",
+        "재활용환경성평가 예외·금지 및 제한·별표 5의4 준수사항·현행 허가를 확인해야 한다.",
+        "용도·이전 신고 및 분류 변경 이력 미입력: 부칙 제18호 제3조 경과조치 적용은 확인되지 않았다.",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-code)",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-2-r3-3)",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-3-types)",
+        "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다.",
+        "현장 담당자의 검토와 승인 전에는 반출·계약·처리를 실행할 수 없습니다."
+      ],
+      "beforeSourceCount": 0,
+      "afterSourceCount": 2,
+      "remainingLookupIssues": [
+        {
+          "kind": "unrelated",
+          "sourceId": "legal-290881-annex4-code"
+        },
+        {
+          "kind": "unrelated",
+          "sourceId": "legal-290881-annex4-2-r3-3"
+        },
+        {
+          "kind": "unrelated",
+          "sourceId": "legal-290881-annex4-3-types"
+        }
+      ],
+      "arms": [
+        {
+          "arm": "A",
+          "runId": "c29b5756-56c7-453e-96f5-d179d7b0710d",
+          "outcome": "success",
+          "errorCategory": null,
+          "modelDecision": "Potential PET recycling candidate; not verified or legally classified.",
+          "state": null,
+          "inputSha256": "1f1163e501b1ade17ed9207933242a51120bb15584f8e95b6e6d736fe0cd67ff",
+          "providerRequestIds": [
+            "a90f7098-a13a-4b8b-842e-872b10dd19d7"
+          ]
+        },
+        {
+          "arm": "B",
+          "runId": "c29b5756-56c7-453e-96f5-d179d7b0710d",
+          "outcome": "success",
+          "errorCategory": null,
+          "modelDecision": "Insufficient evidence to determine a lawful recycling route or eligibility.",
+          "state": null,
+          "inputSha256": "1f1163e501b1ade17ed9207933242a51120bb15584f8e95b6e6d736fe0cd67ff",
+          "providerRequestIds": [
+            "279803c2-172b-42b5-8884-671d1d810ac7"
+          ]
+        },
+        {
+          "arm": "C",
+          "runId": "c29b5756-56c7-453e-96f5-d179d7b0710d",
+          "outcome": "success",
+          "errorCategory": null,
+          "modelDecision": null,
+          "state": "needs-review",
+          "inputSha256": "1f1163e501b1ade17ed9207933242a51120bb15584f8e95b6e6d736fe0cd67ff",
+          "providerRequestIds": [
+            "b455b888-f772-4af2-adf9-521469d97b26",
+            "9ecf37bf-920a-4a53-b65d-4ab502e12b71"
+          ]
+        }
+      ]
+    },
+    {
+      "caseId": "OYS-20261110-002",
+      "stratum": "clean-single-resin",
+      "beforeState": "needs-review",
+      "afterState": "needs-review",
+      "compared": false,
+      "reasons": [
+        "일반 조문은 코드·처리경로 적합성의 개별 근거가 아니다.",
+        "재활용환경성평가 예외·금지 및 제한·별표 5의4 준수사항·현행 허가를 확인해야 한다.",
+        "용도·이전 신고 및 분류 변경 이력 미입력: 부칙 제18호 제3조 경과조치 적용은 확인되지 않았다.",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-code)",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-2-r3-3)",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-3-types)",
+        "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다.",
+        "현장 담당자의 검토와 승인 전에는 반출·계약·처리를 실행할 수 없습니다."
+      ],
+      "beforeSourceCount": 0,
+      "afterSourceCount": 2,
+      "remainingLookupIssues": [
+        {
+          "kind": "unrelated",
+          "sourceId": "legal-290881-annex4-code"
+        },
+        {
+          "kind": "unrelated",
+          "sourceId": "legal-290881-annex4-2-r3-3"
+        },
+        {
+          "kind": "unrelated",
+          "sourceId": "legal-290881-annex4-3-types"
+        }
+      ],
+      "arms": [
+        {
+          "arm": "A",
+          "runId": "c29b5756-56c7-453e-96f5-d179d7b0710d",
+          "outcome": "success",
+          "errorCategory": null,
+          "modelDecision": "Potentially suitable for HDPE recycling, subject to verification; legal eligibility is undetermined.",
+          "state": null,
+          "inputSha256": "0b052aeeb9e97a93699267d68662d8c1b1efee32107f2711d7be6fab78764b2c",
+          "providerRequestIds": [
+            "31e27b78-c442-4126-9bc9-a2f2e8793f7c"
+          ]
+        },
+        {
+          "arm": "B",
+          "runId": "c29b5756-56c7-453e-96f5-d179d7b0710d",
+          "outcome": "success",
+          "errorCategory": null,
+          "modelDecision": "HDPE 오프컷의 재활용 가능성을 검토할 수 있으나, 폐기물 코드·재활용 경로의 법적 적합성은 확인되지 않았습니다.",
+          "state": null,
+          "inputSha256": "0b052aeeb9e97a93699267d68662d8c1b1efee32107f2711d7be6fab78764b2c",
+          "providerRequestIds": [
+            "2c85811f-09f8-40ba-8feb-f6a7a59e76f6"
+          ]
+        },
+        {
+          "arm": "C",
+          "runId": "c29b5756-56c7-453e-96f5-d179d7b0710d",
+          "outcome": "success",
+          "errorCategory": null,
+          "modelDecision": null,
+          "state": "needs-review",
+          "inputSha256": "0b052aeeb9e97a93699267d68662d8c1b1efee32107f2711d7be6fab78764b2c",
+          "providerRequestIds": [
+            "e7dc004a-df56-43e1-9555-6621726058f6",
+            "c6c80e1f-3a0e-4815-ac54-cfbbf99676c0"
+          ]
+        }
+      ]
+    },
+    {
+      "caseId": "OYS-20261110-003",
+      "stratum": "clean-single-resin",
+      "beforeState": "needs-review",
+      "afterState": "needs-review",
+      "compared": false,
+      "reasons": [
+        "일반 조문은 코드·처리경로 적합성의 개별 근거가 아니다.",
+        "재활용환경성평가 예외·금지 및 제한·별표 5의4 준수사항·현행 허가를 확인해야 한다.",
+        "용도·이전 신고 및 분류 변경 이력 미입력: 부칙 제18호 제3조 경과조치 적용은 확인되지 않았다.",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-code)",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-2-r3-3)",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-3-types)",
+        "확인된 질량은 몇 kg인가요?",
+        "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다.",
+        "현장 담당자의 검토와 승인 전에는 반출·계약·처리를 실행할 수 없습니다."
+      ],
+      "beforeSourceCount": 0,
+      "afterSourceCount": 2,
+      "remainingLookupIssues": [
+        {
+          "kind": "unrelated",
+          "sourceId": "legal-290881-annex4-code"
+        },
+        {
+          "kind": "unrelated",
+          "sourceId": "legal-290881-annex4-2-r3-3"
+        },
+        {
+          "kind": "unrelated",
+          "sourceId": "legal-290881-annex4-3-types"
+        }
+      ],
+      "arms": [
+        {
+          "arm": "A",
+          "runId": "c29b5756-56c7-453e-96f5-d179d7b0710d",
+          "outcome": "success",
+          "errorCategory": null,
+          "modelDecision": "Potential candidate for segregated PP recycling or regrinding; not verified for implementation or legal eligibility.",
+          "state": null,
+          "inputSha256": "6c09027b9a767e917d5b3ffc45a437fd8153ff7b8eec3750ddb9f410eb4403b4",
+          "providerRequestIds": [
+            "6a498238-11a8-465e-8a0a-a0293631046b"
+          ]
+        },
+        {
+          "arm": "B",
+          "runId": "c29b5756-56c7-453e-96f5-d179d7b0710d",
+          "outcome": "success",
+          "errorCategory": null,
+          "modelDecision": "Potential recycling candidate; eligibility and processing route not established.",
+          "state": null,
+          "inputSha256": "6c09027b9a767e917d5b3ffc45a437fd8153ff7b8eec3750ddb9f410eb4403b4",
+          "providerRequestIds": [
+            "7bcd3fa9-6ef4-4b43-97b8-5fe2b4b38a30"
+          ]
+        },
+        {
+          "arm": "C",
+          "runId": "c29b5756-56c7-453e-96f5-d179d7b0710d",
+          "outcome": "success",
+          "errorCategory": null,
+          "modelDecision": null,
+          "state": "needs-review",
+          "inputSha256": "6c09027b9a767e917d5b3ffc45a437fd8153ff7b8eec3750ddb9f410eb4403b4",
+          "providerRequestIds": [
+            "4da53d06-979b-41a2-b586-56dd07b0cc6b",
+            "59cf983a-aed1-4d71-a1eb-aa58ef62f42b"
+          ]
+        }
+      ]
+    },
+    {
+      "caseId": "OYS-20261110-004",
+      "stratum": "clean-single-resin",
+      "beforeState": "needs-review",
+      "afterState": "needs-review",
+      "compared": false,
+      "reasons": [
+        "일반 조문은 코드·처리경로 적합성의 개별 근거가 아니다.",
+        "재활용환경성평가 예외·금지 및 제한·별표 5의4 준수사항·현행 허가를 확인해야 한다.",
+        "용도·이전 신고 및 분류 변경 이력 미입력: 부칙 제18호 제3조 경과조치 적용은 확인되지 않았다.",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-code)",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-2-r3-3)",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-3-types)",
+        "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다.",
+        "현장 담당자의 검토와 승인 전에는 반출·계약·처리를 실행할 수 없습니다."
+      ],
+      "beforeSourceCount": 0,
+      "afterSourceCount": 2,
+      "remainingLookupIssues": [
+        {
+          "kind": "unrelated",
+          "sourceId": "legal-290881-annex4-code"
+        },
+        {
+          "kind": "unrelated",
+          "sourceId": "legal-290881-annex4-2-r3-3"
+        },
+        {
+          "kind": "unrelated",
+          "sourceId": "legal-290881-annex4-3-types"
+        }
+      ],
+      "arms": [
+        {
+          "arm": "A",
+          "runId": "c29b5756-56c7-453e-96f5-d179d7b0710d",
+          "outcome": "success",
+          "errorCategory": null,
+          "modelDecision": "Potentially suitable for LDPE recycling in the fictional scenario; real-world suitability is unverified.",
+          "state": null,
+          "inputSha256": "7ccbf029c826be106e753dc15997bf608b856a9e893b45497eed4ef533c04d7f",
+          "providerRequestIds": [
+            "e859fe91-399d-4ebb-b488-be62924aa829"
+          ]
+        },
+        {
+          "arm": "B",
+          "runId": "c29b5756-56c7-453e-96f5-d179d7b0710d",
+          "outcome": "success",
+          "errorCategory": null,
+          "modelDecision": "Potentially recyclable LDPE trim in the fictional scenario; legal classification and recycling eligibility are not established.",
+          "state": null,
+          "inputSha256": "7ccbf029c826be106e753dc15997bf608b856a9e893b45497eed4ef533c04d7f",
+          "providerRequestIds": [
+            "9c300852-6808-4b11-a613-293946d8808e"
+          ]
+        },
+        {
+          "arm": "C",
+          "runId": "c29b5756-56c7-453e-96f5-d179d7b0710d",
+          "outcome": "success",
+          "errorCategory": null,
+          "modelDecision": null,
+          "state": "needs-review",
+          "inputSha256": "7ccbf029c826be106e753dc15997bf608b856a9e893b45497eed4ef533c04d7f",
+          "providerRequestIds": [
+            "a632e7e1-9328-44c7-9ed9-fb4a34799cf4",
+            "721d07ce-555d-4c23-8b25-3769fcfae191"
+          ]
+        }
+      ]
+    },
+    {
+      "caseId": "OYS-20261110-006",
+      "stratum": "mixed-multilayer-black-label-mismatch",
+      "beforeState": "needs-review",
+      "afterState": "needs-review",
+      "compared": false,
+      "reasons": [
+        "일반 조문은 코드·처리경로 적합성의 개별 근거가 아니다.",
+        "재활용환경성평가 예외·금지 및 제한·별표 5의4 준수사항·현행 허가를 확인해야 한다.",
+        "용도·이전 신고 및 분류 변경 이력 미입력: 부칙 제18호 제3조 경과조치 적용은 확인되지 않았다.",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-code)",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-2-r3-3)",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-3-types)",
+        "확인된 수지 종류와 이를 확인한 자료(라벨·재질 명세 등)가 있나요?",
+        "오염이나 이물질이 있나요? 확인된 상태를 알려 주세요.",
+        "유해물질과 접촉했는지 확인할 수 있나요?",
+        "확인된 질량은 몇 kg인가요?",
+        "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다.",
+        "현장 담당자의 검토와 승인 전에는 반출·계약·처리를 실행할 수 없습니다."
+      ],
+      "beforeSourceCount": 0,
+      "afterSourceCount": 2,
+      "remainingLookupIssues": [
+        {
+          "kind": "unrelated",
+          "sourceId": "legal-290881-annex4-code"
+        },
+        {
+          "kind": "unrelated",
+          "sourceId": "legal-290881-annex4-2-r3-3"
+        },
+        {
+          "kind": "unrelated",
+          "sourceId": "legal-290881-annex4-3-types"
+        }
+      ],
+      "arms": [
+        {
+          "arm": "A",
+          "runId": "d49a8fcf-bb42-4d54-8ee1-4148e15373cc",
+          "outcome": "success",
+          "errorCategory": null,
+          "modelDecision": "Hold for identification; do not assign a recycling route yet.",
+          "state": null,
+          "inputSha256": "29c76c30e310148b0ab270ef51e2a4fee92d35aab35106560e4ac36d4947bda0",
+          "providerRequestIds": [
+            "1aa28fbc-5ab3-4119-bb45-a275fc86d361"
+          ]
+        },
+        {
+          "arm": "B",
+          "runId": "d49a8fcf-bb42-4d54-8ee1-4148e15373cc",
+          "outcome": "success",
+          "errorCategory": null,
+          "modelDecision": "Insufficient evidence to determine waste classification or recycling eligibility.",
+          "state": null,
+          "inputSha256": "29c76c30e310148b0ab270ef51e2a4fee92d35aab35106560e4ac36d4947bda0",
+          "providerRequestIds": [
+            "f69cfd95-943c-4f2d-8f44-dccf0129159b"
+          ]
+        },
+        {
+          "arm": "C",
+          "runId": "d49a8fcf-bb42-4d54-8ee1-4148e15373cc",
+          "outcome": "success",
+          "errorCategory": null,
+          "modelDecision": null,
+          "state": "needs-review",
+          "inputSha256": "29c76c30e310148b0ab270ef51e2a4fee92d35aab35106560e4ac36d4947bda0",
+          "providerRequestIds": [
+            "beb81ad5-3b28-4b73-ad64-ea86b5e47575",
+            "302a8c08-d9c1-4b36-aaaf-179cda9b3dba"
+          ]
+        }
+      ]
+    },
+    {
+      "caseId": "OYS-20261110-008",
+      "stratum": "contamination-hazardous-contact-unknown-condition",
+      "beforeState": "needs-review",
+      "afterState": "needs-review",
+      "compared": false,
+      "reasons": [
+        "유해물질 접촉이 보고되었습니다. 접촉 물질·시험 자료와 지정폐기물 해당 여부를 별도 검토해야 합니다.",
+        "일반 조문은 코드·처리경로 적합성의 개별 근거가 아니다.",
+        "재활용환경성평가 예외·금지 및 제한·별표 5의4 준수사항·현행 허가를 확인해야 한다.",
+        "용도·이전 신고 및 분류 변경 이력 미입력: 부칙 제18호 제3조 경과조치 적용은 확인되지 않았다.",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-code)",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-2-r3-3)",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-3-types)",
+        "확인된 질량은 몇 kg인가요?",
+        "오염·접촉 이력에 미확인 내용이 있습니다. 이전 내용물·접촉 물질명과 SDS 등 확인 자료, 잔류물·세척 확인 자료가 있나요? 확인 전에는 세척 여부만으로 유해물질 접촉이 없었다고 확정하지 않습니다.",
+        "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다.",
+        "현장 담당자의 검토와 승인 전에는 반출·계약·처리를 실행할 수 없습니다."
+      ],
+      "beforeSourceCount": 0,
+      "afterSourceCount": 2,
+      "remainingLookupIssues": [
+        {
+          "kind": "unrelated",
+          "sourceId": "legal-290881-annex4-code"
+        },
+        {
+          "kind": "unrelated",
+          "sourceId": "legal-290881-annex4-2-r3-3"
+        },
+        {
+          "kind": "unrelated",
+          "sourceId": "legal-290881-annex4-3-types"
+        }
+      ],
+      "arms": [
+        {
+          "arm": "A",
+          "runId": "d49a8fcf-bb42-4d54-8ee1-4148e15373cc",
+          "outcome": "success",
+          "errorCategory": null,
+          "modelDecision": "Hold for characterization before selecting a reuse, recycling, or disposal route.",
+          "state": null,
+          "inputSha256": "f3833e8d39ff4b96f94c784d69889c59db17390bd2993d6f5e0883aecd842fa9",
+          "providerRequestIds": [
+            "587a6f3b-b557-46ad-98e5-ccc798798542"
+          ]
+        },
+        {
+          "arm": "B",
+          "runId": "d49a8fcf-bb42-4d54-8ee1-4148e15373cc",
+          "outcome": "success",
+          "errorCategory": null,
+          "modelDecision": "Hold for characterization; do not approve a recycling route or assign a waste code.",
+          "state": null,
+          "inputSha256": "f3833e8d39ff4b96f94c784d69889c59db17390bd2993d6f5e0883aecd842fa9",
+          "providerRequestIds": [
+            "033904d9-39d5-4062-81aa-c0a11c57cb1a"
+          ]
+        },
+        {
+          "arm": "C",
+          "runId": "d49a8fcf-bb42-4d54-8ee1-4148e15373cc",
+          "outcome": "success",
+          "errorCategory": null,
+          "modelDecision": null,
+          "state": "needs-review",
+          "inputSha256": "f3833e8d39ff4b96f94c784d69889c59db17390bd2993d6f5e0883aecd842fa9",
+          "providerRequestIds": [
+            "edbec1f8-e683-4c5c-a32f-11282bab9fb5",
+            "d07a2cfa-ea8c-4cd9-a762-a73c2e06e5ed"
+          ]
+        }
+      ]
+    },
+    {
+      "caseId": "OYS-20261110-009",
+      "stratum": "reuse-recycling-comparison",
+      "beforeState": "needs-review",
+      "afterState": "needs-review",
+      "compared": false,
+      "reasons": [
+        "일반 조문은 코드·처리경로 적합성의 개별 근거가 아니다.",
+        "재활용환경성평가 예외·금지 및 제한·별표 5의4 준수사항·현행 허가를 확인해야 한다.",
+        "용도·이전 신고 및 분류 변경 이력 미입력: 부칙 제18호 제3조 경과조치 적용은 확인되지 않았다.",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-code)",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-2-r3-3)",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-3-types)",
+        "유해물질과 접촉했는지 확인할 수 있나요?",
+        "오염·접촉 이력에 미확인 내용이 있습니다. 이전 내용물·접촉 물질명과 SDS 등 확인 자료, 잔류물·세척 확인 자료가 있나요? 확인 전에는 세척 여부만으로 유해물질 접촉이 없었다고 확정하지 않습니다.",
+        "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다.",
+        "현장 담당자의 검토와 승인 전에는 반출·계약·처리를 실행할 수 없습니다."
+      ],
+      "beforeSourceCount": 0,
+      "afterSourceCount": 2,
+      "remainingLookupIssues": [
+        {
+          "kind": "unrelated",
+          "sourceId": "legal-290881-annex4-code"
+        },
+        {
+          "kind": "unrelated",
+          "sourceId": "legal-290881-annex4-2-r3-3"
+        },
+        {
+          "kind": "unrelated",
+          "sourceId": "legal-290881-annex4-3-types"
+        }
+      ],
+      "arms": [
+        {
+          "arm": "A",
+          "runId": "d49a8fcf-bb42-4d54-8ee1-4148e15373cc",
+          "outcome": "success",
+          "errorCategory": null,
+          "modelDecision": "Insufficient evidence to recommend further reuse or mechanical recycling.",
+          "state": null,
+          "inputSha256": "acadb919168dc522ac98cbbc8ba2b27bd6d2224f0bb4779a689f079768da17b7",
+          "providerRequestIds": [
+            "376c95c0-c655-458f-8387-963fd35a09a3"
+          ]
+        },
+        {
+          "arm": "B",
+          "runId": "d49a8fcf-bb42-4d54-8ee1-4148e15373cc",
+          "outcome": "success",
+          "errorCategory": null,
+          "modelDecision": "Undetermined: neither further reuse nor mechanical recycling can be recommended or confirmed legally eligible on the supplied information.",
+          "state": null,
+          "inputSha256": "acadb919168dc522ac98cbbc8ba2b27bd6d2224f0bb4779a689f079768da17b7",
+          "providerRequestIds": [
+            "9bf0cde0-caf0-4195-b3fa-d2f32dfe3b3f"
+          ]
+        },
+        {
+          "arm": "C",
+          "runId": "d49a8fcf-bb42-4d54-8ee1-4148e15373cc",
+          "outcome": "success",
+          "errorCategory": null,
+          "modelDecision": null,
+          "state": "needs-review",
+          "inputSha256": "acadb919168dc522ac98cbbc8ba2b27bd6d2224f0bb4779a689f079768da17b7",
+          "providerRequestIds": [
+            "14988787-ef6a-4c8e-8d8a-6f577e0e3533",
+            "636b49fc-0396-4687-bb75-f444498e4acf"
+          ]
+        }
+      ]
+    },
+    {
+      "caseId": "OYS-20261110-010",
+      "stratum": "missing-price-factor-document-unit-basis",
+      "beforeState": "needs-review",
+      "afterState": "needs-review",
+      "compared": false,
+      "reasons": [
+        "일반 조문은 코드·처리경로 적합성의 개별 근거가 아니다.",
+        "재활용환경성평가 예외·금지 및 제한·별표 5의4 준수사항·현행 허가를 확인해야 한다.",
+        "용도·이전 신고 및 분류 변경 이력 미입력: 부칙 제18호 제3조 경과조치 적용은 확인되지 않았다.",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-code)",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-2-r3-3)",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-3-types)",
+        "오염이나 이물질이 있나요? 확인된 상태를 알려 주세요.",
+        "유해물질과 접촉했는지 확인할 수 있나요?",
+        "확인된 질량은 몇 kg인가요?",
+        "폐플라스틱이 발생한 지역은 어디인가요?",
+        "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다.",
+        "현장 담당자의 검토와 승인 전에는 반출·계약·처리를 실행할 수 없습니다."
+      ],
+      "beforeSourceCount": 0,
+      "afterSourceCount": 2,
+      "remainingLookupIssues": [
+        {
+          "kind": "unrelated",
+          "sourceId": "legal-290881-annex4-code"
+        },
+        {
+          "kind": "unrelated",
+          "sourceId": "legal-290881-annex4-2-r3-3"
+        },
+        {
+          "kind": "unrelated",
+          "sourceId": "legal-290881-annex4-3-types"
+        }
+      ],
+      "arms": [
+        {
+          "arm": "A",
+          "runId": "d49a8fcf-bb42-4d54-8ee1-4148e15373cc",
+          "outcome": "success",
+          "errorCategory": null,
+          "modelDecision": "Insufficient evidence to select a processing route or assess legal eligibility, cost, or carbon impact.",
+          "state": null,
+          "inputSha256": "e83d1f30b91e37a38e70a20963a4db2ecb13287aae67a54e10f92b3509d51d2d",
+          "providerRequestIds": [
+            "8f90a003-e6e7-91d7-860c-0fa7c9eb4918"
+          ]
+        },
+        {
+          "arm": "B",
+          "runId": "d49a8fcf-bb42-4d54-8ee1-4148e15373cc",
+          "outcome": "success",
+          "errorCategory": null,
+          "modelDecision": "Insufficient information to determine a compliant processing route or compare cost and carbon impacts.",
+          "state": null,
+          "inputSha256": "e83d1f30b91e37a38e70a20963a4db2ecb13287aae67a54e10f92b3509d51d2d",
+          "providerRequestIds": [
+            "08b1b396-84a6-4517-b67c-a696cb3616f7"
+          ]
+        },
+        {
+          "arm": "C",
+          "runId": "d49a8fcf-bb42-4d54-8ee1-4148e15373cc",
+          "outcome": "success",
+          "errorCategory": null,
+          "modelDecision": null,
+          "state": "needs-review",
+          "inputSha256": "e83d1f30b91e37a38e70a20963a4db2ecb13287aae67a54e10f92b3509d51d2d",
+          "providerRequestIds": [
+            "71304a22-af3d-487e-a638-79988992d73e",
+            "27a92fa7-c657-462b-9835-3d57e5b123a0"
+          ]
+        }
+      ]
+    }
+  ]
+}
