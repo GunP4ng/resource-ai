@@ -156,7 +156,7 @@ export async function openOperationJournal(options: { readonly stateRoot: string
       inFlightRuns.add(row.run);
       try {
         const response = await transport(url, init);
-        const id = response.headers.get("x-request-id") ?? response.headers.get("apim-request-id");
+        const id = response.headers.get("x-request-id") ?? response.headers.get("apim-request-id") ?? response.headers.get("x-oai-request-id");
         atomic(() => db.query("UPDATE attempts SET state=?,response=? WHERE run=? AND attempt=?").run(response.ok ? "consumed" : "unresolved",
           canonical({ status: response.status, requestId: id && /^[A-Za-z0-9_-]{1,100}$/.test(id) ? id : null }), row.run, row.attempt));
         return response;
