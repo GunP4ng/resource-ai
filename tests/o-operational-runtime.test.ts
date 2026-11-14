@@ -19,6 +19,7 @@ import { createInterface } from "node:readline";
 import { createServer } from "node:net";
 import { fileURLToPath } from "node:url";
 import { origin, secret, signal, post, login, loginCookie, fixture, response } from "./o-operational-fixtures.ts";
+import { authTimeState, processTimeArguments, processTimeEnvironment, runWithProcessTime } from "./o-process-time.ts";
 
 test("login failure keeps the strict 303 assertion and reports sanitized status, body and elapsed time", async () => {
   const cookie = "synthetic-cookie-value";
@@ -32,6 +33,7 @@ test("login failure keeps the strict 303 assertion and reports sanitized status,
 });
 
 test("disk assembly uses native login, exact package binding and SDK transport; synthetic presentation survives restart", async t => {
+  if (await runWithProcessTime(t, import.meta.url)) return;
   const f = await fixture(t);
   const artifact = await prepareCaseRecord(f.snapshot.input, { dataOrigin: { kind: "synthetic", reference: "assembly verification" }, codeRevision: "74c8c3d9a3bae87b560f72e05068f991ca255265", signal: signal(),
     sources: createBundledSnapshotReader(new URL("../", import.meta.url).pathname) });
@@ -100,6 +102,7 @@ test("configuration file checks private metadata without accepting missing crede
 });
 
 test("cancelled disk execution returns promptly while settled waits for late provider metadata", async t => {
+  if (await runWithProcessTime(t, import.meta.url)) return;
   const f = await fixture(t), entered = Promise.withResolvers<void>(), release = Promise.withResolvers<void>(), controller = new AbortController();
   let settled = false;
   const runtime = await createOperatorRuntime({ ...f, origin, configuration: f.config, privatePhotos: false, transport: async () => { entered.resolve(); await release.promise; return response(f.snapshot.input); } });
@@ -118,6 +121,7 @@ test("cancelled disk execution returns promptly while settled waits for late pro
 });
 
 test("disk app remains unsettled after the original deadline until the terminal audit callback drains", async t => {
+  if (await runWithProcessTime(t, import.meta.url)) return;
   const f = await fixture(t), auditing = Promise.withResolvers<void>(), release = Promise.withResolvers<void>();
   const runtime = await createOperatorRuntime({ ...f, origin, configuration: f.config, privatePhotos: false, transport: async () => response(f.snapshot.input) });
   let app: ReturnType<typeof createOperationalApp> | undefined;
@@ -154,30 +158,37 @@ test("cancelled in-flight transport still occupies the concurrent-run allowance 
 });
 
 for (const mode of ["normal", "held"] as const) test(`operational HTTP launcher ${mode} SIGTERM ${mode === "held" ? "forces nonzero with recoverable uncertainty" : "drains audit before exit"}`, { timeout: 20000 }, async t => {
+  if (await runWithProcessTime(t, import.meta.url)) return;
   const f = await fixture(t), path = join(f.root, "operations.json");
   const config = parseOperationalConfiguration({ ...f.config, runnerTimeoutMs: 1000, requestTimeoutMs: 1500, shutdownGraceMs: 1800 });
+  t.diagnostic(JSON.stringify({ stage: "parent seed", ...authTimeState(f.stateRoot), validFrom: config.validFrom, validUntil: config.validUntil }));
   await writeFile(path, JSON.stringify(config), { mode: 0o600 });
   const reservation = createServer(); await new Promise<void>((done, reject) => { reservation.once("error", reject); reservation.listen(0, "127.0.0.1", done); });
   const address = reservation.address(); assert.ok(address && typeof address !== "string");
   await new Promise<void>((done, reject) => reservation.close(error => error ? reject(error) : done()));
-  const environment = Object.fromEntries(Object.entries(process.env).filter(([key]) => !key.startsWith("RESOURCE_") && !key.startsWith("AZURE_OPENAI_")));
-  const child = spawn(process.execPath, [fileURLToPath(new URL("./o-launcher-child.ts", import.meta.url)), mode, JSON.stringify(f.snapshot.input)], { cwd: tmpdir(),
+  const environment = Object.fromEntries(Object.entries(processTimeEnvironment()).filter(([key]) => !key.startsWith("RESOURCE_") && !key.startsWith("AZURE_OPENAI_")));
+  const child = spawn(process.execPath, [...processTimeArguments, fileURLToPath(new URL("./o-launcher-child.ts", import.meta.url)), mode, JSON.stringify(f.snapshot.input)], { cwd: tmpdir(),
     env: { ...environment, PORT: String(address.port), RESOURCE_MODEL_RUNNER: "operational", RESOURCE_APP_AUTH: "local-operator", RESOURCE_STATE_DIR: f.stateRoot,
       RESOURCE_RESOURCES_DIR: f.resourcesRoot, RESOURCE_OPERATIONAL_CONFIG: path }, stdio: ["ignore", "pipe", "pipe"] });
   const exited = once(child, "exit"), lines = createInterface({ input: child.stdout }); let diagnostic = "";
   child.stderr.on("data", bytes => { diagnostic += String(bytes); });
   const transported = Promise.withResolvers<void>();
   try {
-    await Promise.race([new Promise<void>(done => lines.on("line", line => { if (line.startsWith("Re:Source app:")) done(); if (line === "transport") transported.resolve(); })), exited.then(() => { throw new Error(diagnostic); })]);
+    await Promise.race([new Promise<void>(done => lines.on("line", line => { if (line.startsWith("Re:Source app:")) done(); if (line === "transport") transported.resolve(); if (line.startsWith("test-auth-time ")) t.diagnostic(line); })), exited.then(() => { throw new Error(diagnostic); })]);
     const url = `http://localhost:${address.port}`;
     const started = performance.now();
     const signed = await fetch(url + "/login", { method: "POST", redirect: "manual", headers: { origin: url, "content-type": "application/x-www-form-urlencoded" }, body: new URLSearchParams({ username: "operator", password: secret }) });
     const cookie = await loginCookie(signed, started);
+    t.diagnostic(JSON.stringify({ stage: "child native login", ...authTimeState(f.stateRoot), elapsedMs: performance.now() - started, requestTimeoutMs: config.requestTimeoutMs }));
     const pending = fetch(url + f.path + "/answers", { method: "POST", redirect: "manual", headers: { origin: url, cookie: cookie.split(";")[0] ?? "", "content-type": "application/json" },
       body: JSON.stringify({ baseVersion: 1, patch: { massKg: f.snapshot.input.massKg } }) });
-    if (mode === "held") { await transported.promise; child.kill("SIGTERM"); await pending.catch(() => undefined); }
-    else { assert.equal((await pending).status, 303); child.kill("SIGTERM"); }
+    let signalled: number;
+    if (mode === "held") { await transported.promise; signalled = performance.now(); child.kill("SIGTERM"); await pending.catch(() => undefined); }
+    else { assert.equal((await pending).status, 303); signalled = performance.now(); child.kill("SIGTERM"); }
     const [code] = await exited; assert.equal(code, mode === "held" ? 1 : 0, diagnostic);
+    const shutdownMs = performance.now() - signalled;
+    if (mode === "held") assert.ok(shutdownMs >= config.shutdownGraceMs, `grace=${config.shutdownGraceMs} elapsed=${shutdownMs}`);
+    t.diagnostic(JSON.stringify({ mode, exit: code, shutdownMs, graceMs: config.shutdownGraceMs }));
     const row = inspectOperationJournal(f.stateRoot)[0]; assert.equal(row?.state, mode === "held" ? "unresolved" : "consumed");
     assert.ok(row?.terminal); assert.equal(JSON.parse(row.terminal).usage?.total ?? null, mode === "held" ? null : 0);
     assert.ok(row.payload);

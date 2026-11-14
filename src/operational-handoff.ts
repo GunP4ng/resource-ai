@@ -33,10 +33,16 @@ export interface OperationalSuppliers {
 export function createOperationalHandoff(suppliers: OperationalSuppliers) {
   type Run = { closed: boolean; caseRevision: string; reservations: Reservation[]; finish: OperationalAudit | null };
   const runs = new Map<string, Run>();
+  const pending = new Map<Promise<unknown>, string>();
+  const track = <T>(runId: string, work: Promise<T>): Promise<T> => {
+    pending.set(work, runId);
+    void work.then(() => pending.delete(work), () => pending.delete(work));
+    return work;
+  };
   const recover = (reason: RecoveryTask["reason"], reservations: readonly Reservation[], event: OperationalAudit | null) => {
     if (suppliers.enqueueRecovery(structuredClone({ reason, reservations, event })) !== true) throw new Error("recovery-not-acknowledged");
   };
-  return {
+  const hooks = {
     async authorizeDispatch(request: DispatchRequest, signal: AbortSignal): Promise<DispatchPermit | null> {
       const owned = structuredClone(request), run = runs.get(owned.runId);
       if (!run || run.closed || run.caseRevision !== owned.caseRevision || signal.aborted) throw new Error("operation-not-active");
@@ -91,12 +97,23 @@ export function createOperationalHandoff(suppliers: OperationalSuppliers) {
         if (transmitted.length) { await suppliers.reconcile(structuredClone(snapshot), structuredClone(transmitted), signal); check(); }
       };
       try {
-        await Promise.race([interrupted, finalize()]);
+        await Promise.race([interrupted, track(snapshot.runId, finalize())]);
       } catch (error) {
         try { recover("terminal-failure", run.reservations, snapshot); }
         catch (recoveryError) { throw new AggregateError([error, recoveryError], "operation-recovery-failed"); }
         throw error;
       } finally { active = false; signal?.removeEventListener("abort", cancel); runs.delete(snapshot.runId); }
+    },
+  };
+  return {
+    authorizeDispatch: (request: DispatchRequest, signal: AbortSignal) => track(request.runId, hooks.authorizeDispatch(request, signal)),
+    record: (event: OperationalAudit, signal?: AbortSignal) => track(event.runId, hooks.record(event, signal)),
+    async settled(runId?: string): Promise<void> {
+      for (;;) {
+        const work = [...pending].filter(([, id]) => runId === undefined || id === runId).map(([promise]) => promise);
+        if (!work.length) return;
+        await Promise.allSettled(work);
+      }
     },
   };
 }

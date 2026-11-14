@@ -25,6 +25,7 @@ import { revision } from "../src/o-validation.ts";
 import { parseCaseInput } from "../src/input.ts";
 import type { ResourceProvider } from "../src/session.ts";
 import { syntheticCase } from "./h-fixtures.ts";
+import { processTimeArguments, processTimeEnvironment, runWithProcessTime } from "./o-process-time.ts";
 
 const origin = "http://localhost:3000", secret = "integration-only long password";
 const localRuntime = { identity: "local-operator", storage: "sqlite", runner: "local" } as const;
@@ -300,6 +301,7 @@ test("packaged artifact CLI requires explicit authenticated reassessment and ret
 });
 
 test("packaged local operator launcher serves actual HTTP and exits cleanly", { timeout: 30000 }, async t => {
+  if (await runWithProcessTime(t, import.meta.url)) return;
   const f = await fixture(t), root = fileURLToPath(new URL("../", import.meta.url));
   await promisify(execFile)(process.execPath, ["run", "build:app"], { cwd: root, timeout: 20000 });
   // A backdated, real uploaded photo must be queued by startup expiry sweep,
@@ -316,7 +318,7 @@ test("packaged local operator launcher serves actual HTTP and exits cleanly", { 
   await new Promise<void>((done, reject) => { reservation.once("error", reject); reservation.listen(0, "127.0.0.1", done); });
   const address = reservation.address(); assert.ok(address && typeof address !== "string");
   await new Promise<void>((done, reject) => reservation.close(error => error ? reject(error) : done()));
-  const child = spawn(process.execPath, [join(root, "dist/app/app.js")], { cwd: tmpdir(), timeout: 10000, env: { ...process.env, PORT: String(address.port), RESOURCE_APP_AUTH: "local-operator", RESOURCE_STATE_DIR: join(f.root, "state"), RESOURCE_MODEL_RUNNER: "local", RESOURCE_PRIVATE_PHOTOS: "on" }, stdio: ["ignore", "pipe", "pipe"] });
+  const child = spawn(process.execPath, [...processTimeArguments, join(root, "dist/app/app.js")], { cwd: tmpdir(), timeout: 10000, env: { ...processTimeEnvironment(), PORT: String(address.port), RESOURCE_APP_AUTH: "local-operator", RESOURCE_STATE_DIR: join(f.root, "state"), RESOURCE_MODEL_RUNNER: "local", RESOURCE_PRIVATE_PHOTOS: "on" }, stdio: ["ignore", "pipe", "pipe"] });
   child.stderr.on("data", () => {});
   const exited = once(child, "exit"), lines = createInterface({ input: child.stdout });
   try {

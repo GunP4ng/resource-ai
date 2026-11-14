@@ -1,4 +1,4 @@
 {
   "extends": "./tsconfig.json",
-  "include": ["src/**/*.ts", "scripts/**/*.ts", "qa-o4.ts", "tests/processors.test.ts", "tests/comparison.test.ts", "tests/carbon.test.ts", "tests/report.test.ts", "tests/app.test.ts", "tests/o-runtime.test.ts", "tests/o-operation-journal.test.ts", "tests/o-operational-runtime.test.ts", "tests/o-operational-photos.test.ts", "tests/o-journal-child.ts", "tests/o-launcher-child.ts"]
+  "include": ["src/**/*.ts", "scripts/**/*.ts", "qa-o4.ts", "tests/processors.test.ts", "tests/comparison.test.ts", "tests/carbon.test.ts", "tests/report.test.ts", "tests/app.test.ts", "tests/o-runtime.test.ts", "tests/o-operation-journal.test.ts", "tests/o-operational-runtime.test.ts", "tests/o-operational-photos.test.ts", "tests/o-operational-suppliers.test.ts", "tests/o-process-time.test.ts", "tests/o-process-time-child.ts", "tests/o-process-time-preload.ts", "tests/o-journal-child.ts", "tests/o-launcher-child.ts"]
 }

@@ -15,6 +15,8 @@ import type { RuntimeDatabase } from "../src/o-runtime-db.ts";
 import { readOperationalConfiguration } from "../src/o-operations-config.ts";
 import { createOperatorRuntime } from "../src/o-operational-runtime.ts";
 import type { FetchFunction } from "@earendil-works/pi-ai";
+import type { OpenOperatorSuppliers } from "../src/o-operational-backend.ts";
+import type { HOperationalConfiguration } from "../src/o-operations-config.ts";
 // Run with Bun 1.4.2. Node HTTP keeps launch types within existing dependencies.
 /** Streaming bridge shared by the launcher and task-local synthetic QA harness. */
 export function requestBridge(origin: string, fetchRequest: (request: Request) => Promise<Response>) {
@@ -89,7 +91,8 @@ export function createPhotoCleanupWorker(runtime: RuntimeDatabase, caseStore: Re
   return { run, async close() { cleanupAbort.abort(); await cleaning; } };
 }
 
-export async function startApp(injection: { readonly transport?: FetchFunction } = {}) {
+export async function startApp(injection: { readonly transport?: FetchFunction;
+  readonly suppliers?: { readonly configuration: Readonly<HOperationalConfiguration>; readonly open: OpenOperatorSuppliers } } = {}) {
 const port = Number(process.env["PORT"] ?? 3000);
 if (!Number.isInteger(port) || port < 1 || port > 65535) throw new RangeError("Invalid PORT");
 const origin = `http://localhost:${port}`;
@@ -103,12 +106,19 @@ if (authMode === "anonymous" && (state !== undefined || resourcesRoot !== undefi
 if (authMode === "local-operator" && (!state || !isAbsolute(state) || resolve(state) !== state)
   || resourcesRoot !== undefined && (!resourcesRoot || !isAbsolute(resourcesRoot) || resolve(resourcesRoot) !== resourcesRoot)) throw new RangeError("Runtime directories must be absolute private paths");
 const configPath = process.env["RESOURCE_OPERATIONAL_CONFIG"];
-if (mode === "operational" && (authMode !== "local-operator" || !state || !resourcesRoot || !configPath
+if (injection.suppliers !== undefined && (!injection.suppliers || typeof injection.suppliers.open !== "function")) throw new RangeError("Incomplete H supplier injection");
+if (injection.suppliers && (mode !== "operational" || configPath !== undefined)) throw new RangeError("H injection requires explicit operational mode without journal configuration");
+if (mode === "operational" && (authMode !== "local-operator" || !state || !resourcesRoot || !(configPath || injection.suppliers)
   || ["RESOURCE_MODEL_ID", "RESOURCE_AUTH_PATH", "AZURE_OPENAI_API_KEY", "AZURE_OPENAI_BASE_URL", "AZURE_OPENAI_DEPLOYMENT_NAME_MAP", "AZURE_OPENAI_API_VERSION"]
     .some(key => Object.hasOwn(process.env, key)))) throw new RangeError("Explicit operational configuration required; direct runner settings conflict");
-const configuration = mode === "operational" && configPath ? readOperationalConfiguration(configPath) : undefined;
-const operator = configuration && state && resourcesRoot ? await createOperatorRuntime({ origin, stateRoot: state, resourcesRoot,
-  configuration, privatePhotos: privatePhotos === "on", transport: injection.transport }) : undefined;
+const journalConfiguration = mode === "operational" && configPath ? readOperationalConfiguration(configPath) : undefined;
+const configuration = injection.suppliers?.configuration ?? journalConfiguration;
+const journalOperator = journalConfiguration && state && resourcesRoot ? await createOperatorRuntime({ origin, stateRoot: state, resourcesRoot,
+  configuration: journalConfiguration, privatePhotos: privatePhotos === "on", transport: injection.transport }) : undefined;
+const operator = state && resourcesRoot && injection.suppliers
+  ? await createOperatorRuntime({ origin, stateRoot: state, resourcesRoot, configuration: injection.suppliers.configuration,
+    backend: { kind: "h-suppliers", open: injection.suppliers.open }, privatePhotos: privatePhotos === "on", transport: injection.transport })
+  : journalOperator;
 const runtime = operator?.runtime ?? (state ? await openRuntimeDatabase(state) : createMemoryRuntimeDatabase());
 let startupStore: ReturnType<typeof createCaseStore> | undefined;
 try {
@@ -150,7 +160,8 @@ function shutdown(exitCode: number): void {
     await stopped;
     await Promise.allSettled([...handlers]);
     await reloadWork;
-    await app.close(); await closingCleanup;
+    await closingCleanup;
+    await app.close();
     if (operator) await operator.close(); else { caseStore.dispose(); runtime.close(); }
     clearTimeout(deadline); process.exitCode = exitCode;
   };
@@ -158,9 +169,9 @@ function shutdown(exitCode: number): void {
 }
 process.once("SIGTERM", () => shutdown(0));
 process.once("SIGINT", () => shutdown(0));
-if (operator && configPath) process.on("SIGHUP", () => {
+if (journalOperator && configPath) process.on("SIGHUP", () => {
   if (shuttingDown || reloadWork) return;
-  reloadWork = (async () => operator.reloadConfiguration(readOperationalConfiguration(configPath)))().catch(() => {
+  reloadWork = (async () => journalOperator.reloadConfiguration(readOperationalConfiguration(configPath)))().catch(() => {
     console.error("Operational grant reload failed; runtime stopping."); shutdown(1);
   }).finally(() => { reloadWork = undefined; });
 });
