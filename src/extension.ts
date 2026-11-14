@@ -1,8 +1,9 @@
 import { defineTool, type ExtensionAPI } from "@code-yeongyu/senpi";
 import { Type } from "typebox";
-import type { CaseInput } from "./contracts.ts";
+import type { CaseInput, DecisionResult } from "./contracts.ts";
 import { createResourceDomain } from "./domain.ts";
 import type { DomainResources } from "./domain.ts";
+import type { DecisionReference } from "./decision-references.ts";
 
 /**
  * Registration diagnostics. Eligibility and live Azure verification remain incomplete.
@@ -29,7 +30,7 @@ export const projectStatusTool = defineTool({
 });
 
 /** Only these case-bound read-only tools are exposed to the application session. */
-export function createCaseTools(input: CaseInput, resources: DomainResources = {}) {
+export function createCaseTools(input: CaseInput, resources: DomainResources = {}, reference?: (decision: DecisionResult) => DecisionReference) {
   const domain = createResourceDomain(input, resources);
   const respond = (details: unknown) => ({ content: [{ type: "text" as const, text: JSON.stringify(details) }], details });
   return [
@@ -39,7 +40,8 @@ export function createCaseTools(input: CaseInput, resources: DomainResources = {
       parameters: Type.Object({}, { additionalProperties: false }),
       async execute(_id, _params, signal) {
         signal?.throwIfAborted();
-        return respond({ assessment: domain.assess(), decision: await domain.decide() });
+        const decision = await domain.decide();
+        return respond({ assessment: domain.assess(), decision, ...(reference ? { decisionReference: reference(decision) } : {}) });
       },
     }),
     defineTool({
@@ -65,7 +67,8 @@ export function createCaseTools(input: CaseInput, resources: DomainResources = {
         if (comparison === undefined || !domain.readiness().calculations) return respond({ state: "unavailable", missingInputs: ["reviewed-comparison-resources-missing"] });
         if (!routes.some((r) => r.eligibility.state === "eligible")) return respond({ state: "unavailable", missingInputs: ["eligible-route-unverified"] });
         const decision = await domain.decide();
-        return respond(decision.state === "compared" ? decision : { state: "unavailable",
+        if (decision.state === "compared") return respond(reference ? { decision, decisionReference: reference(decision) } : decision);
+        return respond({ state: "unavailable",
           missingInputs: decision.state === "needs-review" ? decision.reasons : decision.questions });
       },
     }),
