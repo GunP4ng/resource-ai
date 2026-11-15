@@ -21,7 +21,7 @@ test("H candidate handoff preserves ten explicit inputs, photos, source/rights h
   assert.equal(report.caseCount, 10); assert.equal(report.externalModelCalls, 0);
   assert.equal(report.independentLabels, 0); assert.equal(report.fieldAcceptances, 0);
   assert.deepEqual(report.results.map(row => row.output.decision.state), [
-    "needs-review", "needs-review", "needs-review", "needs-review", "needs-review",
+    "compared", "compared", "needs-review", "needs-review", "needs-review",
     "needs-review", "needs-review", "needs-review", "needs-information", "needs-information",
   ]);
 });
@@ -96,7 +96,7 @@ test("offline CLI preserves legacy evidence and carries synthetic SDK observatio
         assert.ok(item.assessment.routes.every(route => route.eligibility.missingFacts.includes(question)));
       }
       assert.deepEqual(item.assessment.routes.map(route => route.eligibility.state), ["unknown", "unknown", "unknown", "unknown"]);
-      assert.equal(item.decision.state, index === 0 ? "needs-review" : "needs-information");
+      assert.equal(item.decision.state, index === 0 ? "compared" : "needs-information");
       const usage: unknown = JSON.parse(item.execution.usage);
       assert.ok(Value.Check(Type.Object({ imageSha256: Type.Array(Type.String()) }), usage));
       assert.deepEqual(usage.imageSha256, [item.transmittedImageSha256]);

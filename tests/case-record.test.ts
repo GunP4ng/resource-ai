@@ -23,7 +23,8 @@ test("records actual J snapshot bytes and their SHA without turning a synthetic 
     assert.equal(source.actualSha256, source.expectedSha256);
   }
   assert.ok(result.record.assessment.routes.every((r) => r.eligibility.state === "unknown"));
-  assert.equal(result.record.decision.state, "needs-review");
+  assert.equal(result.record.decision.state, "compared");
+  if (result.record.decision.state === "compared") assert.equal(result.record.decision.humanApproval, "pending");
 });
 
 test("missing and changed snapshots are explicit, never replaced with fabricated verified data", async () => {

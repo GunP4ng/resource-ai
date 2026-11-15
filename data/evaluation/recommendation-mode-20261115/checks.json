@@ -1,0 +1,82 @@
+{
+  "implementationCommit": "74d0d07",
+  "runtime": "Bun 1.4.4 (packageManager declares 1.4.2; 1.4.2 was not run)",
+  "checks": [
+    {
+      "command": "bun test --timeout 30000",
+      "exitCode": 0,
+      "passed": 842,
+      "failed": 0,
+      "files": 42,
+      "seconds": 168.54,
+      "artifact": "/home/gunp4ng/working/resource-recommend-mode-20261115/evidence/full-tests-fixed.log"
+    },
+    {
+      "command": "bun run typecheck",
+      "exitCode": 0,
+      "projects": 3,
+      "artifact": "/home/gunp4ng/working/resource-recommend-mode-20261115/evidence/typecheck.log"
+    },
+    {
+      "command": "bun run build",
+      "exitCode": 0,
+      "modules": 17,
+      "artifact": "/home/gunp4ng/working/resource-recommend-mode-20261115/evidence/build.log"
+    },
+    {
+      "tool": "lsp_diagnostics",
+      "filePath": "src",
+      "diagnostics": 0,
+      "artifact": "/home/gunp4ng/working/resource-recommend-mode-20261115/evidence/diagnostics.txt"
+    },
+    {
+      "command": "bun test --timeout 30000 ./tests/recommendation.test.ts ./tests/assessment.test.ts",
+      "exitCode": 0,
+      "passed": 70,
+      "failed": 0,
+      "artifact": "/home/gunp4ng/working/resource-recommend-mode-20261115/evidence/narrative-conflict-tests.log"
+    },
+    {
+      "check": "temporarily restore result=fallback at the recommendation decision seam",
+      "expectedFailure": true,
+      "implementationCommit": "46d1300",
+      "passed": 6,
+      "failed": 6,
+      "restored": true,
+      "artifact": "/home/gunp4ng/working/resource-recommend-mode-20261115/evidence/mutation-recommendation.log"
+    },
+    {
+      "check": "check-test-junk tests/recommendation.test.ts",
+      "exitCode": 0,
+      "findings": 0,
+      "artifact": "/home/gunp4ng/working/resource-recommend-mode-20261115/evidence/test-quality.log"
+    }
+  ],
+  "realSurface": {
+    "http": {
+      "scenarios": ["advisory", "hazard", "missing-mass"],
+      "passed": 3,
+      "artifact": "/home/gunp4ng/working/resource-recommend-mode-20261115/evidence/http-scenarios.json"
+    },
+    "narrativeConflictHttp": {
+      "caseId": "OYS-20261110-006",
+      "postStatus": 303,
+      "reportStatus": 200,
+      "state": "needs-review",
+      "passed": true,
+      "artifact": "/home/gunp4ng/working/resource-recommend-mode-20261115/evidence/narrative-conflict-http.json"
+    },
+    "browser": {
+      "engine": "omowright connectPipe, owned synthetic profile",
+      "widths": [1440, 390],
+      "themes": ["light", "dark"],
+      "passed": true,
+      "artifact": "/home/gunp4ng/working/resource-recommend-mode-20261115/evidence/visual-qa.json"
+    }
+  },
+  "review": {
+    "tier": "HEAVY",
+    "gateTriggered": false,
+    "method": "self-review of diff, diagnostics, regression tests and actual HTTP/browser output"
+  }
+}

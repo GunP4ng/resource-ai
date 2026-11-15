@@ -158,7 +158,10 @@ try {
     switch (observed.decision.state) {
       case "needs-information": assert.ok(addedQuestions.every(question => observed.decision.state === "needs-information" && observed.decision.questions.includes(question))); break;
       case "needs-review": assert.ok(addedQuestions.every(question => observed.decision.state === "needs-review" && observed.decision.reasons.includes(question))); break;
-      case "compared": assert.fail("Synthetic observations cannot authorize comparison");
+      case "compared":
+        assert.equal(addedQuestions.length, 0);
+        assert.deepEqual(observed.decision, await createResourceDomain(input).decide());
+        break;
       default: observed.decision satisfies never;
     }
     observationMatrix.push({ scenario: scenario.id, scope: "SYNTHETIC injected observations; no accuracy or acceptance claim",

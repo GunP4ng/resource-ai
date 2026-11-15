@@ -14,6 +14,9 @@ O4는 신뢰된 서버 인증을 주입하면 사례 소유권과 비공개 사�
 작은 사용자 앱 → 하나의 senpi SDK 세션 → 구독 모델(기본 `chatgpt-subscription` / `gpt-6-sol`, Azure는 opt-in) + 독립 도메인 도구 → 출처·조건·불확실성이 있는 비교 보고서.
 판정·업체·비교 도구는 앱의 사례별 세션에만 주입된다. 공식 extension은 CLI용 상태 조회 도구 `resource_project_status` 1개만 등록한다. skill/MCP/Foundry 네이티브 조합을 비교한 뒤 이 구조를 택했다.
 
+`compared`는 실행 승인 대신 추천 결과다. 검증된 별표의 분류·허용 유형·R-3-3 정의·공통기준이 연결되는 경로는 `conditional`(공개 근거상 가능·조건부) 등급과 순위를 받는다. `eligible`인 현장 검토 결과와 구분하며, 공개 근거만으로 판단할 수 없는 경로는 `unknown`으로 남긴다.
+결과의 `recommendations`에는 경로별 근거 인용과 비용·탄소 계산/가정 라벨 또는 `null`·사유가 있고, `confidence`와 `preExecutionChecks`를 함께 제공한다. 허가 유효성·인수/계약·실제 견적·거리·계수 적용·현장 승인은 실행 전 확인사항이다. 유해·지정폐기물 의심, 명백한 금지 경로, 인용 검증 실패, 입력 모순은 계속 차단하고 필수 질량 누락은 질문한다.
+
 ## 시작
 
 팀원은 [docs/team-tasks.md](docs/team-tasks.md)부터 읽고 자기 담당 작업을 시작한다.
@@ -43,7 +46,7 @@ smoke는 소스와 빌드된 extension을 **실제 senpi loader**로 열고, SDK
 인증이나 모델이 없으면 제출은 HTTP 503(`not-configured`)으로 끝난다.
 구독이 설정돼 있으면 제출 시 실제 모델 요청이 발생하므로 승인된 사례만 사용한다.
 
-`RESOURCE_MODEL_RUNNER=local bun run app`은 모델 호출 없이 기존 질문/답변/보류 흐름을 실행한다.
+`RESOURCE_MODEL_RUNNER=local bun run app`은 모델 호출 없이 질문/답변/추천/보류 흐름을 실행한다.
 `RESOURCE_MODEL_RUNNER=azure bun run app`은 기존 Azure runner를 명시적으로 선택한다.
 이때만 `.env.example`의 Azure 키·endpoint·deployment 설정이 필요하다.
 공유 운영 배포의 요청별 승인/감사·사진 동의·운영 자료 공급은 별도 인수 대상이며
@@ -84,8 +87,9 @@ RESOURCE_MODEL_RUNNER=local RESOURCE_APP_AUTH=local-operator RESOURCE_STATE_DIR=
 
 - 법적 폐기물 코드·유해성은 사진만으로 확정하지 않는다.
 - 지정폐기물·유해 의심, 명백한 법령상 금지, 출처 없는/검증 실패 인용, 입력 모순은 추천 차단 사유로 남긴다.
-- 허가 유효성·업체 인수/계약·실제 견적/질량/거리·탄소계수 적용 검토·현장 승인은 실행 전 확인 목록으로 표시하며, 이것만으로 경로 비교 전체를 보류하지 않는다.
+- 허가 유효성·업체 인수/계약·실제 견적/질량/거리·탄소계수 적용 검토·현장 승인은 실행 전 확인 목록(`preExecutionChecks`)으로 표시하며, 이것만으로 경로 비교 전체를 보류하지 않는 것이 목표다. 현재 구현은 필수 질량 누락을 `needs-information` 질문으로 처리한다.
 - 비용·탄소는 출처·단위·경계·가정을 확인할 수 있는 범위만 계산한다. 공개 자료 기반 계산은 시나리오 추정으로 표시하고 실제 견적·실측 감축으로 부르지 않는다. 계산 불가 항목은 사유를 남기며 다른 근거 있는 비교는 계속한다.
+- 현재 구현은 검증된 사례별 quote·계수로 계산하거나 `null`·미산정 사유를 제공한다. 공개 법령 추천과 실행 전 확인을 분리했지만, 관련성이 약한 인용·접촉 이력 미확인의 과잉 보류와 보류 사유에 남은 현장 항목은 후속 개선 대상이다([18건 실행 기록](data/evaluation/recommendation-mode-20261115/summary.json): `compared` 5 / `needs-review` 9 / `needs-information` 4).
 - 대회 제출 형식·최종 업로드 시각·Azure 크레딧 금액은 운영진/팀 계정 확인이 남아 있다.
 - 교육용 가상 데이터 정확도는 현장 재활용 판단의 정확도가 아니다.
 - 비공개 저장소다. 교육 영상/자막/로그인 화면·실제 키·개인정보를 업로드하지 않는다.

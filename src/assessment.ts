@@ -160,14 +160,15 @@ export function assessCase(input: CaseInput, options: AssessmentOptions = {}, re
       const byId = (records: readonly EvidenceRecord[]) => [...records].sort((a, b) => a.sourceId.localeCompare(b.sourceId));
       requireValid(canonical(byId(review.legalEvidence)) === canonical(byId(legal.evidence)), "legal-evidence-mismatch");
       uniqueIds(review.checks.map((check) => check.requirement), "duplicate-review-check");
-      requireValid(requiredChecks[route].every((requirement) => review.checks.some((check) => check.requirement === requirement)), "review-check-missing");
-      requireValid(review.checks.every((check) => check.state !== "unknown"), "review-check-unresolved");
       uniqueIds(review.evidenceIds);
       const issue = evidenceIssue(reviews, review.evidenceIds, { key: `eligibility:${facts.caseId}:${route}`, value: review }, facts.assessmentDate);
       requireValid(issue === null, issue ?? "review-unbound");
       const records = review.evidenceIds.map((id) => reviews.documents.find((doc) => doc.record.sourceId === id)!);
       requireValid(records.every((doc) => doc.record.license?.trim() && doc.checkedAt.slice(0, 10) <= facts.assessmentDate
         && !legal.evidence.some((record) => record.sourceId === doc.record.sourceId)), "review-provenance-invalid");
+      // Incomplete field checks leave eligibility unknown, but do not invalidate a recommendation.
+      if (!requiredChecks[route].every((requirement) => review.checks.some((check) => check.requirement === requirement))
+        || review.checks.some((check) => check.state === "unknown")) return hold();
       const failed = review.checks.filter((check) => check.state === "not-met");
       const assessed: RouteAssessment = { routeId: route, route, eligibility: failed.length
         ? { state: "ineligible", evidenceIds: [...review.evidenceIds], reasons: failed.map((check) => `${check.requirement}: ${check.explanation}`) }

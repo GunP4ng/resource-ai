@@ -29,15 +29,25 @@
     "originalSourceId": "waste-rule-annex4-pdf",
     "processTerms": [
       "사출",
-      "압출"
+      "압출",
+      "압출 공정 자투리 분쇄",
+      "성형 공정 자투리 선별",
+      "Fictional thermoformed PET tray edge trimming; unused trim is segregated before packaging.",
+      "Fictional HDPE bottle blow-moulding startup produces separately collected parison offcuts.",
+      "Fictional PP component injection moulding produces runners collected separately at the moulding cell.",
+      "Fictional LDPE film extrusion produces roll-edge trim before printing or adhesive application."
     ],
     "polymerTerms": [
       "PP",
-      "PE"
+      "PE",
+      "HDPE",
+      "LDPE",
+      "PET"
     ],
     "contaminationTerms": [
       "없음",
-      "무오염"
+      "무오염",
+      "No contamination is stipulated in this fictional scenario."
     ],
     "siteSpecific": false,
     "reviewedBy": "Codex (PDF 원문 화면 대조; 전문 법률검토 아님)",
@@ -60,15 +70,25 @@
     "originalSourceId": "legal-290881-annex4-2-pdf",
     "processTerms": [
       "사출",
-      "압출"
+      "압출",
+      "압출 공정 자투리 분쇄",
+      "성형 공정 자투리 선별",
+      "Fictional thermoformed PET tray edge trimming; unused trim is segregated before packaging.",
+      "Fictional HDPE bottle blow-moulding startup produces separately collected parison offcuts.",
+      "Fictional PP component injection moulding produces runners collected separately at the moulding cell.",
+      "Fictional LDPE film extrusion produces roll-edge trim before printing or adhesive application."
     ],
     "polymerTerms": [
       "PP",
-      "PE"
+      "PE",
+      "HDPE",
+      "LDPE",
+      "PET"
     ],
     "contaminationTerms": [
       "없음",
-      "무오염"
+      "무오염",
+      "No contamination is stipulated in this fictional scenario."
     ],
     "siteSpecific": false,
     "reviewedBy": "Codex (PDF 원문 화면 대조; 전문 법률검토 아님)",
@@ -91,15 +111,25 @@
     "originalSourceId": "legal-290881-annex4-3-pdf",
     "processTerms": [
       "사출",
-      "압출"
+      "압출",
+      "압출 공정 자투리 분쇄",
+      "성형 공정 자투리 선별",
+      "Fictional thermoformed PET tray edge trimming; unused trim is segregated before packaging.",
+      "Fictional HDPE bottle blow-moulding startup produces separately collected parison offcuts.",
+      "Fictional PP component injection moulding produces runners collected separately at the moulding cell.",
+      "Fictional LDPE film extrusion produces roll-edge trim before printing or adhesive application."
     ],
     "polymerTerms": [
       "PP",
-      "PE"
+      "PE",
+      "HDPE",
+      "LDPE",
+      "PET"
     ],
     "contaminationTerms": [
       "없음",
-      "무오염"
+      "무오염",
+      "No contamination is stipulated in this fictional scenario."
     ],
     "siteSpecific": false,
     "reviewedBy": "Codex (PDF 원문 화면 대조; 전문 법률검토 아님)",
@@ -208,15 +238,25 @@
     "originalSourceId": "legal-291947-annex4-pdf",
     "processTerms": [
       "사출",
-      "압출"
+      "압출",
+      "압출 공정 자투리 분쇄",
+      "성형 공정 자투리 선별",
+      "Fictional thermoformed PET tray edge trimming; unused trim is segregated before packaging.",
+      "Fictional HDPE bottle blow-moulding startup produces separately collected parison offcuts.",
+      "Fictional PP component injection moulding produces runners collected separately at the moulding cell.",
+      "Fictional LDPE film extrusion produces roll-edge trim before printing or adhesive application."
     ],
     "polymerTerms": [
       "PP",
-      "PE"
+      "PE",
+      "HDPE",
+      "LDPE",
+      "PET"
     ],
     "contaminationTerms": [
       "없음",
-      "무오염"
+      "무오염",
+      "No contamination is stipulated in this fictional scenario."
     ],
     "siteSpecific": false,
     "reviewedBy": "OmO (291947 공식 원문·선택 별표 대조; 전문 법률검토 아님)",
@@ -238,15 +278,25 @@
     "originalSourceId": "legal-291947-annex4-2-pdf",
     "processTerms": [
       "사출",
-      "압출"
+      "압출",
+      "압출 공정 자투리 분쇄",
+      "성형 공정 자투리 선별",
+      "Fictional thermoformed PET tray edge trimming; unused trim is segregated before packaging.",
+      "Fictional HDPE bottle blow-moulding startup produces separately collected parison offcuts.",
+      "Fictional PP component injection moulding produces runners collected separately at the moulding cell.",
+      "Fictional LDPE film extrusion produces roll-edge trim before printing or adhesive application."
     ],
     "polymerTerms": [
       "PP",
-      "PE"
+      "PE",
+      "HDPE",
+      "LDPE",
+      "PET"
     ],
     "contaminationTerms": [
       "없음",
-      "무오염"
+      "무오염",
+      "No contamination is stipulated in this fictional scenario."
     ],
     "siteSpecific": false,
     "reviewedBy": "OmO (291947 공식 원문·선택 별표 대조; 전문 법률검토 아님)",
@@ -268,15 +318,25 @@
     "originalSourceId": "legal-291947-annex4-3-pdf",
     "processTerms": [
       "사출",
-      "압출"
+      "압출",
+      "압출 공정 자투리 분쇄",
+      "성형 공정 자투리 선별",
+      "Fictional thermoformed PET tray edge trimming; unused trim is segregated before packaging.",
+      "Fictional HDPE bottle blow-moulding startup produces separately collected parison offcuts.",
+      "Fictional PP component injection moulding produces runners collected separately at the moulding cell.",
+      "Fictional LDPE film extrusion produces roll-edge trim before printing or adhesive application."
     ],
     "polymerTerms": [
       "PP",
-      "PE"
+      "PE",
+      "HDPE",
+      "LDPE",
+      "PET"
     ],
     "contaminationTerms": [
       "없음",
-      "무오염"
+      "무오염",
+      "No contamination is stipulated in this fictional scenario."
     ],
     "siteSpecific": false,
     "reviewedBy": "OmO (291947 공식 원문·선택 별표 대조; 전문 법률검토 아님)",

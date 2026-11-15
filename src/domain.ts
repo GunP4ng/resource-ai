@@ -9,6 +9,7 @@ import { createComparisonCalculator } from "./cost.ts";
 import type { CalculationContext } from "./o-calculation.ts";
 import { canonical, date, evidenceIssue, period, requireValid, revision, validateDocuments, ValidationError } from "./o-validation.ts";
 import { parseDecision } from "./o-decision.ts";
+import { recommend, recommendationBlockers } from "./recommendation.ts";
 
 /** Server-owned supplements only; never deserialize these from model/app input. */
 export interface DomainResources {
@@ -36,6 +37,15 @@ export function createResourceDomain(input: CaseInput, resources: DomainResource
     requireValid(new Set(routes.map((r) => r.routeId)).size === routes.length, "duplicate-route");
     requireValid(routes.every((route) => current.some((expected) => canonical(expected) === canonical(route))), "route-not-host-authorized");
   };
+  const assertComparisonEvidence = (comparison: ComparisonInput) => {
+    requireValid(owned.calculations !== undefined, "calculation-resources-unavailable");
+    validateDocuments(owned.calculations);
+    const { evidence: _evidence, ...boundInput } = comparison;
+    const issue = evidenceIssue(owned.calculations, owned.comparisonEvidenceIds ?? [],
+      { key: `comparison:${facts.caseId}`, value: { caseRevision: revision(facts), input: boundInput } }, facts.assessmentDate);
+    requireValid(issue === null, `comparison-${issue ?? "unbound"}`);
+    requireValid((owned.comparisonEvidenceIds ?? []).every(id => comparison.evidence.some(record => record.sourceId === id)), "comparison-evidence-missing");
+  };
   const domain: ResourceDomain = {
     async assessRoutes(value) { assertCase(value); return assess().routes; },
     async findProcessors(value, route) {
@@ -49,12 +59,7 @@ export function createResourceDomain(input: CaseInput, resources: DomainResource
       requireValid(calculate !== undefined, "calculation-resources-unavailable");
       requireValid(comparison.routes.length > 0 && comparison.routes.every((r) => routes.some((a) => a.routeId === r.routeId && a.eligibility.state === "eligible")), "comparison-route-not-eligible");
       requireValid(owned.calculations !== undefined, "calculation-resources-unavailable");
-      validateDocuments(owned.calculations);
-      const { evidence: _evidence, ...boundInput } = comparison;
-      const issue = evidenceIssue(owned.calculations, owned.comparisonEvidenceIds ?? [],
-        { key: `comparison:${facts.caseId}`, value: { caseRevision: revision(facts), input: boundInput } }, facts.assessmentDate);
-      requireValid(issue === null, `comparison-${issue ?? "unbound"}`);
-      requireValid((owned.comparisonEvidenceIds ?? []).every((id) => comparison.evidence.some((record) => record.sourceId === id)), "comparison-evidence-missing");
+      assertComparisonEvidence(comparison);
       const mass = owned.calculations.caseMass;
       requireValid(mass == null || (mass.massKg === facts.massKg && mass.caseId === facts.caseId && mass.assessmentDate === facts.assessmentDate), "case-mass-mismatch");
       return calculate(comparison, routes);
@@ -71,8 +76,15 @@ export function createResourceDomain(input: CaseInput, resources: DomainResource
         reasons: [...new Set([...(fallback.state === "needs-review" ? fallback.reasons : assessment.questions), reason])] });
       let result: DecisionResult = fallback;
       try {
-        if (owned.comparison !== undefined && calculate !== undefined) {
-          requireValid(assessment.reviewIssues.length === 0, "route-review-conflict");
+        if (assessment.reviewIssues.length > 0) return hold("route-review-conflict");
+        const blockers = recommendationBlockers(facts, assessment, owned.routeReviews);
+        if (blockers.length > 0) return hold(blockers.join("; "));
+        if (owned.comparison !== undefined && owned.calculations !== undefined) {
+          assertComparisonEvidence(owned.comparison);
+        }
+        if (owned.comparison !== undefined && calculate !== undefined && find !== undefined
+          && owned.comparison.routes.every(selected => assessment.routes.some(route =>
+            route.routeId === selected.routeId && route.eligibility.state === "eligible"))) {
           const scenarios = await domain.compare(owned.comparison, assessment.routes);
           const processors = new Map<string, ProcessorCandidate>();
           for (const selected of owned.comparison.routes) {
@@ -115,6 +127,11 @@ export function createResourceDomain(input: CaseInput, resources: DomainResource
               ...(processors.size === 0 ? ["검증된 업체 후보가 없습니다. 실제 처리·인수 가능성을 확인해야 합니다."] : []),
               ...[...processors.values()].filter((p) => p.acceptance !== "confirmed").map((p) => `인수 의사 미확인: ${p.processorId}`),
             ] });
+        }
+        if (assessment.questions.length === 0) {
+          result = recommend(facts, assessment, result.state === "compared" ? result : undefined);
+        } else {
+          result = { state: "needs-information", caseId: facts.caseId, questions: assessment.questions, evidence: fallback.evidence };
         }
       } catch (error) { result = hold(error instanceof ValidationError ? error.reason : "host-comparison-invalid"); }
       if (proposal !== undefined) {

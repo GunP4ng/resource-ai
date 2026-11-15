@@ -2,6 +2,7 @@ import { creditPolicyNotes, restrictedNet } from "./carbon.ts";
 import type { DecisionResult, Estimate, ScenarioComparison } from "./contracts.ts";
 import { parseDecision } from "./o-decision.ts";
 import { rankScenarios } from "./ranking.ts";
+import { escapeHtml, safeLink, list, page } from "./report-html.ts";
 export interface ReportPresentation {
   readonly mode: "synthetic" | "offline" | "live" | "recording";
   readonly scenarioLabels?: readonly string[];
@@ -12,89 +13,7 @@ export interface ReportPresentation {
   readonly review?: { readonly hash: string; readonly origin: { readonly kind: "synthetic" | "field"; readonly reference: string }; readonly caseRevision: string } | null;
   readonly historical?: boolean;
 }
-export function escapeHtml(value: string): string {
-  return value.replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char] ?? char);
-}
-export function safeLink(value: string): string | null {
-  try {
-    const url = new URL(value);
-    return ["https:", "http:"].includes(url.protocol) && url.username === "" && url.password === "" ? escapeHtml(url.href) : null;
-  } catch (error) {
-    if (error instanceof TypeError) return null;
-    throw error;
-  }
-}
-export const list = (items: readonly string[]): string => `<ul>${items.map((v) => `<li>${escapeHtml(v)}</li>`).join("")}</ul>`;
-export function page(title: string, body: string): string {
-  return `<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>${escapeHtml(title)} · Re:Source</title><style>
-  :root{color-scheme:light dark;--bg:#fbfbfa;--ink:#252824;--muted:#535b52;--line:#737b72;--surface:#fff;--action:#273e31;--on-action:#fff;--focus:#076641;--selection:#d7e9dc}
-  @media(prefers-color-scheme:dark){:root{--bg:#171c19;--ink:#eef2ec;--muted:#bac5ba;--line:#8c998d;--surface:#202922;--action:#c5e5cb;--on-action:#13231a;--focus:#a4e9bf;--selection:#385c44}
-}
-  *{box-sizing:border-box}
-html{scrollbar-color:var(--line) var(--bg)}
-body{margin:0;background:var(--bg);color:var(--ink);font:1rem/1.7 system-ui,'Noto Sans KR',sans-serif;overflow-wrap:anywhere}
-main{max-width:74ch;margin:auto;padding:2rem 1.25rem 4rem}
-nav{display:flex;gap:1rem;flex-wrap:wrap}
-nav a{padding:.5rem 0}
-h1{font-size:2rem;line-height:1.25;margin:2rem 0 1rem}
-h2{font-size:1.56rem;line-height:1.4;margin:3rem 0 1rem}
-h3{font-size:1.25rem;margin:2rem 0 .75rem}
-p{margin:.75rem 0}
-a{color:var(--focus);text-underline-offset:.2em}
-a:hover{text-decoration-thickness:2px}
-a:active{opacity:.8}
-:focus-visible{outline:2px solid var(--focus);outline-offset:3px}
-::selection{background:var(--selection);color:var(--ink)}
-section{margin-block:2rem}
-table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
-th,td{text-align:left;vertical-align:top;padding:.75rem .4rem;border-bottom:1px solid var(--line);overflow-wrap:anywhere}
-caption{text-align:left;font-weight:700;padding-block:.75rem}
-small,.muted{color:var(--muted)}
-label{display:block;margin-top:1.25rem}
-input,textarea,select,button,.primary-action{font:inherit;border:1px solid var(--line);border-radius:4px;min-height:44px;padding:.65rem;background:var(--surface);color:var(--ink);caret-color:var(--focus)}
-input,textarea,select{width:100%}
-textarea{min-height:8rem;resize:vertical}
-button,.primary-action{background:var(--action);color:var(--on-action);cursor:pointer;margin-top:1.5rem;padding-inline:1.25rem}
-.primary-action{display:inline-flex;align-items:center;justify-content:center;min-width:44px;text-decoration:none}
-.secondary-action{background:var(--surface);color:var(--ink)}
-button:hover,.primary-action:hover{filter:brightness(1.12)}
-button:active,.primary-action:active{filter:brightness(.9)}
-button:disabled{opacity:.6;cursor:wait}
-.notice{padding:1rem;background:var(--surface)}
-dl{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:.75rem}
-dd{margin:0;font-variant-numeric:tabular-nums}
-li{margin-block:.4rem}
-.table-wrap{overflow:auto}
-.case-list{max-width:100%;min-width:0}
-.case-list table{min-width:40rem}
-.case-list th,.case-list td:last-child{white-space:nowrap}
-summary{cursor:pointer;min-height:44px;padding:.5rem 0}
-footer{margin-top:3rem;border-top:1px solid var(--line);padding-top:1rem}
-.print-only{display:none}
-@page{size:A4;margin:18mm}
-@media print{nav,form,.screen-only{display:none}
-.print-only{display:block}
-body{background:white;color:#222;font-size:10.5pt;line-height:1.45}
-main{max-width:none;padding:0}
-h1,h2,h3{break-after:avoid}
-h1{font-size:20pt;margin:.75rem 0 .5rem}
-h2{font-size:15pt;margin:1.25rem 0 .5rem}
-h3{font-size:12pt;margin:.75rem 0 .35rem}
-section{margin-block:.75rem}
-th,td{padding:.35rem .3rem}
-caption{padding-block:.35rem}
-ul,ol{margin-block:.4rem}
-li{margin-block:.2rem}
-dl{gap:.35rem;margin-block:.5rem}
-tr{break-inside:avoid}
-section[aria-labelledby="priority-heading"] li{break-inside:avoid}
-thead{display:table-header-group}
-p{margin-block:.5rem;orphans:3;widows:3}
-footer{margin-top:.5rem;padding-top:.25rem}
-.table-wrap{overflow:visible}
-}
-  </style></head><body><main><nav aria-label="주 메뉴"><a href="/">사례 입력</a><a href="/demo/normal">합성 비교 데모</a><a href="/demo/held">합성 보류 데모</a><a href="/reference">실자료 현황</a></nav>${body}<footer>Re:Source · 조건부 의사결정 지원. 처리·계약 실행은 별도 인간 검토가 필요합니다.</footer></main></body></html>`;
-}
+export { escapeHtml, safeLink, list, page } from "./report-html.ts";
 type Metric = Estimate<"KRW" | "kgCO2e">;
 type EvidenceReferences = (ids: readonly string[]) => string;
 
@@ -208,6 +127,8 @@ function routeConditions(result: Extract<DecisionResult, { state: "compared" }>,
   return result.routes.map((route) => {
     const heading = `<h3>${escapeHtml(route.routeId)}`;
     switch (route.eligibility.state) {
+      case "conditional":
+        return `${heading} · 공개 근거상 가능(조건부)</h3>${list(route.eligibility.conditions)}<p>공개 법령 근거: ${references(route.eligibility.evidenceIds)}</p>`;
       case "eligible":
         return `${heading} · 조건부 가능</h3>${list(route.eligibility.conditions)}<p>판정 근거: ${references(route.eligibility.evidenceIds)}</p>`;
       case "ineligible":
@@ -216,6 +137,20 @@ function routeConditions(result: Extract<DecisionResult, { state: "compared" }>,
         return `${heading} · 미확인</h3>${list(route.eligibility.missingFacts)}`;
     }
   }).join("");
+}
+function recommendationSummary(result: Extract<DecisionResult, { state: "compared" }>, references: EvidenceReferences): string {
+  if (result.recommendations === undefined) return "";
+  const names = { reuse: "재사용", "mechanical-recycling": "기계적 재활용", "other-recovery": "기타 회수", disposal: "처분" } as const;
+  return `<section aria-labelledby="recommendation-heading"><h2 id="recommendation-heading">추천 경로 순위</h2><ol>${result.recommendations.map(item => {
+    const route = result.routes.find(route => route.routeId === item.routeId);
+    const amount = (metric: typeof item.cost | typeof item.carbon) => metric.value === null
+      ? `미산정 (null) · ${escapeHtml(metric.reasons.join("; "))}`
+      : `${escapeHtml(metric.value.toLocaleString("ko-KR"))} ${metric.unit} · ${metric.label === "assumption" ? "가정 포함 계산값" : "계산값"}${list(metric.reasons)}`;
+    return `<li><h3>${item.rank}순위 · ${escapeHtml(route ? names[route.route] : item.routeId)}</h3>
+      <p><strong>${item.grade === "public-conditional" ? "공개 근거상 가능(조건부)" : "사례별 자료 검토됨(실행 승인 아님)"}</strong></p>
+      <p>${escapeHtml(item.basis)}</p><p>비용: ${amount(item.cost)}</p><p>탄소: ${amount(item.carbon)}</p>
+      ${item.legalCitations.map(citation => `<p>${references([citation.sourceId])} ${escapeHtml(citation.locator)} · ${escapeHtml(citation.claim)}</p>`).join("")}</li>`;
+  }).join("")}</ol><p>확신도: ${result.confidence?.level === "medium" ? "중간" : "낮음"}</p>${list(result.confidence?.reasons ?? [])}</section>`;
 }
 function processorCandidates(result: Extract<DecisionResult, { state: "compared" }>, references: EvidenceReferences): string {
   if (result.processors.length === 0) {
@@ -259,13 +194,15 @@ export function renderReport(result: DecisionResult, presentation: ReportPresent
     case "compared": {
       const labels = result.scenarios.map((_, index) => presentation.scenarioLabels?.[index] ?? `대안 ${index + 1}`);
       const audit = result.scenarios.map((s, index) => scenarioAudit(s, labels[index]!, references)).join("");
-      content = `<h1>조건부 비교</h1>
-        <p class="notice">${result.humanApproval === "pending" ? "인간 승인 대기" : "인간 승인 기록 있음"} · humanApproval: ${escapeHtml(result.humanApproval)}</p>
-        ${comparisonSummary(result.scenarios, labels, references)}
+      content = `<h1>${result.recommendations ? "추천 후보, 실행 전 확인 필요" : "조건부 비교"}</h1>
+        <p class="notice">${result.recommendations ? "판단 지원 추천 · 실행·반출·계약 승인 아님" : result.humanApproval === "pending" ? "인간 승인 대기" : "인간 승인 기록 있음"} · humanApproval: ${escapeHtml(result.humanApproval)}</p>
+        ${recommendationSummary(result, references)}
+        ${result.scenarios.length ? comparisonSummary(result.scenarios, labels, references) : ""}
         ${comparisonConditions(result.scenarios, labels)}
-        ${prioritySummary(result, labels, references)}
+        ${result.scenarios.length ? prioritySummary(result, labels, references) : ""}
         <p>우열 불확실 · 동일 조건과 완전한 지표를 확인한 뒤 비교하세요. 음의 순배출은 탄소 제거를 뜻하지 않습니다.</p>
         <h2>경로와 조건</h2>${routeConditions(result, references)}
+        ${result.preExecutionChecks ? `<h2>실행 전 확인사항</h2>${list(result.preExecutionChecks)}` : ""}
         <h2>검증된 업체 후보</h2>${processorCandidates(result, references)}
         <h2>비용·탄소 상세 감사</h2>
         <details class="screen-only"><summary>계산 조건·비용 항목·탄소 활동과 계수 펼치기</summary>${audit}</details>

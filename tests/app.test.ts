@@ -299,7 +299,7 @@ test("O4 native corrections refresh missing questions and remain usable after re
     assert.match(middle, /확인된 질량은 몇 kg인가요/);
     assert.equal((await app.fetch(post(path + "/answers", cookie, '{"massKg":100}'))).status, 303);
     const reviewed = await ownedPage(app.fetch, cookie, path);
-    assert.match(reviewed, /<h1>검토 필요<\/h1>/);
+    assert.match(reviewed, /공개 근거상 가능\(조건부\)/);
     assert.doesNotMatch(reviewed, /확인된 질량은 몇 kg인가요/);
     assert.match(reviewed, new RegExp(`action="${path}/answers"`));
     assert.doesNotMatch(await ownedPage(app.fetch, cookie, path + "/report"), /<form\b/);
@@ -344,7 +344,7 @@ test("O4 invalid field corrections return safe 400s, preserve the report and all
       assert.ok(destinations.includes("/cases"), "Missing owned-case list recovery link");
     }
     assert.equal((await app.fetch(post(path + "/answers", cookie, '{"polymer":"PP","massKg":100}'))).status, 303);
-    assert.match(await ownedPage(app.fetch, cookie, path), /<h1>검토 필요<\/h1>/);
+    assert.match(await ownedPage(app.fetch, cookie, path), /공개 근거상 가능\(조건부\)/);
     const forged = await app.fetch(post("/cases", cookie, JSON.stringify({ ...syntheticCase })));
     assert.equal(forged.status, 400);
   } finally { app.dispose(); await app.close(); cases.dispose(); }
@@ -533,7 +533,7 @@ test("O4 source and packaged launchers reduce missing questions before review an
       const refreshed = await fetch(url + path, { headers: { cookie }, signal: AbortSignal.timeout(2000) });
       assert.equal(refreshed.status, 200);
       const reviewed = await refreshed.text();
-      assert.match(reviewed, /<h1>검토 필요<\/h1>/);
+      assert.match(reviewed, /공개 근거상 가능\(조건부\)/);
       assert.ok(reviewed.includes(`사례 ${caseId}</p>`));
       assert.doesNotMatch(reviewed, /snapshot-unavailable/);
       assert.ok(!reviewed.includes(polymerQuestion));
