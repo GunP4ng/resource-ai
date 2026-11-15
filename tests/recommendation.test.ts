@@ -80,6 +80,24 @@ test("verified but unrelated public citations remain advisory without granting s
   assert.equal((await domain.assessRoutes(input)).find(route => route.route === "mechanical-recycling")?.eligibility.state, "unknown");
 });
 
+for (const [name, patch] of [
+  ["PVC exclusion", { polymer: "PVC" }],
+  ["nonplastic material", { polymer: "steel" }],
+  ["oil-contaminated material", { contamination: "폐유 혼합" }],
+  ["negated process", { process: "사출 아님" }],
+] as const) {
+  for (const date of ["2026-11-10", "2026-11-13"] as const) {
+    test(`${name} cannot borrow a plastics citation on ${date}`, async () => {
+      const input = { ...syntheticCase, ...patch, assessmentDate: date };
+      const evidence = lookupLegalEvidence(input, undefined, { includeWeakContext: true });
+      assert.equal(evidence.citations.some(citation => citation.kind === "waste-code"), false);
+      const result = await createResourceDomain(input).decide();
+      assert.equal(result.state, "needs-review");
+      assert.equal("recommendations" in result, false);
+    });
+  }
+}
+
 for (const patch of [
   { hazardousContact: "unknown" },
   { contamination: "세척 완료, 이전 내용물·잔류물은 미확인" },

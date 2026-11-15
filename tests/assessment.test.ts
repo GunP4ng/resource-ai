@@ -6,10 +6,12 @@ import { createResourceDomain } from "../src/domain.ts";
 import type { ComparisonInput } from "../src/contracts.ts";
 import type { CalculationContext } from "../src/o-calculation.ts";
 import type { AssessmentOptions, CaseAssessment } from "../src/assessment.ts";
-import { collectMissingQuestions } from "../src/input.ts";
+import { collectMissingQuestions, parseCaseInput } from "../src/input.ts";
 import { lookupLegalEvidence, pendingLegalSources } from "../src/evidence.ts";
 import { syntheticCase, syntheticReviewed } from "./h-fixtures.ts";
 import { documents } from "../src/o-synthetic-evidence.ts";
+import hdpe from "../data/candidates/oyeonseok-2026-11-10/oys-20261110-002-hdpe-parison.json" with { type: "json" };
+import ldpe from "../data/candidates/oyeonseok-2026-11-10/oys-20261110-004-ldpe-film.json" with { type: "json" };
 
 // Synthetic inputs exercising real bundled references; not real cases or legal decisions.
 function fixture(patch: Partial<CaseInput> = {}): CaseInput {
@@ -32,6 +34,30 @@ function assertHeld(result: CaseAssessment) {
     if (route.eligibility.state !== "unknown") throw new Error("must stay unknown");
     assert.ok(route.eligibility.missingFacts.length > 0);
   }
+}
+
+for (const [name, raw] of [["HDPE", hdpe], ["LDPE", ldpe]] as const) {
+  for (const [assessmentDate, version] of [["2026-11-10", "290881"], ["2026-11-13", "291947"]] as const) {
+    test(`${name} H2 code candidate uses ${version} without granting route eligibility`, () => {
+      const parsed = parseCaseInput(raw);
+      assert.ok(parsed.ok);
+      const result = assessCase({ ...parsed.value, assessmentDate });
+      assert.deepEqual(result.candidates.wasteCodes.map(({ value, state, sourceId }) => ({ value, state, sourceId })),
+        [{ value: "51-03-01", state: "conditional", sourceId: `legal-${version}-annex4-code` }]);
+      assertHeld(result);
+    });
+  }
+}
+
+for (const [name, patch] of [
+  ["PVC", { polymer: "PVC" }],
+  ["nonplastic", { polymer: "steel" }],
+  ["oil mixture", { contamination: "폐유 혼합" }],
+] as const) {
+  test(`${name} H2 candidate cannot claim the plastic waste code`, () => {
+    const result = assessCase(fixture({ ...patch, assessmentDate: "2026-11-13" }));
+    assert.deepEqual(result.candidates.wasteCodes, []);
+  });
 }
 
 test("returns four contract routes without promoting a conditional citation to eligible", async () => {

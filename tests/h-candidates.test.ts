@@ -71,6 +71,10 @@ test("offline CLI preserves legacy evidence and carries synthetic SDK observatio
       assert.equal(legacy.candidates.photoResins, undefined);
     }
     assert.equal(report.samePhotoConditionVariants.length, 3); assert.equal(report.historicalSyntheticBoundaryControl.variants.length, 4);
+    const controls = report.historicalSyntheticBoundaryControl.variants;
+    assert.equal(new Set(controls.map(item => item.transmittedImageSha256)).size, 1);
+    assert.deepEqual(controls.map(item => item.candidates.wasteCodes.length), [1, 0, 0, 0]);
+    assert.deepEqual(controls.map(item => item.decision.state), ["compared", "compared", "needs-review", "needs-review"]);
     assert.deepEqual(report.observationMatrix.map(item => item.scenario), ["matching-reported-resin", "conflicting-resin", "unknown-reported-resin", "unusable-photo"]);
     const expectedResins = [["PP"], ["PET"], ["PET"], []], expectedQuestions = [0, 1, 1, 1];
     for (const [index, item] of report.observationMatrix.entries()) {
