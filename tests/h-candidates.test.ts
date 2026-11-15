@@ -21,8 +21,8 @@ test("H candidate handoff preserves ten explicit inputs, photos, source/rights h
   assert.equal(report.caseCount, 10); assert.equal(report.externalModelCalls, 0);
   assert.equal(report.independentLabels, 0); assert.equal(report.fieldAcceptances, 0);
   assert.deepEqual(report.results.map(row => row.output.decision.state), [
-    "compared", "compared", "needs-review", "needs-review", "needs-review",
-    "needs-review", "needs-review", "needs-review", "needs-information", "needs-information",
+    "compared", "compared", "needs-review", "needs-information", "needs-review",
+    "compared", "compared", "needs-information", "needs-information", "needs-information",
   ]);
 });
 

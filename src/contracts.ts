@@ -193,6 +193,7 @@ export type DecisionResult =
       readonly caseId: string;
       readonly reasons: readonly string[];
       readonly evidence: readonly EvidenceRecord[];
+      readonly preExecutionChecks?: readonly string[];
     }
   | {
       readonly state: "compared";

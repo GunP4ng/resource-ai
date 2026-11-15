@@ -9,7 +9,8 @@ import { createComparisonCalculator } from "./cost.ts";
 import type { CalculationContext } from "./o-calculation.ts";
 import { canonical, date, evidenceIssue, period, requireValid, revision, validateDocuments, ValidationError } from "./o-validation.ts";
 import { parseDecision } from "./o-decision.ts";
-import { recommend, recommendationBlockers } from "./recommendation.ts";
+import { executionChecksFor, recommend, recommendationBlockers } from "./recommendation.ts";
+import { lookupLegalEvidence } from "./evidence.ts";
 
 /** Server-owned supplements only; never deserialize these from model/app input. */
 export interface DomainResources {
@@ -70,15 +71,18 @@ export function createResourceDomain(input: CaseInput, resources: DomainResource
     assess,
     async decide(proposal?: unknown): Promise<DecisionResult> {
       const assessment = assess();
+      // Keep strict route eligibility intact; weak relevance is advisory only for recommendations.
+      const recommendationAssessment = { ...assessment, legal: lookupLegalEvidence(facts, undefined,
+        { ...owned.assessmentOptions, includeWeakContext: true }) };
       const fallback = decideCase(facts, undefined, owned.assessmentOptions, owned.routeReviews, photoObservations);
-      const hold = (reason: string): DecisionResult => ({ state: "needs-review", caseId: facts.caseId,
+      const hold = (...reasons: readonly string[]): DecisionResult => ({ state: "needs-review", caseId: facts.caseId,
         evidence: fallback.evidence,
-        reasons: [...new Set([...(fallback.state === "needs-review" ? fallback.reasons : assessment.questions), reason])] });
+        reasons: [...new Set([...reasons, ...assessment.questions])], preExecutionChecks: executionChecksFor(recommendationAssessment) });
       let result: DecisionResult = fallback;
       try {
-        if (assessment.reviewIssues.length > 0) return hold("route-review-conflict");
-        const blockers = recommendationBlockers(facts, assessment, owned.routeReviews);
-        if (blockers.length > 0) return hold(blockers.join("; "));
+        if (assessment.reviewIssues.length > 0) return hold(...assessment.reviewIssues, "route-review-conflict");
+        const blockers = recommendationBlockers(facts, recommendationAssessment, owned.routeReviews);
+        if (blockers.length > 0) return hold(...blockers);
         if (owned.comparison !== undefined && owned.calculations !== undefined) {
           assertComparisonEvidence(owned.comparison);
         }
@@ -129,7 +133,7 @@ export function createResourceDomain(input: CaseInput, resources: DomainResource
             ] });
         }
         if (assessment.questions.length === 0) {
-          result = recommend(facts, assessment, result.state === "compared" ? result : undefined);
+          result = recommend(facts, recommendationAssessment, result.state === "compared" ? result : undefined);
         } else {
           result = { state: "needs-information", caseId: facts.caseId, questions: assessment.questions, evidence: fallback.evidence };
         }

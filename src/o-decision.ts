@@ -24,7 +24,8 @@ const RecommendationSchema = Type.Object({ routeId: text, rank: Type.Integer({ m
   cost: RecommendationMetricSchema("KRW"), carbon: RecommendationMetricSchema("kgCO2e") });
 export const DecisionSchema = Type.Union([
   Type.Object({ state: Type.Literal("needs-information"), caseId: text, questions: Type.Array(text, { minItems: 1 }), evidence: Type.Array(EvidenceSchema) }),
-  Type.Object({ state: Type.Literal("needs-review"), caseId: text, reasons: Type.Array(text, { minItems: 1 }), evidence: Type.Array(EvidenceSchema) }),
+  Type.Object({ state: Type.Literal("needs-review"), caseId: text, reasons: Type.Array(text, { minItems: 1 }), evidence: Type.Array(EvidenceSchema),
+    preExecutionChecks: Type.Optional(Type.Array(text, { minItems: 1 })) }),
   Type.Object({ state: Type.Literal("compared"), caseId: text, routes: Type.Array(RouteSchema), processors: Type.Array(ProcessorSchema), scenarios: Type.Array(ScenarioSchema), evidence: Type.Array(EvidenceSchema), limitations: strings, humanApproval: Type.Union([Type.Literal("pending"), Type.Literal("approved")]),
     recommendations: Type.Optional(Type.Array(RecommendationSchema, { minItems: 1 })),
     confidence: Type.Optional(Type.Object({ level: Type.Union([Type.Literal("low"), Type.Literal("medium")]), reasons: Type.Array(text, { minItems: 1 }) })),

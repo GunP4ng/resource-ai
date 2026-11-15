@@ -67,6 +67,26 @@ describe("legal evidence lookup", () => {
     expect(result.issues.map((issue) => issue.kind)).toContain("site-specific");
   });
 
+  test("recommendation lookup retains weak relevance but never bypasses source verification", () => {
+    const input = { ...caseInput, process: "결속밴드 절단" };
+    const weak = { ...candidate, processTerms: ["사출"] };
+    const result = lookupLegalEvidence(input, [weak], { includeWeakContext: true });
+    expect(result.evidence).toEqual([record]);
+    expect(result.issues).toEqual([{ kind: "unrelated", sourceId: record.sourceId }]);
+    for (const invalid of [
+      { ...weak, originalVerified: false },
+      { ...weak, claimVerified: false },
+      { ...weak, record: { ...record, sha256: "invalid" } },
+      { ...weak, access: "failed" },
+      { ...weak, record: { ...record, licenseVerified: false } },
+    ] satisfies readonly EvidenceCandidate[]) {
+      const rejected = lookupLegalEvidence(input, [invalid], { includeWeakContext: true });
+      expect(rejected.evidence).toEqual([]);
+      expect(rejected.issues[0]?.kind).not.toBe("unrelated");
+    }
+    expect(lookupLegalEvidence(input, [weak]).evidence).toEqual([]);
+  });
+
   test("keeps unavailable annexes and rights failures in review", () => {
     const result = lookupLegalEvidence(caseInput, [
       { ...candidate, originalVerified: false },

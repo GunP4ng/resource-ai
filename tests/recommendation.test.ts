@@ -4,6 +4,7 @@ import { createResourceDomain } from "../src/domain.ts";
 import { parseDecision } from "../src/o-decision.ts";
 import { syntheticCase, syntheticReviewed } from "./h-fixtures.ts";
 import { renderReport } from "../src/report.ts";
+import { lookupLegalEvidence } from "../src/evidence.ts";
 
 test("complete safe facts produce a public-law conditional recommendation without field resources", async () => {
   const domain = createResourceDomain(syntheticCase);
@@ -62,10 +63,53 @@ test("an explicit designated-waste exclusion is not interpreted as hazardous sus
   assert.equal(result.state, "compared");
 });
 
+test("verified but unrelated public citations remain advisory without granting strict route eligibility", async () => {
+  const input = { ...syntheticCase, process: "결속밴드 절단", polymer: "PET" };
+  const domain = createResourceDomain(input);
+  const result = await domain.decide();
+  assert.equal(result.state, "compared");
+  if (result.state !== "compared") throw new Error(JSON.stringify(result));
+  assert.equal(result.recommendations?.[0]?.grade, "public-conditional");
+  assert.equal(result.recommendations?.[0]?.legalCitations.length, 4);
+  assert.equal(result.confidence?.level, "low");
+  assert.ok(result.confidence?.reasons.some(reason => reason.includes("관련성")));
+  assert.ok(result.preExecutionChecks?.some(check => check.includes("관련성")));
+  for (const requirement of lookupLegalEvidence(input, undefined, { includeWeakContext: true }).reviewRequirements) {
+    assert.ok(result.preExecutionChecks?.includes(requirement), requirement);
+  }
+  assert.equal((await domain.assessRoutes(input)).find(route => route.route === "mechanical-recycling")?.eligibility.state, "unknown");
+});
+
+for (const patch of [
+  { hazardousContact: "unknown" },
+  { contamination: "세척 완료, 이전 내용물·잔류물은 미확인" },
+] as const) {
+  test(`unresolved contact asks for information: ${JSON.stringify(patch)}`, async () => {
+    const result = await createResourceDomain({ ...syntheticCase, process: "사용한 용기 세척·압축", ...patch }).decide();
+    assert.equal(result.state, "needs-information");
+    if (result.state !== "needs-information") throw new Error(JSON.stringify(result));
+    assert.ok(result.questions.some(question => /접촉|이전 내용물/u.test(question)));
+  });
+}
+
+test("hazard holds expose only blocking reasons and put field requirements in execution checks", async () => {
+  const result = await createResourceDomain({ ...syntheticCase, hazardousContact: "yes" }).decide();
+  assert.equal(result.state, "needs-review");
+  if (result.state !== "needs-review") throw new Error(JSON.stringify(result));
+  assert.ok(result.reasons.some(reason => reason.includes("유해물질")));
+  assert.equal(result.reasons.some(reason => /현행 허가|승인 전|처리 공정·생산물|용도·방식/u.test(reason)), false);
+  assert.ok(result.preExecutionChecks?.some(check => check.includes("허가")));
+  assert.ok(result.preExecutionChecks?.some(check => check.includes("승인")));
+  assert.deepEqual(parseDecision(result), result);
+});
+
 for (const [name, patch] of [
   ["hazardous contact", { hazardousContact: "yes" }],
   ["designated waste suspicion", { description: "지정폐기물 의심 자투리" }],
   ["contradictory label", { polymer: "PP (라벨 ABS와 불일치)" }],
+  ["mixed resin", { polymer: "PP+PE" }],
+  ["multilayer resin", { polymer: "PET/PE multilayer" }],
+  ["suspected hazardous contact", { contamination: "유해물질 접촉 의심" }],
   ["conflicting labels reported outside an empty resin field",
     { description: "SYNTHETIC: conflicting labels for one lot, PP versus ABS.", polymer: null, massKg: null }],
 ] as const) {
