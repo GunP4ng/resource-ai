@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "fixture_sha256": "4ebc0a90b8150a033bd3daeb07191bbc2ad2f0bdf5be6310065f53c620ecd69c",
+  "metadata_sha256": "023ab9e288128179674c463912b21584ccc431395ddc7f796057c5bfaa8e3cd5",
+  "upstream": [
+    {
+      "path": "data/reference/keco-price-2026-10.csv",
+      "sha256": "562bf85c2f9a2047649b52d9875da462fdb2ca14be36e21cfd1950ff976dfeb3"
+    },
+    {
+      "path": "data/candidates/oyeonseok-2026-11-10/oys-20261110-001-pet-trim.json",
+      "sha256": "1f1163e501b1ade17ed9207933242a51120bb15584f8e95b6e6d736fe0cd67ff"
+    },
+    {
+      "path": "data/candidates/oyeonseok-2026-11-10/oys-20261110-002-hdpe-parison.json",
+      "sha256": "0b052aeeb9e97a93699267d68662d8c1b1efee32107f2711d7be6fab78764b2c"
+    },
+    {
+      "path": "data/candidates/oyeonseok-2026-11-10/oys-20261110-003-pp-runners.json",
+      "sha256": "6c09027b9a767e917d5b3ffc45a437fd8153ff7b8eec3750ddb9f410eb4403b4"
+    },
+    {
+      "path": "data/candidates/oyeonseok-2026-11-10/manifest.json",
+      "sha256": "95be89c0a5eeae1d7484371d5066e3532226c66d2e1aee54239900316ea3fbd4"
+    }
+  ],
+  "private_evidence": [
+    {
+      "path": "epa-warm-v16-containers.pdf",
+      "sha256": "ec8c9a500a60ab68f3d90552faba835dca606cd34bc5c819dcd0f9885b185e87"
+    },
+    {
+      "path": "wonju-fee-private.html",
+      "sha256": "53b5189bfbef7f8400e4242092492d3ebf307725d18a7ccc8c1c0193413742d1"
+    }
+  ]
+}
