@@ -1,7 +1,10 @@
 import { expect, test } from "bun:test";
 import type { CaseInput } from "../src/contracts.ts";
 import { loadEvidenceRegistry, lookupLegalEvidence } from "../src/evidence.ts";
+import { parseCaseInput } from "../src/input.ts";
 import entries from "../data/sources/evidence-candidates.json" with { type: "json" };
+import hdpe from "../data/candidates/oyeonseok-2026-11-10/oys-20261110-002-hdpe-parison.json" with { type: "json" };
+import ldpe from "../data/candidates/oyeonseok-2026-11-10/oys-20261110-004-ldpe-film.json" with { type: "json" };
 
 const input: CaseInput = {
   caseId: "legal-source-reproduction", description: "실제 법령 조회 재현용 입력; 실제 사업장 사례 아님",
@@ -63,6 +66,35 @@ test("uses the reverified 291947 revision on November 15", () => {
   expect(result.citations.some((item) => item.sourceId === "legal-291947-annex4-code")).toBe(true);
   expect(result.citations.some((item) => item.sourceId.startsWith("legal-290881-"))).toBe(false);
   expect(result.issues.some((item) => item.kind === "currentness-unverified")).toBe(false);
+});
+
+test.each([
+  ["HDPE blow-moulding", hdpe],
+  ["LDPE film extrusion", ldpe],
+] as const)("preserves %s source version and original linkage across the legal boundary", (_name, raw) => {
+  const parsed = parseCaseInput(raw);
+  if (!parsed.ok) throw new Error(JSON.stringify(parsed.issues));
+  for (const [assessmentDate, version, verifiedThrough] of [
+    ["2026-11-10", "290881", "2026-11-14"],
+    ["2026-11-13", "291947", "2026-11-15"],
+  ] as const) {
+    const result = lookupLegalEvidence({ ...parsed.value, assessmentDate });
+    const expected = [
+      `legal-${version}-annex4-code`,
+      `legal-${version}-annex4-2-r3-3`,
+      `legal-${version}-annex4-3-types`,
+    ];
+    expect(new Set(result.citations.map(citation => citation.sourceId).filter(id => expected.includes(id))))
+      .toEqual(new Set(expected));
+    for (const sourceId of expected) {
+      const citation = result.citations.find(item => item.sourceId === sourceId);
+      expect(citation?.verifiedThrough).toBe(verifiedThrough);
+      expect(citation?.originalSha256).toMatch(/^[a-f0-9]{64}$/);
+      expect(citation?.locator).toBeTruthy();
+    }
+    expect(result.citations.some(item => item.sourceId.startsWith(`legal-${version === "290881" ? "291947" : "290881"}-`))).toBe(false);
+    expect(result.issues).toEqual([]);
+  }
 });
 
 test("keeps dates after the 291947 verification cutoff under review", () => {

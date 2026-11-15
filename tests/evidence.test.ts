@@ -87,6 +87,21 @@ describe("legal evidence lookup", () => {
     expect(lookupLegalEvidence(input, [weak]).evidence).toEqual([]);
   });
 
+  for (const [field, value] of [
+    ["polymer", "PVC"],
+    ["polymer", "steel"],
+    ["contamination", "폐유 혼합"],
+    ["process", "사출 아님"],
+  ] as const) {
+    test(`weak lookup cannot cite a contradicted ${field}: ${value}`, () => {
+      const input = { ...caseInput, [field]: value, hazardousContact: "no" as const };
+      const result = lookupLegalEvidence(input, [candidate], { includeWeakContext: true });
+      expect(result.evidence).toEqual([]);
+      expect(result.citations).toEqual([]);
+      expect(result.issues[0]?.kind).toBe(field === "process" ? "context-ambiguous" : "unrelated");
+    });
+  }
+
   test("keeps unavailable annexes and rights failures in review", () => {
     const result = lookupLegalEvidence(caseInput, [
       { ...candidate, originalVerified: false },

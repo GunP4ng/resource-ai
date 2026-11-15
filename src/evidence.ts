@@ -185,6 +185,7 @@ export function lookupLegalEvidence(input: CaseInput, candidates?: readonly Evid
     const context = [contextMatch(input.process, candidate.processTerms, "process"),
       contextMatch(input.polymer, candidate.polymerTerms, "polymer"),
       contextMatch(input.contamination, candidate.contaminationTerms, "contamination")];
+    const [process, polymer, contamination] = context;
     const contextIssue = context.includes("unrelated") ? "unrelated"
       : context.includes("ambiguous") ? "context-ambiguous"
       : context.includes("missing") ? "context-missing" : null;
@@ -194,8 +195,9 @@ export function lookupLegalEvidence(input: CaseInput, candidates?: readonly Evid
     const issue = options?.includeWeakContext ? validityIssue ?? contextIssue : contextIssue ?? validityIssue;
     if (issue !== null) {
       issues.push({ kind: issue, sourceId: candidate.record.sourceId });
-      // Source validity is checked before relevance; advisory citations never waive it.
-      if (!options?.includeWeakContext || (issue !== "unrelated" && issue !== "context-ambiguous")) continue;
+      // Only an unrelated generating process can be advisory; the material and condition must match.
+      if (!options?.includeWeakContext || issue !== "unrelated" || process !== "unrelated"
+        || polymer !== "match" || contamination !== "match") continue;
     }
     evidence.set(candidate.record.sourceId, candidate.record);
     for (const requirement of candidate.reviewRequirements ?? []) reviewRequirements.add(requirement);
