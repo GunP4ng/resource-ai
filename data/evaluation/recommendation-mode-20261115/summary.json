@@ -1,0 +1,1370 @@
+{
+  "runId": "f07863f8-5939-4445-8e4b-8a0382e3e68b",
+  "gitSha": "74d0d07b7d7f943976583e353dd2846c52d4e485",
+  "arms": {
+    "A": {
+      "rows": 18,
+      "success": 18,
+      "failures": 0,
+      "calls": 18,
+      "requestIds": 18,
+      "uniqueRequestIds": 18,
+      "tokens": {
+        "input": 4562,
+        "output": 5015,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "total": 9577
+      }
+    },
+    "B": {
+      "rows": 18,
+      "success": 18,
+      "failures": 0,
+      "calls": 18,
+      "requestIds": 18,
+      "uniqueRequestIds": 18,
+      "tokens": {
+        "input": 38776,
+        "output": 8760,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "total": 47536
+      }
+    },
+    "C": {
+      "rows": 18,
+      "success": 18,
+      "failures": 0,
+      "calls": 36,
+      "requestIds": 36,
+      "uniqueRequestIds": 36,
+      "tokens": {
+        "input": 111144,
+        "output": 1846,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "total": 112990
+      }
+    }
+  },
+  "before": {
+    "compared": 0,
+    "needs-review": 15,
+    "needs-information": 3
+  },
+  "after": {
+    "compared": 5,
+    "needs-review": 9,
+    "needs-information": 4
+  },
+  "deltas": [
+    {
+      "caseId": "HYEOB-20261112-001",
+      "before": "needs-review",
+      "after": "compared",
+      "effectiveInputEqual": true,
+      "inputEqual": true,
+      "promptEqual": true,
+      "runnerEqual": true,
+      "sourceEqual": false,
+      "reasons": [],
+      "questions": []
+    },
+    {
+      "caseId": "HYEOB-20261112-002",
+      "before": "needs-review",
+      "after": "compared",
+      "effectiveInputEqual": true,
+      "inputEqual": true,
+      "promptEqual": true,
+      "runnerEqual": true,
+      "sourceEqual": false,
+      "reasons": [],
+      "questions": []
+    },
+    {
+      "caseId": "HYEOB-20261112-003",
+      "before": "needs-review",
+      "after": "needs-review",
+      "effectiveInputEqual": true,
+      "inputEqual": true,
+      "promptEqual": true,
+      "runnerEqual": true,
+      "sourceEqual": false,
+      "reasons": [
+        "일반 조문은 코드·처리경로 적합성의 개별 근거가 아니다.",
+        "재활용환경성평가 예외·금지 및 제한·별표 5의4 준수사항·현행 허가를 확인해야 한다.",
+        "용도·이전 신고 및 분류 변경 이력 미입력: 부칙 제18호 제3조 경과조치 적용은 확인되지 않았다.",
+        "법령 근거 확인 필요: unrelated (legal-291947-annex4-code)",
+        "법령 근거 확인 필요: unrelated (legal-291947-annex4-2-r3-3)",
+        "법령 근거 확인 필요: unrelated (legal-291947-annex4-3-types)",
+        "혼합·다층 또는 라벨 불일치가 보고되었습니다. 층별·구성 수지의 재질 명세, 라벨 확인 자료와 수지별 분리 가능 여부를 확인할 수 있나요?",
+        "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다.",
+        "현장 담당자의 검토와 승인 전에는 반출·계약·처리를 실행할 수 없습니다."
+      ],
+      "questions": []
+    },
+    {
+      "caseId": "HYEOB-20261112-004",
+      "before": "needs-review",
+      "after": "needs-review",
+      "effectiveInputEqual": true,
+      "inputEqual": true,
+      "promptEqual": true,
+      "runnerEqual": true,
+      "sourceEqual": false,
+      "reasons": [
+        "일반 조문은 코드·처리경로 적합성의 개별 근거가 아니다.",
+        "재활용환경성평가 예외·금지 및 제한·별표 5의4 준수사항·현행 허가를 확인해야 한다.",
+        "용도·이전 신고 및 분류 변경 이력 미입력: 부칙 제18호 제3조 경과조치 적용은 확인되지 않았다.",
+        "법령 근거 확인 필요: unrelated (legal-291947-annex4-code)",
+        "법령 근거 확인 필요: unrelated (legal-291947-annex4-2-r3-3)",
+        "법령 근거 확인 필요: unrelated (legal-291947-annex4-3-types)",
+        "오염·접촉 이력에 미확인 내용이 있습니다. 이전 내용물·접촉 물질명과 SDS 등 확인 자료, 잔류물·세척 확인 자료가 있나요? 확인 전에는 세척 여부만으로 유해물질 접촉이 없었다고 확정하지 않습니다.",
+        "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다.",
+        "현장 담당자의 검토와 승인 전에는 반출·계약·처리를 실행할 수 없습니다."
+      ],
+      "questions": []
+    },
+    {
+      "caseId": "HYEOB-20261112-005",
+      "before": "needs-review",
+      "after": "needs-review",
+      "effectiveInputEqual": true,
+      "inputEqual": true,
+      "promptEqual": true,
+      "runnerEqual": true,
+      "sourceEqual": false,
+      "reasons": [
+        "일반 조문은 코드·처리경로 적합성의 개별 근거가 아니다.",
+        "재활용환경성평가 예외·금지 및 제한·별표 5의4 준수사항·현행 허가를 확인해야 한다.",
+        "용도·이전 신고 및 분류 변경 이력 미입력: 부칙 제18호 제3조 경과조치 적용은 확인되지 않았다.",
+        "법령 근거 확인 필요: unrelated (legal-291947-annex4-code)",
+        "법령 근거 확인 필요: unrelated (legal-291947-annex4-2-r3-3)",
+        "법령 근거 확인 필요: unrelated (legal-291947-annex4-3-types)",
+        "유해물질과 접촉했는지 확인할 수 있나요?",
+        "확인된 질량은 몇 kg인가요?",
+        "폐플라스틱이 발생한 지역은 어디인가요?",
+        "혼합·다층 또는 라벨 불일치가 보고되었습니다. 층별·구성 수지의 재질 명세, 라벨 확인 자료와 수지별 분리 가능 여부를 확인할 수 있나요?",
+        "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다.",
+        "현장 담당자의 검토와 승인 전에는 반출·계약·처리를 실행할 수 없습니다."
+      ],
+      "questions": []
+    },
+    {
+      "caseId": "HYEOB-20261112-006",
+      "before": "needs-review",
+      "after": "needs-review",
+      "effectiveInputEqual": true,
+      "inputEqual": true,
+      "promptEqual": true,
+      "runnerEqual": true,
+      "sourceEqual": false,
+      "reasons": [
+        "일반 조문은 코드·처리경로 적합성의 개별 근거가 아니다.",
+        "재활용환경성평가 예외·금지 및 제한·별표 5의4 준수사항·현행 허가를 확인해야 한다.",
+        "용도·이전 신고 및 분류 변경 이력 미입력: 부칙 제18호 제3조 경과조치 적용은 확인되지 않았다.",
+        "법령 근거 확인 필요: unrelated (legal-291947-annex4-code)",
+        "법령 근거 확인 필요: unrelated (legal-291947-annex4-2-r3-3)",
+        "법령 근거 확인 필요: unrelated (legal-291947-annex4-3-types)",
+        "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다.",
+        "현장 담당자의 검토와 승인 전에는 반출·계약·처리를 실행할 수 없습니다.",
+        "경로별 판단에 필요한 공개 법령 인용 부족"
+      ],
+      "questions": []
+    },
+    {
+      "caseId": "HYEOB-20261112-007",
+      "before": "needs-review",
+      "after": "needs-review",
+      "effectiveInputEqual": true,
+      "inputEqual": true,
+      "promptEqual": true,
+      "runnerEqual": true,
+      "sourceEqual": false,
+      "reasons": [
+        "일반 조문은 코드·처리경로 적합성의 개별 근거가 아니다.",
+        "재활용환경성평가 예외·금지 및 제한·별표 5의4 준수사항·현행 허가를 확인해야 한다.",
+        "용도·이전 신고 및 분류 변경 이력 미입력: 부칙 제18호 제3조 경과조치 적용은 확인되지 않았다.",
+        "법령 근거 확인 필요: unrelated (legal-291947-annex4-code)",
+        "법령 근거 확인 필요: unrelated (legal-291947-annex4-2-r3-3)",
+        "법령 근거 확인 필요: unrelated (legal-291947-annex4-3-types)",
+        "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다.",
+        "현장 담당자의 검토와 승인 전에는 반출·계약·처리를 실행할 수 없습니다.",
+        "경로별 판단에 필요한 공개 법령 인용 부족"
+      ],
+      "questions": []
+    },
+    {
+      "caseId": "HYEOB-20261112-008",
+      "before": "needs-review",
+      "after": "needs-review",
+      "effectiveInputEqual": true,
+      "inputEqual": true,
+      "promptEqual": true,
+      "runnerEqual": true,
+      "sourceEqual": false,
+      "reasons": [
+        "일반 조문은 코드·처리경로 적합성의 개별 근거가 아니다.",
+        "재활용환경성평가 예외·금지 및 제한·별표 5의4 준수사항·현행 허가를 확인해야 한다.",
+        "용도·이전 신고 및 분류 변경 이력 미입력: 부칙 제18호 제3조 경과조치 적용은 확인되지 않았다.",
+        "법령 근거 확인 필요: unrelated (legal-291947-annex4-code)",
+        "법령 근거 확인 필요: unrelated (legal-291947-annex4-2-r3-3)",
+        "법령 근거 확인 필요: unrelated (legal-291947-annex4-3-types)",
+        "오염·접촉 이력에 미확인 내용이 있습니다. 이전 내용물·접촉 물질명과 SDS 등 확인 자료, 잔류물·세척 확인 자료가 있나요? 확인 전에는 세척 여부만으로 유해물질 접촉이 없었다고 확정하지 않습니다.",
+        "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다.",
+        "현장 담당자의 검토와 승인 전에는 반출·계약·처리를 실행할 수 없습니다."
+      ],
+      "questions": []
+    },
+    {
+      "caseId": "HYEOB-20261112-009",
+      "before": "needs-information",
+      "after": "needs-information",
+      "effectiveInputEqual": true,
+      "inputEqual": true,
+      "promptEqual": true,
+      "runnerEqual": true,
+      "sourceEqual": false,
+      "reasons": [],
+      "questions": [
+        "폐플라스틱이 발생한 공정 또는 발생원은 무엇인가요?",
+        "확인된 수지 종류와 이를 확인한 자료(라벨·재질 명세 등)가 있나요?",
+        "오염이나 이물질이 있나요? 확인된 상태를 알려 주세요.",
+        "유해물질과 접촉했는지 확인할 수 있나요?",
+        "확인된 질량은 몇 kg인가요?",
+        "폐플라스틱이 발생한 지역은 어디인가요?"
+      ]
+    },
+    {
+      "caseId": "HYEOB-20261112-010",
+      "before": "needs-information",
+      "after": "needs-information",
+      "effectiveInputEqual": true,
+      "inputEqual": true,
+      "promptEqual": true,
+      "runnerEqual": true,
+      "sourceEqual": false,
+      "reasons": [],
+      "questions": [
+        "폐플라스틱이 발생한 공정 또는 발생원은 무엇인가요?",
+        "확인된 수지 종류와 이를 확인한 자료(라벨·재질 명세 등)가 있나요?",
+        "오염이나 이물질이 있나요? 확인된 상태를 알려 주세요.",
+        "유해물질과 접촉했는지 확인할 수 있나요?",
+        "확인된 질량은 몇 kg인가요?",
+        "폐플라스틱이 발생한 지역은 어디인가요?"
+      ]
+    },
+    {
+      "caseId": "OYS-20261110-001",
+      "before": "needs-review",
+      "after": "compared",
+      "effectiveInputEqual": true,
+      "inputEqual": true,
+      "promptEqual": true,
+      "runnerEqual": true,
+      "sourceEqual": false,
+      "reasons": [],
+      "questions": []
+    },
+    {
+      "caseId": "OYS-20261110-002",
+      "before": "needs-review",
+      "after": "compared",
+      "effectiveInputEqual": true,
+      "inputEqual": true,
+      "promptEqual": true,
+      "runnerEqual": true,
+      "sourceEqual": false,
+      "reasons": [],
+      "questions": []
+    },
+    {
+      "caseId": "OYS-20261110-003",
+      "before": "needs-information",
+      "after": "needs-information",
+      "effectiveInputEqual": true,
+      "inputEqual": true,
+      "promptEqual": true,
+      "runnerEqual": true,
+      "sourceEqual": false,
+      "reasons": [],
+      "questions": [
+        "확인된 질량은 몇 kg인가요?"
+      ]
+    },
+    {
+      "caseId": "OYS-20261110-004",
+      "before": "needs-review",
+      "after": "compared",
+      "effectiveInputEqual": true,
+      "inputEqual": true,
+      "promptEqual": true,
+      "runnerEqual": true,
+      "sourceEqual": false,
+      "reasons": [],
+      "questions": []
+    },
+    {
+      "caseId": "OYS-20261110-006",
+      "before": "needs-review",
+      "after": "needs-review",
+      "effectiveInputEqual": true,
+      "inputEqual": true,
+      "promptEqual": true,
+      "runnerEqual": true,
+      "sourceEqual": false,
+      "reasons": [
+        "일반 조문은 코드·처리경로 적합성의 개별 근거가 아니다.",
+        "재활용환경성평가 예외·금지 및 제한·별표 5의4 준수사항·현행 허가를 확인해야 한다.",
+        "용도·이전 신고 및 분류 변경 이력 미입력: 부칙 제18호 제3조 경과조치 적용은 확인되지 않았다.",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-code)",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-2-r3-3)",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-3-types)",
+        "확인된 수지 종류와 이를 확인한 자료(라벨·재질 명세 등)가 있나요?",
+        "오염이나 이물질이 있나요? 확인된 상태를 알려 주세요.",
+        "유해물질과 접촉했는지 확인할 수 있나요?",
+        "확인된 질량은 몇 kg인가요?",
+        "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다.",
+        "현장 담당자의 검토와 승인 전에는 반출·계약·처리를 실행할 수 없습니다.",
+        "입력 자체 모순 확인 필요"
+      ],
+      "questions": []
+    },
+    {
+      "caseId": "OYS-20261110-008",
+      "before": "needs-review",
+      "after": "needs-review",
+      "effectiveInputEqual": true,
+      "inputEqual": true,
+      "promptEqual": true,
+      "runnerEqual": true,
+      "sourceEqual": false,
+      "reasons": [
+        "유해물질 접촉이 보고되었습니다. 접촉 물질·시험 자료와 지정폐기물 해당 여부를 별도 검토해야 합니다.",
+        "일반 조문은 코드·처리경로 적합성의 개별 근거가 아니다.",
+        "재활용환경성평가 예외·금지 및 제한·별표 5의4 준수사항·현행 허가를 확인해야 한다.",
+        "용도·이전 신고 및 분류 변경 이력 미입력: 부칙 제18호 제3조 경과조치 적용은 확인되지 않았다.",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-code)",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-2-r3-3)",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-3-types)",
+        "확인된 질량은 몇 kg인가요?",
+        "오염·접촉 이력에 미확인 내용이 있습니다. 이전 내용물·접촉 물질명과 SDS 등 확인 자료, 잔류물·세척 확인 자료가 있나요? 확인 전에는 세척 여부만으로 유해물질 접촉이 없었다고 확정하지 않습니다.",
+        "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다.",
+        "현장 담당자의 검토와 승인 전에는 반출·계약·처리를 실행할 수 없습니다.",
+        "유해물질 접촉·지정폐기물 해당 여부 검토 필요; 오염·접촉 이력에 미확인 내용이 있습니다. 이전 내용물·접촉 물질명과 SDS 등 확인 자료, 잔류물·세척 확인 자료가 있나요? 확인 전에는 세척 여부만으로 유해물질 접촉이 없었다고 확정하지 않습니다."
+      ],
+      "questions": []
+    },
+    {
+      "caseId": "OYS-20261110-009",
+      "before": "needs-review",
+      "after": "needs-review",
+      "effectiveInputEqual": true,
+      "inputEqual": true,
+      "promptEqual": true,
+      "runnerEqual": true,
+      "sourceEqual": false,
+      "reasons": [
+        "일반 조문은 코드·처리경로 적합성의 개별 근거가 아니다.",
+        "재활용환경성평가 예외·금지 및 제한·별표 5의4 준수사항·현행 허가를 확인해야 한다.",
+        "용도·이전 신고 및 분류 변경 이력 미입력: 부칙 제18호 제3조 경과조치 적용은 확인되지 않았다.",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-code)",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-2-r3-3)",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-3-types)",
+        "유해물질과 접촉했는지 확인할 수 있나요?",
+        "오염·접촉 이력에 미확인 내용이 있습니다. 이전 내용물·접촉 물질명과 SDS 등 확인 자료, 잔류물·세척 확인 자료가 있나요? 확인 전에는 세척 여부만으로 유해물질 접촉이 없었다고 확정하지 않습니다.",
+        "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다.",
+        "현장 담당자의 검토와 승인 전에는 반출·계약·처리를 실행할 수 없습니다."
+      ],
+      "questions": []
+    },
+    {
+      "caseId": "OYS-20261110-010",
+      "before": "needs-review",
+      "after": "needs-information",
+      "effectiveInputEqual": true,
+      "inputEqual": true,
+      "promptEqual": true,
+      "runnerEqual": true,
+      "sourceEqual": false,
+      "reasons": [],
+      "questions": [
+        "오염이나 이물질이 있나요? 확인된 상태를 알려 주세요.",
+        "유해물질과 접촉했는지 확인할 수 있나요?",
+        "확인된 질량은 몇 kg인가요?",
+        "폐플라스틱이 발생한 지역은 어디인가요?"
+      ]
+    }
+  ],
+  "command": "RESOURCE_MODEL_RUNNER=subscription RESOURCE_MODEL_ID=gpt-6-sol bun scripts/eval-development.ts --cases data/evaluation/development.json --out /home/gunp4ng/working/resource-recommend-mode-20261115/evidence/runs --max-cases 18 --max-calls 90 --timeout-ms 60000",
+  "exitCode": 0,
+  "cases": 18,
+  "calls": 72,
+  "failures": 0,
+  "rawDirectory": "/home/gunp4ng/working/resource-recommend-mode-20261115/evidence/runs/f07863f8-5939-4445-8e4b-8a0382e3e68b",
+  "sourceVersion": "2e703c95d9c33a3807edf75d0649eee6e2f7a3f6008bd90e9d41e71171de39b0",
+  "sourceVersions": {
+    "evidenceCandidates": "2d47e674f4c3ce2c5738d1724d0eca6633bfbdfe15b95e87a3fd9d946bf5af5a",
+    "manifest": "fe8c9b88a97f8059ffd16220785c5c0eda61ce86c267809caf78985d842f1fc7"
+  },
+  "baseline": {
+    "runId": "916d828b-b52e-4b84-9548-f4087fd30196",
+    "path": "/home/gunp4ng/working/resource-hold-fix-20261115/repo/data/evaluation/hold-fix-20261115/C.jsonl",
+    "originalSha256": "d093227e7ba72930a04f62af0980daef789e9b6d3973b6c985012f303bc88821",
+    "projectionSha256": "7475f066d4dda4f5c00b56ffea21a4a0fd8dd097514fbce960ecf7098296875d"
+  },
+  "afterProjectionSha256": "410b4396da9015145dba8ff922b8c1ee5777199128b86ee8dbb6881c903c27ff",
+  "projection": {
+    "omittedFields": [
+      "rawOutput"
+    ],
+    "reason": "Only model-internal raw response metadata omitted; effective inputs, gate outputs, hashes, request IDs, usage and failures retained. Complete originals remain immutable locally."
+  },
+  "requestEvidence": {
+    "A": [
+      {
+        "caseId": "HYEOB-20261112-001",
+        "outcome": "success",
+        "providerRequestIds": [
+          "845a84f0-4211-4e35-a858-0b2aa7e4526b"
+        ],
+        "tokenUsage": {
+          "input": 244,
+          "output": 370,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "total": 614
+        },
+        "calls": 1,
+        "errorCategory": null
+      },
+      {
+        "caseId": "HYEOB-20261112-002",
+        "outcome": "success",
+        "providerRequestIds": [
+          "46946a86-293b-469e-8f28-67294758ab4c"
+        ],
+        "tokenUsage": {
+          "input": 237,
+          "output": 339,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "total": 576
+        },
+        "calls": 1,
+        "errorCategory": null
+      },
+      {
+        "caseId": "HYEOB-20261112-003",
+        "outcome": "success",
+        "providerRequestIds": [
+          "be8cb093-6bff-4bc6-b5e4-4d7770b4b7e4"
+        ],
+        "tokenUsage": {
+          "input": 249,
+          "output": 262,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "total": 511
+        },
+        "calls": 1,
+        "errorCategory": null
+      },
+      {
+        "caseId": "HYEOB-20261112-004",
+        "outcome": "success",
+        "providerRequestIds": [
+          "6f280dbb-fd4b-4d6f-96ab-1d22530f41b4"
+        ],
+        "tokenUsage": {
+          "input": 256,
+          "output": 268,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "total": 524
+        },
+        "calls": 1,
+        "errorCategory": null
+      },
+      {
+        "caseId": "HYEOB-20261112-005",
+        "outcome": "success",
+        "providerRequestIds": [
+          "da1b9fbb-0b84-4d71-96f2-6284211f5cee"
+        ],
+        "tokenUsage": {
+          "input": 256,
+          "output": 311,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "total": 567
+        },
+        "calls": 1,
+        "errorCategory": null
+      },
+      {
+        "caseId": "HYEOB-20261112-006",
+        "outcome": "success",
+        "providerRequestIds": [
+          "f8bc07c3-6ad4-4a41-85e9-1fdff453f982"
+        ],
+        "tokenUsage": {
+          "input": 244,
+          "output": 371,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "total": 615
+        },
+        "calls": 1,
+        "errorCategory": null
+      },
+      {
+        "caseId": "HYEOB-20261112-007",
+        "outcome": "success",
+        "providerRequestIds": [
+          "f5f9e348-5af6-4e40-a7d0-df5c98003d0a"
+        ],
+        "tokenUsage": {
+          "input": 245,
+          "output": 335,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "total": 580
+        },
+        "calls": 1,
+        "errorCategory": null
+      },
+      {
+        "caseId": "HYEOB-20261112-008",
+        "outcome": "success",
+        "providerRequestIds": [
+          "bc59f370-3365-4248-8209-0ad0430be067"
+        ],
+        "tokenUsage": {
+          "input": 255,
+          "output": 358,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "total": 613
+        },
+        "calls": 1,
+        "errorCategory": null
+      },
+      {
+        "caseId": "HYEOB-20261112-009",
+        "outcome": "success",
+        "providerRequestIds": [
+          "4116c1a3-18b8-4523-bbbb-7f7e4cfa3d9c"
+        ],
+        "tokenUsage": {
+          "input": 237,
+          "output": 258,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "total": 495
+        },
+        "calls": 1,
+        "errorCategory": null
+      },
+      {
+        "caseId": "HYEOB-20261112-010",
+        "outcome": "success",
+        "providerRequestIds": [
+          "adce30a8-fce1-4055-acf0-45d3dffd2dc4"
+        ],
+        "tokenUsage": {
+          "input": 274,
+          "output": 264,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "total": 538
+        },
+        "calls": 1,
+        "errorCategory": null
+      },
+      {
+        "caseId": "OYS-20261110-001",
+        "outcome": "success",
+        "providerRequestIds": [
+          "f905c34c-d5fb-4492-8e67-c7cc43cc1566"
+        ],
+        "tokenUsage": {
+          "input": 251,
+          "output": 215,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "total": 466
+        },
+        "calls": 1,
+        "errorCategory": null
+      },
+      {
+        "caseId": "OYS-20261110-002",
+        "outcome": "success",
+        "providerRequestIds": [
+          "3b6b494b-4c3f-4b8a-aa5e-79baf3d3cd85"
+        ],
+        "tokenUsage": {
+          "input": 256,
+          "output": 265,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "total": 521
+        },
+        "calls": 1,
+        "errorCategory": null
+      },
+      {
+        "caseId": "OYS-20261110-003",
+        "outcome": "success",
+        "providerRequestIds": [
+          "a144e69a-e303-47ea-b73e-3f4a966af54d"
+        ],
+        "tokenUsage": {
+          "input": 242,
+          "output": 230,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "total": 472
+        },
+        "calls": 1,
+        "errorCategory": null
+      },
+      {
+        "caseId": "OYS-20261110-004",
+        "outcome": "success",
+        "providerRequestIds": [
+          "e51e45c3-2e2d-4036-a10b-ef97922793d7"
+        ],
+        "tokenUsage": {
+          "input": 254,
+          "output": 262,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "total": 516
+        },
+        "calls": 1,
+        "errorCategory": null
+      },
+      {
+        "caseId": "OYS-20261110-006",
+        "outcome": "success",
+        "providerRequestIds": [
+          "23140f9b-62e3-4f34-a7e3-cc4609b60a13"
+        ],
+        "tokenUsage": {
+          "input": 251,
+          "output": 253,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "total": 504
+        },
+        "calls": 1,
+        "errorCategory": null
+      },
+      {
+        "caseId": "OYS-20261110-008",
+        "outcome": "success",
+        "providerRequestIds": [
+          "83427d36-4d9d-486b-9013-87b64fe354ff"
+        ],
+        "tokenUsage": {
+          "input": 264,
+          "output": 222,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "total": 486
+        },
+        "calls": 1,
+        "errorCategory": null
+      },
+      {
+        "caseId": "OYS-20261110-009",
+        "outcome": "success",
+        "providerRequestIds": [
+          "4c39242c-0c6a-4db9-861d-61c812caaa72"
+        ],
+        "tokenUsage": {
+          "input": 282,
+          "output": 230,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "total": 512
+        },
+        "calls": 1,
+        "errorCategory": null
+      },
+      {
+        "caseId": "OYS-20261110-010",
+        "outcome": "success",
+        "providerRequestIds": [
+          "6504d4be-f391-49d0-a9f9-5d404bc318ac"
+        ],
+        "tokenUsage": {
+          "input": 265,
+          "output": 202,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "total": 467
+        },
+        "calls": 1,
+        "errorCategory": null
+      }
+    ],
+    "B": [
+      {
+        "caseId": "HYEOB-20261112-001",
+        "outcome": "success",
+        "providerRequestIds": [
+          "737c7295-31e9-4694-8711-7a47edf14351"
+        ],
+        "tokenUsage": {
+          "input": 3382,
+          "output": 522,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "total": 3904
+        },
+        "calls": 1,
+        "errorCategory": null
+      },
+      {
+        "caseId": "HYEOB-20261112-002",
+        "outcome": "success",
+        "providerRequestIds": [
+          "6a22fa58-6f05-47c0-8500-6f3c23ed66fc"
+        ],
+        "tokenUsage": {
+          "input": 3378,
+          "output": 621,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "total": 3999
+        },
+        "calls": 1,
+        "errorCategory": null
+      },
+      {
+        "caseId": "HYEOB-20261112-003",
+        "outcome": "success",
+        "providerRequestIds": [
+          "841e2e15-8b79-414d-9c6b-a001941feb8e"
+        ],
+        "tokenUsage": {
+          "input": 1514,
+          "output": 443,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "total": 1957
+        },
+        "calls": 1,
+        "errorCategory": null
+      },
+      {
+        "caseId": "HYEOB-20261112-004",
+        "outcome": "success",
+        "providerRequestIds": [
+          "f5c80588-55dc-4d71-a6f7-1c7162ba1e8c"
+        ],
+        "tokenUsage": {
+          "input": 1520,
+          "output": 493,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "total": 2013
+        },
+        "calls": 1,
+        "errorCategory": null
+      },
+      {
+        "caseId": "HYEOB-20261112-005",
+        "outcome": "success",
+        "providerRequestIds": [
+          "6881a088-2539-4912-9c3e-65ce381770bd"
+        ],
+        "tokenUsage": {
+          "input": 1520,
+          "output": 484,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "total": 2004
+        },
+        "calls": 1,
+        "errorCategory": null
+      },
+      {
+        "caseId": "HYEOB-20261112-006",
+        "outcome": "success",
+        "providerRequestIds": [
+          "302e1197-5574-4f3b-9382-dcfe774204a4"
+        ],
+        "tokenUsage": {
+          "input": 1507,
+          "output": 509,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "total": 2016
+        },
+        "calls": 1,
+        "errorCategory": null
+      },
+      {
+        "caseId": "HYEOB-20261112-007",
+        "outcome": "success",
+        "providerRequestIds": [
+          "1d415bfb-142b-408a-91a1-7547ba70c730"
+        ],
+        "tokenUsage": {
+          "input": 1510,
+          "output": 475,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "total": 1985
+        },
+        "calls": 1,
+        "errorCategory": null
+      },
+      {
+        "caseId": "HYEOB-20261112-008",
+        "outcome": "success",
+        "providerRequestIds": [
+          "3332da64-cb84-4f80-a6d6-6902003cd244"
+        ],
+        "tokenUsage": {
+          "input": 1520,
+          "output": 468,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "total": 1988
+        },
+        "calls": 1,
+        "errorCategory": null
+      },
+      {
+        "caseId": "HYEOB-20261112-009",
+        "outcome": "success",
+        "providerRequestIds": [
+          "3a6f58b8-b14a-4d49-842e-13fbdfe9e961"
+        ],
+        "tokenUsage": {
+          "input": 1505,
+          "output": 468,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "total": 1973
+        },
+        "calls": 1,
+        "errorCategory": null
+      },
+      {
+        "caseId": "HYEOB-20261112-010",
+        "outcome": "success",
+        "providerRequestIds": [
+          "1b79c8a4-87bb-4052-b0c7-e132e1cd4c60"
+        ],
+        "tokenUsage": {
+          "input": 1540,
+          "output": 442,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "total": 1982
+        },
+        "calls": 1,
+        "errorCategory": null
+      },
+      {
+        "caseId": "OYS-20261110-001",
+        "outcome": "success",
+        "providerRequestIds": [
+          "9805b00a-140a-41cd-b1d2-ecbf975ccc16"
+        ],
+        "tokenUsage": {
+          "input": 3407,
+          "output": 588,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "total": 3995
+        },
+        "calls": 1,
+        "errorCategory": null
+      },
+      {
+        "caseId": "OYS-20261110-002",
+        "outcome": "success",
+        "providerRequestIds": [
+          "88558e04-bc8c-443e-90ef-e65709bfcc78"
+        ],
+        "tokenUsage": {
+          "input": 3413,
+          "output": 443,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "total": 3856
+        },
+        "calls": 1,
+        "errorCategory": null
+      },
+      {
+        "caseId": "OYS-20261110-003",
+        "outcome": "success",
+        "providerRequestIds": [
+          "a2873fef-665a-4684-a67d-67ab10551d1f"
+        ],
+        "tokenUsage": {
+          "input": 3397,
+          "output": 598,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "total": 3995
+        },
+        "calls": 1,
+        "errorCategory": null
+      },
+      {
+        "caseId": "OYS-20261110-004",
+        "outcome": "success",
+        "providerRequestIds": [
+          "bc23fcbd-f9ea-419e-a246-cc49bf50bef9"
+        ],
+        "tokenUsage": {
+          "input": 3410,
+          "output": 440,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "total": 3850
+        },
+        "calls": 1,
+        "errorCategory": null
+      },
+      {
+        "caseId": "OYS-20261110-006",
+        "outcome": "success",
+        "providerRequestIds": [
+          "52fea54c-8010-4c36-a627-9da3aec83483"
+        ],
+        "tokenUsage": {
+          "input": 1551,
+          "output": 508,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "total": 2059
+        },
+        "calls": 1,
+        "errorCategory": null
+      },
+      {
+        "caseId": "OYS-20261110-008",
+        "outcome": "success",
+        "providerRequestIds": [
+          "aaf08bf3-6827-445f-a630-46110b794365"
+        ],
+        "tokenUsage": {
+          "input": 1561,
+          "output": 406,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "total": 1967
+        },
+        "calls": 1,
+        "errorCategory": null
+      },
+      {
+        "caseId": "OYS-20261110-009",
+        "outcome": "success",
+        "providerRequestIds": [
+          "2484a084-89b5-435a-a493-1c47085874c6"
+        ],
+        "tokenUsage": {
+          "input": 1579,
+          "output": 435,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "total": 2014
+        },
+        "calls": 1,
+        "errorCategory": null
+      },
+      {
+        "caseId": "OYS-20261110-010",
+        "outcome": "success",
+        "providerRequestIds": [
+          "a7794c32-d5ce-43ed-a69a-a6f0134a096c"
+        ],
+        "tokenUsage": {
+          "input": 1562,
+          "output": 417,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "total": 1979
+        },
+        "calls": 1,
+        "errorCategory": null
+      }
+    ],
+    "C": [
+      {
+        "caseId": "HYEOB-20261112-001",
+        "outcome": "success",
+        "providerRequestIds": [
+          "384149a0-0c94-48f3-95a3-b452ab5d16a9",
+          "c03ef4be-c628-4fe6-9423-324e28274352"
+        ],
+        "tokenUsage": {
+          "input": 8722,
+          "output": 104,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "total": 8826
+        },
+        "calls": 2,
+        "errorCategory": null
+      },
+      {
+        "caseId": "HYEOB-20261112-002",
+        "outcome": "success",
+        "providerRequestIds": [
+          "ed1f0359-2711-4859-8c3b-63bd6f673b5a",
+          "63343a75-11dc-4711-87e3-585af51d993e"
+        ],
+        "tokenUsage": {
+          "input": 8711,
+          "output": 100,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "total": 8811
+        },
+        "calls": 2,
+        "errorCategory": null
+      },
+      {
+        "caseId": "HYEOB-20261112-003",
+        "outcome": "success",
+        "providerRequestIds": [
+          "38aa973b-00c9-45d9-bd1c-a7c2593c4ae5",
+          "a46ef08b-3745-4119-8dd4-78cc02b70b0a"
+        ],
+        "tokenUsage": {
+          "input": 4920,
+          "output": 103,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "total": 5023
+        },
+        "calls": 2,
+        "errorCategory": null
+      },
+      {
+        "caseId": "HYEOB-20261112-004",
+        "outcome": "success",
+        "providerRequestIds": [
+          "4135dbef-5d28-4114-80a3-a7b4d49e201d",
+          "6c850d4f-19a3-405c-82f9-9415375e7271"
+        ],
+        "tokenUsage": {
+          "input": 5023,
+          "output": 99,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "total": 5122
+        },
+        "calls": 2,
+        "errorCategory": null
+      },
+      {
+        "caseId": "HYEOB-20261112-005",
+        "outcome": "success",
+        "providerRequestIds": [
+          "e288e2b4-8c9d-4303-acb4-31ad18a06d83",
+          "badf593e-2cb1-4142-901b-efcbde9e844c"
+        ],
+        "tokenUsage": {
+          "input": 5195,
+          "output": 105,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "total": 5300
+        },
+        "calls": 2,
+        "errorCategory": null
+      },
+      {
+        "caseId": "HYEOB-20261112-006",
+        "outcome": "success",
+        "providerRequestIds": [
+          "a7c18580-6113-4c6c-bf06-525bf4fa6042",
+          "057d9944-6704-4191-9466-8707c5de628d"
+        ],
+        "tokenUsage": {
+          "input": 4623,
+          "output": 108,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "total": 4731
+        },
+        "calls": 2,
+        "errorCategory": null
+      },
+      {
+        "caseId": "HYEOB-20261112-007",
+        "outcome": "success",
+        "providerRequestIds": [
+          "85330e91-84bd-4af7-a234-40f5034a4ede",
+          "fd24e835-1dae-4ff8-80c7-ea5050180266"
+        ],
+        "tokenUsage": {
+          "input": 4621,
+          "output": 101,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "total": 4722
+        },
+        "calls": 2,
+        "errorCategory": null
+      },
+      {
+        "caseId": "HYEOB-20261112-008",
+        "outcome": "success",
+        "providerRequestIds": [
+          "0799798f-6858-48ba-ad4b-c8f9498fdc16",
+          "e1efdb67-555c-46e4-a284-56befd0e731f"
+        ],
+        "tokenUsage": {
+          "input": 5033,
+          "output": 108,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "total": 5141
+        },
+        "calls": 2,
+        "errorCategory": null
+      },
+      {
+        "caseId": "HYEOB-20261112-009",
+        "outcome": "success",
+        "providerRequestIds": [
+          "be8cf749-e6fb-4b7d-aa6a-365118ef943e",
+          "2889c263-0e72-40b0-a76b-bf9ac63a1cd7"
+        ],
+        "tokenUsage": {
+          "input": 4957,
+          "output": 104,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "total": 5061
+        },
+        "calls": 2,
+        "errorCategory": null
+      },
+      {
+        "caseId": "HYEOB-20261112-010",
+        "outcome": "success",
+        "providerRequestIds": [
+          "ea959b33-94d5-4217-b424-74bc8e65457c",
+          "e9921642-a395-4b78-b9e1-70de6166a79b"
+        ],
+        "tokenUsage": {
+          "input": 5028,
+          "output": 101,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "total": 5129
+        },
+        "calls": 2,
+        "errorCategory": null
+      },
+      {
+        "caseId": "OYS-20261110-001",
+        "outcome": "success",
+        "providerRequestIds": [
+          "d061ef0f-a078-41f8-a27e-97f7fc555599",
+          "a77eb58b-464e-4eb8-9da8-753f0ca96bf1"
+        ],
+        "tokenUsage": {
+          "input": 8758,
+          "output": 103,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "total": 8861
+        },
+        "calls": 2,
+        "errorCategory": null
+      },
+      {
+        "caseId": "OYS-20261110-002",
+        "outcome": "success",
+        "providerRequestIds": [
+          "a8ad911b-4ade-4947-897d-7d5c32c6cdda",
+          "36615fca-6c55-41b8-9a72-758929efa27a"
+        ],
+        "tokenUsage": {
+          "input": 8764,
+          "output": 100,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "total": 8864
+        },
+        "calls": 2,
+        "errorCategory": null
+      },
+      {
+        "caseId": "OYS-20261110-003",
+        "outcome": "success",
+        "providerRequestIds": [
+          "0d802218-b367-4ae7-ba94-b3cb2bfecd1a",
+          "4be4953a-8367-4c9a-9ef9-c6ee02b85914"
+        ],
+        "tokenUsage": {
+          "input": 7529,
+          "output": 104,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "total": 7633
+        },
+        "calls": 2,
+        "errorCategory": null
+      },
+      {
+        "caseId": "OYS-20261110-004",
+        "outcome": "success",
+        "providerRequestIds": [
+          "d60d9515-3263-4ca5-92b0-a94e1e4f9e8b",
+          "8acd635d-a717-4c56-aaca-eb5e9cb96963"
+        ],
+        "tokenUsage": {
+          "input": 8760,
+          "output": 100,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "total": 8860
+        },
+        "calls": 2,
+        "errorCategory": null
+      },
+      {
+        "caseId": "OYS-20261110-006",
+        "outcome": "success",
+        "providerRequestIds": [
+          "3c526c81-aff3-48b6-9480-73c5c350a0a3",
+          "291feb15-fa1c-4caf-8683-601d48dc3e71"
+        ],
+        "tokenUsage": {
+          "input": 5085,
+          "output": 100,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "total": 5185
+        },
+        "calls": 2,
+        "errorCategory": null
+      },
+      {
+        "caseId": "OYS-20261110-008",
+        "outcome": "success",
+        "providerRequestIds": [
+          "c99221b7-6e0c-4183-8f79-a0cac6e5d0a7",
+          "3cf61c1d-01e0-4bf1-9a47-6c03ac997e6e"
+        ],
+        "tokenUsage": {
+          "input": 5431,
+          "output": 101,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "total": 5532
+        },
+        "calls": 2,
+        "errorCategory": null
+      },
+      {
+        "caseId": "OYS-20261110-009",
+        "outcome": "success",
+        "providerRequestIds": [
+          "57466a09-ffe6-4e08-be18-6f10ab217968",
+          "8f23d77d-4cf9-4a9e-a5ed-ae9b9351e065"
+        ],
+        "tokenUsage": {
+          "input": 5218,
+          "output": 101,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "total": 5319
+        },
+        "calls": 2,
+        "errorCategory": null
+      },
+      {
+        "caseId": "OYS-20261110-010",
+        "outcome": "success",
+        "providerRequestIds": [
+          "c651b5e1-3167-47e1-ad78-bc2f445d10bd",
+          "73b3c3f0-bc36-4d58-b028-e8ae0c053bf2"
+        ],
+        "tokenUsage": {
+          "input": 4766,
+          "output": 104,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "total": 4870
+        },
+        "calls": 2,
+        "errorCategory": null
+      }
+    ]
+  },
+  "recommendationAudit": [
+    {
+      "caseId": "HYEOB-20261112-001",
+      "passed": true
+    },
+    {
+      "caseId": "HYEOB-20261112-002",
+      "passed": true
+    },
+    {
+      "caseId": "OYS-20261110-001",
+      "passed": true
+    },
+    {
+      "caseId": "OYS-20261110-002",
+      "passed": true
+    },
+    {
+      "caseId": "OYS-20261110-004",
+      "passed": true
+    }
+  ],
+  "limitations": [
+    "Exposed synthetic text development set; no independent labels or photo input. Not an accuracy or execution-approval result.",
+    "Inputs, prompts and runner match all 18 baseline C rows; source bundles differ, including current 291947 revision and expanded reviewed matching terms. Not a controlled isolated causal estimate.",
+    "Compared now means decision-support candidate with pre-execution checks. Only supported mechanical recycling is ranked; unsupported alternatives remain unknown.",
+    "First iteration had one A formatting failure and exposed OYS006 contradiction regression; both preserved in development-iteration.json. Final rerun follows production fix 74d0d07; no failed rows filtered."
+  ]
+}

@@ -1,0 +1,445 @@
+{
+  "runId": "f07863f8-5939-4445-8e4b-8a0382e3e68b",
+  "samples": [
+    {
+      "caseId": "HYEOB-20261112-001",
+      "effectiveInput": {
+        "caseId": "HYEOB-20261112-001",
+        "description": "SYNTHETIC / 공개 사진을 참고한 시험용 입력: HDPE 분쇄물의 정상 정보 입력. 아래 공정·수지·오염·접촉·질량·지역은 검증 목적의 가정이며 사진의 실제 현장 사실이 아니다.",
+        "photoRefs": [],
+        "process": "압출 공정 자투리 분쇄",
+        "polymer": "HDPE",
+        "contamination": "없음",
+        "hazardousContact": "no",
+        "massKg": 120,
+        "region": "울산",
+        "assessmentDate": "2026-11-12"
+      },
+      "providerRequestIds": [
+        "384149a0-0c94-48f3-95a3-b452ab5d16a9",
+        "c03ef4be-c628-4fe6-9423-324e28274352"
+      ],
+      "output": {
+        "state": "compared",
+        "caseId": "HYEOB-20261112-001",
+        "processors": [],
+        "scenarios": [],
+        "evidence": [
+          {
+            "sourceId": "waste-rule-2026-11-12",
+            "title": "폐기물관리법 시행규칙",
+            "publisher": "국가법령정보센터",
+            "url": "https://www.law.go.kr/LSW/lsInfoR.do?lsiSeq=291947&efYd=20261112",
+            "locator": "제4조의2 제1항",
+            "retrievedAt": "2026-11-13T10:25:00Z",
+            "effectiveFrom": "2026-11-12",
+            "effectiveTo": null,
+            "datasetVersion": "lsiSeq=291947",
+            "sha256": "ffda6c1dad0c53dcdc1db86543e768c346dbbecdea2d2a0d2fc649aca565e529",
+            "license": "저작권법 제7조 제1호 비보호저작물 (법령 본문)",
+            "licenseVerified": true
+          },
+          {
+            "sourceId": "legal-291947-annex4-code",
+            "title": "별표 4 제2호 51-03-01, PDF 6쪽",
+            "publisher": "국가법령정보센터",
+            "url": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400799&bylClsCd=110201",
+            "locator": "별표 4 제2호 51-03-01, PDF 6쪽",
+            "retrievedAt": "2026-11-13T10:25:00Z",
+            "effectiveFrom": "2026-11-12",
+            "effectiveTo": null,
+            "datasetVersion": "lsiSeq=291947 (2026-11-12 시행본; 선택 별표 개정 표기 2025-12-30)",
+            "sha256": "90278d34f41574ef470ba55e1ad5c8698fc5d46792b5cd80e1ae056bdb61e5d3",
+            "license": "저작권법 제7조 제1호 비보호저작물 (법령·별표 원문)",
+            "licenseVerified": true
+          },
+          {
+            "sourceId": "legal-291947-annex4-2-r3-3",
+            "title": "별표 4의2 제2호가목3), PDF 1쪽",
+            "publisher": "국가법령정보센터",
+            "url": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400831&bylClsCd=110201",
+            "locator": "별표 4의2 제2호가목3), PDF 1쪽",
+            "retrievedAt": "2026-11-13T10:25:00Z",
+            "effectiveFrom": "2026-11-12",
+            "effectiveTo": null,
+            "datasetVersion": "lsiSeq=291947 (2026-11-12 시행본; 선택 별표 개정 표기 2025-12-30)",
+            "sha256": "1c37f9100831e09d2c485c4c27d57d6b5bd9b1fe80a6f4de794a6701cbe251c8",
+            "license": "저작권법 제7조 제1호 비보호저작물 (법령·별표 원문)",
+            "licenseVerified": true
+          },
+          {
+            "sourceId": "legal-291947-annex4-3-types",
+            "title": "별표 4의3 제2호 51-03-01, R-3-3 포함 행, PDF 9쪽",
+            "publisher": "국가법령정보센터",
+            "url": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400843&bylClsCd=110201",
+            "locator": "별표 4의3 제2호 51-03-01, R-3-3 포함 행, PDF 9쪽",
+            "retrievedAt": "2026-11-13T10:25:00Z",
+            "effectiveFrom": "2026-11-12",
+            "effectiveTo": null,
+            "datasetVersion": "lsiSeq=291947 (2026-11-12 시행본; 선택 별표 개정 표기 2025-12-30)",
+            "sha256": "d94242b3f23bf4e198146f52fb3373bfb24689e27fa4291c2392e0b6a3827565",
+            "license": "저작권법 제7조 제1호 비보호저작물 (법령·별표 원문)",
+            "licenseVerified": true
+          },
+          {
+            "sourceId": "legal-291947-annex5-3-common",
+            "title": "별표 5의3 제1호다목, PDF 1쪽",
+            "publisher": "국가법령정보센터",
+            "url": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400985&bylClsCd=110201",
+            "locator": "별표 5의3 제1호다목, PDF 1쪽",
+            "retrievedAt": "2026-11-13T10:25:00Z",
+            "effectiveFrom": "2026-11-12",
+            "effectiveTo": null,
+            "datasetVersion": "lsiSeq=291947 (2026-11-12 시행본; 선택 별표 개정 표기 2025-12-30)",
+            "sha256": "6dd79d704a8c8be87e9b57469ccf1d8d189f4fbfac156beca735312020c16533",
+            "license": "저작권법 제7조 제1호 비보호저작물 (법령·별표 원문)",
+            "licenseVerified": true
+          }
+        ],
+        "humanApproval": "pending",
+        "limitations": [
+          "추천 후보, 실행 전 확인 필요. 실행·반출·계약의 승인 결과가 아닙니다.",
+          "추천 순위는 검토 순서입니다. 검증되지 않은 수치·폐기물 코드·업체 허가를 추정하지 않습니다."
+        ],
+        "routes": [
+          {
+            "routeId": "reuse",
+            "route": "reuse",
+            "eligibility": {
+              "state": "unknown",
+              "missingFacts": [
+                "이 경로의 용도·처리 방식에 맞는 개별 공개 근거가 부족합니다."
+              ]
+            }
+          },
+          {
+            "routeId": "mechanical-recycling",
+            "route": "mechanical-recycling",
+            "eligibility": {
+              "state": "conditional",
+              "evidenceIds": [
+                "legal-291947-annex4-code",
+                "legal-291947-annex4-2-r3-3",
+                "legal-291947-annex4-3-types",
+                "legal-291947-annex5-3-common"
+              ],
+              "conditions": [
+                "공개 근거상 가능(조건부): 51-03-01의 R-3-3 원료물질 제조 유형 후보"
+              ]
+            }
+          },
+          {
+            "routeId": "other-recovery",
+            "route": "other-recovery",
+            "eligibility": {
+              "state": "unknown",
+              "missingFacts": [
+                "이 경로의 용도·처리 방식에 맞는 개별 공개 근거가 부족합니다."
+              ]
+            }
+          },
+          {
+            "routeId": "disposal",
+            "route": "disposal",
+            "eligibility": {
+              "state": "unknown",
+              "missingFacts": [
+                "이 경로의 용도·처리 방식에 맞는 개별 공개 근거가 부족합니다."
+              ]
+            }
+          }
+        ],
+        "recommendations": [
+          {
+            "routeId": "mechanical-recycling",
+            "rank": 1,
+            "grade": "public-conditional",
+            "basis": "공개 법령의 폐합성수지류 분류·허용 유형·R-3-3 정의·공통기준을 연결한 원료물질 제조 후보입니다. 실제 발생 공정을 처리 공정으로 간주하지 않으며 비용·탄소 우월성을 뜻하지 않습니다.",
+            "legalCitations": [
+              {
+                "sourceId": "legal-291947-annex4-code",
+                "locator": "별표 4 제2호 51-03-01, PDF 6쪽",
+                "claim": "사업장일반폐기물로 별도 확인된 PVC 제외 폐합성수지류의 분류번호는 51-03-01이다. 입력 사례의 코드 확정은 보류한다."
+              },
+              {
+                "sourceId": "legal-291947-annex4-2-r3-3",
+                "locator": "별표 4의2 제2호가목3), PDF 1쪽",
+                "claim": "R-3-3은 합성수지 등의 원료물질 제조 유형이다. 발생 공정인 사출을 재활용 처리 공정으로 간주하지 않는다."
+              },
+              {
+                "sourceId": "legal-291947-annex4-3-types",
+                "locator": "별표 4의3 제2호 51-03-01, R-3-3 포함 행, PDF 9쪽",
+                "claim": "51-03-01 행은 R-3-3을 열거한다. 사전 분석·확인 필요 여부의 해당 없음은 모든 허가·시험·기준의 면제를 뜻하지 않는다."
+              },
+              {
+                "sourceId": "legal-291947-annex5-3-common",
+                "locator": "별표 5의3 제1호다목, PDF 1쪽",
+                "claim": "재활용환경성평가 예외를 제외한 재활용자는 별표 4의3 유형과 별표 5의3의 유형별 세부기준을 함께 준수해야 한다."
+              }
+            ],
+            "cost": {
+              "value": null,
+              "unit": "KRW",
+              "label": "unavailable",
+              "reasons": [
+                "사례별 검증된 견적·운송·처리 비용 자료 없음"
+              ]
+            },
+            "carbon": {
+              "value": null,
+              "unit": "kgCO2e",
+              "label": "unavailable",
+              "reasons": [
+                "동일 계산 경계의 활동량·적용 가능한 탄소 계수 없음"
+              ]
+            }
+          }
+        ],
+        "confidence": {
+          "level": "low",
+          "reasons": [
+            "입력은 신고된 정보이며 현장 조건의 충족이나 법적 적합성을 확정하지 않았습니다.",
+            "비용·탄소 비교값이 없어 검토 순서만 제시합니다."
+          ]
+        },
+        "preExecutionChecks": [
+          "현행 허가의 유효기간·허가 범위와 해당 수지·오염 상태의 처리 가능 여부를 관할기관·업체에 확인하세요.",
+          "업체의 실제 인수 의사·계약 조건을 확인하세요.",
+          "실측 질량·수율·운송 거리와 실제 견적·세금·운송 조건을 확인하세요.",
+          "탄소 계수의 수지·지역·기간·계산 경계와 크레딧 적용 가능성을 확인하세요.",
+          "반출·계약·처리 전 현장 책임자의 별도 검토와 승인을 받으세요.",
+          "일반 조문은 코드·처리경로 적합성의 개별 근거가 아니다.",
+          "사업장일반폐기물 해당 여부와 지정폐기물 제외를 별도 확인해야 한다.",
+          "실제 재활용 공정·산출물·용도가 R-3-3 정의와 일치하는지 확인해야 한다.",
+          "재활용 유형별 세부기준·허가 범위·인수 조건을 별도로 확인해야 한다.",
+          "재활용환경성평가 예외·금지 및 제한·별표 5의4 준수사항·현행 허가를 확인해야 한다.",
+          "용도·이전 신고 및 분류 변경 이력 미입력: 부칙 제18호 제3조 경과조치 적용은 확인되지 않았다.",
+          "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+          "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+          "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+          "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다."
+        ]
+      }
+    },
+    {
+      "caseId": "OYS-20261110-001",
+      "effectiveInput": {
+        "caseId": "OYS-20261110-001",
+        "description": "SYNTHETIC — newly authored text-only fictional scenario: Clean single-resin PET. No field records, photos or external evidence supplied. massKg=24 is a fictional scenario parameter, not a measured value. No legal eligibility, price or emissions factor is asserted.",
+        "photoRefs": [],
+        "process": "Fictional thermoformed PET tray edge trimming; unused trim is segregated before packaging.",
+        "polymer": "PET",
+        "contamination": "No contamination is stipulated in this fictional scenario.",
+        "hazardousContact": "no",
+        "massKg": 24,
+        "region": "경기도",
+        "assessmentDate": "2026-11-10"
+      },
+      "providerRequestIds": [
+        "d061ef0f-a078-41f8-a27e-97f7fc555599",
+        "a77eb58b-464e-4eb8-9da8-753f0ca96bf1"
+      ],
+      "output": {
+        "state": "compared",
+        "caseId": "OYS-20261110-001",
+        "processors": [],
+        "scenarios": [],
+        "evidence": [
+          {
+            "sourceId": "waste-rule-2026-10-02",
+            "title": "폐기물관리법 시행규칙",
+            "publisher": "국가법령정보센터",
+            "url": "https://www.law.go.kr/LSW/lsInfoP.do?lsiSeq=290881",
+            "locator": "제4조의2 제1항",
+            "retrievedAt": "2026-11-05T09:31:22Z",
+            "effectiveFrom": "2026-10-02",
+            "effectiveTo": "2026-11-11",
+            "datasetVersion": "lsiSeq=290881",
+            "sha256": "f3b71f45f2c35edf330e70d61b6610bca5fd4c236a1383bb1a39faaef8664659",
+            "license": "저작권법 제7조 제1호 비보호저작물 (법령 본문)",
+            "licenseVerified": true
+          },
+          {
+            "sourceId": "legal-290881-annex4-code",
+            "title": "별표 4 제2호 51-03-01, PDF 6쪽",
+            "publisher": "국가법령정보센터",
+            "url": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=170404737&bylClsCd=110201",
+            "locator": "별표 4 제2호 51-03-01, PDF 6쪽",
+            "retrievedAt": "2026-11-05T11:46:53Z",
+            "effectiveFrom": "2026-10-02",
+            "effectiveTo": "2026-11-11",
+            "datasetVersion": "lsiSeq=290881 (2026-10-02 시행본; 별표 개정 표기 2025-12-30)",
+            "sha256": "24678e53168f2ca4811cafc0d776769114abd95a1670dc61326b93f8ae9f8550",
+            "license": "저작권법 제7조 제1호 비보호저작물 (법령·별표 원문)",
+            "licenseVerified": true
+          },
+          {
+            "sourceId": "legal-290881-annex4-2-r3-3",
+            "title": "별표 4의2 제2호가목3), PDF 1쪽",
+            "publisher": "국가법령정보센터",
+            "url": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=170404769&bylClsCd=110201",
+            "locator": "별표 4의2 제2호가목3), PDF 1쪽",
+            "retrievedAt": "2026-11-05T11:46:53Z",
+            "effectiveFrom": "2026-10-02",
+            "effectiveTo": "2026-11-11",
+            "datasetVersion": "lsiSeq=290881 (2026-10-02 시행본; 별표 개정 표기 2025-12-30)",
+            "sha256": "d6e6ea0416c8568e403bb53507fb2311370e171fd71a1e3097c89dc4640488ed",
+            "license": "저작권법 제7조 제1호 비보호저작물 (법령·별표 원문)",
+            "licenseVerified": true
+          },
+          {
+            "sourceId": "legal-290881-annex4-3-types",
+            "title": "별표 4의3 제2호 51-03-01, R-3-3 포함 행, PDF 9쪽",
+            "publisher": "국가법령정보센터",
+            "url": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=170404781&bylClsCd=110201",
+            "locator": "별표 4의3 제2호 51-03-01, R-3-3 포함 행, PDF 9쪽",
+            "retrievedAt": "2026-11-05T11:46:53Z",
+            "effectiveFrom": "2026-10-02",
+            "effectiveTo": "2026-11-11",
+            "datasetVersion": "lsiSeq=290881 (2026-10-02 시행본; 별표 개정 표기 2025-12-30)",
+            "sha256": "e1d02f6101dfbda72d2f15357d0e6d067590303cb45cc76830d6f49fcbbeb0a1",
+            "license": "저작권법 제7조 제1호 비보호저작물 (법령·별표 원문)",
+            "licenseVerified": true
+          },
+          {
+            "sourceId": "legal-290881-annex5-3-common",
+            "title": "별표 5의3 제1호다목, PDF 1쪽",
+            "publisher": "국가법령정보센터",
+            "url": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=170404923&bylClsCd=110201",
+            "locator": "별표 5의3 제1호다목, PDF 1쪽",
+            "retrievedAt": "2026-11-05T11:46:53Z",
+            "effectiveFrom": "2026-10-02",
+            "effectiveTo": "2026-11-11",
+            "datasetVersion": "lsiSeq=290881 (2026-10-02 시행본; 별표 개정 표기 2025-12-30)",
+            "sha256": "7a861fed124e6f9ea9e597c2d378c2a5f47ebbb381c17695092b9d283f4a2a31",
+            "license": "저작권법 제7조 제1호 비보호저작물 (법령·별표 원문)",
+            "licenseVerified": true
+          }
+        ],
+        "humanApproval": "pending",
+        "limitations": [
+          "추천 후보, 실행 전 확인 필요. 실행·반출·계약의 승인 결과가 아닙니다.",
+          "추천 순위는 검토 순서입니다. 검증되지 않은 수치·폐기물 코드·업체 허가를 추정하지 않습니다."
+        ],
+        "routes": [
+          {
+            "routeId": "reuse",
+            "route": "reuse",
+            "eligibility": {
+              "state": "unknown",
+              "missingFacts": [
+                "이 경로의 용도·처리 방식에 맞는 개별 공개 근거가 부족합니다."
+              ]
+            }
+          },
+          {
+            "routeId": "mechanical-recycling",
+            "route": "mechanical-recycling",
+            "eligibility": {
+              "state": "conditional",
+              "evidenceIds": [
+                "legal-290881-annex4-code",
+                "legal-290881-annex4-2-r3-3",
+                "legal-290881-annex4-3-types",
+                "legal-290881-annex5-3-common"
+              ],
+              "conditions": [
+                "공개 근거상 가능(조건부): 51-03-01의 R-3-3 원료물질 제조 유형 후보"
+              ]
+            }
+          },
+          {
+            "routeId": "other-recovery",
+            "route": "other-recovery",
+            "eligibility": {
+              "state": "unknown",
+              "missingFacts": [
+                "이 경로의 용도·처리 방식에 맞는 개별 공개 근거가 부족합니다."
+              ]
+            }
+          },
+          {
+            "routeId": "disposal",
+            "route": "disposal",
+            "eligibility": {
+              "state": "unknown",
+              "missingFacts": [
+                "이 경로의 용도·처리 방식에 맞는 개별 공개 근거가 부족합니다."
+              ]
+            }
+          }
+        ],
+        "recommendations": [
+          {
+            "routeId": "mechanical-recycling",
+            "rank": 1,
+            "grade": "public-conditional",
+            "basis": "공개 법령의 폐합성수지류 분류·허용 유형·R-3-3 정의·공통기준을 연결한 원료물질 제조 후보입니다. 실제 발생 공정을 처리 공정으로 간주하지 않으며 비용·탄소 우월성을 뜻하지 않습니다.",
+            "legalCitations": [
+              {
+                "sourceId": "legal-290881-annex4-code",
+                "locator": "별표 4 제2호 51-03-01, PDF 6쪽",
+                "claim": "사업장일반폐기물로 별도 확인된 PVC 제외 폐합성수지류의 분류번호는 51-03-01이다. 입력 사례의 코드 확정은 보류한다."
+              },
+              {
+                "sourceId": "legal-290881-annex4-2-r3-3",
+                "locator": "별표 4의2 제2호가목3), PDF 1쪽",
+                "claim": "R-3-3은 합성수지 등의 원료물질 제조 유형이다. 발생 공정인 사출을 재활용 처리 공정으로 간주하지 않는다."
+              },
+              {
+                "sourceId": "legal-290881-annex4-3-types",
+                "locator": "별표 4의3 제2호 51-03-01, R-3-3 포함 행, PDF 9쪽",
+                "claim": "51-03-01 행은 R-3-3을 열거한다. 사전 분석·확인 필요 여부의 해당 없음은 모든 허가·시험·기준의 면제를 뜻하지 않는다."
+              },
+              {
+                "sourceId": "legal-290881-annex5-3-common",
+                "locator": "별표 5의3 제1호다목, PDF 1쪽",
+                "claim": "재활용환경성평가 예외를 제외한 재활용자는 별표 4의3 유형과 별표 5의3의 유형별 세부기준을 함께 준수해야 한다."
+              }
+            ],
+            "cost": {
+              "value": null,
+              "unit": "KRW",
+              "label": "unavailable",
+              "reasons": [
+                "사례별 검증된 견적·운송·처리 비용 자료 없음"
+              ]
+            },
+            "carbon": {
+              "value": null,
+              "unit": "kgCO2e",
+              "label": "unavailable",
+              "reasons": [
+                "동일 계산 경계의 활동량·적용 가능한 탄소 계수 없음"
+              ]
+            }
+          }
+        ],
+        "confidence": {
+          "level": "low",
+          "reasons": [
+            "입력은 신고된 정보이며 현장 조건의 충족이나 법적 적합성을 확정하지 않았습니다.",
+            "비용·탄소 비교값이 없어 검토 순서만 제시합니다."
+          ]
+        },
+        "preExecutionChecks": [
+          "현행 허가의 유효기간·허가 범위와 해당 수지·오염 상태의 처리 가능 여부를 관할기관·업체에 확인하세요.",
+          "업체의 실제 인수 의사·계약 조건을 확인하세요.",
+          "실측 질량·수율·운송 거리와 실제 견적·세금·운송 조건을 확인하세요.",
+          "탄소 계수의 수지·지역·기간·계산 경계와 크레딧 적용 가능성을 확인하세요.",
+          "반출·계약·처리 전 현장 책임자의 별도 검토와 승인을 받으세요.",
+          "일반 조문은 코드·처리경로 적합성의 개별 근거가 아니다.",
+          "사업장일반폐기물 해당 여부와 지정폐기물 제외를 별도 확인해야 한다.",
+          "실제 재활용 공정·산출물·용도가 R-3-3 정의와 일치하는지 확인해야 한다.",
+          "재활용 유형별 세부기준·허가 범위·인수 조건을 별도로 확인해야 한다.",
+          "재활용환경성평가 예외·금지 및 제한·별표 5의4 준수사항·현행 허가를 확인해야 한다.",
+          "용도·이전 신고 및 분류 변경 이력 미입력: 부칙 제18호 제3조 경과조치 적용은 확인되지 않았다.",
+          "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+          "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+          "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+          "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다."
+        ]
+      }
+    }
+  ]
+}

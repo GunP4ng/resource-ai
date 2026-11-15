@@ -1,0 +1,34 @@
+{
+  "runId": "3b4012c3-c511-45c5-8908-1d12de00710d",
+  "implementationCommit": "46d1300",
+  "cases": 18,
+  "calls": 72,
+  "failedRows": [
+    {
+      "arm": "A",
+      "caseId": "HYEOB-20261112-006",
+      "errorCategory": "invalid-model-output",
+      "providerRequestIds": [
+        "1530e5a1-b8c9-4bdc-a7e5-9744cbef4ba9"
+      ],
+      "assistantText": "I’ll check the supplied case materials for evidence and authorization status, then return a JSON decision with the relevant limitations.\n{\n  \"caseId\": \"HYEOB-20261112-006\",\n  \"decision\": \"판정 보류\",\n  \"reasons\": [\n    \"PET 결속밴드를 절단했다는 입력만으로 재활용 가능 여부나 적법한 처리 방법을 확정할 수 없습니다.\",\n    \"처리업체의 허가 여부가 확인되지 않았습니다.\"\n  ],\n  \"evidence\": [\n    \"입력값: PET, 결속밴드 절단, 60kg, 충북.\",\n    \"입력값에는 오염이 없고 유해물질 접촉이 없다고 기재되어 있습니다.\"\n  ],\n  \"limitations\": [\n    \"공정·재질·오염·접촉·질량·지역은 검증용 가정이며 실제 현장 사실이 아닙니다.\",\n    \"사진과 허가 확인 자료가 제공되지 않았습니다.\"\n  ]\n}"
+    }
+  ],
+  "C": {
+    "successful": 18,
+    "counts": {
+      "compared": 5,
+      "needs-review": 8,
+      "needs-information": 5
+    }
+  },
+  "regressionFound": {
+    "caseId": "OYS-20261110-006",
+    "observed": "needs-information",
+    "required": "needs-review",
+    "cause": "Explicit conflicting labels in description/process were not checked when polymer was null.",
+    "fixedBy": "74d0d07"
+  },
+  "originalLogs": "/home/gunp4ng/working/resource-recommend-mode-20261115/evidence/runs/3b4012c3-c511-45c5-8908-1d12de00710d",
+  "selection": "Complete first run preserved; final full run follows a production fix, not result selection."
+}
