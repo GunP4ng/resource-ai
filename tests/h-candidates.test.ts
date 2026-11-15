@@ -14,7 +14,7 @@ import { sanitizePhoto } from "../src/photo-codec.ts";
 import { parseCaseInput } from "../src/input.ts";
 import { revision } from "../src/o-validation.ts";
 
-test("H candidate handoff preserves ten explicit inputs, photos, source/rights hashes and pending review", async () => {
+test("H candidate handoff preserves ten explicit inputs, photos, source/rights hashes and pending states", async () => {
   const pack = await loadHCandidates();
   assert.equal(new Set(pack.entries.map(row => row.duplicateGroupId)).size, 6);
   const report = await verifyHCandidates();

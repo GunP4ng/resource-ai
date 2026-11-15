@@ -307,11 +307,11 @@ test("O4 native corrections refresh missing questions and remain usable after re
   } finally { app.dispose(); }
 });
 
-test("O4 current-date review keeps correction access without bypassing currentness", async () => {
+test("O4 post-verification review keeps correction access without bypassing currentness", async () => {
   const app = createResourceApp({ origin });
   try {
     const cookie = await session(app.fetch);
-    const path = await submitNative(app.fetch, cookie, { ...nativeFields, polymer: "PP", assessmentDate: "2026-11-15" });
+    const path = await submitNative(app.fetch, cookie, { ...nativeFields, polymer: "PP", assessmentDate: "2026-11-16" });
     assert.match(await ownedPage(app.fetch, cookie, path), /<form\b/);
     assert.equal((await app.fetch(post(path + "/answers", cookie, '{"massKg":100}'))).status, 303);
     const html = await ownedPage(app.fetch, cookie, path);

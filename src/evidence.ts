@@ -29,6 +29,7 @@ export interface EvidenceCandidate {
   readonly polymerTerms: readonly string[];
   readonly contaminationTerms: readonly string[];
   readonly siteSpecific: boolean;
+  readonly versionFamily?: string;
   readonly verifiedThrough?: string;
   readonly requireSafeContext?: boolean;
   readonly intendedUse?: "food-container";
@@ -173,11 +174,20 @@ export function lookupLegalEvidence(input: CaseInput, candidates?: readonly Evid
   const selected = (candidates ?? registry.candidates).filter((candidate) => candidate.intendedUse === undefined || candidate.intendedUse === options?.intendedUse);
   const loadIssues = candidates === undefined ? registry.issues : [];
   if (selected.length === 0) return { evidence: [], citations: [], reviewRequirements: [], issues: [...loadIssues, { kind: "no-results", sourceId: null }] };
+  const activeFamilies = new Set(selected.flatMap((candidate) => {
+    const { effectiveFrom, effectiveTo } = candidate.record;
+    return candidate.versionFamily !== undefined && effectiveFrom !== null && validDate(effectiveFrom)
+      && effectiveFrom <= input.assessmentDate && (effectiveTo === null || (validDate(effectiveTo) && effectiveTo >= input.assessmentDate))
+      ? [candidate.versionFamily] : [];
+  }));
+  const applicable = selected.filter((candidate) => candidate.versionFamily === undefined || !activeFamilies.has(candidate.versionFamily)
+    || (candidate.record.effectiveFrom !== null && candidate.record.effectiveFrom <= input.assessmentDate
+      && (candidate.record.effectiveTo === null || candidate.record.effectiveTo >= input.assessmentDate)));
   const evidence = new Map<string, EvidenceRecord>();
   const citations: EvidenceCitation[] = [];
   const issues: SearchIssue[] = [...loadIssues];
   const reviewRequirements = new Set<string>();
-  for (const candidate of selected) {
+  for (const candidate of applicable) {
     const issue = candidateIssue(input, candidate, maxSnapshotAgeDays);
     if (issue !== null) {
       issues.push({ kind: issue, sourceId: candidate.record.sourceId });

@@ -18,8 +18,23 @@
       "licenseVerified": true,
       "access": "bundled",
       "localPath": "data/reference/keco-price-2026-10.csv",
-      "verifiedFields": ["시점", "구분", "수도권", "강원", "충북", "충남", "전북", "전남", "경북", "경남", "데이터 기준일"],
-      "missing": ["2026년 VAT/물류비 정의 재확인", "실제 매각 계약·처리 견적"]
+      "verifiedFields": [
+        "시점",
+        "구분",
+        "수도권",
+        "강원",
+        "충북",
+        "충남",
+        "전북",
+        "전남",
+        "경북",
+        "경남",
+        "데이터 기준일"
+      ],
+      "missing": [
+        "2026년 VAT/물류비 정의 재확인",
+        "실제 매각 계약·처리 견적"
+      ]
     },
     {
       "sourceId": "ulsan-processors-2025-12",
@@ -38,8 +53,20 @@
       "licenseVerified": true,
       "access": "downloaded-not-bundled",
       "localPath": null,
-      "verifiedFields": ["구분", "업체명", "대표자", "사무실 소재지", "전화번호", "영업구역", "비고"],
-      "missing": ["대표자·전화번호가 있어 원본 배포 제외", "폐기물 코드·허가 근거·시설 위치·행별 갱신일 미포함", "현재 인수 의사 미확인"]
+      "verifiedFields": [
+        "구분",
+        "업체명",
+        "대표자",
+        "사무실 소재지",
+        "전화번호",
+        "영업구역",
+        "비고"
+      ],
+      "missing": [
+        "대표자·전화번호가 있어 원본 배포 제외",
+        "폐기물 코드·허가 근거·시설 위치·행별 갱신일 미포함",
+        "현재 인수 의사 미확인"
+      ]
     },
     {
       "sourceId": "ulsan-processors-2025-12-sanitized",
@@ -59,9 +86,21 @@
       "access": "bundled",
       "localPath": "data/reference/ulsan-processors-2025-12.sanitized.csv",
       "derivedFrom": "794b619d7e0606ded9ebe447bb226fcebdbc442efeed69f625296f3fe39c68ed",
-      "removedColumns": ["대표자", "전화번호"],
-      "verifiedFields": ["구분", "업체명", "사무실 소재지", "영업구역", "비고"],
-      "missing": ["폐기물 코드·허가 근거·시설 위치·행별 갱신일 미포함", "현재 인수 의사 미확인"]
+      "removedColumns": [
+        "대표자",
+        "전화번호"
+      ],
+      "verifiedFields": [
+        "구분",
+        "업체명",
+        "사무실 소재지",
+        "영업구역",
+        "비고"
+      ],
+      "missing": [
+        "폐기물 코드·허가 근거·시설 위치·행별 갱신일 미포함",
+        "현재 인수 의사 미확인"
+      ]
     },
     {
       "sourceId": "national-processors-catalog",
@@ -80,8 +119,19 @@
       "licenseVerified": false,
       "access": "metadata-only",
       "localPath": null,
-      "verifiedFields": ["시설명", "소재지도로명주소", "업종명", "처리폐기물정보", "영업구역", "허가일자"],
-      "missing": ["원본 행 미확보", "재사용 조건 미확인", "행별 최신 허가 상태 미확인"]
+      "verifiedFields": [
+        "시설명",
+        "소재지도로명주소",
+        "업종명",
+        "처리폐기물정보",
+        "영업구역",
+        "허가일자"
+      ],
+      "missing": [
+        "원본 행 미확보",
+        "재사용 조건 미확인",
+        "행별 최신 허가 상태 미확인"
+      ]
     },
     {
       "sourceId": "waste-rule-2026-09-18",
@@ -122,7 +172,7 @@
       "datasetVersion": "lsiSeq=290881",
       "sourceDate": "2026-10-02",
       "effectiveFrom": "2026-10-02",
-      "effectiveTo": null,
+      "effectiveTo": "2026-11-11",
       "sha256": "f3b71f45f2c35edf330e70d61b6610bca5fd4c236a1383bb1a39faaef8664659",
       "license": "저작권법 제7조 제1호 비보호저작물 (법령 본문)",
       "licenseVerified": true,
@@ -147,7 +197,7 @@
       "datasetVersion": "lsiSeq=290881 (2026-10-02 시행본; 별표 개정 표기 2025-12-30)",
       "sourceDate": "2025-12-30",
       "effectiveFrom": "2026-10-02",
-      "effectiveTo": null,
+      "effectiveTo": "2026-11-11",
       "license": "저작권법 제7조 제1호 비보호저작물 (법령·별표 원문)",
       "licenseVerified": true,
       "access": "bundled",
@@ -184,8 +234,18 @@
       "licenseVerified": false,
       "access": "downloaded-not-bundled",
       "localPath": null,
-      "verifiedFields": ["게시 제목", "게시일", "PDF 첨부 387652바이트", "PDF 4쪽 (페이지 트리 /Count 4)", "PDF SHA-256"],
-      "missing": ["PDF 본문 계수의 개별 쪽·단위·GWP 기준 미대조", "재사용 조건", "폐플라스틱 전 경로 계수"]
+      "verifiedFields": [
+        "게시 제목",
+        "게시일",
+        "PDF 첨부 387652바이트",
+        "PDF 4쪽 (페이지 트리 /Count 4)",
+        "PDF SHA-256"
+      ],
+      "missing": [
+        "PDF 본문 계수의 개별 쪽·단위·GWP 기준 미대조",
+        "재사용 조건",
+        "폐플라스틱 전 경로 계수"
+      ]
     },
     {
       "sourceId": "keiti-lci-description",
@@ -204,8 +264,14 @@
       "licenseVerified": false,
       "access": "metadata-only",
       "localPath": null,
-      "verifiedFields": ["사업 설명"],
-      "missing": ["개별 계수 레코드", "한국 LCI DB·평가계수의 상업용 사용 불가 안내 확인", "비상업 이용 권한·단위·경계·기간 확인"]
+      "verifiedFields": [
+        "사업 설명"
+      ],
+      "missing": [
+        "개별 계수 레코드",
+        "한국 LCI DB·평가계수의 상업용 사용 불가 안내 확인",
+        "비상업 이용 권한·단위·경계·기간 확인"
+      ]
     },
     {
       "category": "law",
@@ -214,7 +280,7 @@
       "datasetVersion": "lsiSeq=290881 (2026-10-02 시행본; 별표 개정 표기 2025-12-30)",
       "sourceDate": "2025-12-30",
       "effectiveFrom": "2026-10-02",
-      "effectiveTo": null,
+      "effectiveTo": "2026-11-11",
       "license": "저작권법 제7조 제1호 비보호저작물 (법령·별표 원문)",
       "licenseVerified": true,
       "access": "bundled",
@@ -241,7 +307,7 @@
       "datasetVersion": "lsiSeq=290881 (2026-10-02 시행본; 별표 개정 표기 2025-12-30)",
       "sourceDate": "2025-12-30",
       "effectiveFrom": "2026-10-02",
-      "effectiveTo": null,
+      "effectiveTo": "2026-11-11",
       "license": "저작권법 제7조 제1호 비보호저작물 (법령·별표 원문)",
       "licenseVerified": true,
       "access": "bundled",
@@ -268,7 +334,7 @@
       "datasetVersion": "lsiSeq=290881 (2026-10-02 시행본; 별표 개정 표기 2025-12-30)",
       "sourceDate": "2025-12-30",
       "effectiveFrom": "2026-10-02",
-      "effectiveTo": null,
+      "effectiveTo": "2026-11-11",
       "license": "저작권법 제7조 제1호 비보호저작물 (법령·별표 원문)",
       "licenseVerified": true,
       "access": "bundled",
@@ -295,7 +361,7 @@
       "datasetVersion": "lsiSeq=290881 (2026-10-02 시행본; 별표 개정 표기 2025-12-30)",
       "sourceDate": "2025-12-30",
       "effectiveFrom": "2026-10-02",
-      "effectiveTo": null,
+      "effectiveTo": "2026-11-11",
       "license": "저작권법 제7조 제1호 비보호저작물 (법령·별표 원문)",
       "licenseVerified": true,
       "access": "bundled",
@@ -323,7 +389,7 @@
       "datasetVersion": "lsiSeq=290881 (2026-10-02 시행본; 별표 개정 표기 2025-12-30)",
       "sourceDate": "2025-12-30",
       "effectiveFrom": "2026-10-02",
-      "effectiveTo": null,
+      "effectiveTo": "2026-11-11",
       "license": "저작권법 제7조 제1호 비보호저작물 (법령·별표 원문)",
       "licenseVerified": true,
       "access": "bundled",
@@ -351,7 +417,7 @@
       "datasetVersion": "lsiSeq=290881 (2026-10-02 시행본; 별표 개정 표기 2025-12-30)",
       "sourceDate": "2025-12-30",
       "effectiveFrom": "2026-10-02",
-      "effectiveTo": null,
+      "effectiveTo": "2026-11-11",
       "license": "저작권법 제7조 제1호 비보호저작물 (법령·별표 원문)",
       "licenseVerified": true,
       "access": "bundled",
@@ -380,7 +446,7 @@
       "datasetVersion": "lsiSeq=290881 (2026-10-02 시행본; 별표 개정 표기 2025-12-30)",
       "sourceDate": "2025-12-30",
       "effectiveFrom": "2026-10-02",
-      "effectiveTo": null,
+      "effectiveTo": "2026-11-11",
       "license": "저작권법 제7조 제1호 비보호저작물 (법령·별표 원문)",
       "licenseVerified": true,
       "access": "bundled",
@@ -409,7 +475,7 @@
       "datasetVersion": "lsiSeq=290881 (2026-10-02 시행본; 별표 개정 표기 2025-12-30)",
       "sourceDate": "2025-12-30",
       "effectiveFrom": "2026-10-02",
-      "effectiveTo": null,
+      "effectiveTo": "2026-11-11",
       "license": "저작권법 제7조 제1호 비보호저작물 (법령·별표 원문)",
       "licenseVerified": true,
       "access": "bundled",
@@ -480,6 +546,286 @@
       ],
       "missing": [
         "개별 사업장의 변경 전 분류·신고 이력 미확인; 경과조치 자동 적용 불가"
+      ],
+      "legalFamily": "waste-rule"
+    },
+    {
+      "sourceId": "waste-rule-2026-11-12",
+      "category": "law",
+      "title": "폐기물관리법 시행규칙",
+      "publisher": "국가법령정보센터",
+      "url": "https://www.law.go.kr/LSW/lsInfoR.do?lsiSeq=291947&efYd=20261112",
+      "downloadUrl": null,
+      "retrievedAt": "2026-11-13T10:25:00Z",
+      "datasetVersion": "lsiSeq=291947",
+      "sourceDate": "2026-11-12",
+      "effectiveFrom": "2026-11-12",
+      "effectiveTo": null,
+      "sha256": "ffda6c1dad0c53dcdc1db86543e768c346dbbecdea2d2a0d2fc649aca565e529",
+      "license": "저작권법 제7조 제1호 비보호저작물 (법령 본문)",
+      "licenseVerified": true,
+      "access": "bundled",
+      "localPath": "data/reference/legal/291947/article4-2.txt",
+      "verifiedFields": [
+        "법령명",
+        "공포일",
+        "시행일",
+        "제4조의2 제1항부터 제3항",
+        "제70호 개정문에서 선택 별표 비개정"
+      ],
+      "missing": [
+        "일반조문만으로 사례별 코드·처리경로 확정 불가; 선택 별표는 legal-291947-* 레코드 참조",
+        "포털 화면·편집물 자체는 배포하지 않음"
+      ],
+      "legalFamily": "waste-rule"
+    },
+    {
+      "sourceId": "legal-291947-annex4-pdf",
+      "category": "law",
+      "title": "폐기물관리법 시행규칙 별표 4 (291947 시행본 원문)",
+      "publisher": "국가법령정보센터",
+      "url": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400799&bylClsCd=110201",
+      "downloadUrl": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400799&bylClsCd=110201",
+      "retrievedAt": "2026-11-13T10:25:00Z",
+      "datasetVersion": "lsiSeq=291947 (2026-11-12 시행본; 선택 별표 개정 표기 2025-12-30)",
+      "sourceDate": "2025-12-30",
+      "effectiveFrom": "2026-11-12",
+      "effectiveTo": null,
+      "sha256": "cbfff5b2561b1ed566142de2d6549c02f86265ba510a987a74e3585a757624b3",
+      "license": "저작권법 제7조 제1호 비보호저작물 (법령·별표 원문)",
+      "licenseVerified": true,
+      "access": "bundled",
+      "localPath": "data/reference/legal/291947/annex-4.pdf",
+      "verifiedFields": [
+        "291947 본문의 첨부 링크",
+        "원본 SHA-256",
+        "선택 인용 텍스트와 페이지 수 대조"
+      ],
+      "missing": [
+        "선택 인용 외 전체 행 자동 해석·전체 처리경로 적합성 검증은 수행하지 않음"
+      ],
+      "legalFamily": "waste-rule"
+    },
+    {
+      "sourceId": "legal-291947-annex4-2-pdf",
+      "category": "law",
+      "title": "폐기물관리법 시행규칙 별표 4의2 (291947 시행본 원문)",
+      "publisher": "국가법령정보센터",
+      "url": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400831&bylClsCd=110201",
+      "downloadUrl": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400831&bylClsCd=110201",
+      "retrievedAt": "2026-11-13T10:25:00Z",
+      "datasetVersion": "lsiSeq=291947 (2026-11-12 시행본; 선택 별표 개정 표기 2025-12-30)",
+      "sourceDate": "2025-12-30",
+      "effectiveFrom": "2026-11-12",
+      "effectiveTo": null,
+      "sha256": "72f755c69cb86f9ba3f068fbed755178308071822d6a4a5805197dadc1b792f3",
+      "license": "저작권법 제7조 제1호 비보호저작물 (법령·별표 원문)",
+      "licenseVerified": true,
+      "access": "bundled",
+      "localPath": "data/reference/legal/291947/annex-4-2.pdf",
+      "verifiedFields": [
+        "291947 본문의 첨부 링크",
+        "원본 SHA-256",
+        "선택 인용 텍스트와 페이지 수 대조"
+      ],
+      "missing": [
+        "선택 인용 외 전체 행 자동 해석·전체 처리경로 적합성 검증은 수행하지 않음"
+      ],
+      "legalFamily": "waste-rule"
+    },
+    {
+      "sourceId": "legal-291947-annex4-3-pdf",
+      "category": "law",
+      "title": "폐기물관리법 시행규칙 별표 4의3 (291947 시행본 원문)",
+      "publisher": "국가법령정보센터",
+      "url": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400843&bylClsCd=110201",
+      "downloadUrl": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400843&bylClsCd=110201",
+      "retrievedAt": "2026-11-13T10:25:00Z",
+      "datasetVersion": "lsiSeq=291947 (2026-11-12 시행본; 선택 별표 개정 표기 2025-12-30)",
+      "sourceDate": "2025-12-30",
+      "effectiveFrom": "2026-11-12",
+      "effectiveTo": null,
+      "sha256": "34983e831af31bfdfd0e9e350fdbe435dd0a942364e23ec2e27bbac4a7b6ac48",
+      "license": "저작권법 제7조 제1호 비보호저작물 (법령·별표 원문)",
+      "licenseVerified": true,
+      "access": "bundled",
+      "localPath": "data/reference/legal/291947/annex-4-3.pdf",
+      "verifiedFields": [
+        "291947 본문의 첨부 링크",
+        "원본 SHA-256",
+        "선택 인용 텍스트와 페이지 수 대조"
+      ],
+      "missing": [
+        "선택 인용 외 전체 행 자동 해석·전체 처리경로 적합성 검증은 수행하지 않음"
+      ],
+      "legalFamily": "waste-rule"
+    },
+    {
+      "sourceId": "legal-291947-annex5-3-pdf",
+      "category": "law",
+      "title": "폐기물관리법 시행규칙 별표 5의3 (291947 시행본 원문)",
+      "publisher": "국가법령정보센터",
+      "url": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400985&bylClsCd=110201",
+      "downloadUrl": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400985&bylClsCd=110201",
+      "retrievedAt": "2026-11-13T10:25:00Z",
+      "datasetVersion": "lsiSeq=291947 (2026-11-12 시행본; 선택 별표 개정 표기 2025-12-30)",
+      "sourceDate": "2025-12-30",
+      "effectiveFrom": "2026-11-12",
+      "effectiveTo": null,
+      "sha256": "c2960243df802adf97262a33bc79902940abc41cb393e519a3d5a1bead1926ef",
+      "license": "저작권법 제7조 제1호 비보호저작물 (법령·별표 원문)",
+      "licenseVerified": true,
+      "access": "bundled",
+      "localPath": "data/reference/legal/291947/annex-5-3.pdf",
+      "verifiedFields": [
+        "291947 본문의 첨부 링크",
+        "원본 SHA-256",
+        "선택 인용 텍스트와 페이지 수 대조"
+      ],
+      "missing": [
+        "선택 인용 외 전체 행 자동 해석·전체 처리경로 적합성 검증은 수행하지 않음"
+      ],
+      "legalFamily": "waste-rule"
+    },
+    {
+      "sourceId": "legal-291947-annex4-code",
+      "category": "law",
+      "title": "별표 4 제2호 51-03-01, PDF 6쪽",
+      "publisher": "국가법령정보센터",
+      "url": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400799&bylClsCd=110201",
+      "downloadUrl": null,
+      "retrievedAt": "2026-11-13T10:25:00Z",
+      "datasetVersion": "lsiSeq=291947 (2026-11-12 시행본; 선택 별표 개정 표기 2025-12-30)",
+      "sourceDate": "2025-12-30",
+      "effectiveFrom": "2026-11-12",
+      "effectiveTo": null,
+      "sha256": "90278d34f41574ef470ba55e1ad5c8698fc5d46792b5cd80e1ae056bdb61e5d3",
+      "license": "저작권법 제7조 제1호 비보호저작물 (법령·별표 원문)",
+      "licenseVerified": true,
+      "access": "bundled",
+      "localPath": "data/reference/legal/291947/annex4-code.txt",
+      "derivedFrom": "cbfff5b2561b1ed566142de2d6549c02f86265ba510a987a74e3585a757624b3",
+      "verifiedFields": [
+        "인용문·조항·PDF 물리 페이지",
+        "새 시행본 원본과 발췌본 SHA-256",
+        "추출 텍스트와 행·열 문맥 대조"
+      ],
+      "missing": [
+        "사업장일반폐기물 해당 여부와 지정폐기물 제외를 별도 확인해야 한다."
+      ],
+      "legalFamily": "waste-rule"
+    },
+    {
+      "sourceId": "legal-291947-annex4-2-r3-3",
+      "category": "law",
+      "title": "별표 4의2 제2호가목3), PDF 1쪽",
+      "publisher": "국가법령정보센터",
+      "url": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400831&bylClsCd=110201",
+      "downloadUrl": null,
+      "retrievedAt": "2026-11-13T10:25:00Z",
+      "datasetVersion": "lsiSeq=291947 (2026-11-12 시행본; 선택 별표 개정 표기 2025-12-30)",
+      "sourceDate": "2025-12-30",
+      "effectiveFrom": "2026-11-12",
+      "effectiveTo": null,
+      "sha256": "1c37f9100831e09d2c485c4c27d57d6b5bd9b1fe80a6f4de794a6701cbe251c8",
+      "license": "저작권법 제7조 제1호 비보호저작물 (법령·별표 원문)",
+      "licenseVerified": true,
+      "access": "bundled",
+      "localPath": "data/reference/legal/291947/annex4-2-r3-3.txt",
+      "derivedFrom": "72f755c69cb86f9ba3f068fbed755178308071822d6a4a5805197dadc1b792f3",
+      "verifiedFields": [
+        "인용문·조항·PDF 물리 페이지",
+        "새 시행본 원본과 발췌본 SHA-256",
+        "추출 텍스트와 행·열 문맥 대조"
+      ],
+      "missing": [
+        "실제 재활용 공정·산출물·용도가 R-3-3 정의와 일치하는지 확인해야 한다."
+      ],
+      "legalFamily": "waste-rule"
+    },
+    {
+      "sourceId": "legal-291947-annex4-3-types",
+      "category": "law",
+      "title": "별표 4의3 제2호 51-03-01, R-3-3 포함 행, PDF 9쪽",
+      "publisher": "국가법령정보센터",
+      "url": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400843&bylClsCd=110201",
+      "downloadUrl": null,
+      "retrievedAt": "2026-11-13T10:25:00Z",
+      "datasetVersion": "lsiSeq=291947 (2026-11-12 시행본; 선택 별표 개정 표기 2025-12-30)",
+      "sourceDate": "2025-12-30",
+      "effectiveFrom": "2026-11-12",
+      "effectiveTo": null,
+      "sha256": "d94242b3f23bf4e198146f52fb3373bfb24689e27fa4291c2392e0b6a3827565",
+      "license": "저작권법 제7조 제1호 비보호저작물 (법령·별표 원문)",
+      "licenseVerified": true,
+      "access": "bundled",
+      "localPath": "data/reference/legal/291947/annex4-3-types.txt",
+      "derivedFrom": "34983e831af31bfdfd0e9e350fdbe435dd0a942364e23ec2e27bbac4a7b6ac48",
+      "verifiedFields": [
+        "인용문·조항·PDF 물리 페이지",
+        "새 시행본 원본과 발췌본 SHA-256",
+        "추출 텍스트와 행·열 문맥 대조"
+      ],
+      "missing": [
+        "사업장일반폐기물 해당 여부와 지정폐기물 제외를 별도 확인해야 한다.",
+        "재활용 유형별 세부기준·허가 범위·인수 조건을 별도로 확인해야 한다."
+      ],
+      "legalFamily": "waste-rule"
+    },
+    {
+      "sourceId": "legal-291947-annex5-3-common",
+      "category": "law",
+      "title": "별표 5의3 제1호다목, PDF 1쪽",
+      "publisher": "국가법령정보센터",
+      "url": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400985&bylClsCd=110201",
+      "downloadUrl": null,
+      "retrievedAt": "2026-11-13T10:25:00Z",
+      "datasetVersion": "lsiSeq=291947 (2026-11-12 시행본; 선택 별표 개정 표기 2025-12-30)",
+      "sourceDate": "2025-12-30",
+      "effectiveFrom": "2026-11-12",
+      "effectiveTo": null,
+      "sha256": "6dd79d704a8c8be87e9b57469ccf1d8d189f4fbfac156beca735312020c16533",
+      "license": "저작권법 제7조 제1호 비보호저작물 (법령·별표 원문)",
+      "licenseVerified": true,
+      "access": "bundled",
+      "localPath": "data/reference/legal/291947/annex5-3-common.txt",
+      "derivedFrom": "c2960243df802adf97262a33bc79902940abc41cb393e519a3d5a1bead1926ef",
+      "verifiedFields": [
+        "인용문·조항·PDF 물리 페이지",
+        "새 시행본 원본과 발췌본 SHA-256",
+        "추출 텍스트와 행·열 문맥 대조"
+      ],
+      "missing": [
+        "재활용환경성평가 예외·금지 및 제한·별표 5의4 준수사항·현행 허가를 확인해야 한다.",
+        "용도·이전 신고 및 분류 변경 이력 미입력: 부칙 제18호 제3조 경과조치 적용은 확인되지 않았다."
+      ],
+      "legalFamily": "waste-rule"
+    },
+    {
+      "sourceId": "legal-291947-annex5-3-food",
+      "category": "law",
+      "title": "별표 5의3 제2호나목1)다)(3), PDF 7쪽",
+      "publisher": "국가법령정보센터",
+      "url": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400985&bylClsCd=110201",
+      "downloadUrl": null,
+      "retrievedAt": "2026-11-13T10:25:00Z",
+      "datasetVersion": "lsiSeq=291947 (2026-11-12 시행본; 선택 별표 개정 표기 2025-12-30)",
+      "sourceDate": "2025-12-30",
+      "effectiveFrom": "2026-11-12",
+      "effectiveTo": null,
+      "sha256": "e32cea03cc7b0259878991f59b7d490ae2c403f40afbe0a8fc5b12332d52b491",
+      "license": "저작권법 제7조 제1호 비보호저작물 (법령·별표 원문)",
+      "licenseVerified": true,
+      "access": "bundled",
+      "localPath": "data/reference/legal/291947/annex5-3-food.txt",
+      "derivedFrom": "c2960243df802adf97262a33bc79902940abc41cb393e519a3d5a1bead1926ef",
+      "verifiedFields": [
+        "인용문·조항·PDF 물리 페이지",
+        "새 시행본 원본과 발췌본 SHA-256",
+        "추출 텍스트와 행·열 문맥 대조"
+      ],
+      "missing": [
+        "식품용기 재생원료의 적용범위·시설·품질·식약처 인정 증빙 미확인: 적합 판정 보류."
       ],
       "legalFamily": "waste-rule"
     }

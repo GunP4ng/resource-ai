@@ -63,7 +63,7 @@ test("prepare and verify reproduce an offline bundle with separate byte and cano
   assert.equal(receipt["lineageFileSha256"], sha(await readFile(join(directory, "lineage.json"))));
   const artifact = await load(directory, "artifact.json");
   assert.equal(receipt["artifactCanonicalSha256"], revision(artifact["record"]));
-  assert.equal(receipt["decision"], "needs-review");
+  assert.equal(receipt["decision"], "needs-information");
   assert.equal(receipt["resourcesSha256"], revision({}));
   const record = object(artifact["record"]);
   assert.equal(receipt["codeRevision"], record["codeRevision"]);

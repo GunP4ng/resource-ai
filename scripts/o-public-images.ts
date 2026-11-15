@@ -107,7 +107,7 @@ async function verify(directory: string) {
   requireValid(canonical(record.resources) === "{}" && canonical(accepted.resources) === "{}" && record.images.length === 0
     && record.sourceIssues.length === 0 && record.sources.every(source => source.state === "verified")
     && record.assessment.routes.every(route => route.eligibility.state === "unknown")
-    && record.decision.state === "needs-review", "development-holds");
+    && record.decision.state === "needs-information", "development-holds");
   return { status: "verified", codeRevision: record.codeRevision, images, files,
     inputRevision: record.caseRevision, inputFileSha256, lineageFileSha256: sha(lineageBytes),
     artifactCanonicalSha256: accepted.artifact.sha256, artifactFileSha256: sha(artifactBytes),

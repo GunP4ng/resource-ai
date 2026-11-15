@@ -34,10 +34,42 @@ test.each([
   expect(result.issues.some((item) => item.kind === reason)).toBe(true);
 });
 
-test.each(["2026-09-30", "2026-11-15"])("does not extend verified annex coverage to %s", (assessmentDate) => {
+test("does not apply the archived 290881 annex before its effective date", () => {
+  const assessmentDate = "2026-09-30";
   const result = lookupLegalEvidence({ ...input, assessmentDate });
   expect(result.citations.filter((item) => item.sourceId.startsWith("legal-290881-"))).toEqual([]);
-  expect(result.issues.some((item) => item.kind === (assessmentDate < "2026-10-02" ? "out-of-period" : "currentness-unverified"))).toBe(true);
+  expect(result.issues.some((item) => item.kind === "out-of-period")).toBe(true);
+});
+
+test.each(["2026-11-10", "2026-11-11"])("uses the archived revision through its November 11 effective end: %s", (assessmentDate) => {
+  const result = lookupLegalEvidence({ ...input, assessmentDate }, undefined, { intendedUse: "general-resin" });
+  expect(result.citations.some((item) => item.sourceId === "legal-290881-annex4-code")).toBe(true);
+  expect(result.citations.some((item) => item.sourceId.startsWith("legal-291947-"))).toBe(false);
+  expect(result.issues.some((item) => item.kind === "currentness-unverified")).toBe(false);
+  expect(result.citations.find((item) => item.sourceId === "legal-290881-annex4-code")?.verifiedThrough).toBe("2026-11-14");
+});
+
+test("selects the registered 291947 revision at the 2026-11-12 boundary", () => {
+  const result = lookupLegalEvidence({ ...input, assessmentDate: "2026-11-12" }, undefined, { intendedUse: "general-resin" });
+  expect(result.citations.some((item) => item.sourceId === "legal-291947-annex4-code")).toBe(true);
+  expect(result.citations.some((item) => item.sourceId.startsWith("legal-290881-"))).toBe(false);
+  expect(result.citations.find((item) => item.sourceId === "legal-291947-annex4-code")?.originalSha256)
+    .toBe("cbfff5b2561b1ed566142de2d6549c02f86265ba510a987a74e3585a757624b3");
+  expect(result.issues).toEqual([]);
+});
+
+test("uses the reverified 291947 revision on November 15", () => {
+  const result = lookupLegalEvidence({ ...input, assessmentDate: "2026-11-15" });
+  expect(result.citations.some((item) => item.sourceId === "legal-291947-annex4-code")).toBe(true);
+  expect(result.citations.some((item) => item.sourceId.startsWith("legal-290881-"))).toBe(false);
+  expect(result.issues.some((item) => item.kind === "currentness-unverified")).toBe(false);
+});
+
+test("keeps dates after the 291947 verification cutoff under review", () => {
+  const result = lookupLegalEvidence({ ...input, assessmentDate: "2026-11-16" });
+  expect(result.citations.filter((item) => item.sourceId.startsWith("legal-291947-"))).toEqual([]);
+  expect(result.issues.some((item) => item.kind === "currentness-unverified"
+    && item.sourceId === "legal-291947-annex4-code")).toBe(true);
 });
 
 test("adds the actual food feedstock condition and keeps the linked notice unresolved", () => {

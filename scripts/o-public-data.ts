@@ -90,7 +90,7 @@ async function verify(directory: string) {
     && record.images.length === 0 && record.sourceIssues.length === 0
     && record.sources.every(source => source.state === "verified")
     && record.assessment.routes.every(route => route.eligibility.state === "unknown")
-    && record.decision.state === "needs-review", "development-holds");
+    && record.decision.state === "needs-information", "development-holds");
   return { status: "verified", population, inputRevision: record.caseRevision,
     artifactCanonicalSha256: accepted.artifact.sha256, artifactFileSha256: sha(artifactBytes),
     resourcesSha256: record.resourcesSha256, lineageFileSha256: sha(lineageBytes), sourceSha256: subset.source.sha256 };

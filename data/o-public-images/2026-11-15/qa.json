@@ -6,13 +6,13 @@
       "Parsed manifest and selected/reordered UTF-8 LF declaration snapshots; checked their anchored hashes.",
       "Verified exact three PNG raw byte hashes and decoded dimensions with sanitizePhoto.",
       "Verified canonical input revision, raw input hash, six lineage file bindings and exact synthetic dataOrigin lineage SHA.",
-      "Validated resource artifact with resources {}, empty runtime photo refs, unknown eligibility and needs-review.",
+      "Validated resource artifact with resources {}, empty runtime photo refs, unknown eligibility and needs-information after the 291947 source update.",
       "Retained observed Copyrighted=True, CC0, crop history, H006 overlap and zero independent field/label/holdout counts."
     ]
   },
   "actualAppProof": {
     "status": "verified",
-    "scope": "task-local synthetic operator; not field/provider approval",
+    "scope": "prior source snapshot, task-local synthetic operator; not field/provider approval or a fresh runtime check of the 291947 artifact",
     "realPngUploads": 3,
     "authenticatedPreviewHashesMatched": 3,
     "storageOnly": true,
