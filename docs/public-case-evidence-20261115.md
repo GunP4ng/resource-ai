@@ -76,4 +76,4 @@
 
 새 근거가 기본 조회에 포함되므로 공개 개발 패키지 두 개의 캐시를 기존 `o-public-data.ts prepare`와 `o-public-images.ts prepare`로 재생성했다. 검증 코드는 그대로이며 각 `verify`를 실제 실행했다. 만료 테스트는 새 검증기간 다음 날인 2026-11-16을 사용하고, 패키지 테스트는 비어 있던 근거 대신 새 발췌 두 개와 원문 PDF 두 개가 검증 상태로 보존됨을 확인한다. 기존 거부·변조·승인 대기 조건은 제거하지 않았다.
 
-실구독 재실행 결과와 전체 검사 영수증은 후속 평가 보고서에 기록한다.
+실구독 재실행 결과와 전체 검사 영수증은 [평가 보고서](hold-fix-evaluation-20261115.md)에 기록했다. C는 compared 0, needs-review 15, needs-information 3이며 OYS-003만 질량 정보요청으로 전환됐다. 전체 테스트는 823 pass/0 fail, typecheck·build는 통과했다.

@@ -1,0 +1,15 @@
+{
+  "scenario": "Python fitz + hashlib: each registry snapshot SHA equals manifest and entry SHA; literal quote exists; two new quotes match original PDF after whitespace normalization. Python Decimal independently checks six case cost subtotals and UK transport diagnostic arithmetic.",
+  "registryEntriesVerified": 9,
+  "newOriginalQuotesMatched": 2,
+  "caseCalculationsVerified": 6,
+  "missingMassRemainsNull": true,
+  "netCostAndNetCarbonAndSavingsRemainNull": true,
+  "pass": true,
+  "artifact": "data/evaluation/public-evidence-20261115.json",
+  "notes": [
+    "Comparison tolerance for floating JSON transport outputs is 1e-12.",
+    "The formulas use explicit synthetic mass and assumed cost/distance inputs, not field data.",
+    "No resulting value is a quotation, current facility acceptance or execution approval."
+  ]
+}

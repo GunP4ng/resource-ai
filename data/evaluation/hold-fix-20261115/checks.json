@@ -1,0 +1,59 @@
+{
+  "testedCommit": "40f8f8a",
+  "runtime": "1.4.4",
+  "checks": [
+    {
+      "command": "bun test --timeout 30000",
+      "pass": 823,
+      "fail": 0,
+      "files": 41,
+      "exitCode": 0,
+      "log": "evidence/tests-final.log"
+    },
+    {
+      "command": "bun run typecheck",
+      "exitCode": 0,
+      "log": "evidence/typecheck-final.log",
+      "projects": [
+        "tsconfig.json",
+        "tsconfig.tests.json",
+        "tsconfig.bun-tests.json"
+      ]
+    },
+    {
+      "command": "bun run build",
+      "exitCode": 0,
+      "log": "evidence/build.log",
+      "modules": 16
+    }
+  ],
+  "regressionsCaught": {
+    "initialPass": 819,
+    "initialFail": 4,
+    "log": "evidence/tests.log",
+    "repaired": [
+      "regenerated public package cached envelopes",
+      "expiration fixture advances beyond new verifiedThrough",
+      "serialized package now requires four verified legal sources"
+    ]
+  },
+  "diagnostics": {
+    "typescriptChangedTests": "no diagnostics",
+    "json": "Biome not installed; runtime schema and hash checks passed"
+  },
+  "productionDiff": {
+    "src": [],
+    "scripts": [],
+    "originalEvaluationInputs": []
+  },
+  "review": {
+    "tier": "LIGHT",
+    "kind": "self-review",
+    "gateTriggered": false
+  },
+  "limitations": [
+    "Bun 1.4.4 used; packageManager specifies1.4.2",
+    "No independently labeled field cases or holdout",
+    "No current facility permit/acceptance confirmed"
+  ]
+}
