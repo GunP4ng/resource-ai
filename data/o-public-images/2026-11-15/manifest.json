@@ -1,0 +1,203 @@
+{
+  "version": 1,
+  "selection": {
+    "selectedAt": "2026-11-15T06:20:31.489Z",
+    "images": [
+      {
+        "id": "O-PUBLIC-IMAGE-001",
+        "path": "samples/river-fragments.png",
+        "sha256": "4550f1fa24b4c7ca109da850a63edd039aaf717e047961c7d14372fecef83605",
+        "bytes": 132436,
+        "mimeType": "image/png",
+        "width": 300,
+        "height": 230,
+        "sourceTitle": "File:River litter plastic fragments 1.jpg",
+        "commonsPageId": 26375439,
+        "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:River_litter_plastic_fragments_1.jpg",
+        "author": "Provincie Limburg / Alf Mertens",
+        "sourceDateText": "2013-03-10",
+        "license": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "licenseDeclaration": "CC0",
+        "original": {
+          "url": "https://upload.wikimedia.org/wikipedia/commons/5/5b/River_litter_plastic_fragments_1.jpg",
+          "sha256": "50429a3c6c35933b1cbcd04b4a4d45cbce59a1a002deb11809aaaa8265a7c694",
+          "bytes": 245915,
+          "bundled": false
+        },
+        "publisherInput": {
+          "url": "https://upload.wikimedia.org/wikipedia/commons/5/5b/River_litter_plastic_fragments_1.jpg",
+          "sha256": "50429a3c6c35933b1cbcd04b4a4d45cbce59a1a002deb11809aaaa8265a7c694",
+          "bytes": 245915,
+          "width": 850,
+          "height": 568,
+          "kind": "publisher-original",
+          "bundled": false
+        },
+        "derivation": {
+          "metadataRemoved": true,
+          "orientationNormalized": true,
+          "crop": {
+            "left": 0,
+            "top": 50,
+            "right": 300,
+            "bottom": 280
+          },
+          "coordinateSpace": "sanitized publisher input pixels",
+          "encoder": "existing src/photo-codec.ts sanitizePhoto; Pillow crop then same sanitizer"
+        },
+        "review": {
+          "performedBy": "AI-assisted parent visual inspection; not an independent human label",
+          "reviewedAt": "2026-11-15T06:19:12.864Z",
+          "observation": "짙은 바탕 위 여러 색상의 작은 조각. 선택 영역에서 사람·문자·번호판·회사명은 식별되지 않음.",
+          "peopleVisible": false,
+          "readableTextVisible": false,
+          "platesVisible": false,
+          "companyNamesVisible": false,
+          "modelExecutionApproval": false,
+          "operatorApproval": false
+        },
+        "knownOverlapWith": [],
+        "sourceMaterialClaim": "Publisher describes river-litter plastic fragments; composition/process/lot not independently verified."
+      },
+      {
+        "id": "O-PUBLIC-IMAGE-002",
+        "path": "samples/gannet-plastic.png",
+        "sha256": "62ff5d4860020132c67ad4a49b860100b58d893703ec40a2c798a548143f5130",
+        "bytes": 283326,
+        "mimeType": "image/png",
+        "width": 960,
+        "height": 638,
+        "sourceTitle": "File:Northern Gannet carrying plastic waste.jpg",
+        "commonsPageId": 83970396,
+        "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:Northern_Gannet_carrying_plastic_waste.jpg",
+        "author": "Hobbyfotowiki",
+        "sourceDateText": "2019-05-13 14:08:24",
+        "license": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "licenseDeclaration": "CC0",
+        "original": {
+          "url": "https://upload.wikimedia.org/wikipedia/commons/0/0d/Northern_Gannet_carrying_plastic_waste.jpg",
+          "sha256": null,
+          "bytes": 11557000,
+          "bundled": false,
+          "retrieval": "full-resolution source not retrieved; no hash invented"
+        },
+        "publisherInput": {
+          "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0d/Northern_Gannet_carrying_plastic_waste.jpg/960px-Northern_Gannet_carrying_plastic_waste.jpg",
+          "sha256": "c7d841dec202cfeb88f5aa66901af3a327e0bd1929945fb18ab608ba55417080",
+          "bytes": 35611,
+          "width": 960,
+          "height": 638,
+          "kind": "publisher-thumbnail",
+          "bundled": false
+        },
+        "derivation": {
+          "metadataRemoved": true,
+          "orientationNormalized": true,
+          "crop": null,
+          "coordinateSpace": "sanitized publisher input pixels",
+          "encoder": "existing src/photo-codec.ts sanitizePhoto; Pillow crop then same sanitizer"
+        },
+        "review": {
+          "performedBy": "AI-assisted parent visual inspection; not an independent human label",
+          "reviewedAt": "2026-11-15T06:20:31.319Z",
+          "observation": "하늘을 배경으로 새가 투명한 조각을 물고 있음. 사람·문자·번호판·회사명은 식별되지 않음. 폐기물·재질 설명은 게시자 주장과 구분.",
+          "peopleVisible": false,
+          "readableTextVisible": false,
+          "platesVisible": false,
+          "companyNamesVisible": false,
+          "modelExecutionApproval": false,
+          "operatorApproval": false
+        },
+        "knownOverlapWith": [],
+        "sourceMaterialClaim": "Publisher describes a northern gannet carrying plastic waste; composition and field waste context not independently verified."
+      },
+      {
+        "id": "O-PUBLIC-IMAGE-003",
+        "path": "samples/strapping.png",
+        "sha256": "dac9bfbe7323264b1ac40e39f6a003c97e55647cf97a668758fbb268eea134ac",
+        "bytes": 1017355,
+        "mimeType": "image/png",
+        "width": 960,
+        "height": 380,
+        "sourceTitle": "File:PET Strapping - Opaque.jpg",
+        "commonsPageId": 148691839,
+        "sourcePageUrl": "https://commons.wikimedia.org/wiki/File:PET_Strapping_-_Opaque.jpg",
+        "author": "ScrapManagement",
+        "sourceDateText": "2024-05-24",
+        "license": "CC0-1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "licenseDeclaration": "CC0",
+        "original": {
+          "url": "https://upload.wikimedia.org/wikipedia/commons/9/9c/PET_Strapping_-_Opaque.jpg",
+          "sha256": null,
+          "bytes": 4292069,
+          "bundled": false,
+          "retrieval": "full-resolution source not retrieved; no hash invented"
+        },
+        "publisherInput": {
+          "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9c/PET_Strapping_-_Opaque.jpg/960px-PET_Strapping_-_Opaque.jpg",
+          "sha256": "1b202f03da63c4fde1e5246fe70a849ca92d8526b187d25e97d5853646795067",
+          "bytes": 184750,
+          "width": 960,
+          "height": 720,
+          "kind": "publisher-thumbnail",
+          "bundled": false
+        },
+        "derivation": {
+          "metadataRemoved": true,
+          "orientationNormalized": true,
+          "crop": {
+            "left": 0,
+            "top": 200,
+            "right": 960,
+            "bottom": 580
+          },
+          "coordinateSpace": "sanitized publisher input pixels",
+          "encoder": "existing src/photo-codec.ts sanitizePhoto; Pillow crop then same sanitizer"
+        },
+        "review": {
+          "performedBy": "AI-assisted parent visual inspection; not an independent human label",
+          "reviewedAt": "2026-11-15T06:20:31.488Z",
+          "observation": "녹색 띠 조각의 질감. 상자 가장자리 인쇄가 있는 영역은 제외. 선택 영역에 사람·문자·번호판·회사명은 식별되지 않음.",
+          "peopleVisible": false,
+          "readableTextVisible": false,
+          "platesVisible": false,
+          "companyNamesVisible": false,
+          "modelExecutionApproval": false,
+          "operatorApproval": false
+        },
+        "knownOverlapWith": [
+          "HYEOB-20261112-006"
+        ],
+        "sourceMaterialClaim": "Publisher calls the material PET strapping; this does not establish this case polymer/process/contact facts."
+      }
+    ],
+    "rejected": [
+      {
+        "id": 128881327,
+        "title": "File:Marine debris and plastic waste on beach.jpg",
+        "reason": "Visible branding, text and printed faces; original/derivative not admitted."
+      },
+      {
+        "source": "RealWaste",
+        "reason": "UCI CC BY4.0 vs author CC BY-NC-SA4.0 conflict; no images admitted."
+      }
+    ],
+    "acquisitionNote": "Optional full-resolution gannet request returned HTTP429. Selected official publisher inputs already obtained; full-resolution original hashes remain null where not fetched. No retry or claim of their byte validation.",
+    "boundary": "Three curated files, not independent field cases; one source already present in H006; all exposed development material, unseen holdout0."
+  },
+  "runtimeIdentity": {
+    "uploadedCuratedSha256": null,
+    "sanitizedStorageSha256": null,
+    "modelExecutionApproval": false,
+    "operatorApproval": false
+  },
+  "evidenceStatus": {
+    "exposedDevelopmentPictures": 3,
+    "newIndependentFieldCases": 0,
+    "independentHumanLabels": 0,
+    "unseenHoldout": 0
+  }
+}

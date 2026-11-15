@@ -1,0 +1,217 @@
+{
+  "record": {
+    "version": 1,
+    "execution": "offline-preparation",
+    "release": "review-required",
+    "dataOrigin": {
+      "kind": "synthetic",
+      "reference": "data/o-public-images/2026-11-15/lineage.json#sha256=df245928cb4c50f68adbe80da126534e62b8d6e49802397848eb1dc796e29c6f"
+    },
+    "codeRevision": "b6b6bd00ff5b705acf3c19ea485183b94e7f35b4",
+    "recordedAt": "2026-11-15T06:30:57.334Z",
+    "caseRevision": "98d70132305b45ce10218fdb76b3ac8e4e5edf8d5460092abfb933acf1861138",
+    "input": {
+      "caseId": "PUBLIC-IMG-DEV-001",
+      "description": "These distinct public reference photographs are not one field lot. Case facts are non-field synthetic/unknown; publisher material claims do not confirm resin or process. Runtime photo refs require actual upload/consent.",
+      "photoRefs": [],
+      "process": null,
+      "polymer": null,
+      "contamination": null,
+      "hazardousContact": "unknown",
+      "massKg": null,
+      "region": null,
+      "assessmentDate": "2026-11-15"
+    },
+    "images": [],
+    "assessment": {
+      "caseId": "PUBLIC-IMG-DEV-001",
+      "candidates": {
+        "resins": [],
+        "wasteCodes": [],
+        "photoInference": "not-performed"
+      },
+      "routes": [
+        {
+          "routeId": "reuse",
+          "route": "reuse",
+          "eligibility": {
+            "state": "unknown",
+            "missingFacts": [
+              "폐플라스틱이 발생한 공정 또는 발생원은 무엇인가요?",
+              "확인된 수지 종류와 이를 확인한 자료(라벨·재질 명세 등)가 있나요?",
+              "오염이나 이물질이 있나요? 확인된 상태를 알려 주세요.",
+              "유해물질과 접촉했는지 확인할 수 있나요?",
+              "확인된 질량은 몇 kg인가요?",
+              "폐플라스틱이 발생한 지역은 어디인가요?",
+              "법령 근거 확인 필요: currentness-unverified (waste-rule-2026-10-02)",
+              "법령 근거 확인 필요: context-missing (legal-290881-annex4-code)",
+              "법령 근거 확인 필요: context-missing (legal-290881-annex4-2-r3-3)",
+              "법령 근거 확인 필요: context-missing (legal-290881-annex4-3-types)",
+              "법령 근거 확인 필요: currentness-unverified (legal-290881-annex5-3-common)",
+              "이 평가일·사례 조건에 사용할 수 있는 검증된 법령 근거가 없습니다.",
+              "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다."
+            ]
+          }
+        },
+        {
+          "routeId": "mechanical-recycling",
+          "route": "mechanical-recycling",
+          "eligibility": {
+            "state": "unknown",
+            "missingFacts": [
+              "폐플라스틱이 발생한 공정 또는 발생원은 무엇인가요?",
+              "확인된 수지 종류와 이를 확인한 자료(라벨·재질 명세 등)가 있나요?",
+              "오염이나 이물질이 있나요? 확인된 상태를 알려 주세요.",
+              "유해물질과 접촉했는지 확인할 수 있나요?",
+              "확인된 질량은 몇 kg인가요?",
+              "폐플라스틱이 발생한 지역은 어디인가요?",
+              "법령 근거 확인 필요: currentness-unverified (waste-rule-2026-10-02)",
+              "법령 근거 확인 필요: context-missing (legal-290881-annex4-code)",
+              "법령 근거 확인 필요: context-missing (legal-290881-annex4-2-r3-3)",
+              "법령 근거 확인 필요: context-missing (legal-290881-annex4-3-types)",
+              "법령 근거 확인 필요: currentness-unverified (legal-290881-annex5-3-common)",
+              "이 평가일·사례 조건에 사용할 수 있는 검증된 법령 근거가 없습니다.",
+              "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다."
+            ]
+          }
+        },
+        {
+          "routeId": "other-recovery",
+          "route": "other-recovery",
+          "eligibility": {
+            "state": "unknown",
+            "missingFacts": [
+              "폐플라스틱이 발생한 공정 또는 발생원은 무엇인가요?",
+              "확인된 수지 종류와 이를 확인한 자료(라벨·재질 명세 등)가 있나요?",
+              "오염이나 이물질이 있나요? 확인된 상태를 알려 주세요.",
+              "유해물질과 접촉했는지 확인할 수 있나요?",
+              "확인된 질량은 몇 kg인가요?",
+              "폐플라스틱이 발생한 지역은 어디인가요?",
+              "법령 근거 확인 필요: currentness-unverified (waste-rule-2026-10-02)",
+              "법령 근거 확인 필요: context-missing (legal-290881-annex4-code)",
+              "법령 근거 확인 필요: context-missing (legal-290881-annex4-2-r3-3)",
+              "법령 근거 확인 필요: context-missing (legal-290881-annex4-3-types)",
+              "법령 근거 확인 필요: currentness-unverified (legal-290881-annex5-3-common)",
+              "이 평가일·사례 조건에 사용할 수 있는 검증된 법령 근거가 없습니다.",
+              "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다."
+            ]
+          }
+        },
+        {
+          "routeId": "disposal",
+          "route": "disposal",
+          "eligibility": {
+            "state": "unknown",
+            "missingFacts": [
+              "폐플라스틱이 발생한 공정 또는 발생원은 무엇인가요?",
+              "확인된 수지 종류와 이를 확인한 자료(라벨·재질 명세 등)가 있나요?",
+              "오염이나 이물질이 있나요? 확인된 상태를 알려 주세요.",
+              "유해물질과 접촉했는지 확인할 수 있나요?",
+              "확인된 질량은 몇 kg인가요?",
+              "폐플라스틱이 발생한 지역은 어디인가요?",
+              "법령 근거 확인 필요: currentness-unverified (waste-rule-2026-10-02)",
+              "법령 근거 확인 필요: context-missing (legal-290881-annex4-code)",
+              "법령 근거 확인 필요: context-missing (legal-290881-annex4-2-r3-3)",
+              "법령 근거 확인 필요: context-missing (legal-290881-annex4-3-types)",
+              "법령 근거 확인 필요: currentness-unverified (legal-290881-annex5-3-common)",
+              "이 평가일·사례 조건에 사용할 수 있는 검증된 법령 근거가 없습니다.",
+              "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다."
+            ]
+          }
+        }
+      ],
+      "questions": [
+        "폐플라스틱이 발생한 공정 또는 발생원은 무엇인가요?",
+        "확인된 수지 종류와 이를 확인한 자료(라벨·재질 명세 등)가 있나요?",
+        "오염이나 이물질이 있나요? 확인된 상태를 알려 주세요.",
+        "유해물질과 접촉했는지 확인할 수 있나요?",
+        "확인된 질량은 몇 kg인가요?",
+        "폐플라스틱이 발생한 지역은 어디인가요?"
+      ],
+      "legal": {
+        "evidence": [],
+        "citations": [],
+        "issues": [
+          {
+            "kind": "currentness-unverified",
+            "sourceId": "waste-rule-2026-10-02"
+          },
+          {
+            "kind": "context-missing",
+            "sourceId": "legal-290881-annex4-code"
+          },
+          {
+            "kind": "context-missing",
+            "sourceId": "legal-290881-annex4-2-r3-3"
+          },
+          {
+            "kind": "context-missing",
+            "sourceId": "legal-290881-annex4-3-types"
+          },
+          {
+            "kind": "currentness-unverified",
+            "sourceId": "legal-290881-annex5-3-common"
+          }
+        ],
+        "reviewRequirements": []
+      },
+      "pendingLegal": {
+        "pending": [],
+        "issues": []
+      },
+      "reviewReasons": [
+        "법령 근거 확인 필요: currentness-unverified (waste-rule-2026-10-02)",
+        "법령 근거 확인 필요: context-missing (legal-290881-annex4-code)",
+        "법령 근거 확인 필요: context-missing (legal-290881-annex4-2-r3-3)",
+        "법령 근거 확인 필요: context-missing (legal-290881-annex4-3-types)",
+        "법령 근거 확인 필요: currentness-unverified (legal-290881-annex5-3-common)",
+        "이 평가일·사례 조건에 사용할 수 있는 검증된 법령 근거가 없습니다."
+      ],
+      "reviewIssues": [],
+      "requiredChecks": {
+        "reuse": [
+          "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다."
+        ],
+        "mechanical-recycling": [
+          "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다."
+        ],
+        "other-recovery": [
+          "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다."
+        ],
+        "disposal": [
+          "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다."
+        ]
+      },
+      "reviewEvidence": []
+    },
+    "decision": {
+      "state": "needs-review",
+      "caseId": "PUBLIC-IMG-DEV-001",
+      "evidence": [],
+      "reasons": [
+        "법령 근거 확인 필요: currentness-unverified (waste-rule-2026-10-02)",
+        "법령 근거 확인 필요: context-missing (legal-290881-annex4-code)",
+        "법령 근거 확인 필요: context-missing (legal-290881-annex4-2-r3-3)",
+        "법령 근거 확인 필요: context-missing (legal-290881-annex4-3-types)",
+        "법령 근거 확인 필요: currentness-unverified (legal-290881-annex5-3-common)",
+        "이 평가일·사례 조건에 사용할 수 있는 검증된 법령 근거가 없습니다.",
+        "폐플라스틱이 발생한 공정 또는 발생원은 무엇인가요?",
+        "확인된 수지 종류와 이를 확인한 자료(라벨·재질 명세 등)가 있나요?",
+        "오염이나 이물질이 있나요? 확인된 상태를 알려 주세요.",
+        "유해물질과 접촉했는지 확인할 수 있나요?",
+        "확인된 질량은 몇 kg인가요?",
+        "폐플라스틱이 발생한 지역은 어디인가요?",
+        "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다.",
+        "현장 담당자의 검토와 승인 전에는 반출·계약·처리를 실행할 수 없습니다."
+      ]
+    },
+    "sources": [],
+    "resources": {},
+    "resourcesSha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+    "sourceIssues": []
+  },
+  "sha256": "08c211d5346408f8a54df87a6682f0b107990b6d051fffe0878c0ccb3e9d61aa"
+}

@@ -1,0 +1,89 @@
+{
+  "version": 1,
+  "dataChecks": {
+    "status": "verified",
+    "checks": [
+      "Parsed manifest and selected/reordered UTF-8 LF declaration snapshots; checked their anchored hashes.",
+      "Verified exact three PNG raw byte hashes and decoded dimensions with sanitizePhoto.",
+      "Verified canonical input revision, raw input hash, six lineage file bindings and exact synthetic dataOrigin lineage SHA.",
+      "Validated resource artifact with resources {}, empty runtime photo refs, unknown eligibility and needs-review.",
+      "Retained observed Copyrighted=True, CC0, crop history, H006 overlap and zero independent field/label/holdout counts."
+    ]
+  },
+  "actualAppProof": {
+    "status": "verified",
+    "scope": "task-local synthetic operator; not field/provider approval",
+    "realPngUploads": 3,
+    "authenticatedPreviewHashesMatched": 3,
+    "storageOnly": true,
+    "selectedModelPhotos": 0,
+    "checkExitCode": 0,
+    "installExitCode": 0,
+    "installReassessmentSeparationVerified": true,
+    "explicitAuthenticatedReassessment": true,
+    "runtimeArtifactCanonicalSha256": "2d902763acd8f8c87ca30335b99f668f84faf1748c9d32470a1bad3f2b14300c",
+    "unknownFieldsRetained": true,
+    "unavailableCalculationsRetained": true,
+    "negativeBoundaries": {
+      "wrongRevisionExitCode": 1,
+      "anonymousPreviewHttpStatus": 403,
+      "modelConsentWithoutAvailableTicketHttpStatus": 400,
+      "withdrawalHttpStatus": 303,
+      "withdrawnPreviewHttpStatus": 404
+    },
+    "priorResultPreservedOnRejection": true,
+    "withdrawalPreservedPriorAssessment": true,
+    "desktop": [
+      1440,
+      1000
+    ],
+    "mobile": [
+      390,
+      844
+    ],
+    "colorPreferences": [
+      "light",
+      "dark"
+    ],
+    "mobileHorizontalOverflow": false,
+    "privateRuntimeIdsAndReceiptsNotCommitted": true,
+    "privateReceiptSha256": "726c520d67ceb2c7f5f495c327ccbf4e51aa91a6009f9259a6571c3a78facba5"
+  },
+  "finalGate": {
+    "status": "APPROVE",
+    "reviewer": "gpt-6-astra",
+    "reasoningEffort": "xhigh",
+    "confidence": "HIGH",
+    "manualQaRows": 9,
+    "blockingIssues": 0,
+    "reviewFileSha256": "92a47c6969628933252e608608b5414b423b4e59525c1f567afba7458f7378f2"
+  },
+  "imageInference": "not performed",
+  "operatorApproval": false,
+  "modelExecutionApproval": false,
+  "targetTests": {
+    "passed": 11,
+    "failed": 0,
+    "mutationProof": "Replacing only the exact dataOrigin lineage-reference equality with true admitted whitespace-altered lineage: 10 pass, 1 fail (lineage-bytes expected rejection but CLI returned verified). Owner restored byte-for-byte."
+  },
+  "typechecks": "configured typecheck passed",
+  "repositoryChecks": {
+    "passed": 808,
+    "failed": 0,
+    "files": 39,
+    "scope": "ordinary detached clone of b6b6bd0 plus the scoped changes; existing linked-worktree commonDir defect avoided without changing its code/tests",
+    "commands": [
+      "bun run typecheck",
+      "bun run typecheck:o-tests",
+      "bun test --timeout 30000",
+      "bun run build",
+      "bun run build:app",
+      "bun run smoke"
+    ],
+    "smokeScope": "scaffold only; no prompt or Azure connectivity test"
+  },
+  "testJunkCheck": {
+    "exitCode": 0,
+    "findings": 0
+  }
+}
