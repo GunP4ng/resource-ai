@@ -64,7 +64,7 @@ test("an explicit designated-waste exclusion is not interpreted as hazardous sus
 });
 
 test("verified but unrelated public citations remain advisory without granting strict route eligibility", async () => {
-  const input = { ...syntheticCase, process: "결속밴드 절단", polymer: "PET" };
+  const input = { ...syntheticCase, process: "결속밴드 분류", polymer: "PET" };
   const domain = createResourceDomain(input);
   const result = await domain.decide();
   assert.equal(result.state, "compared");

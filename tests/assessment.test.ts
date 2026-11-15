@@ -12,6 +12,7 @@ import { syntheticCase, syntheticReviewed } from "./h-fixtures.ts";
 import { documents } from "../src/o-synthetic-evidence.ts";
 import hdpe from "../data/candidates/oyeonseok-2026-11-10/oys-20261110-002-hdpe-parison.json" with { type: "json" };
 import ldpe from "../data/candidates/oyeonseok-2026-11-10/oys-20261110-004-ldpe-film.json" with { type: "json" };
+import petStrap from "../data/h-candidates/2026-11-12/inputs/HYEOB-20261112-006.json" with { type: "json" };
 
 // Synthetic inputs exercising real bundled references; not real cases or legal decisions.
 function fixture(patch: Partial<CaseInput> = {}): CaseInput {
@@ -36,7 +37,7 @@ function assertHeld(result: CaseAssessment) {
   }
 }
 
-for (const [name, raw] of [["HDPE", hdpe], ["LDPE", ldpe]] as const) {
+for (const [name, raw] of [["HDPE", hdpe], ["LDPE", ldpe], ["PET strapping", petStrap]] as const) {
   for (const [assessmentDate, version] of [["2026-11-10", "290881"], ["2026-11-13", "291947"]] as const) {
     test(`${name} H2 code candidate uses ${version} without granting route eligibility`, () => {
       const parsed = parseCaseInput(raw);
