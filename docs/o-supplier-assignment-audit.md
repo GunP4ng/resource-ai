@@ -1,5 +1,9 @@
 # O 공급자 연결: PR 전 담당 업무 재대조
 
+## 2026-11-15 현재 목표 적용
+
+아래 PR 제출·QA 사실은 당시 기록이다. 현장 자료 대기는 #42에 따라 종료하고 공개·합성 package로 비교·추천을 연결한다. 현재 데모 목표는 비교·추천3분/차단·확인 목록2분이다. 실제 원장·파일 guard·독립 supervisor·retention과 provider/model/purpose 권한은 live 운영 인수 조건으로 유지한다. 이 운영 권한과 [추천 목표](recommendation-goal.md)의 반출·계약 전 확인 항목을 구분한다.
+
 2026-11-13에 GitHub 배정, main `ceb9e48`, PR34 병합 후 #12 댓글과
 현재 작업을 대조했다. 브랜치는 `feat/oyeonseok-o4-supplier-selection`이다.
 이 문서는 오연석의 담당 범위와 이번 제출의 경계를 기록한다.
