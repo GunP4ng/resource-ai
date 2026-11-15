@@ -1,5 +1,11 @@
 # H 후보·질문 개선·운영 의존성 인계
 
+## 2026-11-15 현재 인계 기준
+
+#42에 따라 현장 사진·자료를 기다리지 않고 권리 확인된 공개 사진(#59 방식)과 합성 사례로 H2 추천 시험을 진행한다. J 후보의 후속 공개 인계는 [issue42 인계](issue42-j-to-h-handoff-2026-11-14.md)를 따른다. 원격 후보·사진 바이트·사람 라벨은 서로 다르며 없는 라벨이나 전송 권한을 만들지 않는다.
+
+[추천 목표](recommendation-goal.md)에 따라 모델 실행 전에 필요한 자료는 검증 가능한 source snapshot/version/locator/SHA·권리·원본-파생 지지 관계다. 현장 시설 허가·인수·실견적/계량·거리·계수 적용은 추천 뒤 실행 전 확인 목록으로 붙인다. provider/account/model/purpose 승인·사진 동의/scope·철회·감사와 실제 request ID/usage 증거는 그대로 필요하다. 아래 보류·미완료 상태는 과거 관측으로 보존한다.
+
 시작 기준 main은 `74c8c3d9a3bae87b560f72e05068f991ca255265`이며 작업 브랜치는 `hyeobikong/h2-candidate-handoff`다. 게시 중 팀장이 PR33/37, 이어 PR39/34를 병합한 검증 기준 main `ae6456b7e6a23232314a2a47384c4de049f794c8`을 이 작업 브랜치에 정상 병합해 기존 이력을 보존했다. main 자체에는 커밋/푸시하지 않았다. 승인된 O 코드와 공통 설정은 상속했으며 H가 임의 수정하지 않았다. 사진 ZIP PR35는 별도 자료다. 이 변경은 H의 평가 후보와 질문 개선·재현 자료를 전달하며 승인된 운영 구현을 재구현하지 않는다.
 
 근거: [H2 #6](https://github.com/GunP4ng/resource-ai/issues/6), [PR33 병합 후 팀장 최신 배분](https://github.com/GunP4ng/resource-ai/issues/12#issuecomment-6827498808), [이전 배분](https://github.com/GunP4ng/resource-ai/issues/12#issuecomment-6765265158), [담당 업무](team-tasks.md#h2), [평가 계획](evaluation.md). #8은 PR25 병합 때 자동 CLOSED 됐으며 실제 구독/H/O 운영 인수는 미완료로 #12에서 추적한다. 이슈 종료를 실제 실행 인수로 해석하지 않는다.

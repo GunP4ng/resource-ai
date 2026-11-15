@@ -1,5 +1,11 @@
 # O4 operational runtime handoff
 
+## Goal and demo update: 2026-11-15
+
+The code and QA receipts below are historical implementation evidence. The current [recommendation goal](recommendation-goal.md) uses labelled public/synthetic packages without waiting for field data. Permits, acceptance/contracts, actual quotes/mass/distance, factor site applicability and site approval are pre-execution checks, not prerequisites for all route comparisons. Provider/financial authority, private-store guards, independent recovery supervisor and retention ownership remain live operational requirements; corpus independence and human labels remain evaluation requirements.
+
+The new five-minute demo target supersedes the held-only script below: three minutes show the versioned input, compared routes and reasons, sourced processor candidates, labelled calculation items and checklist; two minutes submit hazardous-contact or contradictory input, inspect the block, correct the same case, and inspect the returning comparison and checklist. This is a target to prove after recommendation-mode integration, not a claim that it already ran. Neither the existing nor new demo establishes field suitability, financial settlement or independent labels.
+
 Branch: `feat/oyeonseok-o4-supplier-selection`, base
 `ceb9e48b6db3e1a16b1eb69a65a35da8482b0dc4`. O owns supplier-selection assembly,
 component checks and this execution handoff. The parent owns whole-suite/real

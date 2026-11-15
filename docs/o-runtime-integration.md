@@ -1,5 +1,11 @@
 # O4 local operator runtime
 
+## Goal and demo update: 2026-11-15
+
+Under [recommendation goal](recommendation-goal.md) and #42, no field package is awaited. Install public/synthetic packages with their own identity, provenance, rights and exact actor/case/revision; do not label them field evidence. The open requirements below are live operational requirements, not a field-data dependency. Actual permit/acceptance, quotation/mass/distance, carbon-factor site applicability and site approval belong to the pre-execution checklist. Current citation support and source lineage remain required; invalid citations or contradictory inputs are blocked.
+
+The timed demo target is comparison/recommendation for three minutes and hazardous/contradictory-input block plus checklist for two minutes, replacing the incomplete-input/currentness-hold-only target below. Show conditions, available calculation items and their public/synthetic labels. New compared behavior must be proven after code integration; this documentation change does not establish it. Auth, consent, exact artifacts, real provider receipts, usage limitations and operational cleanup contracts below still apply.
+
 The explicit operational assembly, strict config contract, durable request-quota
 journal and recovery commands are documented in [O4 operational handoff](o-operational-handoff.md).
 O owns implementation checks, app execution evidence and the implementation PR.

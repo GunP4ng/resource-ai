@@ -1,5 +1,11 @@
 # O1–O4 implementation handoff
 
+## Goal update: 2026-11-15
+
+The implementation and QA contracts below describe their recorded versions, including zero verified processors and unavailable numeric totals. They do not certify a new recommendation mode. The current product goal is [route comparison and recommendation](recommendation-goal.md), not shipment or contract approval.
+
+Permit validity and processor acceptance do not prevent presenting a sourced candidate labelled unverified. Actual quotations, measured mass/distance, carbon-factor site applicability and site approval are pre-execution checklist items. Public-reference calculations require checked provenance, rights, units and boundary, and must be labelled scenario estimates. Missing numeric totals do not suppress every supported route comparison. Hazard/designated suspicion, explicit legal prohibition, invalid citations and contradictory input remain blocks. Authentication, consent, approvalId and other technical authorization contracts remain unchanged.
+
 ## O4 application transaction and photo boundary (2026-11-06)
 
 This section supersedes older O4 integration-pending statements below. The browser composition now uses H's stateless `prepareSubmit` / `prepareAnswer` / `evaluate` methods and one O case store. Direct `createAssessmentAdapter().submit/answer` compatibility callers retain their existing private H storage. The integrated browser never invokes those committing wrappers.

@@ -1,5 +1,9 @@
 # Oyeonseok ten-candidate handoff — 2026-11-10
 
+## Goal update: 2026-11-15
+
+Per #42, development and evaluation use labelled public and synthetic cases; field-source collection is no longer awaited. Actual permits, acceptance, contracts, quotations, measured mass/distance, carbon-factor site applicability and site approval belong to the pre-execution checklist in [recommendation goal](recommendation-goal.md). Do not present these cases as field-data or performance evidence. The manifest acceptance/split metadata and historical execution observations below remain unchanged.
+
 Prepared for the Oyeonseok handoff on branch `feat/oyeonseok-o4-operational-handoff`, starting at `74c8c3d9a3bae87b560f72e05068f991ca255265`. Candidate inputs and their manifest are under `data/candidates/oyeonseok-2026-11-10/`.
 
 These are ten newly authored, **synthetic text-only, exposed development candidates**. They are not ten collected field cases, accepted quota entries, independently labelled data, or locked holdout data. No field records, photographs, external evidence, real businesses or third-party source URLs were supplied or invented. Every description explicitly says SYNTHETIC. Structured facts are fictional scenario premises, not observed facts or established labels. Numeric mass values are fictional parameters, not measurements; other unknown mass values remain null. No prices, emissions factors, legal eligibility or expected verdicts are supplied.
