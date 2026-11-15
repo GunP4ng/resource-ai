@@ -43,7 +43,8 @@ test("adapter generates case IDs, preserves inputs and refreshes only explicitly
     assert.deepEqual(fields, before);
     const second = envelope(await adapter.answer(first.decision.caseId, { answers: '{"massKg":100}' }, live()));
     assert.equal(second.decision.caseId, first.decision.caseId);
-    assert.equal(second.decision.state, "needs-review");
+    assert.equal(second.decision.state, "compared");
+    if (second.decision.state === "compared") assert.equal(second.decision.recommendations?.[0]?.grade, "public-conditional");
     assert.equal(second.execution, undefined);
   } finally { adapter.dispose(); }
 });
@@ -212,7 +213,7 @@ test("real O4 HTTP handler accepts H adapter, updates questions and enforces own
     assert.equal((await get(b)).status, 404);
     assert.equal((await post(path + "/answers", b, { answers: '{"massKg":100}' })).status, 404);
     assert.equal((await post(path + "/answers", a, { answers: '{"massKg":100}' })).status, 303);
-    const review = await (await get(a)).text(); assert.ok(review.includes("검토 필요")); assert.ok(!review.includes("확인된 질량은"));
+    const review = await (await get(a)).text(); assert.ok(review.includes("공개 근거상 가능(조건부)")); assert.ok(!review.includes("확인된 질량은"));
   } finally { resourceApp.dispose(); }
 });
 

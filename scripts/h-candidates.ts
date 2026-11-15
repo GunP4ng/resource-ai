@@ -62,7 +62,11 @@ export async function verifyHCandidates() {
       assert.deepEqual(item.input, before);
       assert.equal(assessment.candidates.photoInference, "not-performed");
       assert.ok(assessment.routes.every(route => route.eligibility.state === "unknown"));
-      assert.notEqual(output.decision.state, "compared");
+      if (output.decision.state === "compared") {
+        assert.equal(output.decision.humanApproval, "pending");
+        assert.ok(output.decision.recommendations?.every(item => item.grade === "public-conditional"));
+        assert.ok(output.decision.routes.some(route => route.eligibility.state === "conditional"));
+      }
       results.push({ candidateId: item.candidateId, stratum: item.stratum,
         input: item.input, duplicateGroupId: item.duplicateGroupId,
         photoSha256: item.photo.sha256, source: item.photo.sourceSnapshot,

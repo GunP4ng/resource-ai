@@ -32,6 +32,7 @@ export interface EvidenceRecord {
 
 export type Eligibility =
   | { readonly state: "eligible"; readonly evidenceIds: readonly string[]; readonly conditions: readonly string[] }
+  | { readonly state: "conditional"; readonly evidenceIds: readonly string[]; readonly conditions: readonly string[] }
   | { readonly state: "ineligible"; readonly evidenceIds: readonly string[]; readonly reasons: readonly string[] }
   | { readonly state: "unknown"; readonly missingFacts: readonly string[] };
 
@@ -162,6 +163,24 @@ export interface ScenarioComparison {
     | { readonly state: "baseline-provided"; readonly baselineRouteId: string; readonly amount: Estimate<"kgCO2e"> };
 }
 
+/** Recommendation priority is not legal eligibility or numerical dominance. */
+export interface RouteRecommendation {
+  readonly routeId: string;
+  readonly rank: number;
+  readonly basis: string;
+  readonly grade: "public-conditional" | "reviewed";
+  readonly legalCitations: readonly { readonly sourceId: string; readonly locator: string; readonly claim: string }[];
+  readonly cost: RecommendationMetric<"KRW">;
+  readonly carbon: RecommendationMetric<"kgCO2e">;
+}
+
+export interface RecommendationMetric<Unit extends "KRW" | "kgCO2e"> {
+  readonly value: number | null;
+  readonly unit: Unit;
+  readonly label: "calculated" | "assumption" | "unavailable";
+  readonly reasons: readonly string[];
+}
+
 export type DecisionResult =
   | {
       readonly state: "needs-information";
@@ -184,6 +203,10 @@ export type DecisionResult =
       readonly evidence: readonly EvidenceRecord[];
       readonly limitations: readonly string[];
       readonly humanApproval: "pending" | "approved";
+      /** Optional only for historical records; current server decisions populate these. */
+      readonly recommendations?: readonly RouteRecommendation[];
+      readonly confidence?: { readonly level: "low" | "medium"; readonly reasons: readonly string[] };
+      readonly preExecutionChecks?: readonly string[];
     };
 
 /** Proposed application boundaries, not senpi framework APIs. */

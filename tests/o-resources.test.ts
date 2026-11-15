@@ -117,7 +117,9 @@ test("missing source bytes suppress operational supplements while retaining the 
   const a = await prepareCaseRecord(input, { ...options(), resources: syntheticReviewed(input), sources: async () => null });
   await f.install(a); const lease = f.store.begin(owner, input.caseId, null);
   const resources = await f.store.run(lease, input, async signal => f.provider(input, signal)); assert.deepEqual(resources, {});
-  const decision = await createResourceDomain(input, resources).decide(); assert.equal(decision.state, "needs-review");
+  // Missing field-source bytes cannot supply operational calculations, but public law still supports a recommendation.
+  const decision = await createResourceDomain(input, resources).decide(); assert.equal(decision.state, "compared");
+  if (decision.state === "compared") assert.equal(decision.recommendations?.[0]?.cost.value, null);
   f.store.commit(lease, { decision }, () => undefined); assert.equal(f.store.read(owner, input.caseId)?.review?.hash, a.sha256);
 });
 

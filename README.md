@@ -11,6 +11,9 @@ O4는 신뢰된 서버 인증을 주입하면 사례 소유권과 비공개 사�
 작은 사용자 앱 → 하나의 senpi SDK 세션 → 구독 모델(기본 `chatgpt-subscription` / `gpt-6-sol`, Azure는 opt-in) + 독립 도메인 도구 → 출처·조건·불확실성이 있는 비교 보고서.
 판정·업체·비교 도구는 앱의 사례별 세션에만 주입된다. 공식 extension은 CLI용 상태 조회 도구 `resource_project_status` 1개만 등록한다. skill/MCP/Foundry 네이티브 조합을 비교한 뒤 이 구조를 택했다.
 
+`compared`는 실행 승인 대신 추천 결과다. 검증된 별표의 분류·허용 유형·R-3-3 정의·공통기준이 연결되는 경로는 `conditional`(공개 근거상 가능·조건부) 등급과 순위를 받는다. `eligible`인 현장 검토 결과와 구분하며, 공개 근거만으로 판단할 수 없는 경로는 `unknown`으로 남긴다.
+결과의 `recommendations`에는 경로별 근거 인용과 비용·탄소 계산/가정 라벨 또는 `null`·사유가 있고, `confidence`와 `preExecutionChecks`를 함께 제공한다. 허가 유효성·인수/계약·실제 견적·거리·계수 적용·현장 승인은 실행 전 확인사항이다. 유해·지정폐기물 의심, 명백한 금지 경로, 인용 검증 실패, 입력 모순은 계속 차단하고 필수 질량 누락은 질문한다.
+
 ## 시작
 
 팀원은 [docs/team-tasks.md](docs/team-tasks.md)부터 읽고 자기 담당 작업을 시작한다.
@@ -40,7 +43,7 @@ smoke는 소스와 빌드된 extension을 **실제 senpi loader**로 열고, SDK
 인증이나 모델이 없으면 제출은 HTTP 503(`not-configured`)으로 끝난다.
 구독이 설정돼 있으면 제출 시 실제 모델 요청이 발생하므로 승인된 사례만 사용한다.
 
-`RESOURCE_MODEL_RUNNER=local bun run app`은 모델 호출 없이 기존 질문/답변/보류 흐름을 실행한다.
+`RESOURCE_MODEL_RUNNER=local bun run app`은 모델 호출 없이 질문/답변/추천/보류 흐름을 실행한다.
 `RESOURCE_MODEL_RUNNER=azure bun run app`은 기존 Azure runner를 명시적으로 선택한다.
 이때만 `.env.example`의 Azure 키·endpoint·deployment 설정이 필요하다.
 공유 운영 배포의 요청별 승인/감사·사진 동의·운영 자료 공급은 별도 인수 대상이며
@@ -80,7 +83,7 @@ RESOURCE_MODEL_RUNNER=local RESOURCE_APP_AUTH=local-operator RESOURCE_STATE_DIR=
 ## 범위와 정직한 한계
 
 - 법적 폐기물 코드·유해성은 사진만으로 확정하지 않는다.
-- 출처/허가/계수가 부족하면 질문·보류·비교 불가로 표시한다.
+- 출처 검증 실패·위험은 보류하고, 허가·견적·계수 미확인은 추천의 실행 전 확인사항과 수치 미산정 사유로 표시한다.
 - 원가·탄소 수치는 실제 quote/계수·단위·경계가 확보된 경우에만 계산한다.
 - 대회 제출 형식·최종 업로드 시각·Azure 크레딧 금액은 운영진/팀 계정 확인이 남아 있다.
 - 교육용 가상 데이터 정확도는 현장 재활용 판단의 정확도가 아니다.

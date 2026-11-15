@@ -298,7 +298,8 @@ test("domain is bound to a case revision and refuses caller-promoted routes", as
   assert.deepEqual(await domain.findProcessors(input, routes[0]!), []);
   Object.assign(input, { massKg: 200 });
   assert.deepEqual(domain.assess().questions, []);
-  assert.equal((await domain.decide()).state, "needs-review");
+  // Missing field reviews now permit a recommendation; the captured case revision is unchanged.
+  assert.equal((await domain.decide()).state, "compared");
 });
 
 test("domain delegates comparison to O with server-owned inputs and preserves missing-data failures", async () => {
@@ -437,15 +438,18 @@ test("a reviewed comparison without factors preserves unavailable carbon and no-
   }
 });
 
-test("host blocks unbound comparison, case mass mismatch, unverified quote facility and unknown routes", async () => {
+test("host blocks unbound comparison and case mass mismatch while missing field resources are advisory", async () => {
   const base = syntheticReviewed();
   for (const patch of [
     { comparisonEvidenceIds: [] }, { comparison: { ...base.comparison, boundary: "forged" } },
     { calculations: { ...base.calculations, caseMass: { ...base.calculations.caseMass, massKg: 1 } } },
-    { processors: undefined },
     { comparison: { ...base.comparison, routes: base.comparison.routes.map((r) => ({ ...r, routeId: "reuse" })) } },
-    { routeReviews: undefined },
   ]) assert.equal((await createResourceDomain(syntheticCase, { ...base, ...patch }).decide()).state, "needs-review");
+  for (const patch of [{ processors: undefined }, { routeReviews: undefined }]) {
+    const result = await createResourceDomain(syntheticCase, { ...base, ...patch }).decide();
+    assert.equal(result.state, "compared");
+    if (result.state === "compared") assert.equal(result.recommendations?.[0]?.cost.value, null);
+  }
   Object.assign(base.routeReviews.reviews[0]!, { caseRevision: "mutated" });
   assert.equal((await createResourceDomain(syntheticCase, base).decide()).state, "needs-review");
 });
