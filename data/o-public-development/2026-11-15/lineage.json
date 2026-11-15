@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "caseId": "PUBLIC-DEV-001",
+  "inputRevision": "f16e34fea8a273edcecc6a090dc3f955f9f4eca414c50c9d882518bd484dc0cb",
+  "files": [
+    {
+      "path": "data/sources/public-2026-11-15/catalog.json",
+      "sha256": "caf96555f9704ddb138351673a5ba4e91af72cd319b07358cd5c3d704c778032"
+    },
+    {
+      "path": "data/sources/public-2026-11-15/source-snapshots.json",
+      "sha256": "f3d15ee10b46b2121dd23cf9d6b454ddcf850b922fc457c7c8712204c38d1848"
+    },
+    {
+      "path": "data/sources/public-2026-11-15/license-snapshots.json",
+      "sha256": "203495e204cafa9e69d5c47e2f3a8d96ef53b75f69333bc29212c3cf18d86727"
+    },
+    {
+      "path": "data/reference/public-2026-11-15/keco-price-subset.json",
+      "sha256": "d21b63fbe804b45c0ee30b526ad6680ecf33b9bc1d4fb02d6880a8868e522b6e"
+    }
+  ],
+  "fields": {
+    "caseId": "합성 개발 식별자",
+    "description": "공개 가격 분류를 참고한 합성 설명; 실제 사례 증거 아님",
+    "assessmentDate": "개발 기준일 가정",
+    "photoRefs": "빈 배열; 사진 없음",
+    "process": "미상 null",
+    "polymer": "미상 null",
+    "contamination": "미상 null",
+    "hazardousContact": "미상 unknown",
+    "massKg": "독립 계량 증거 없음 null",
+    "region": "사례 지역 미상 null"
+  }
+}

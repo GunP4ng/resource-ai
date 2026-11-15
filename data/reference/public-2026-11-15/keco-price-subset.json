@@ -1,0 +1,68 @@
+{
+  "version": 1,
+  "source": {
+    "sourceId": "keco-price-2026-10",
+    "title": "한국환경공단_재활용가능자원 가격조사_20261026",
+    "publisher": "한국환경공단",
+    "url": "https://www.data.go.kr/data/3076421/fileData.do",
+    "locator": "CSV rows 2-27",
+    "retrievedAt": "2026-11-05T08:53:59Z",
+    "effectiveFrom": null,
+    "effectiveTo": null,
+    "datasetVersion": "2026-10-26",
+    "sha256": "562bf85c2f9a2047649b52d9875da462fdb2ca14be36e21cfd1950ff976dfeb3",
+    "license": "공공저작물 출처표시 제1유형",
+    "licenseVerified": true
+  },
+  "observationDate": "2026-11-15",
+  "observationMeaning": "기존 바이트와 공개 미리보기 대조; 새 다운로드 아님",
+  "unit": "KRW/kg",
+  "attribution": "한국환경공단, 재활용가능자원 가격조사_20261026, 공공누리 제1유형; 2개 셀 정규화 추출",
+  "locators": {
+    "dataRow": 3,
+    "csvRowIncludingHeader": 4,
+    "previewRowIndex": 3,
+    "columnIndices": [
+      2,
+      3
+    ]
+  },
+  "rows": [
+    {
+      "sourceId": "keco-price-2026-10",
+      "rowNumber": 4,
+      "itemLabel": "압축-PE(잡색)",
+      "polymer": "PE",
+      "form": "압축",
+      "quality": "잡색",
+      "region": "수도권",
+      "sourceLocator": "CSV row 4, column 수도권",
+      "observedOn": "2026-10-10",
+      "surveyMonth": "2026-10",
+      "publishedOn": "2026-10-26",
+      "priceKrwPerKg": 481.3,
+      "missingReason": null,
+      "priceKind": "reference-sale-price",
+      "vat": "unverified",
+      "logistics": "unverified"
+    },
+    {
+      "sourceId": "keco-price-2026-10",
+      "rowNumber": 4,
+      "itemLabel": "압축-PE(잡색)",
+      "polymer": "PE",
+      "form": "압축",
+      "quality": "잡색",
+      "region": "강원",
+      "sourceLocator": "CSV row 4, column 강원",
+      "observedOn": "2026-10-10",
+      "surveyMonth": "2026-10",
+      "publishedOn": "2026-10-26",
+      "priceKrwPerKg": null,
+      "missingReason": "unpublished",
+      "priceKind": "reference-sale-price",
+      "vat": "unverified",
+      "logistics": "unverified"
+    }
+  ]
+}

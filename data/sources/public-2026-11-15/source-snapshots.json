@@ -1,0 +1,138 @@
+{
+  "version": 1,
+  "snapshots": [
+    {
+      "id": "keco-price-source-0300b8f46c28",
+      "publisherUrl": "https://www.data.go.kr/data/3076421/fileData.do",
+      "captureAnchor": "source-observations-v3.json#/observations/0",
+      "observedAt": "2026-11-15T02:33:48.655Z",
+      "representation": "extracted-text; not original HTML/archive/file bytes",
+      "extraction": "원문에서 확인한 연속 부분문자열을 편집 순서로 재배열해 LF로 결합; 원문 전체나 원문 순서의 재현 아님. 마지막 LF 포함 UTF-8 text의 SHA-256",
+      "redaction": "탐색 메뉴·개인명/연락처·예제 레코드·이미지·환경 경로 제외; 남긴 발췌 문자열은 변경하지 않음",
+      "text": "한국환경공단_재활용가능자원 가격조사_20261026\nㅇ 가격단위 : 원/kg\n빈칸으로 표시된 부분은 미공표된 자료\n통계 공표 시점\n",
+      "sha256": "0300b8f46c28f10a08cda2bf4ebbf8e6d0e312addb3591878eaa1702deac6e82",
+      "attribution": "한국환경공단; 한국환경공단_재활용가능자원 가격조사_20261026"
+    },
+    {
+      "id": "waste-statistics-source-da6de5d46556",
+      "publisherUrl": "https://www.data.go.kr/data/3070174/fileData.do",
+      "captureAnchor": "source-observations-v3.json#/observations/4",
+      "observedAt": "2026-11-15T02:38:12.983Z",
+      "representation": "extracted-text; not original HTML/archive/file bytes",
+      "extraction": "원문에서 확인한 연속 부분문자열을 편집 순서로 재배열해 LF로 결합; 원문 전체나 원문 순서의 재현 아님. 마지막 LF 포함 UTF-8 text의 SHA-256",
+      "redaction": "탐색 메뉴·개인명/연락처·예제 레코드·이미지·환경 경로 제외; 남긴 발췌 문자열은 변경하지 않음",
+      "text": "한국환경공단_폐기물배출및처리현황_20241231\n전국 폐기물 발생 및 처리현황 자료입니다.\n",
+      "sha256": "da6de5d46556bd241c567d521eef81cb06456e9ae0ad17cecda732a8eeb183bd",
+      "attribution": "한국환경공단; 한국환경공단_폐기물배출및처리현황_20241231"
+    },
+    {
+      "id": "law-open-service-source-af853b5e5b1f",
+      "publisherUrl": "https://open.law.go.kr/LSO/information/guide.do",
+      "captureAnchor": "source-observations-v3.json#/observations/5",
+      "observedAt": "2026-11-15T02:38:53.784Z",
+      "representation": "extracted-text; not original HTML/archive/file bytes",
+      "extraction": "원문에서 확인한 연속 부분문자열을 편집 순서로 재배열해 LF로 결합; 원문 전체나 원문 순서의 재현 아님. 마지막 LF 포함 UTF-8 text의 SHA-256",
+      "redaction": "탐색 메뉴·개인명/연락처·예제 레코드·이미지·환경 경로 제외; 남긴 발췌 문자열은 변경하지 않음",
+      "text": "국가법령정보 공동활용 LAW OPEN DATA\n모든 DATA 활용은 공동활용이용 승인 후 가능합니다.\n",
+      "sha256": "af853b5e5b1f1c6b272b8646b7d611a0ee8f36469a0f17ff29216542de9bf577",
+      "attribution": "법제처; 국가법령정보 공동활용 LAW OPEN DATA"
+    },
+    {
+      "id": "kicox-factory-registry-verified-source-ada40b4b8b4c",
+      "publisherUrl": "https://www.data.go.kr/data/15105482/fileData.do",
+      "captureAnchor": "source-observations-v3.json#/observations/9",
+      "observedAt": "2026-11-15T02:41:43.831Z",
+      "representation": "extracted-text; not original HTML/archive/file bytes",
+      "extraction": "원문에서 확인한 연속 부분문자열을 편집 순서로 재배열해 LF로 결합; 원문 전체나 원문 순서의 재현 아님. 마지막 LF 포함 UTF-8 text의 SHA-256",
+      "redaction": "탐색 메뉴·개인명/연락처·예제 레코드·이미지·환경 경로 제외; 남긴 발췌 문자열은 변경하지 않음",
+      "text": "한국산업단지공단_전국등록공장현황_등록공장현황자료_20251231\n전체 행 1\n월 마지막 일을 기점으로 현황 데이터를 출력합니다.\n",
+      "sha256": "ada40b4b8b4cf9d87625abb8ab5fb4aef65782ef0cbe93ef5a3752a1f7418d4c",
+      "attribution": "한국산업단지공단; 한국산업단지공단_전국등록공장현황_등록공장현황자료_20251231"
+    },
+    {
+      "id": "gir-approved-factors-current-source-cf90d825ea28",
+      "publisherUrl": "https://www.gir.go.kr/home/board/read.do?boardId=86&boardMasterId=2&menuId=36",
+      "captureAnchor": "source-observations-v3.json#/observations/21",
+      "observedAt": "2026-11-15T02:53:40.726Z",
+      "representation": "extracted-text; not original HTML/archive/file bytes",
+      "extraction": "원문에서 확인한 연속 부분문자열을 편집 순서로 재배열해 LF로 결합; 원문 전체나 원문 순서의 재현 아님. 마지막 LF 포함 UTF-8 text의 SHA-256",
+      "redaction": "탐색 메뉴·개인명/연락처·예제 레코드·이미지·환경 경로 제외; 남긴 발췌 문자열은 변경하지 않음",
+      "text": "2025년 승인 국가 온실가스 배출·흡수계수\n2025-12-18\n387,652 Byte\n",
+      "sha256": "cf90d825ea28c1014f725c7d9709a6f1be1af85ca93155d66bd5485d8761a7e1",
+      "attribution": "온실가스종합정보센터 GIR; 2025년 승인 국가 온실가스 배출·흡수계수"
+    },
+    {
+      "id": "keiti-lci-detail-source-13c2d01aa450",
+      "publisherUrl": "https://www.keiti.re.kr/site/keiti/02/10202100000002023101610.jsp",
+      "captureAnchor": "source-observations-v3.json#/observations/20",
+      "observedAt": "2026-11-15T02:53:03.570Z",
+      "representation": "extracted-text; not original HTML/archive/file bytes",
+      "extraction": "원문에서 확인한 연속 부분문자열을 편집 순서로 재배열해 LF로 결합; 원문 전체나 원문 순서의 재현 아님. 마지막 LF 포함 UTF-8 text의 SHA-256",
+      "redaction": "탐색 메뉴·개인명/연락처·예제 레코드·이미지·환경 경로 제외; 남긴 발췌 문자열은 변경하지 않음",
+      "text": "LCI DB 정의\n제품에 대한 전과정평가를 수행하는 기초데이터로 활용되고 있음\n",
+      "sha256": "13c2d01aa450fc91a4d873178e08c323b870bcffec7816e4451eb627b6b77376",
+      "attribution": "한국환경산업기술원 KEITI; 국가 LCI DB 사업 설명"
+    },
+    {
+      "id": "uci-realwaste-source-4547b126a0fc",
+      "publisherUrl": "https://archive.ics.uci.edu/dataset/908/realwaste",
+      "captureAnchor": "UCI908 original HTML; visible declarations and embedded filesInfo record paths",
+      "observedAt": "2026-11-15T03:50:42.172Z",
+      "representation": "extracted-text; not original HTML/archive/file bytes",
+      "extraction": "페이지의 수량 선언·분류별 선언과 embedded filesInfo의 실제 파일명 한 개를 편집 순서로 LF 결합. metadata 파일 수의 독립 계산은 catalog의 fileListVerification 참조; 이미지 내용 검증 아님.",
+      "redaction": "탐색 메뉴·개인명/연락처·예제 레코드·이미지·환경 경로 제외; 남긴 발췌 문자열은 변경하지 않음",
+      "text": "RealWaste\n4752\n4753\nCardboard: 461 - Food Organics: 411 - Glass: 420 - Metal: 790 - Miscellaneous Trash: 495 - Paper: 500 - Plastic: 921 - Textile Trash: 318 - Vegetation: 436\nrealwaste-main/README.md\n",
+      "sha256": "4547b126a0fc5677021a129a1eb47bb9999f6f00b7a2db49f7d2b4e92184d578",
+      "attribution": "UCI Machine Learning Repository; Single, Iranmanesh, Raad; RealWaste",
+      "rawCaptureSha256": "487a7cd1690ca926e5c284517ee081b4dee980ffe4d878a09644d67fa0f74f99"
+    },
+    {
+      "id": "aihub-recycling-images-verified-source-d36480e003da",
+      "publisherUrl": "https://aihub.or.kr/aihubdata/data/view.do?dataSetSn=71362",
+      "captureAnchor": "source-observations-v3.json#/observations/11",
+      "observedAt": "2026-11-15T02:44:21.778Z",
+      "representation": "extracted-text; not original HTML/archive/file bytes",
+      "extraction": "원문에서 확인한 연속 부분문자열을 편집 순서로 재배열해 LF로 결합; 원문 전체나 원문 순서의 재현 아님. 마지막 LF 포함 UTF-8 text의 SHA-256",
+      "redaction": "탐색 메뉴·개인명/연락처·예제 레코드·이미지·환경 경로 제외; 남긴 발췌 문자열은 변경하지 않음",
+      "text": "재활용품 분류 및 선별 데이터\n2022년/1,000,000 건\n706,101건\n299,764건\n1,005,865건\n내국인만 데이터 신청이 가능합니다.\n",
+      "sha256": "d36480e003dac1b830e504558a638eab9d6068195e3dad89ef539dc0c492c26d",
+      "attribution": "AI Hub / 한국지능정보사회진흥원; 주관 ㈜뉴컨; 재활용품 분류 및 선별 데이터 (71362)"
+    },
+    {
+      "id": "taco-canonical-source-2690b56fda87",
+      "publisherUrl": "https://github.com/pedropro/TACO",
+      "captureAnchor": "source-observations-v3.json#/observations/14",
+      "observedAt": "2026-11-15T02:45:53.256Z",
+      "representation": "extracted-text; not original HTML/archive/file bytes",
+      "extraction": "원문에서 확인한 연속 부분문자열을 편집 순서로 재배열해 LF로 결합; 원문 전체나 원문 순서의 재현 아님. 마지막 LF 포함 UTF-8 text의 SHA-256",
+      "redaction": "탐색 메뉴·개인명/연락처·예제 레코드·이미지·환경 경로 제외; 남긴 발췌 문자열은 변경하지 않음",
+      "text": "Trash Annotations in Context Dataset Toolkit\nAdded more 785 images and 2642 litter segmentations.\nMIT license\n",
+      "sha256": "2690b56fda87587a0f3678d7c572931d1f246630d659aa03c8dee8214c605f2e",
+      "attribution": "pedropro/TACO; Pedro F Proença and Pedro Simões; TACO: Trash Annotations in Context Dataset Toolkit"
+    },
+    {
+      "id": "hf-extendedtaco-source-4d09bb2d7364",
+      "publisherUrl": "https://huggingface.co/datasets/roboticslaburjc/ExtendedTACO-reviewed",
+      "captureAnchor": "source-observations-v3.json#/observations/15",
+      "observedAt": "2026-11-15T02:46:30.696Z",
+      "representation": "extracted-text; not original HTML/archive/file bytes",
+      "extraction": "원문에서 확인한 연속 부분문자열을 편집 순서로 재배열해 LF로 결합; 원문 전체나 원문 순서의 재현 아님. 마지막 LF 포함 UTF-8 text의 SHA-256",
+      "redaction": "탐색 메뉴·개인명/연락처·예제 레코드·이미지·환경 경로 제외; 남긴 발췌 문자열은 변경하지 않음",
+      "text": "ExtendedTACO-reviewed\n25.2k rows\ntext\n",
+      "sha256": "4d09bb2d7364cfc9e7557f69d959cde9ec04deb84694819f7152e009965b92b0",
+      "attribution": "roboticslaburjc / Hugging Face; ExtendedTACO-reviewed"
+    },
+    {
+      "id": "kaggle-garbage-metadata-source-fe0fd14973c2",
+      "publisherUrl": "https://www.kaggle.com/api/v1/datasets/list?search=garbage-classification&user=mostafaabla",
+      "captureAnchor": "source-observations-v3.json#/observations/17",
+      "observedAt": "2026-11-15T02:49:17.946Z",
+      "representation": "extracted-text; not original HTML/archive/file bytes",
+      "extraction": "원문에서 확인한 연속 부분문자열을 편집 순서로 재배열해 LF로 결합; 원문 전체나 원문 순서의 재현 아님. 마지막 LF 포함 UTF-8 text의 SHA-256",
+      "redaction": "탐색 메뉴·개인명/연락처·예제 레코드·이미지·환경 경로 제외; 남긴 발췌 문자열은 변경하지 않음",
+      "text": "mostafaabla/garbage-classification\nGarbage Classification (12 classes)\n",
+      "sha256": "fe0fd14973c2e1af82f76855dd203678f3d38a6385c89cbc0a9df77a3d828972",
+      "attribution": "Kaggle / mostafaabla; Garbage Classification (12 classes)"
+    }
+  ]
+}
