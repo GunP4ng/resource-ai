@@ -33,7 +33,8 @@ export function recommendationBlockers(facts: CaseInput, assessment: CaseAssessm
     ...(assessment.legal.evidence.length === 0 || assessment.legal.citations.length === 0 ? ["검증된 법령 인용 없음"] : []),
     ...(assessment.questions.length === 0 && publicRecyclingEvidence(assessment).length === 0
       && assessment.routes.every(route => route.eligibility.state !== "eligible") ? ["경로별 판단에 필요한 공개 법령 인용 부족"] : []),
-    ...(/불일치|상충|일치하지|label\s*(?:conflict|mismatch)/iu.test(facts.polymer ?? "")
+    ...(/불일치|상충|일치하지|labels?\s*(?:conflict|mismatch)|conflicting\s+labels?/iu.test(
+      [facts.polymer, facts.process, facts.description].join(" "))
       || /사출\s*아님|압출\s*아님/u.test(facts.process ?? "") ? ["입력 자체 모순 확인 필요"] : []),
     ...(reviews?.reviews.flatMap(review => review.checks.filter(check => check.state === "not-met"
       && (check.requirement.includes("지정폐기물 제외")

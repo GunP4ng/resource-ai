@@ -66,6 +66,8 @@ for (const [name, patch] of [
   ["hazardous contact", { hazardousContact: "yes" }],
   ["designated waste suspicion", { description: "지정폐기물 의심 자투리" }],
   ["contradictory label", { polymer: "PP (라벨 ABS와 불일치)" }],
+  ["conflicting labels reported outside an empty resin field",
+    { description: "SYNTHETIC: conflicting labels for one lot, PP versus ABS.", polymer: null, massKg: null }],
 ] as const) {
   test(`${name} still blocks recommendations`, async () => {
     const result = await createResourceDomain({ ...syntheticCase, ...patch }).decide();
