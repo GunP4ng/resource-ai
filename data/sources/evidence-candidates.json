@@ -12,7 +12,7 @@
     "siteSpecific": false,
     "reviewedBy": "Codex (국가법령정보센터 원문 대조)",
     "reviewedAt": "2026-11-05T09:31:22Z",
-    "verifiedThrough": "2026-11-05",
+    "verifiedThrough": "2026-11-11",
     "reviewRequirements": [
       "일반 조문은 코드·처리경로 적합성의 개별 근거가 아니다."
     ],
@@ -41,7 +41,7 @@
     "siteSpecific": false,
     "reviewedBy": "Codex (PDF 원문 화면 대조; 전문 법률검토 아님)",
     "reviewedAt": "2026-11-05T11:46:53Z",
-    "verifiedThrough": "2026-11-05",
+    "verifiedThrough": "2026-11-11",
     "requireSafeContext": true,
     "reviewRequirements": [
       "사업장일반폐기물 해당 여부와 지정폐기물 제외를 별도 확인해야 한다."
@@ -71,7 +71,7 @@
     "siteSpecific": false,
     "reviewedBy": "Codex (PDF 원문 화면 대조; 전문 법률검토 아님)",
     "reviewedAt": "2026-11-05T11:46:53Z",
-    "verifiedThrough": "2026-11-05",
+    "verifiedThrough": "2026-11-11",
     "requireSafeContext": true,
     "reviewRequirements": [
       "실제 재활용 공정·산출물·용도가 R-3-3 정의와 일치하는지 확인해야 한다."
@@ -101,7 +101,7 @@
     "siteSpecific": false,
     "reviewedBy": "Codex (PDF 원문 화면 대조; 전문 법률검토 아님)",
     "reviewedAt": "2026-11-05T11:46:53Z",
-    "verifiedThrough": "2026-11-05",
+    "verifiedThrough": "2026-11-11",
     "requireSafeContext": true,
     "reviewRequirements": [
       "사업장일반폐기물 해당 여부와 지정폐기물 제외를 별도 확인해야 한다.",
@@ -123,7 +123,7 @@
     "siteSpecific": false,
     "reviewedBy": "Codex (PDF 원문 화면 대조; 전문 법률검토 아님)",
     "reviewedAt": "2026-11-05T11:46:53Z",
-    "verifiedThrough": "2026-11-05",
+    "verifiedThrough": "2026-11-11",
     "requireSafeContext": false,
     "reviewRequirements": [
       "재활용환경성평가 예외·금지 및 제한·별표 5의4 준수사항·현행 허가를 확인해야 한다.",
@@ -145,7 +145,7 @@
     "siteSpecific": false,
     "reviewedBy": "Codex (PDF 원문 화면 대조; 전문 법률검토 아님)",
     "reviewedAt": "2026-11-05T11:46:53Z",
-    "verifiedThrough": "2026-11-05",
+    "verifiedThrough": "2026-11-11",
     "requireSafeContext": false,
     "reviewRequirements": [
       "식품용기 재생원료의 적용범위·시설·품질·식약처 인정 증빙 미확인: 적합 판정 보류."
@@ -185,7 +185,7 @@
     "siteSpecific": false,
     "reviewedBy": "OmO (291947 공식 원문·선택 별표 대조; 전문 법률검토 아님)",
     "reviewedAt": "2026-11-13T10:25:00Z",
-    "verifiedThrough": "2026-11-13",
+    "verifiedThrough": "2026-11-15",
     "reviewRequirements": [
       "일반 조문은 코드·처리경로 적합성의 개별 근거가 아니다."
     ],
@@ -214,7 +214,7 @@
     "siteSpecific": false,
     "reviewedBy": "OmO (291947 공식 원문·선택 별표 대조; 전문 법률검토 아님)",
     "reviewedAt": "2026-11-13T10:25:00Z",
-    "verifiedThrough": "2026-11-13",
+    "verifiedThrough": "2026-11-15",
     "requireSafeContext": true,
     "reviewRequirements": [
       "사업장일반폐기물 해당 여부와 지정폐기물 제외를 별도 확인해야 한다."
@@ -244,7 +244,7 @@
     "siteSpecific": false,
     "reviewedBy": "OmO (291947 공식 원문·선택 별표 대조; 전문 법률검토 아님)",
     "reviewedAt": "2026-11-13T10:25:00Z",
-    "verifiedThrough": "2026-11-13",
+    "verifiedThrough": "2026-11-15",
     "requireSafeContext": true,
     "reviewRequirements": [
       "실제 재활용 공정·산출물·용도가 R-3-3 정의와 일치하는지 확인해야 한다."
@@ -274,7 +274,7 @@
     "siteSpecific": false,
     "reviewedBy": "OmO (291947 공식 원문·선택 별표 대조; 전문 법률검토 아님)",
     "reviewedAt": "2026-11-13T10:25:00Z",
-    "verifiedThrough": "2026-11-13",
+    "verifiedThrough": "2026-11-15",
     "requireSafeContext": true,
     "reviewRequirements": [
       "사업장일반폐기물 해당 여부와 지정폐기물 제외를 별도 확인해야 한다.",
@@ -296,7 +296,7 @@
     "siteSpecific": false,
     "reviewedBy": "OmO (291947 공식 원문·선택 별표 대조; 전문 법률검토 아님)",
     "reviewedAt": "2026-11-13T10:25:00Z",
-    "verifiedThrough": "2026-11-13",
+    "verifiedThrough": "2026-11-15",
     "requireSafeContext": false,
     "reviewRequirements": [
       "재활용환경성평가 예외·금지 및 제한·별표 5의4 준수사항·현행 허가를 확인해야 한다.",
@@ -318,7 +318,7 @@
     "siteSpecific": false,
     "reviewedBy": "OmO (291947 공식 원문·선택 별표 대조; 전문 법률검토 아님)",
     "reviewedAt": "2026-11-13T10:25:00Z",
-    "verifiedThrough": "2026-11-13",
+    "verifiedThrough": "2026-11-15",
     "requireSafeContext": false,
     "reviewRequirements": [
       "식품용기 재생원료의 적용범위·시설·품질·식약처 인정 증빙 미확인: 적합 판정 보류."
