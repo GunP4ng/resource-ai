@@ -1,0 +1,11 @@
+{
+  "snapshots": [
+    {
+      "id": "cc0-rights-declarations",
+      "encoding": "UTF-8/LF",
+      "kind": "selected-reordered-declaration",
+      "text": "Selected/reordered publisher declaration; not complete original HTML.\n{\n  \"observedAt\": \"2026-11-15T06:26:27.904Z\",\n  \"licence\": {\n    \"id\": \"CC0-1.0\",\n    \"deedUrl\": \"https://creativecommons.org/publicdomain/zero/1.0/\",\n    \"deedRawSha256\": \"abb4d48fc8b85de52b377dd105532c6c549f515d492a8e1712bc99e7316a1f12\",\n    \"legalCodeUrl\": \"https://creativecommons.org/publicdomain/zero/1.0/legalcode.en\",\n    \"legalCodeRawSha256\": \"b43732f4c1463b087cf10d4daf8d8766514b2bf8f21bc5ef50905f95be227726\",\n    \"scope\": \"Affirmer copyright/related-right waiver or fallback licence, including commercial reuse and adaptation; no trademark/patent waiver, title guarantee or clearing of third-party permissions. Project runtime consent remains separate.\"\n  },\n  \"excludedSources\": [\n    {\n      \"name\": \"RealWaste\",\n      \"publisherUrl\": \"https://archive.ics.uci.edu/dataset/908/realwaste\",\n      \"publisherDeclaration\": \"CC BY 4.0\",\n      \"authorUrl\": \"https://raw.githubusercontent.com/sam-single/realwaste/main/README.md\",\n      \"authorDeclaration\": \"CC BY-NC-SA 4.0\",\n      \"authorReadmeSha256\": \"e812725fd1e38b9dcd8c60253fba55a99c5b90617ce27765fa1f65d1336e13b1\",\n      \"decision\": \"rights conflict unresolved; no image admission\"\n    }\n  ]\n}\n",
+      "sha256": "8080b9d5d99ffc69ecfa3f79335daf79242d196b9402389e5ba4d0d466adda61"
+    }
+  ]
+}

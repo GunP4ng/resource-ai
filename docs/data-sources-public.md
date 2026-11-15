@@ -1,6 +1,6 @@
 # 공개 출처와 최소 개발 패키지 (#52/#54)
 
-2026-11-15 관찰 기준이다. 기관의 선언, 로컬 바이트 검증, 사용 목적별 승인을 구분한다. 공개 원문과 메타데이터는 직접 조회했으며, 이번 최소 패키지는 기존 KECO 파일을 재사용한다. 신규 원본 데이터 파일이나 이미지 묶음은 내려받지 않았다. 상세 한국어 카탈로그는 [catalog.json](../data/sources/public-2026-11-15/catalog.json)이며 활성 source registry와 분리돼 있다.
+2026-11-15 관찰 기준이다. 기관의 선언, 로컬 바이트 검증, 사용 목적별 승인을 구분한다. PR58의 최초 패키지는 기존 KECO 파일을 재사용했고 당시 신규 원본 데이터 파일이나 이미지 묶음을 반입하지 않았다. 후속 이미지 반영은 아래 별도 절과 개별 manifest를 따른다. PR58의 동결 관측 카탈로그는 [catalog.json](../data/sources/public-2026-11-15/catalog.json)이며 활성 source registry 및 후속 이미지 사용 승인과 분리돼 있다.
 
 | 출처·발행자 | 공표 모집단·시점 | 권리·접근·반입 상태와 남은 의존성 |
 | --- | --- | --- |
@@ -10,7 +10,7 @@
 | [KICOX15105482](https://www.data.go.kr/data/15105482/fileData.do), 한국산업단지공단 | `_20251231`, 등록·수정2026-09-23. 전체 행1은 공장 수 아님 | `이용허락범위 제한 없음`. CSV 링크 공개; 원본·행 수·식별자 제거·고유 공장 수 미검증. 연간 갱신과 월말 출력 설명 확인 필요. 등재는 폐기물 허가/인수 근거가 아님 |
 | [GIR current86](https://www.gir.go.kr/home/board/read.do?boardId=86&boardMasterId=2&menuId=36), 온실가스종합정보센터 | 2025년 승인 계수, 게시2025-12-18. PDF387,652바이트·HWPX86,067바이트는 계수 수 아님 | [menu43 저작권 정책](https://www.gir.go.kr/home/index.do?menuId=43)은 KOGL1 표시 확인 또는 사전 협의를 요구. 게시물별 표시 미검증. 개별 단위·GWP·경계·기간 검증 전 계수 반입 금지; 정책도 함께 링크 |
 | [KEITI LCI](https://www.keiti.re.kr/site/keiti/02/10202100000002023101610.jsp), 한국환경산업기술원 | 사업 설명; 개별 레코드·유효기간·계수 수 미확보 | `한국 LCI DB와 평가계수는 상업용 목적으로 사용할 수 없습니다.` 상세는 에코스퀘어 연계. 상업 서비스 등록 금지; 비상업 파생 범위·접근 조건도 확인 필요 |
-| [RealWaste](https://archive.ics.uci.edu/dataset/908/realwaste), UCI·Single/Iranmanesh/Raad | 기증2023-10-17; 공표4,752 instances·9분류·Plastic921·524×524. 게시처 원문의 filesInfo 4,753개 객체는 JPEG 파일명4,752개와 README.md 1개로 조정됨. 분류별 파일명 수도 공표 수량과 일치 | `CC BY 4.0`, 적절한 출처표시 하 목적 무관 공유·변형 선언. DOI10.24432/C5SS4G 및 변경 표시. 실제 archive·고유 이미지·디코딩·개별 권리·개인정보·목적별 모델 처리 승인 미검토; 사진 반입0 |
+| [RealWaste](https://archive.ics.uci.edu/dataset/908/realwaste), UCI·Single/Iranmanesh/Raad | 기증2023-10-17; 공표4,752 instances·9분류·Plastic921·524×524. 게시처 원문의 filesInfo 4,753개 객체는 JPEG 파일명4,752개와 README.md 1개로 조정됨. 분류별 파일명 수도 공표 수량과 일치 | **권리 선언 충돌:** UCI는 `CC BY 4.0`, [저자 저장소 README](https://github.com/sam-single/realwaste/blob/main/README.md)는 `CC BY-NC-SA 4.0`을 명시한다. 동일 자료의 상업 이용·변형 배포 조건을 확정하지 않고 해소 전 반입 보류. 파일목록 조정은 권리 해소나 이미지 내용 검증이 아님; 사진 반입0 |
 | [AIHub71362](https://aihub.or.kr/aihubdata/data/view.do?dataSetSn=71362), NIA·주관㈜뉴컨 | 2022 구축, v1.1 2023-11-24. 메타100만 vs 상세706,101+299,764=1,005,865. 라벨1,005,865. 표시2.30TB와 상세약2,700+170+6GB 미조정 | [확장 이용정책](https://aihub.or.kr/intrcn/guid/usagepolicy.do): 영리·비영리 연구개발 가능하나 학습용 한정. NIA 사업결과 표시를 2차 저작물에도 적용. 무단 제3자 열람/제공/양도/대여/판매 금지. 데이터 판매 등 상업 이용 별도 협의. 국외 이용자·반출 별도 합의. 본인확인·목적 신청 및 내국인 안내; 개인정보 발견 신고·삭제, 재식별 금지, 실태조사 협조. 현재 메타데이터만 반입 |
 | [TACO](https://github.com/pedropro/TACO), Proença·Simões | 현재 이미지 총량 미확인. 2019년 추가785이미지·2,642분할은 현재 총량 아님 | MIT 표시는 저장소에서 관찰. 전체 이미지 라이선스로 확대 불가. HF 카드가 인용한 TACO 조건은 annotation CC BY4.0, 이미지는 원 URL/개별 라이선스(누락 시 CC BY4.0 기본값 선언). 원문·각 이미지 재확인 필요. original/VGA는 같은 이미지 변형 |
 | [ExtendedTACO-reviewed](https://huggingface.co/datasets/roboticslaburjc/ExtendedTACO-reviewed), roboticslaburjc | viewer25.2k TEXT rows vs 카드 `1K<n<10K`; 실제 이미지 수 미확인. 약600장 삭제는 카드 주장 | 카드 `cc-by-4.0`과 이미지별 TACO 조건 유지. [카드 원문](https://huggingface.co/datasets/roboticslaburjc/ExtendedTACO-reviewed/raw/main/README.md). 권리·중복·개인정보 검토 전 반입 보류; TACO와 독립 cohort로 합산 금지 |
@@ -19,6 +19,14 @@
 잘못된 후보 URL도 카탈로그에 남겼다. KICOX 후보15272362는 페이지 미발견(HTTP 상태 미기록), 15050671은 기상청 반응가스 자료다. AIHub645는 야생동물 영상이다. GIR8651은 오류 화면이며 current86으로 대체 조사했다. KOGL 일반 안내의 첫 화면은 제0유형이어서 제1유형 탭과 [정식 일반증서](https://www.kogl.or.kr/info/licenseType1.do)를 추가 확인했다. 공유·변경·영리 이용은 출처표시 조건이며 기관의 후원을 뜻하지 않는다. 배지나 URL만으로 출처를 판정하지 않았다. 포털 Quick/AI Summary의 효율·사업효과 주장은 검증된 분석으로 채택하지 않았다.
 
 RealWaste의 수량 차이는 처음 ZIP 범위 요청과 화면 일부 목록으로는 해결하지 못했다. 이후 게시처의 완전한 HTML 원문에 포함된 filesInfo를 파싱해 JPEG 파일명 4,752개와 `realwaste-main/README.md` 1개를 확인했고, 9개 분류의 파일명 수가 게시 수량과 일치함을 계산했다. 원문 해시와 처리 범위는 카탈로그에 기록했다. 이는 파일목록 메타데이터 조정이며 실제 archive·JPEG bytes, 이미지 고유성·디코딩·개인정보 검증은 아니다. 사진 반입은 계속 보류한다.
+
+후속 원본 접근 조사에서 저자 README의 비상업·동일조건변경허락 선언을 확인했다. PR58의 UCI 관측 발췌를 저자 측 조건까지 확인한 승인으로 확대하지 않는다. 실제 샘플은 이 충돌 자료 대신 파일별 CC0 선언을 확인한 공개 사진에서 선택했다.
+
+## 후속 공개 이미지 소량
+
+[공개 이미지 묶음](../data/o-public-images/2026-11-15/README.md)은 파일별 CC0 선언과 공식 CC0 법률 문구를 대조한 3개 PNG 파생본이다. 사람이 보이거나 문자·회사명이 포함된 후보는 제외하고 필요한 영역만 crop했으며 기존 sanitizer로 메타데이터를 제거했다. 원본 전체·공식 축소 입력·crop 파생본의 경로와 해시를 구분하고, 취득하지 않은 고해상도 원본의 해시는 null로 둔다. 게시자의 날짜는 촬영 사실을 독립 검증한 날짜가 아니다.
+
+이 3개는 노출된 개발 사진이며 독립 현장 사례·사람 라벨·미노출 holdout이 아니다. 띠 조각 사진은 기존 H006과 같은 출처이므로 새 독립 표본으로 합산하지 않는다. 저작권상 재사용 가능성과 실제 운영자·모델 전송 승인은 별개이며 후자는 획득했다고 쓰지 않는다. 입력/lineage/권리·J/H 인계와 실제 앱 검증 범위는 해당 묶음의 manifest·README·qa를 따른다.
 
 ## 저장 표현과 해시
 
@@ -57,7 +65,9 @@ fixture는 비공개 임시 디렉터리에 활성 합성 계정 `public-data-de
 
 ## J/H 및 #13 인계
 
-사진 없는 `PUBLIC-DEV-001` 패키지1개만 새 합성 개발 자료다. process/polymer/contamination/massKg/region은 null, hazardousContact는 unknown, photoRefs는 빈 배열이다. 공개 가격 분류는 해당 사례의 재질·공정·지역·질량 증거가 아니다. 허가·인수·견적·검토·계수·독립 계량 자료를 만들지 않았다. `prepareCaseRecord`와 실제 `validateResourceArtifact`를 사용하며 J의 보류·계산 불가를 유지한다. 현재 사례 맥락에서 요청하는 source set은 빈 배열이고 카탈로그 자료를 임의 추가하지 않는다.
+다음 표는 PR58 최초 가격 패키지의 반입 수다. 후속 공개 이미지 3개와 그 개발 인계는 위 별도 묶음으로 추적하며, 두 기록을 하나의 독립 평가 집합으로 합산하지 않는다.
+
+PR58의 가격 인계에는 사진 없는 `PUBLIC-DEV-001` 합성 개발 패키지1개가 있다. process/polymer/contamination/massKg/region은 null, hazardousContact는 unknown, photoRefs는 빈 배열이다. 공개 가격 분류는 해당 사례의 재질·공정·지역·질량 증거가 아니다. 허가·인수·견적·검토·계수·독립 계량 자료를 만들지 않았다. `prepareCaseRecord`와 실제 `validateResourceArtifact`를 사용하며 J의 보류·계산 불가를 유지한다. 현재 사례 맥락에서 요청하는 source set은 빈 배열이고 카탈로그 자료를 임의 추가하지 않는다.
 
 `dataOrigin.reference`는 [lineage.json](../data/o-public-development/2026-11-15/lineage.json)의 raw-file SHA를 참조한다. 기존 validator는 이를 해석하지 않으므로 새 verify가 참조·파일·입력 revision을 검사한다. canonical artifact hash, artifact raw-file hash, resources hash, input revision, lineage raw-file hash, 원본 CSV hash는 서로 다른 양이다. 실제 값과 실행 범위는 [qa.json](../data/o-public-development/2026-11-15/qa.json)에 기록한다.
 
