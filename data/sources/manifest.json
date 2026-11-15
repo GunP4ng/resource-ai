@@ -482,6 +482,253 @@
         "개별 사업장의 변경 전 분류·신고 이력 미확인; 경과조치 자동 적용 불가"
       ],
       "legalFamily": "waste-rule"
+    },
+    {
+      "category": "law",
+      "publisher": "국가법령정보센터",
+      "retrievedAt": "2026-11-15T10:36:49Z",
+      "datasetVersion": "lsiSeq=290881 (2026-10-02 시행본; 291947 현행본과 본문 대조)",
+      "sourceDate": "2025-10-01",
+      "effectiveFrom": "2026-10-02",
+      "effectiveTo": null,
+      "license": "저작권법 제7조 제1호 비보호저작물 (법령·별표 원문)",
+      "licenseVerified": true,
+      "access": "bundled",
+      "verifiedFields": [
+        "원문 SHA-256",
+        "PDF 화면 대조",
+        "이전·현재 시행본 추출 본문 일치"
+      ],
+      "missing": [
+        "현장 시설·공정의 기준 충족 여부 미확인"
+      ],
+      "legalFamily": "waste-rule",
+      "sourceId": "legal-public-annex5-4-290881-pdf",
+      "title": "폐기물관리법 시행규칙 별표 5의4 (290881 시행본)",
+      "url": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=170404979&bylClsCd=110201",
+      "downloadUrl": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=170404979&bylClsCd=110201",
+      "sha256": "fad9fbe36b30952c7cf8671d70f2fb7a3210db96444a8d2b0a50724f83aa178a",
+      "localPath": "data/reference/legal/annex-5-4-290881.pdf"
+    },
+    {
+      "category": "law",
+      "publisher": "국가법령정보센터",
+      "retrievedAt": "2026-11-15T10:36:49Z",
+      "datasetVersion": "lsiSeq=291947 (2026-11-12 시행본; 별표 개정 2025-10-01)",
+      "sourceDate": "2025-10-01",
+      "effectiveFrom": "2026-11-12",
+      "effectiveTo": null,
+      "license": "저작권법 제7조 제1호 비보호저작물 (법령·별표 원문)",
+      "licenseVerified": true,
+      "access": "bundled",
+      "verifiedFields": [
+        "원문 SHA-256",
+        "PDF 화면 대조",
+        "이전·현재 시행본 추출 본문 일치"
+      ],
+      "missing": [
+        "현장 시설·공정의 기준 충족 여부 미확인"
+      ],
+      "legalFamily": "waste-rule",
+      "sourceId": "legal-public-annex5-4-291947-pdf",
+      "title": "폐기물관리법 시행규칙 별표 5의4 (291947 시행본)",
+      "url": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171401041&bylClsCd=110201",
+      "downloadUrl": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171401041&bylClsCd=110201",
+      "sha256": "24bd7d359a7b85ff66831fc999a37fa52dead109359b2691228be996c545a574",
+      "localPath": "data/reference/legal/annex-5-4-291947.pdf"
+    },
+    {
+      "category": "law",
+      "publisher": "국가법령정보센터",
+      "retrievedAt": "2026-11-15T10:36:49Z",
+      "datasetVersion": "lsiSeq=290881 (2026-10-02 시행본; 291947 현행본과 본문 대조)",
+      "sourceDate": "2025-10-01",
+      "effectiveFrom": "2026-10-02",
+      "effectiveTo": null,
+      "license": "저작권법 제7조 제1호 비보호저작물 (법령·별표 원문)",
+      "licenseVerified": true,
+      "access": "bundled",
+      "verifiedFields": [
+        "원문 SHA-256",
+        "PDF 화면 대조",
+        "이전·현재 시행본 추출 본문 일치"
+      ],
+      "missing": [
+        "처리업체의 배출시설·오염방지시설 설치 및 운영, 해당 배출허용기준 충족 자료가 필요하다.",
+        "분쇄물 등이 분말·미립자에 해당하면 용기·보관 및 비산·유출 방지 상태를 현장에서 확인해야 한다."
+      ],
+      "legalFamily": "waste-rule",
+      "sourceId": "legal-public-annex5-4-obligations",
+      "title": "별표 5의4 제1호가목1), 제2호가목2), PDF 1–2쪽",
+      "url": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=170404979&bylClsCd=110201",
+      "downloadUrl": null,
+      "sha256": "37ded71bd2a6710e4a2dff0cebc23726cbe526e738dd2aa2c3debfe770011868",
+      "localPath": "data/reference/legal/annex5-4-obligations.txt",
+      "derivedFrom": "fad9fbe36b30952c7cf8671d70f2fb7a3210db96444a8d2b0a50724f83aa178a"
+    },
+    {
+      "category": "law",
+      "publisher": "국가법령정보센터",
+      "retrievedAt": "2026-11-15T10:36:49Z",
+      "datasetVersion": "lsiSeq=290881 (2026-10-02 시행본; 291947 현행본과 본문 대조)",
+      "sourceDate": "2025-12-30",
+      "effectiveFrom": "2026-10-02",
+      "effectiveTo": null,
+      "license": "저작권법 제7조 제1호 비보호저작물 (법령·별표 원문)",
+      "licenseVerified": true,
+      "access": "bundled",
+      "verifiedFields": [
+        "원문 SHA-256",
+        "PDF 화면 대조",
+        "이전·현재 시행본 추출 본문 일치"
+      ],
+      "missing": [
+        "실제 재활용 공정·산출물·용도와 재활용의무대상 폐포장재 해당 여부를 확인해야 한다.",
+        "이 조항 적용 시 이물질·유해물질 및 이를 담았던 용기의 분리·제거 자료가 필요하다."
+      ],
+      "legalFamily": "waste-rule",
+      "sourceId": "legal-public-annex5-3-r3-3-packaging",
+      "title": "별표 5의3 제2호나목1)다)(1)(가)·(나), PDF 6쪽",
+      "url": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=170404923&bylClsCd=110201",
+      "downloadUrl": null,
+      "sha256": "29cea2a9f019890e0d59a9c24beb17e8334709b66eefcc58720b71baa0816189",
+      "localPath": "data/reference/legal/annex5-3-r3-3-packaging.txt",
+      "derivedFrom": "3d718a601e603ae72aa35fb60db81311c236298b571d579de54f1f5d83c21f1c"
+    },
+    {
+      "sourceId": "uk-desnz-2026-transport-workbook",
+      "category": "factor",
+      "title": "UK Government GHG Conversion Factors for Company Reporting 2026",
+      "publisher": "DESNZ",
+      "url": "https://www.gov.uk/government/publications/greenhouse-gas-reporting-conversion-factors-2026",
+      "downloadUrl": "https://assets.publishing.service.gov.uk/media/6a29392bade52dc0882218a8/ghg-conversion-factors-2026-full-set.xlsx",
+      "retrievedAt": "2026-11-15T10:34:17Z",
+      "datasetVersion": "2026 full set v1",
+      "sourceDate": null,
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "sha256": "b5c4f2f86cdc74707337b2fb013b44ded189a1b528f5e29ea99856ba65ae0205",
+      "license": "Open Government Licence v3.0",
+      "licenseVerified": true,
+      "access": "downloaded-not-bundled",
+      "localPath": null,
+      "verifiedFields": [
+        "Freighting goods!B63:D63: Average non-refrigerated HGVs, tonne.km, 0.10356",
+        "공식 배포 페이지 OGL v3.0"
+      ],
+      "missing": [
+        "한국 현장 차량·공정 적용성 미확인",
+        "전체 워크북은 레인 evidence에 보존; 저장소는 선택 셀만 배포"
+      ]
+    },
+    {
+      "sourceId": "uk-desnz-2026-transport-reference",
+      "category": "factor",
+      "title": "UK 2026 HGV 운송 진단계수 선택 셀",
+      "publisher": "DESNZ",
+      "url": "https://www.gov.uk/government/publications/greenhouse-gas-reporting-conversion-factors-2026",
+      "downloadUrl": "https://assets.publishing.service.gov.uk/media/6a29392bade52dc0882218a8/ghg-conversion-factors-2026-full-set.xlsx",
+      "retrievedAt": "2026-11-15T10:34:17Z",
+      "datasetVersion": "2026 full set v1 / Freighting goods!D63",
+      "sourceDate": null,
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "sha256": "b47987efe845fe71f39cfcec09d46eaf59657b277a8a6a3b33c6f377d3b28bca",
+      "license": "Open Government Licence v3.0",
+      "licenseVerified": true,
+      "access": "bundled",
+      "localPath": "data/reference/public-2026-11-15/uk-transport-subset.json",
+      "derivedFrom": "b5c4f2f86cdc74707337b2fb013b44ded189a1b528f5e29ea99856ba65ae0205",
+      "verifiedFields": [
+        "원본 워크북 SHA",
+        "값·단위·셀 위치",
+        "UK 평균 차량 직접배출"
+      ],
+      "missing": [
+        "재활용 경로 총배출·감축량 계수가 아님",
+        "한국 차량 적용성 미확인"
+      ]
+    },
+    {
+      "sourceId": "re-member-30574",
+      "category": "processor",
+      "title": "주식회사 춘일실업 / 강원 춘천시 / (2010)중간가공폐기물 제조(재활용)",
+      "publisher": "한국환경공단 순환자원정보센터 (회원등록)",
+      "url": "https://www.re.or.kr/info/listTrtmPage.do",
+      "downloadUrl": null,
+      "retrievedAt": "2026-11-15T10:29:03Z",
+      "datasetVersion": "2026-11-15 조회 순번 30574",
+      "sourceDate": null,
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "sha256": "8ca87ea4c6ed454234099dcc671c38477660eeab224d87127e7a857f815f90c5",
+      "license": null,
+      "licenseVerified": false,
+      "access": "downloaded-not-bundled",
+      "localPath": null,
+      "verifiedFields": [
+        "선택 HTML 행에 51-03-01·회사명·시군·처리방법 표기",
+        "인허가 열 등록; 출처 열 회원등록"
+      ],
+      "missing": [
+        "행정기관 원 허가명부 아님",
+        "현재 허가 및 정확한 수지 인수·지역·용량 미확인",
+        "상업 이용·재배포 권리 미확인; 원문 행은 연구 증거로만 보존"
+      ]
+    },
+    {
+      "sourceId": "re-member-30573",
+      "category": "processor",
+      "title": "(주)오성아이케이진천지점 / 충북 진천군 / (2003)원료 제조(재활용)",
+      "publisher": "한국환경공단 순환자원정보센터 (회원등록)",
+      "url": "https://www.re.or.kr/info/listTrtmPage.do",
+      "downloadUrl": null,
+      "retrievedAt": "2026-11-15T10:29:03Z",
+      "datasetVersion": "2026-11-15 조회 순번 30573",
+      "sourceDate": null,
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "sha256": "047f0c63bc532b988e12fedcfce7d8de2d108634c26b878beb40595fd6e0b249",
+      "license": null,
+      "licenseVerified": false,
+      "access": "downloaded-not-bundled",
+      "localPath": null,
+      "verifiedFields": [
+        "선택 HTML 행에 51-03-01·회사명·시군·처리방법 표기",
+        "인허가 열 등록; 출처 열 회원등록"
+      ],
+      "missing": [
+        "행정기관 원 허가명부 아님",
+        "현재 허가 및 정확한 수지 인수·지역·용량 미확인",
+        "상업 이용·재배포 권리 미확인; 원문 행은 연구 증거로만 보존"
+      ]
+    },
+    {
+      "sourceId": "re-member-30556",
+      "category": "processor",
+      "title": "(주)에스제이물산 / 경기 평택시 / (2010)중간가공폐기물 제조(재활용)",
+      "publisher": "한국환경공단 순환자원정보센터 (회원등록)",
+      "url": "https://www.re.or.kr/info/listTrtmPage.do?page=2",
+      "downloadUrl": null,
+      "retrievedAt": "2026-11-15T10:29:46Z",
+      "datasetVersion": "2026-11-15 조회 순번 30556",
+      "sourceDate": null,
+      "effectiveFrom": null,
+      "effectiveTo": null,
+      "sha256": "c706834cbbb8e7b969c7bacc55a04db9945a3d744d760fd68c6ecd0d544a74e3",
+      "license": null,
+      "licenseVerified": false,
+      "access": "downloaded-not-bundled",
+      "localPath": null,
+      "verifiedFields": [
+        "선택 HTML 행에 51-03-01·회사명·시군·처리방법 표기",
+        "인허가 열 등록; 출처 열 회원등록"
+      ],
+      "missing": [
+        "행정기관 원 허가명부 아님",
+        "현재 허가 및 정확한 수지 인수·지역·용량 미확인",
+        "상업 이용·재배포 권리 미확인; 원문 행은 연구 증거로만 보존"
+      ]
     }
   ]
 }

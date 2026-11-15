@@ -275,7 +275,7 @@ for (const [label, mutate, expected] of [
 }
 
 test("a formerly valid reference cannot be reused at a changed assessment date", () => {
-  const result = decideCase(fixture({ assessmentDate: "2026-11-15" }), proposedComparison());
+  const result = decideCase(fixture({ assessmentDate: "2026-11-16" }), proposedComparison());
   assert.equal(result.state, "needs-review");
   assert.deepEqual(result.evidence, []);
   if (result.state === "needs-review") assert.ok(result.reasons.includes("proposal-source-unresolved"));

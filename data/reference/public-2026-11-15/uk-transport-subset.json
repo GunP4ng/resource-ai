@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "source": {
+    "sourceId": "uk-desnz-2026-transport-reference",
+    "title": "UK Government GHG Conversion Factors for Company Reporting 2026",
+    "publisher": "DESNZ",
+    "url": "https://assets.publishing.service.gov.uk/media/6a29392bade52dc0882218a8/ghg-conversion-factors-2026-full-set.xlsx",
+    "locator": "Freighting goods!B63:D63",
+    "retrievedAt": "2026-11-15T10:34:17.541Z",
+    "sha256": "b5c4f2f86cdc74707337b2fb013b44ded189a1b528f5e29ea99856ba65ae0205",
+    "datasetVersion": "2026 full set v1",
+    "license": "Open Government Licence v3.0",
+    "licenseVerified": true
+  },
+  "value": 0.10356,
+  "unit": "kgCO2e/(tonne.km)",
+  "description": "Average non-refrigerated HGVs",
+  "kind": "published_reference",
+  "boundary": "UK average vehicle direct transport diagnostic only; not recycling net lifecycle or Korean measured factor",
+  "attribution": "UK Government GHG Conversion Factors for Company Reporting 2026, DESNZ, Open Government Licence v3.0; selected value."
+}

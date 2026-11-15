@@ -253,5 +253,28 @@
     "scope": "thirteen requested files and captured source/CLI/test evidence; auxiliary report separate",
     "resolvedFinding": "runtimeBinding canonical artifact hash synchronized with final receipt",
     "reviewSha256": "ffe0294218809712ff7d19c05c73a7adea5860c756d4d35dae6ac648b60ddf5d"
+  },
+  "currentGeneration": {
+    "checkedAt": "2026-11-15T10:41:05.586Z",
+    "reason": "새 공개 법령 레지스트리 반영; 기존 prepare/verify로 재생성",
+    "command": "bun scripts/o-public-data.ts prepare && bun scripts/o-public-data.ts verify",
+    "exitCode": 0,
+    "receipt": {
+      "status": "verified",
+      "population": {
+        "records": 136,
+        "numeric": 60,
+        "null": 76,
+        "skipped": 9,
+        "issues": 0
+      },
+      "inputRevision": "f16e34fea8a273edcecc6a090dc3f955f9f4eca414c50c9d882518bd484dc0cb",
+      "artifactCanonicalSha256": "c2405770818bd48c24df4852cc6b745151a69489c79c5f5b8ad5ecd5db4a931c",
+      "artifactFileSha256": "485947a2e527bf265009a0966c49dbfb4ad0b14ccb2f55ca142d79ba3e07ff18",
+      "resourcesSha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "lineageFileSha256": "aa6337680544690dd4781fa24fda9f36378f4b53106fb05e007652f371b89539",
+      "sourceSha256": "562bf85c2f9a2047649b52d9875da462fdb2ca14be36e21cfd1950ff976dfeb3"
+    },
+    "scope": "이 객체가 현재 artifact의 검증 기록이다. 나머지 QA 필드는 이전 패키지 세대의 이력이며 현재 재실행으로 주장하지 않는다. 현장·모델·운영 승인 추가 없음."
   }
 }

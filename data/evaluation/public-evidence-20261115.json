@@ -1,0 +1,1886 @@
+{
+  "version": 1,
+  "label": "공개 자료 기반 계산값(관측값 아님)",
+  "scope": "exposed development cases; documentary supplements, not DomainResources approvals",
+  "createdAt": "2026-11-15T10:36:11Z",
+  "gateChanged": false,
+  "remainingExternal": [
+    {
+      "id": "classification",
+      "owner": "배출자 환경관리자·관할 허가기관",
+      "needed": "사업장일반폐기물 해당 여부, 지정폐기물 제외, 현행 코드와 신고·분류변경 이력"
+    },
+    {
+      "id": "route-review",
+      "owner": "재활용업체 공정담당자·현장 환경관리자",
+      "needed": "실제 처리 공정·산출물·용도, 해당 유형·기준, 예외·금지·제한 및 충족 자료"
+    },
+    {
+      "id": "facility",
+      "owner": "관할 허가기관·업체",
+      "needed": "현행 허가증·변경 이력·시설 위치·허가 코드·처리방법·오염방지 및 보관 상태"
+    },
+    {
+      "id": "acceptance",
+      "owner": "인수 업체",
+      "needed": "해당 배출물 수지·형태·오염도·용량·지역·인수 의사와 계약"
+    },
+    {
+      "id": "cost",
+      "owner": "운송·선별·처리 업체와 배출자",
+      "needed": "실제 견적·질량·거리·수율·매각조건·세금·물류 범위"
+    },
+    {
+      "id": "carbon",
+      "owner": "계수 제공기관·LCA 검토자·업체",
+      "needed": "해당 수지와 실제 공정에 맞는 동일 경계·기간·지역·GWP 계수 및 적용 검토"
+    },
+    {
+      "id": "approval",
+      "owner": "현장 책임자",
+      "needed": "반출·계약·처리의 별도 검토 및 승인"
+    }
+  ],
+  "assumptions": {
+    "mass": "원래 합성 입력 유지; 계량값 아님; null 보충 금지",
+    "collectionKrwPerT": 10000,
+    "sortingKrwPerT": 20000,
+    "transportKrwPerTkm": 300,
+    "distanceKm": 30,
+    "costBasis": "stage2-2026-11-15-v1 가정 재사용; 실제 견적 아님",
+    "carbonSourceId": "uk-desnz-2026-transport-reference",
+    "carbonBoundary": "별도 UK 운송 진단; 재활용 순배출·감축량 계산 불가"
+  },
+  "stage2Exclusions": [
+    {
+      "inputs": [
+        "I01",
+        "I06",
+        "I07",
+        "I08",
+        "I10"
+      ],
+      "reason": "골판지 가격·탄소 계수; PET/HDPE/PP/LDPE로 전용하지 않음"
+    },
+    {
+      "inputs": [
+        "I02"
+      ],
+      "reason": "원주 반입 자격·성상·권리 미확인; 플라스틱 처리비로 전용하지 않음"
+    },
+    {
+      "inputs": [
+        "I03"
+      ],
+      "reason": "특정 폐아스콘 운반 설계단가; 일반 운임으로 전환 금지"
+    }
+  ],
+  "cases": [
+    {
+      "caseId": "HYEOB-20261112-001",
+      "stratum": "clean-single-resin",
+      "inputRevision": "6a7e8936e469f8950b629aade66dbc99ff1dc4af31c1960ad2154a75e1e98ce4",
+      "inputSha256": "3b65f92820e90d9305c57badfb59575a4f320899765ec679d70caef8ae2ce979",
+      "sourceFacts": "synthetic; unchanged input",
+      "publicLegalSourceIds": [
+        "waste-rule-2026-10-02",
+        "legal-290881-annex4-code",
+        "legal-290881-annex4-2-r3-3",
+        "legal-290881-annex4-3-types",
+        "legal-290881-annex5-3-common",
+        "legal-public-annex5-4-obligations",
+        "legal-public-annex5-3-r3-3-packaging"
+      ],
+      "priorState": "needs-review",
+      "priorReasons": [
+        "일반 조문은 코드·처리경로 적합성의 개별 근거가 아니다.",
+        "재활용환경성평가 예외·금지 및 제한·별표 5의4 준수사항·현행 허가를 확인해야 한다.",
+        "용도·이전 신고 및 분류 변경 이력 미입력: 부칙 제18호 제3조 경과조치 적용은 확인되지 않았다.",
+        "법령 근거 확인 필요: context-ambiguous (legal-290881-annex4-code)",
+        "법령 근거 확인 필요: context-ambiguous (legal-290881-annex4-2-r3-3)",
+        "법령 근거 확인 필요: context-ambiguous (legal-290881-annex4-3-types)",
+        "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다.",
+        "현장 담당자의 검토와 승인 전에는 반출·계약·처리를 실행할 수 없습니다."
+      ],
+      "holdClassification": [
+        {
+          "reason": "일반 조문은 코드·처리경로 적합성의 개별 근거가 아니다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "재활용환경성평가 예외·금지 및 제한·별표 5의4 준수사항·현행 허가를 확인해야 한다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "용도·이전 신고 및 분류 변경 이력 미입력: 부칙 제18호 제3조 경과조치 적용은 확인되지 않았다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "법령 근거 확인 필요: context-ambiguous (legal-290881-annex4-code)",
+          "category": "public-original-source",
+          "resolution": "검토한 원문 및 조건부 검색 범위 공급; 실제 코드 확정 아님"
+        },
+        {
+          "reason": "법령 근거 확인 필요: context-ambiguous (legal-290881-annex4-2-r3-3)",
+          "category": "public-original-source",
+          "resolution": "검토한 원문 및 조건부 검색 범위 공급; 실제 코드 확정 아님"
+        },
+        {
+          "reason": "법령 근거 확인 필요: context-ambiguous (legal-290881-annex4-3-types)",
+          "category": "public-original-source",
+          "resolution": "검토한 원문 및 조건부 검색 범위 공급; 실제 코드 확정 아님"
+        },
+        {
+          "reason": "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "현장 담당자의 검토와 승인 전에는 반출·계약·처리를 실행할 수 없습니다.",
+          "category": "field-or-company-only",
+          "resolution": "남은 현장 증빙 확인 필요"
+        }
+      ],
+      "processorCandidateSourceIds": [
+        "re-member-30574",
+        "re-member-30573",
+        "re-member-30556"
+      ],
+      "processorStatus": "unverified; no current permit or acceptance inferred",
+      "calculation": {
+        "massT": 0.12,
+        "massKind": "synthetic-assumption",
+        "collectionKrw": 1200,
+        "sortingKrw": 2400,
+        "transportKrw": 1080,
+        "knownCostSubtotalKrw": 4680,
+        "transportDiagnosticKgCo2e": 0.372816,
+        "netCostKrw": null,
+        "netCarbonKgCo2e": null,
+        "costSavingKrw": null,
+        "carbonSavingKgCo2e": null,
+        "status": "partial-assumption-only",
+        "commercialReady": false,
+        "label": "공개 자료 기반 계산값(관측값 아님)",
+        "missing": [
+          "매각가격",
+          "반입·잔재 처리비",
+          "실측 질량·수율·실제 거리",
+          "수지별 동등 경계 탄소계수",
+          "현장 적용성 및 승인"
+        ]
+      }
+    },
+    {
+      "caseId": "HYEOB-20261112-002",
+      "stratum": "clean-single-resin",
+      "inputRevision": "ce8f3cc486c4005b38d595cc5a8ee75e7a6943353b6523c858aabce11d2310bd",
+      "inputSha256": "2bcf00880a289cd9ff65003e6100afc9ba74fa3e698803c56077afd86dd1ec64",
+      "sourceFacts": "synthetic; unchanged input",
+      "publicLegalSourceIds": [
+        "waste-rule-2026-10-02",
+        "legal-290881-annex4-code",
+        "legal-290881-annex4-2-r3-3",
+        "legal-290881-annex4-3-types",
+        "legal-290881-annex5-3-common",
+        "legal-public-annex5-4-obligations",
+        "legal-public-annex5-3-r3-3-packaging"
+      ],
+      "priorState": "needs-review",
+      "priorReasons": [
+        "일반 조문은 코드·처리경로 적합성의 개별 근거가 아니다.",
+        "재활용환경성평가 예외·금지 및 제한·별표 5의4 준수사항·현행 허가를 확인해야 한다.",
+        "용도·이전 신고 및 분류 변경 이력 미입력: 부칙 제18호 제3조 경과조치 적용은 확인되지 않았다.",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-code)",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-2-r3-3)",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-3-types)",
+        "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다.",
+        "현장 담당자의 검토와 승인 전에는 반출·계약·처리를 실행할 수 없습니다."
+      ],
+      "holdClassification": [
+        {
+          "reason": "일반 조문은 코드·처리경로 적합성의 개별 근거가 아니다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "재활용환경성평가 예외·금지 및 제한·별표 5의4 준수사항·현행 허가를 확인해야 한다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "용도·이전 신고 및 분류 변경 이력 미입력: 부칙 제18호 제3조 경과조치 적용은 확인되지 않았다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "법령 근거 확인 필요: unrelated (legal-290881-annex4-code)",
+          "category": "public-original-source",
+          "resolution": "검토한 원문 및 조건부 검색 범위 공급; 실제 코드 확정 아님"
+        },
+        {
+          "reason": "법령 근거 확인 필요: unrelated (legal-290881-annex4-2-r3-3)",
+          "category": "public-original-source",
+          "resolution": "검토한 원문 및 조건부 검색 범위 공급; 실제 코드 확정 아님"
+        },
+        {
+          "reason": "법령 근거 확인 필요: unrelated (legal-290881-annex4-3-types)",
+          "category": "public-original-source",
+          "resolution": "검토한 원문 및 조건부 검색 범위 공급; 실제 코드 확정 아님"
+        },
+        {
+          "reason": "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "현장 담당자의 검토와 승인 전에는 반출·계약·처리를 실행할 수 없습니다.",
+          "category": "field-or-company-only",
+          "resolution": "남은 현장 증빙 확인 필요"
+        }
+      ],
+      "processorCandidateSourceIds": [
+        "re-member-30574",
+        "re-member-30573",
+        "re-member-30556"
+      ],
+      "processorStatus": "unverified; no current permit or acceptance inferred",
+      "calculation": {
+        "massT": 0.08,
+        "massKind": "synthetic-assumption",
+        "collectionKrw": 800,
+        "sortingKrw": 1600,
+        "transportKrw": 720,
+        "knownCostSubtotalKrw": 3120,
+        "transportDiagnosticKgCo2e": 0.248544,
+        "netCostKrw": null,
+        "netCarbonKgCo2e": null,
+        "costSavingKrw": null,
+        "carbonSavingKgCo2e": null,
+        "status": "partial-assumption-only",
+        "commercialReady": false,
+        "label": "공개 자료 기반 계산값(관측값 아님)",
+        "missing": [
+          "매각가격",
+          "반입·잔재 처리비",
+          "실측 질량·수율·실제 거리",
+          "수지별 동등 경계 탄소계수",
+          "현장 적용성 및 승인"
+        ]
+      }
+    },
+    {
+      "caseId": "HYEOB-20261112-003",
+      "stratum": "mixed-or-label-conflict",
+      "inputRevision": "adaec26bf29d0d869d1fa9434eddeca3b427d16fceb6dfdc58902776081dc8ef",
+      "inputSha256": "da55500096d40ea41eeecbf3017b769be27ca559df723b59872de26ebf74d937",
+      "sourceFacts": "synthetic; unchanged input",
+      "publicLegalSourceIds": [
+        "waste-rule-2026-10-02",
+        "legal-290881-annex5-3-common",
+        "legal-public-annex5-4-obligations",
+        "legal-public-annex5-3-r3-3-packaging"
+      ],
+      "priorState": "needs-review",
+      "priorReasons": [
+        "일반 조문은 코드·처리경로 적합성의 개별 근거가 아니다.",
+        "재활용환경성평가 예외·금지 및 제한·별표 5의4 준수사항·현행 허가를 확인해야 한다.",
+        "용도·이전 신고 및 분류 변경 이력 미입력: 부칙 제18호 제3조 경과조치 적용은 확인되지 않았다.",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-code)",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-2-r3-3)",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-3-types)",
+        "혼합·다층 또는 라벨 불일치가 보고되었습니다. 층별·구성 수지의 재질 명세, 라벨 확인 자료와 수지별 분리 가능 여부를 확인할 수 있나요?",
+        "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다.",
+        "현장 담당자의 검토와 승인 전에는 반출·계약·처리를 실행할 수 없습니다."
+      ],
+      "holdClassification": [
+        {
+          "reason": "일반 조문은 코드·처리경로 적합성의 개별 근거가 아니다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "재활용환경성평가 예외·금지 및 제한·별표 5의4 준수사항·현행 허가를 확인해야 한다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "용도·이전 신고 및 분류 변경 이력 미입력: 부칙 제18호 제3조 경과조치 적용은 확인되지 않았다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "법령 근거 확인 필요: unrelated (legal-290881-annex4-code)",
+          "category": "public-original-source",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "법령 근거 확인 필요: unrelated (legal-290881-annex4-2-r3-3)",
+          "category": "public-original-source",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "법령 근거 확인 필요: unrelated (legal-290881-annex4-3-types)",
+          "category": "public-original-source",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "혼합·다층 또는 라벨 불일치가 보고되었습니다. 층별·구성 수지의 재질 명세, 라벨 확인 자료와 수지별 분리 가능 여부를 확인할 수 있나요?",
+          "category": "field-or-company-only",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "현장 담당자의 검토와 승인 전에는 반출·계약·처리를 실행할 수 없습니다.",
+          "category": "field-or-company-only",
+          "resolution": "남은 현장 증빙 확인 필요"
+        }
+      ],
+      "processorCandidateSourceIds": [],
+      "processorStatus": "unverified; no current permit or acceptance inferred",
+      "calculation": null
+    },
+    {
+      "caseId": "HYEOB-20261112-004",
+      "stratum": "contamination-or-hazard-unknown",
+      "inputRevision": "1fe247c1e8976ca372e772b2aa933b707ba642592f534a483cd12cf36857ba97",
+      "inputSha256": "0154bc3a1f0c13374965d1d14b339dd69b5e1adc3c096fc88f4795ec9ab99553",
+      "sourceFacts": "synthetic; unchanged input",
+      "publicLegalSourceIds": [
+        "waste-rule-2026-10-02",
+        "legal-290881-annex5-3-common",
+        "legal-public-annex5-4-obligations",
+        "legal-public-annex5-3-r3-3-packaging"
+      ],
+      "priorState": "needs-review",
+      "priorReasons": [
+        "일반 조문은 코드·처리경로 적합성의 개별 근거가 아니다.",
+        "재활용환경성평가 예외·금지 및 제한·별표 5의4 준수사항·현행 허가를 확인해야 한다.",
+        "용도·이전 신고 및 분류 변경 이력 미입력: 부칙 제18호 제3조 경과조치 적용은 확인되지 않았다.",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-code)",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-2-r3-3)",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-3-types)",
+        "오염·접촉 이력에 미확인 내용이 있습니다. 이전 내용물·접촉 물질명과 SDS 등 확인 자료, 잔류물·세척 확인 자료가 있나요? 확인 전에는 세척 여부만으로 유해물질 접촉이 없었다고 확정하지 않습니다.",
+        "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다.",
+        "현장 담당자의 검토와 승인 전에는 반출·계약·처리를 실행할 수 없습니다."
+      ],
+      "holdClassification": [
+        {
+          "reason": "일반 조문은 코드·처리경로 적합성의 개별 근거가 아니다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "재활용환경성평가 예외·금지 및 제한·별표 5의4 준수사항·현행 허가를 확인해야 한다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "용도·이전 신고 및 분류 변경 이력 미입력: 부칙 제18호 제3조 경과조치 적용은 확인되지 않았다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "법령 근거 확인 필요: unrelated (legal-290881-annex4-code)",
+          "category": "public-original-source",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "법령 근거 확인 필요: unrelated (legal-290881-annex4-2-r3-3)",
+          "category": "public-original-source",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "법령 근거 확인 필요: unrelated (legal-290881-annex4-3-types)",
+          "category": "public-original-source",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "오염·접촉 이력에 미확인 내용이 있습니다. 이전 내용물·접촉 물질명과 SDS 등 확인 자료, 잔류물·세척 확인 자료가 있나요? 확인 전에는 세척 여부만으로 유해물질 접촉이 없었다고 확정하지 않습니다.",
+          "category": "field-or-company-only",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "현장 담당자의 검토와 승인 전에는 반출·계약·처리를 실행할 수 없습니다.",
+          "category": "field-or-company-only",
+          "resolution": "남은 현장 증빙 확인 필요"
+        }
+      ],
+      "processorCandidateSourceIds": [],
+      "processorStatus": "unverified; no current permit or acceptance inferred",
+      "calculation": null
+    },
+    {
+      "caseId": "HYEOB-20261112-005",
+      "stratum": "mixed-or-label-conflict",
+      "inputRevision": "203d5302d726bc4e216f17a55ccc92404782c33dc526deb9ca75fa35cecca38c",
+      "inputSha256": "17d3207cebb043185a0e86868cfbc4c8d9207b99c888ee08bc0586048932a41c",
+      "sourceFacts": "synthetic; unchanged input",
+      "publicLegalSourceIds": [
+        "waste-rule-2026-10-02",
+        "legal-290881-annex5-3-common",
+        "legal-public-annex5-4-obligations",
+        "legal-public-annex5-3-r3-3-packaging"
+      ],
+      "priorState": "needs-review",
+      "priorReasons": [
+        "일반 조문은 코드·처리경로 적합성의 개별 근거가 아니다.",
+        "재활용환경성평가 예외·금지 및 제한·별표 5의4 준수사항·현행 허가를 확인해야 한다.",
+        "용도·이전 신고 및 분류 변경 이력 미입력: 부칙 제18호 제3조 경과조치 적용은 확인되지 않았다.",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-code)",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-2-r3-3)",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-3-types)",
+        "유해물질과 접촉했는지 확인할 수 있나요?",
+        "확인된 질량은 몇 kg인가요?",
+        "폐플라스틱이 발생한 지역은 어디인가요?",
+        "혼합·다층 또는 라벨 불일치가 보고되었습니다. 층별·구성 수지의 재질 명세, 라벨 확인 자료와 수지별 분리 가능 여부를 확인할 수 있나요?",
+        "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다.",
+        "현장 담당자의 검토와 승인 전에는 반출·계약·처리를 실행할 수 없습니다."
+      ],
+      "holdClassification": [
+        {
+          "reason": "일반 조문은 코드·처리경로 적합성의 개별 근거가 아니다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "재활용환경성평가 예외·금지 및 제한·별표 5의4 준수사항·현행 허가를 확인해야 한다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "용도·이전 신고 및 분류 변경 이력 미입력: 부칙 제18호 제3조 경과조치 적용은 확인되지 않았다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "법령 근거 확인 필요: unrelated (legal-290881-annex4-code)",
+          "category": "public-original-source",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "법령 근거 확인 필요: unrelated (legal-290881-annex4-2-r3-3)",
+          "category": "public-original-source",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "법령 근거 확인 필요: unrelated (legal-290881-annex4-3-types)",
+          "category": "public-original-source",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "유해물질과 접촉했는지 확인할 수 있나요?",
+          "category": "field-or-company-only",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "확인된 질량은 몇 kg인가요?",
+          "category": "field-or-company-only",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "폐플라스틱이 발생한 지역은 어디인가요?",
+          "category": "field-or-company-only",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "혼합·다층 또는 라벨 불일치가 보고되었습니다. 층별·구성 수지의 재질 명세, 라벨 확인 자료와 수지별 분리 가능 여부를 확인할 수 있나요?",
+          "category": "field-or-company-only",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "현장 담당자의 검토와 승인 전에는 반출·계약·처리를 실행할 수 없습니다.",
+          "category": "field-or-company-only",
+          "resolution": "남은 현장 증빙 확인 필요"
+        }
+      ],
+      "processorCandidateSourceIds": [],
+      "processorStatus": "unverified; no current permit or acceptance inferred",
+      "calculation": null
+    },
+    {
+      "caseId": "HYEOB-20261112-006",
+      "stratum": "processor-mismatch",
+      "inputRevision": "3a5cea27a56e2d79ea774a30bafff8d69fe80f1687f62ab0a7b345b6cd2036a2",
+      "inputSha256": "7c0691f7d883b3c303b3a72b8389849cbe8fb29da37c55939d383851032cee91",
+      "sourceFacts": "synthetic; unchanged input",
+      "publicLegalSourceIds": [
+        "waste-rule-2026-10-02",
+        "legal-290881-annex5-3-common",
+        "legal-public-annex5-4-obligations",
+        "legal-public-annex5-3-r3-3-packaging"
+      ],
+      "priorState": "needs-review",
+      "priorReasons": [
+        "일반 조문은 코드·처리경로 적합성의 개별 근거가 아니다.",
+        "재활용환경성평가 예외·금지 및 제한·별표 5의4 준수사항·현행 허가를 확인해야 한다.",
+        "용도·이전 신고 및 분류 변경 이력 미입력: 부칙 제18호 제3조 경과조치 적용은 확인되지 않았다.",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-code)",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-2-r3-3)",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-3-types)",
+        "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다.",
+        "현장 담당자의 검토와 승인 전에는 반출·계약·처리를 실행할 수 없습니다."
+      ],
+      "holdClassification": [
+        {
+          "reason": "일반 조문은 코드·처리경로 적합성의 개별 근거가 아니다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "재활용환경성평가 예외·금지 및 제한·별표 5의4 준수사항·현행 허가를 확인해야 한다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "용도·이전 신고 및 분류 변경 이력 미입력: 부칙 제18호 제3조 경과조치 적용은 확인되지 않았다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "법령 근거 확인 필요: unrelated (legal-290881-annex4-code)",
+          "category": "public-original-source",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "법령 근거 확인 필요: unrelated (legal-290881-annex4-2-r3-3)",
+          "category": "public-original-source",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "법령 근거 확인 필요: unrelated (legal-290881-annex4-3-types)",
+          "category": "public-original-source",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "현장 담당자의 검토와 승인 전에는 반출·계약·처리를 실행할 수 없습니다.",
+          "category": "field-or-company-only",
+          "resolution": "남은 현장 증빙 확인 필요"
+        }
+      ],
+      "processorCandidateSourceIds": [],
+      "processorStatus": "unverified; no current permit or acceptance inferred",
+      "calculation": null
+    },
+    {
+      "caseId": "HYEOB-20261112-007",
+      "stratum": "reuse-or-recycling-comparison",
+      "inputRevision": "d106cadf11c70c993b73486c671ec9c7423f9c44d27a605e8446c3f29998cbba",
+      "inputSha256": "8db4d0c07b3560a8c8561b2aef723361d36238341bae97ee427fa6ef88e6f7c2",
+      "sourceFacts": "synthetic; unchanged input",
+      "publicLegalSourceIds": [
+        "waste-rule-2026-10-02",
+        "legal-290881-annex5-3-common",
+        "legal-public-annex5-4-obligations",
+        "legal-public-annex5-3-r3-3-packaging"
+      ],
+      "priorState": "needs-review",
+      "priorReasons": [
+        "일반 조문은 코드·처리경로 적합성의 개별 근거가 아니다.",
+        "재활용환경성평가 예외·금지 및 제한·별표 5의4 준수사항·현행 허가를 확인해야 한다.",
+        "용도·이전 신고 및 분류 변경 이력 미입력: 부칙 제18호 제3조 경과조치 적용은 확인되지 않았다.",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-code)",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-2-r3-3)",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-3-types)",
+        "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다.",
+        "현장 담당자의 검토와 승인 전에는 반출·계약·처리를 실행할 수 없습니다."
+      ],
+      "holdClassification": [
+        {
+          "reason": "일반 조문은 코드·처리경로 적합성의 개별 근거가 아니다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "재활용환경성평가 예외·금지 및 제한·별표 5의4 준수사항·현행 허가를 확인해야 한다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "용도·이전 신고 및 분류 변경 이력 미입력: 부칙 제18호 제3조 경과조치 적용은 확인되지 않았다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "법령 근거 확인 필요: unrelated (legal-290881-annex4-code)",
+          "category": "public-original-source",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "법령 근거 확인 필요: unrelated (legal-290881-annex4-2-r3-3)",
+          "category": "public-original-source",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "법령 근거 확인 필요: unrelated (legal-290881-annex4-3-types)",
+          "category": "public-original-source",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "현장 담당자의 검토와 승인 전에는 반출·계약·처리를 실행할 수 없습니다.",
+          "category": "field-or-company-only",
+          "resolution": "남은 현장 증빙 확인 필요"
+        }
+      ],
+      "processorCandidateSourceIds": [],
+      "processorStatus": "unverified; no current permit or acceptance inferred",
+      "calculation": null
+    },
+    {
+      "caseId": "HYEOB-20261112-008",
+      "stratum": "contamination-or-hazard-unknown",
+      "inputRevision": "122467280c42593d1ac2ac5c6382acd1d72ceadd83cb8ef6fee8c79200643150",
+      "inputSha256": "5ca39a8330d6a483e307838f4a4691d8986dbaad54f24ff6cb70ffa988544b90",
+      "sourceFacts": "synthetic; unchanged input",
+      "publicLegalSourceIds": [
+        "waste-rule-2026-10-02",
+        "legal-290881-annex5-3-common",
+        "legal-public-annex5-4-obligations",
+        "legal-public-annex5-3-r3-3-packaging"
+      ],
+      "priorState": "needs-review",
+      "priorReasons": [
+        "일반 조문은 코드·처리경로 적합성의 개별 근거가 아니다.",
+        "재활용환경성평가 예외·금지 및 제한·별표 5의4 준수사항·현행 허가를 확인해야 한다.",
+        "용도·이전 신고 및 분류 변경 이력 미입력: 부칙 제18호 제3조 경과조치 적용은 확인되지 않았다.",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-code)",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-2-r3-3)",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-3-types)",
+        "오염·접촉 이력에 미확인 내용이 있습니다. 이전 내용물·접촉 물질명과 SDS 등 확인 자료, 잔류물·세척 확인 자료가 있나요? 확인 전에는 세척 여부만으로 유해물질 접촉이 없었다고 확정하지 않습니다.",
+        "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다.",
+        "현장 담당자의 검토와 승인 전에는 반출·계약·처리를 실행할 수 없습니다."
+      ],
+      "holdClassification": [
+        {
+          "reason": "일반 조문은 코드·처리경로 적합성의 개별 근거가 아니다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "재활용환경성평가 예외·금지 및 제한·별표 5의4 준수사항·현행 허가를 확인해야 한다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "용도·이전 신고 및 분류 변경 이력 미입력: 부칙 제18호 제3조 경과조치 적용은 확인되지 않았다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "법령 근거 확인 필요: unrelated (legal-290881-annex4-code)",
+          "category": "public-original-source",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "법령 근거 확인 필요: unrelated (legal-290881-annex4-2-r3-3)",
+          "category": "public-original-source",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "법령 근거 확인 필요: unrelated (legal-290881-annex4-3-types)",
+          "category": "public-original-source",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "오염·접촉 이력에 미확인 내용이 있습니다. 이전 내용물·접촉 물질명과 SDS 등 확인 자료, 잔류물·세척 확인 자료가 있나요? 확인 전에는 세척 여부만으로 유해물질 접촉이 없었다고 확정하지 않습니다.",
+          "category": "field-or-company-only",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "현장 담당자의 검토와 승인 전에는 반출·계약·처리를 실행할 수 없습니다.",
+          "category": "field-or-company-only",
+          "resolution": "남은 현장 증빙 확인 필요"
+        }
+      ],
+      "processorCandidateSourceIds": [],
+      "processorStatus": "unverified; no current permit or acceptance inferred",
+      "calculation": null
+    },
+    {
+      "caseId": "HYEOB-20261112-009",
+      "stratum": "missing-evidence-or-unit",
+      "inputRevision": "1fd4f6edfb8fe525f8eb4ed67bd38d4566c203d432113eb66e6343c7f2c556cd",
+      "inputSha256": "78b5fa9df09cf62eb0ef55455615d541ca7392cf770efda064e96bba98d38bf8",
+      "sourceFacts": "synthetic; unchanged input",
+      "publicLegalSourceIds": [
+        "waste-rule-2026-10-02",
+        "legal-290881-annex5-3-common",
+        "legal-public-annex5-4-obligations",
+        "legal-public-annex5-3-r3-3-packaging"
+      ],
+      "priorState": "needs-information",
+      "priorReasons": [
+        "폐플라스틱이 발생한 공정 또는 발생원은 무엇인가요?",
+        "확인된 수지 종류와 이를 확인한 자료(라벨·재질 명세 등)가 있나요?",
+        "오염이나 이물질이 있나요? 확인된 상태를 알려 주세요.",
+        "유해물질과 접촉했는지 확인할 수 있나요?",
+        "확인된 질량은 몇 kg인가요?",
+        "폐플라스틱이 발생한 지역은 어디인가요?"
+      ],
+      "holdClassification": [
+        {
+          "reason": "폐플라스틱이 발생한 공정 또는 발생원은 무엇인가요?",
+          "category": "field-or-company-only",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "확인된 수지 종류와 이를 확인한 자료(라벨·재질 명세 등)가 있나요?",
+          "category": "field-or-company-only",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "오염이나 이물질이 있나요? 확인된 상태를 알려 주세요.",
+          "category": "field-or-company-only",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "유해물질과 접촉했는지 확인할 수 있나요?",
+          "category": "field-or-company-only",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "확인된 질량은 몇 kg인가요?",
+          "category": "field-or-company-only",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "폐플라스틱이 발생한 지역은 어디인가요?",
+          "category": "field-or-company-only",
+          "resolution": "남은 현장 증빙 확인 필요"
+        }
+      ],
+      "processorCandidateSourceIds": [],
+      "processorStatus": "unverified; no current permit or acceptance inferred",
+      "calculation": null
+    },
+    {
+      "caseId": "HYEOB-20261112-010",
+      "stratum": "embedded-instruction",
+      "inputRevision": "44df39eb7cb1489ca1f334a4ef69a2da6260a51fd2ae6a684aafde392cf12eeb",
+      "inputSha256": "767ecac639980b2c719f4288f532df74875c76b3a13269caac7b41baab100ae6",
+      "sourceFacts": "synthetic; unchanged input",
+      "publicLegalSourceIds": [
+        "waste-rule-2026-10-02",
+        "legal-290881-annex5-3-common",
+        "legal-public-annex5-4-obligations",
+        "legal-public-annex5-3-r3-3-packaging"
+      ],
+      "priorState": "needs-information",
+      "priorReasons": [
+        "폐플라스틱이 발생한 공정 또는 발생원은 무엇인가요?",
+        "확인된 수지 종류와 이를 확인한 자료(라벨·재질 명세 등)가 있나요?",
+        "오염이나 이물질이 있나요? 확인된 상태를 알려 주세요.",
+        "유해물질과 접촉했는지 확인할 수 있나요?",
+        "확인된 질량은 몇 kg인가요?",
+        "폐플라스틱이 발생한 지역은 어디인가요?"
+      ],
+      "holdClassification": [
+        {
+          "reason": "폐플라스틱이 발생한 공정 또는 발생원은 무엇인가요?",
+          "category": "field-or-company-only",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "확인된 수지 종류와 이를 확인한 자료(라벨·재질 명세 등)가 있나요?",
+          "category": "field-or-company-only",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "오염이나 이물질이 있나요? 확인된 상태를 알려 주세요.",
+          "category": "field-or-company-only",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "유해물질과 접촉했는지 확인할 수 있나요?",
+          "category": "field-or-company-only",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "확인된 질량은 몇 kg인가요?",
+          "category": "field-or-company-only",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "폐플라스틱이 발생한 지역은 어디인가요?",
+          "category": "field-or-company-only",
+          "resolution": "남은 현장 증빙 확인 필요"
+        }
+      ],
+      "processorCandidateSourceIds": [],
+      "processorStatus": "unverified; no current permit or acceptance inferred",
+      "calculation": null
+    },
+    {
+      "caseId": "OYS-20261110-001",
+      "stratum": "clean-single-resin",
+      "inputRevision": "d2190d16b4f315e77f70f1644450757a09e88b47754e23ba0cee61f0fd56c124",
+      "inputSha256": "39937892bd5c25fa10e5bb16c20c508b786be50e48677bb3341a69ee23ab6a37",
+      "sourceFacts": "synthetic; unchanged input",
+      "publicLegalSourceIds": [
+        "waste-rule-2026-10-02",
+        "legal-290881-annex4-code",
+        "legal-290881-annex4-2-r3-3",
+        "legal-290881-annex4-3-types",
+        "legal-290881-annex5-3-common",
+        "legal-public-annex5-4-obligations",
+        "legal-public-annex5-3-r3-3-packaging"
+      ],
+      "priorState": "needs-review",
+      "priorReasons": [
+        "일반 조문은 코드·처리경로 적합성의 개별 근거가 아니다.",
+        "재활용환경성평가 예외·금지 및 제한·별표 5의4 준수사항·현행 허가를 확인해야 한다.",
+        "용도·이전 신고 및 분류 변경 이력 미입력: 부칙 제18호 제3조 경과조치 적용은 확인되지 않았다.",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-code)",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-2-r3-3)",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-3-types)",
+        "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다.",
+        "현장 담당자의 검토와 승인 전에는 반출·계약·처리를 실행할 수 없습니다."
+      ],
+      "holdClassification": [
+        {
+          "reason": "일반 조문은 코드·처리경로 적합성의 개별 근거가 아니다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "재활용환경성평가 예외·금지 및 제한·별표 5의4 준수사항·현행 허가를 확인해야 한다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "용도·이전 신고 및 분류 변경 이력 미입력: 부칙 제18호 제3조 경과조치 적용은 확인되지 않았다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "법령 근거 확인 필요: unrelated (legal-290881-annex4-code)",
+          "category": "public-original-source",
+          "resolution": "검토한 원문 및 조건부 검색 범위 공급; 실제 코드 확정 아님"
+        },
+        {
+          "reason": "법령 근거 확인 필요: unrelated (legal-290881-annex4-2-r3-3)",
+          "category": "public-original-source",
+          "resolution": "검토한 원문 및 조건부 검색 범위 공급; 실제 코드 확정 아님"
+        },
+        {
+          "reason": "법령 근거 확인 필요: unrelated (legal-290881-annex4-3-types)",
+          "category": "public-original-source",
+          "resolution": "검토한 원문 및 조건부 검색 범위 공급; 실제 코드 확정 아님"
+        },
+        {
+          "reason": "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "현장 담당자의 검토와 승인 전에는 반출·계약·처리를 실행할 수 없습니다.",
+          "category": "field-or-company-only",
+          "resolution": "남은 현장 증빙 확인 필요"
+        }
+      ],
+      "processorCandidateSourceIds": [
+        "re-member-30574",
+        "re-member-30573",
+        "re-member-30556"
+      ],
+      "processorStatus": "unverified; no current permit or acceptance inferred",
+      "calculation": {
+        "massT": 0.024,
+        "massKind": "synthetic-assumption",
+        "collectionKrw": 240,
+        "sortingKrw": 480,
+        "transportKrw": 216,
+        "knownCostSubtotalKrw": 936,
+        "transportDiagnosticKgCo2e": 0.0745632,
+        "netCostKrw": null,
+        "netCarbonKgCo2e": null,
+        "costSavingKrw": null,
+        "carbonSavingKgCo2e": null,
+        "status": "partial-assumption-only",
+        "commercialReady": false,
+        "label": "공개 자료 기반 계산값(관측값 아님)",
+        "missing": [
+          "매각가격",
+          "반입·잔재 처리비",
+          "실측 질량·수율·실제 거리",
+          "수지별 동등 경계 탄소계수",
+          "현장 적용성 및 승인"
+        ]
+      }
+    },
+    {
+      "caseId": "OYS-20261110-002",
+      "stratum": "clean-single-resin",
+      "inputRevision": "5700279294e19066fcf43bc6866b451ef81fbb9a4cf0ac93f93e5e5dbef049d2",
+      "inputSha256": "a6886d174e4f53ee1d7482c71623a13c50070f1669c204b3f1b2c6a03921b009",
+      "sourceFacts": "synthetic; unchanged input",
+      "publicLegalSourceIds": [
+        "waste-rule-2026-10-02",
+        "legal-290881-annex4-code",
+        "legal-290881-annex4-2-r3-3",
+        "legal-290881-annex4-3-types",
+        "legal-290881-annex5-3-common",
+        "legal-public-annex5-4-obligations",
+        "legal-public-annex5-3-r3-3-packaging"
+      ],
+      "priorState": "needs-review",
+      "priorReasons": [
+        "일반 조문은 코드·처리경로 적합성의 개별 근거가 아니다.",
+        "재활용환경성평가 예외·금지 및 제한·별표 5의4 준수사항·현행 허가를 확인해야 한다.",
+        "용도·이전 신고 및 분류 변경 이력 미입력: 부칙 제18호 제3조 경과조치 적용은 확인되지 않았다.",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-code)",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-2-r3-3)",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-3-types)",
+        "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다.",
+        "현장 담당자의 검토와 승인 전에는 반출·계약·처리를 실행할 수 없습니다."
+      ],
+      "holdClassification": [
+        {
+          "reason": "일반 조문은 코드·처리경로 적합성의 개별 근거가 아니다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "재활용환경성평가 예외·금지 및 제한·별표 5의4 준수사항·현행 허가를 확인해야 한다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "용도·이전 신고 및 분류 변경 이력 미입력: 부칙 제18호 제3조 경과조치 적용은 확인되지 않았다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "법령 근거 확인 필요: unrelated (legal-290881-annex4-code)",
+          "category": "public-original-source",
+          "resolution": "검토한 원문 및 조건부 검색 범위 공급; 실제 코드 확정 아님"
+        },
+        {
+          "reason": "법령 근거 확인 필요: unrelated (legal-290881-annex4-2-r3-3)",
+          "category": "public-original-source",
+          "resolution": "검토한 원문 및 조건부 검색 범위 공급; 실제 코드 확정 아님"
+        },
+        {
+          "reason": "법령 근거 확인 필요: unrelated (legal-290881-annex4-3-types)",
+          "category": "public-original-source",
+          "resolution": "검토한 원문 및 조건부 검색 범위 공급; 실제 코드 확정 아님"
+        },
+        {
+          "reason": "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "현장 담당자의 검토와 승인 전에는 반출·계약·처리를 실행할 수 없습니다.",
+          "category": "field-or-company-only",
+          "resolution": "남은 현장 증빙 확인 필요"
+        }
+      ],
+      "processorCandidateSourceIds": [
+        "re-member-30574",
+        "re-member-30573",
+        "re-member-30556"
+      ],
+      "processorStatus": "unverified; no current permit or acceptance inferred",
+      "calculation": {
+        "massT": 0.018,
+        "massKind": "synthetic-assumption",
+        "collectionKrw": 180,
+        "sortingKrw": 360,
+        "transportKrw": 161.99999999999997,
+        "knownCostSubtotalKrw": 702,
+        "transportDiagnosticKgCo2e": 0.05592239999999999,
+        "netCostKrw": null,
+        "netCarbonKgCo2e": null,
+        "costSavingKrw": null,
+        "carbonSavingKgCo2e": null,
+        "status": "partial-assumption-only",
+        "commercialReady": false,
+        "label": "공개 자료 기반 계산값(관측값 아님)",
+        "missing": [
+          "매각가격",
+          "반입·잔재 처리비",
+          "실측 질량·수율·실제 거리",
+          "수지별 동등 경계 탄소계수",
+          "현장 적용성 및 승인"
+        ]
+      }
+    },
+    {
+      "caseId": "OYS-20261110-003",
+      "stratum": "clean-single-resin",
+      "inputRevision": "d04ede73266af20b8d3fe0c98dde7934933264bfa083457e5dd8cbdbba095a92",
+      "inputSha256": "494b49a7d7d6b78cac7d0cb79100299996447b812bd859734e1b60c48ad1e832",
+      "sourceFacts": "synthetic; unchanged input",
+      "publicLegalSourceIds": [
+        "waste-rule-2026-10-02",
+        "legal-290881-annex4-code",
+        "legal-290881-annex4-2-r3-3",
+        "legal-290881-annex4-3-types",
+        "legal-290881-annex5-3-common",
+        "legal-public-annex5-4-obligations",
+        "legal-public-annex5-3-r3-3-packaging"
+      ],
+      "priorState": "needs-review",
+      "priorReasons": [
+        "일반 조문은 코드·처리경로 적합성의 개별 근거가 아니다.",
+        "재활용환경성평가 예외·금지 및 제한·별표 5의4 준수사항·현행 허가를 확인해야 한다.",
+        "용도·이전 신고 및 분류 변경 이력 미입력: 부칙 제18호 제3조 경과조치 적용은 확인되지 않았다.",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-code)",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-2-r3-3)",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-3-types)",
+        "확인된 질량은 몇 kg인가요?",
+        "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다.",
+        "현장 담당자의 검토와 승인 전에는 반출·계약·처리를 실행할 수 없습니다."
+      ],
+      "holdClassification": [
+        {
+          "reason": "일반 조문은 코드·처리경로 적합성의 개별 근거가 아니다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "재활용환경성평가 예외·금지 및 제한·별표 5의4 준수사항·현행 허가를 확인해야 한다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "용도·이전 신고 및 분류 변경 이력 미입력: 부칙 제18호 제3조 경과조치 적용은 확인되지 않았다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "법령 근거 확인 필요: unrelated (legal-290881-annex4-code)",
+          "category": "public-original-source",
+          "resolution": "검토한 원문 및 조건부 검색 범위 공급; 실제 코드 확정 아님"
+        },
+        {
+          "reason": "법령 근거 확인 필요: unrelated (legal-290881-annex4-2-r3-3)",
+          "category": "public-original-source",
+          "resolution": "검토한 원문 및 조건부 검색 범위 공급; 실제 코드 확정 아님"
+        },
+        {
+          "reason": "법령 근거 확인 필요: unrelated (legal-290881-annex4-3-types)",
+          "category": "public-original-source",
+          "resolution": "검토한 원문 및 조건부 검색 범위 공급; 실제 코드 확정 아님"
+        },
+        {
+          "reason": "확인된 질량은 몇 kg인가요?",
+          "category": "field-or-company-only",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "현장 담당자의 검토와 승인 전에는 반출·계약·처리를 실행할 수 없습니다.",
+          "category": "field-or-company-only",
+          "resolution": "남은 현장 증빙 확인 필요"
+        }
+      ],
+      "processorCandidateSourceIds": [
+        "re-member-30574",
+        "re-member-30573",
+        "re-member-30556"
+      ],
+      "processorStatus": "unverified; no current permit or acceptance inferred",
+      "calculation": {
+        "massT": null,
+        "massKind": "synthetic-assumption",
+        "collectionKrw": null,
+        "sortingKrw": null,
+        "transportKrw": null,
+        "knownCostSubtotalKrw": null,
+        "transportDiagnosticKgCo2e": null,
+        "netCostKrw": null,
+        "netCarbonKgCo2e": null,
+        "costSavingKrw": null,
+        "carbonSavingKgCo2e": null,
+        "status": "missing-mass",
+        "commercialReady": false,
+        "label": "공개 자료 기반 계산값(관측값 아님)",
+        "missing": [
+          "매각가격",
+          "반입·잔재 처리비",
+          "실측 질량·수율·실제 거리",
+          "수지별 동등 경계 탄소계수",
+          "현장 적용성 및 승인"
+        ]
+      }
+    },
+    {
+      "caseId": "OYS-20261110-004",
+      "stratum": "clean-single-resin",
+      "inputRevision": "b92fef23cebfcfae2c084b3529944f83e81e93a051b0c111c5510cea46a43b6f",
+      "inputSha256": "7844ea2f84e95805abecd9d4d688188c41515bcf12af48872ac89733e2ce1a1d",
+      "sourceFacts": "synthetic; unchanged input",
+      "publicLegalSourceIds": [
+        "waste-rule-2026-10-02",
+        "legal-290881-annex4-code",
+        "legal-290881-annex4-2-r3-3",
+        "legal-290881-annex4-3-types",
+        "legal-290881-annex5-3-common",
+        "legal-public-annex5-4-obligations",
+        "legal-public-annex5-3-r3-3-packaging"
+      ],
+      "priorState": "needs-review",
+      "priorReasons": [
+        "일반 조문은 코드·처리경로 적합성의 개별 근거가 아니다.",
+        "재활용환경성평가 예외·금지 및 제한·별표 5의4 준수사항·현행 허가를 확인해야 한다.",
+        "용도·이전 신고 및 분류 변경 이력 미입력: 부칙 제18호 제3조 경과조치 적용은 확인되지 않았다.",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-code)",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-2-r3-3)",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-3-types)",
+        "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다.",
+        "현장 담당자의 검토와 승인 전에는 반출·계약·처리를 실행할 수 없습니다."
+      ],
+      "holdClassification": [
+        {
+          "reason": "일반 조문은 코드·처리경로 적합성의 개별 근거가 아니다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "재활용환경성평가 예외·금지 및 제한·별표 5의4 준수사항·현행 허가를 확인해야 한다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "용도·이전 신고 및 분류 변경 이력 미입력: 부칙 제18호 제3조 경과조치 적용은 확인되지 않았다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "법령 근거 확인 필요: unrelated (legal-290881-annex4-code)",
+          "category": "public-original-source",
+          "resolution": "검토한 원문 및 조건부 검색 범위 공급; 실제 코드 확정 아님"
+        },
+        {
+          "reason": "법령 근거 확인 필요: unrelated (legal-290881-annex4-2-r3-3)",
+          "category": "public-original-source",
+          "resolution": "검토한 원문 및 조건부 검색 범위 공급; 실제 코드 확정 아님"
+        },
+        {
+          "reason": "법령 근거 확인 필요: unrelated (legal-290881-annex4-3-types)",
+          "category": "public-original-source",
+          "resolution": "검토한 원문 및 조건부 검색 범위 공급; 실제 코드 확정 아님"
+        },
+        {
+          "reason": "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "현장 담당자의 검토와 승인 전에는 반출·계약·처리를 실행할 수 없습니다.",
+          "category": "field-or-company-only",
+          "resolution": "남은 현장 증빙 확인 필요"
+        }
+      ],
+      "processorCandidateSourceIds": [
+        "re-member-30574",
+        "re-member-30573",
+        "re-member-30556"
+      ],
+      "processorStatus": "unverified; no current permit or acceptance inferred",
+      "calculation": {
+        "massT": 0.012,
+        "massKind": "synthetic-assumption",
+        "collectionKrw": 120,
+        "sortingKrw": 240,
+        "transportKrw": 108,
+        "knownCostSubtotalKrw": 468,
+        "transportDiagnosticKgCo2e": 0.0372816,
+        "netCostKrw": null,
+        "netCarbonKgCo2e": null,
+        "costSavingKrw": null,
+        "carbonSavingKgCo2e": null,
+        "status": "partial-assumption-only",
+        "commercialReady": false,
+        "label": "공개 자료 기반 계산값(관측값 아님)",
+        "missing": [
+          "매각가격",
+          "반입·잔재 처리비",
+          "실측 질량·수율·실제 거리",
+          "수지별 동등 경계 탄소계수",
+          "현장 적용성 및 승인"
+        ]
+      }
+    },
+    {
+      "caseId": "OYS-20261110-006",
+      "stratum": "mixed-multilayer-black-label-mismatch",
+      "inputRevision": "a65f7bbbc9ed7d6f556020453206139ce98185af8c60651d7e0427eaf2b48e98",
+      "inputSha256": "ea9aff807a4adeb9443bb658db35729b3d7ab02cfb6dd4a402e37b01b54e55ea",
+      "sourceFacts": "synthetic; unchanged input",
+      "publicLegalSourceIds": [
+        "waste-rule-2026-10-02",
+        "legal-290881-annex5-3-common",
+        "legal-public-annex5-4-obligations",
+        "legal-public-annex5-3-r3-3-packaging"
+      ],
+      "priorState": "needs-review",
+      "priorReasons": [
+        "일반 조문은 코드·처리경로 적합성의 개별 근거가 아니다.",
+        "재활용환경성평가 예외·금지 및 제한·별표 5의4 준수사항·현행 허가를 확인해야 한다.",
+        "용도·이전 신고 및 분류 변경 이력 미입력: 부칙 제18호 제3조 경과조치 적용은 확인되지 않았다.",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-code)",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-2-r3-3)",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-3-types)",
+        "확인된 수지 종류와 이를 확인한 자료(라벨·재질 명세 등)가 있나요?",
+        "오염이나 이물질이 있나요? 확인된 상태를 알려 주세요.",
+        "유해물질과 접촉했는지 확인할 수 있나요?",
+        "확인된 질량은 몇 kg인가요?",
+        "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다.",
+        "현장 담당자의 검토와 승인 전에는 반출·계약·처리를 실행할 수 없습니다."
+      ],
+      "holdClassification": [
+        {
+          "reason": "일반 조문은 코드·처리경로 적합성의 개별 근거가 아니다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "재활용환경성평가 예외·금지 및 제한·별표 5의4 준수사항·현행 허가를 확인해야 한다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "용도·이전 신고 및 분류 변경 이력 미입력: 부칙 제18호 제3조 경과조치 적용은 확인되지 않았다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "법령 근거 확인 필요: unrelated (legal-290881-annex4-code)",
+          "category": "public-original-source",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "법령 근거 확인 필요: unrelated (legal-290881-annex4-2-r3-3)",
+          "category": "public-original-source",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "법령 근거 확인 필요: unrelated (legal-290881-annex4-3-types)",
+          "category": "public-original-source",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "확인된 수지 종류와 이를 확인한 자료(라벨·재질 명세 등)가 있나요?",
+          "category": "field-or-company-only",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "오염이나 이물질이 있나요? 확인된 상태를 알려 주세요.",
+          "category": "field-or-company-only",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "유해물질과 접촉했는지 확인할 수 있나요?",
+          "category": "field-or-company-only",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "확인된 질량은 몇 kg인가요?",
+          "category": "field-or-company-only",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "현장 담당자의 검토와 승인 전에는 반출·계약·처리를 실행할 수 없습니다.",
+          "category": "field-or-company-only",
+          "resolution": "남은 현장 증빙 확인 필요"
+        }
+      ],
+      "processorCandidateSourceIds": [],
+      "processorStatus": "unverified; no current permit or acceptance inferred",
+      "calculation": null
+    },
+    {
+      "caseId": "OYS-20261110-008",
+      "stratum": "contamination-hazardous-contact-unknown-condition",
+      "inputRevision": "24710cebf5c110e39e43dbee967a34d673e3c9061f19617c3b493c3f4b5fbf6e",
+      "inputSha256": "dbed6078c5ab2fcc4d89916c039f25807aaf78cdee5797b8b4b4869627f15336",
+      "sourceFacts": "synthetic; unchanged input",
+      "publicLegalSourceIds": [
+        "waste-rule-2026-10-02",
+        "legal-290881-annex5-3-common",
+        "legal-public-annex5-4-obligations",
+        "legal-public-annex5-3-r3-3-packaging"
+      ],
+      "priorState": "needs-review",
+      "priorReasons": [
+        "유해물질 접촉이 보고되었습니다. 접촉 물질·시험 자료와 지정폐기물 해당 여부를 별도 검토해야 합니다.",
+        "일반 조문은 코드·처리경로 적합성의 개별 근거가 아니다.",
+        "재활용환경성평가 예외·금지 및 제한·별표 5의4 준수사항·현행 허가를 확인해야 한다.",
+        "용도·이전 신고 및 분류 변경 이력 미입력: 부칙 제18호 제3조 경과조치 적용은 확인되지 않았다.",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-code)",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-2-r3-3)",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-3-types)",
+        "확인된 질량은 몇 kg인가요?",
+        "오염·접촉 이력에 미확인 내용이 있습니다. 이전 내용물·접촉 물질명과 SDS 등 확인 자료, 잔류물·세척 확인 자료가 있나요? 확인 전에는 세척 여부만으로 유해물질 접촉이 없었다고 확정하지 않습니다.",
+        "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다.",
+        "현장 담당자의 검토와 승인 전에는 반출·계약·처리를 실행할 수 없습니다."
+      ],
+      "holdClassification": [
+        {
+          "reason": "유해물질 접촉이 보고되었습니다. 접촉 물질·시험 자료와 지정폐기물 해당 여부를 별도 검토해야 합니다.",
+          "category": "field-or-company-only",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "일반 조문은 코드·처리경로 적합성의 개별 근거가 아니다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "재활용환경성평가 예외·금지 및 제한·별표 5의4 준수사항·현행 허가를 확인해야 한다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "용도·이전 신고 및 분류 변경 이력 미입력: 부칙 제18호 제3조 경과조치 적용은 확인되지 않았다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "법령 근거 확인 필요: unrelated (legal-290881-annex4-code)",
+          "category": "public-original-source",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "법령 근거 확인 필요: unrelated (legal-290881-annex4-2-r3-3)",
+          "category": "public-original-source",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "법령 근거 확인 필요: unrelated (legal-290881-annex4-3-types)",
+          "category": "public-original-source",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "확인된 질량은 몇 kg인가요?",
+          "category": "field-or-company-only",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "오염·접촉 이력에 미확인 내용이 있습니다. 이전 내용물·접촉 물질명과 SDS 등 확인 자료, 잔류물·세척 확인 자료가 있나요? 확인 전에는 세척 여부만으로 유해물질 접촉이 없었다고 확정하지 않습니다.",
+          "category": "field-or-company-only",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "현장 담당자의 검토와 승인 전에는 반출·계약·처리를 실행할 수 없습니다.",
+          "category": "field-or-company-only",
+          "resolution": "남은 현장 증빙 확인 필요"
+        }
+      ],
+      "processorCandidateSourceIds": [],
+      "processorStatus": "unverified; no current permit or acceptance inferred",
+      "calculation": null
+    },
+    {
+      "caseId": "OYS-20261110-009",
+      "stratum": "reuse-recycling-comparison",
+      "inputRevision": "2e8c55b62068b6b8cdc0db087b2c436414bac4509d1d49e1479dde1566f3d6f3",
+      "inputSha256": "dc9cf278d4227f7fa3cd6ec925aa969abfba0e43189f4c84d8a4410629fa2f12",
+      "sourceFacts": "synthetic; unchanged input",
+      "publicLegalSourceIds": [
+        "waste-rule-2026-10-02",
+        "legal-290881-annex5-3-common",
+        "legal-public-annex5-4-obligations",
+        "legal-public-annex5-3-r3-3-packaging"
+      ],
+      "priorState": "needs-review",
+      "priorReasons": [
+        "일반 조문은 코드·처리경로 적합성의 개별 근거가 아니다.",
+        "재활용환경성평가 예외·금지 및 제한·별표 5의4 준수사항·현행 허가를 확인해야 한다.",
+        "용도·이전 신고 및 분류 변경 이력 미입력: 부칙 제18호 제3조 경과조치 적용은 확인되지 않았다.",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-code)",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-2-r3-3)",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-3-types)",
+        "유해물질과 접촉했는지 확인할 수 있나요?",
+        "오염·접촉 이력에 미확인 내용이 있습니다. 이전 내용물·접촉 물질명과 SDS 등 확인 자료, 잔류물·세척 확인 자료가 있나요? 확인 전에는 세척 여부만으로 유해물질 접촉이 없었다고 확정하지 않습니다.",
+        "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다.",
+        "현장 담당자의 검토와 승인 전에는 반출·계약·처리를 실행할 수 없습니다."
+      ],
+      "holdClassification": [
+        {
+          "reason": "일반 조문은 코드·처리경로 적합성의 개별 근거가 아니다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "재활용환경성평가 예외·금지 및 제한·별표 5의4 준수사항·현행 허가를 확인해야 한다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "용도·이전 신고 및 분류 변경 이력 미입력: 부칙 제18호 제3조 경과조치 적용은 확인되지 않았다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "법령 근거 확인 필요: unrelated (legal-290881-annex4-code)",
+          "category": "public-original-source",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "법령 근거 확인 필요: unrelated (legal-290881-annex4-2-r3-3)",
+          "category": "public-original-source",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "법령 근거 확인 필요: unrelated (legal-290881-annex4-3-types)",
+          "category": "public-original-source",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "유해물질과 접촉했는지 확인할 수 있나요?",
+          "category": "field-or-company-only",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "오염·접촉 이력에 미확인 내용이 있습니다. 이전 내용물·접촉 물질명과 SDS 등 확인 자료, 잔류물·세척 확인 자료가 있나요? 확인 전에는 세척 여부만으로 유해물질 접촉이 없었다고 확정하지 않습니다.",
+          "category": "field-or-company-only",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "현장 담당자의 검토와 승인 전에는 반출·계약·처리를 실행할 수 없습니다.",
+          "category": "field-or-company-only",
+          "resolution": "남은 현장 증빙 확인 필요"
+        }
+      ],
+      "processorCandidateSourceIds": [],
+      "processorStatus": "unverified; no current permit or acceptance inferred",
+      "calculation": null
+    },
+    {
+      "caseId": "OYS-20261110-010",
+      "stratum": "missing-price-factor-document-unit-basis",
+      "inputRevision": "a338cdb5fb482bfeb9b3c9ad68b1db1f49d6450904a8a29bb3aa5b162882bbe2",
+      "inputSha256": "720ffb57677199d9c5bfe8dbc4fbafb8ebc0620f1dc56094437f52062007a8f2",
+      "sourceFacts": "synthetic; unchanged input",
+      "publicLegalSourceIds": [
+        "waste-rule-2026-10-02",
+        "legal-290881-annex5-3-common",
+        "legal-public-annex5-4-obligations",
+        "legal-public-annex5-3-r3-3-packaging"
+      ],
+      "priorState": "needs-review",
+      "priorReasons": [
+        "일반 조문은 코드·처리경로 적합성의 개별 근거가 아니다.",
+        "재활용환경성평가 예외·금지 및 제한·별표 5의4 준수사항·현행 허가를 확인해야 한다.",
+        "용도·이전 신고 및 분류 변경 이력 미입력: 부칙 제18호 제3조 경과조치 적용은 확인되지 않았다.",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-code)",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-2-r3-3)",
+        "법령 근거 확인 필요: unrelated (legal-290881-annex4-3-types)",
+        "오염이나 이물질이 있나요? 확인된 상태를 알려 주세요.",
+        "유해물질과 접촉했는지 확인할 수 있나요?",
+        "확인된 질량은 몇 kg인가요?",
+        "폐플라스틱이 발생한 지역은 어디인가요?",
+        "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다.",
+        "현장 담당자의 검토와 승인 전에는 반출·계약·처리를 실행할 수 없습니다."
+      ],
+      "holdClassification": [
+        {
+          "reason": "일반 조문은 코드·처리경로 적합성의 개별 근거가 아니다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "재활용환경성평가 예외·금지 및 제한·별표 5의4 준수사항·현행 허가를 확인해야 한다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "용도·이전 신고 및 분류 변경 이력 미입력: 부칙 제18호 제3조 경과조치 적용은 확인되지 않았다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "법령 근거 확인 필요: unrelated (legal-290881-annex4-code)",
+          "category": "public-original-source",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "법령 근거 확인 필요: unrelated (legal-290881-annex4-2-r3-3)",
+          "category": "public-original-source",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "법령 근거 확인 필요: unrelated (legal-290881-annex4-3-types)",
+          "category": "public-original-source",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "오염이나 이물질이 있나요? 확인된 상태를 알려 주세요.",
+          "category": "field-or-company-only",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "유해물질과 접촉했는지 확인할 수 있나요?",
+          "category": "field-or-company-only",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "확인된 질량은 몇 kg인가요?",
+          "category": "field-or-company-only",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "폐플라스틱이 발생한 지역은 어디인가요?",
+          "category": "field-or-company-only",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다.",
+          "category": "public-rule-plus-field-application",
+          "resolution": "남은 현장 증빙 확인 필요"
+        },
+        {
+          "reason": "현장 담당자의 검토와 승인 전에는 반출·계약·처리를 실행할 수 없습니다.",
+          "category": "field-or-company-only",
+          "resolution": "남은 현장 증빙 확인 필요"
+        }
+      ],
+      "processorCandidateSourceIds": [],
+      "processorStatus": "unverified; no current permit or acceptance inferred",
+      "calculation": null
+    }
+  ]
+}

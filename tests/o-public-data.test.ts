@@ -65,7 +65,13 @@ test("public package verifies separate hashes while retaining unknown facts and 
   assert.equal(receipt.lineageFileSha256, sha(await readFile(join(directory, "lineage.json"))));
   assert.deepEqual([parsed.value.process, parsed.value.polymer, parsed.value.contamination, parsed.value.massKg, parsed.value.region], [null, null, null, null, null]);
   assert.equal(parsed.value.hazardousContact, "unknown"); assert.deepEqual(parsed.value.photoRefs, []);
-  assert.deepEqual(accepted.resources, {}); assert.deepEqual(accepted.artifact.record.sources, []);
+  assert.deepEqual(accepted.resources, {});
+  assert.deepEqual(accepted.artifact.record.sources.map(source => ({ sourceId: source.sourceId, state: source.state })), [
+    { sourceId: "legal-public-annex5-4-obligations", state: "verified" },
+    { sourceId: "legal-public-annex5-3-r3-3-packaging", state: "verified" },
+    { sourceId: "legal-public-annex5-4-290881-pdf", state: "verified" },
+    { sourceId: "legal-290881-annex5-3-pdf", state: "verified" },
+  ]);
   assert.equal(accepted.artifact.record.dataOrigin.kind, "synthetic");
   assert.equal(accepted.artifact.record.decision.state, "needs-review");
   assert.deepEqual(accepted.artifact.record.assessment.routes.map(route => route.eligibility.state), ["unknown", "unknown", "unknown", "unknown"]);

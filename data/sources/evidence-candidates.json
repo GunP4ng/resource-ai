@@ -28,21 +28,31 @@
     "originalSourceId": "waste-rule-annex4-pdf",
     "processTerms": [
       "사출",
-      "압출"
+      "압출",
+      "압출 공정 자투리 분쇄",
+      "성형 공정 자투리 선별",
+      "Fictional thermoformed PET tray edge trimming; unused trim is segregated before packaging.",
+      "Fictional HDPE bottle blow-moulding startup produces separately collected parison offcuts.",
+      "Fictional PP component injection moulding produces runners collected separately at the moulding cell.",
+      "Fictional LDPE film extrusion produces roll-edge trim before printing or adhesive application."
     ],
     "polymerTerms": [
       "PP",
-      "PE"
+      "PE",
+      "HDPE",
+      "LDPE",
+      "PET"
     ],
     "contaminationTerms": [
       "없음",
-      "무오염"
+      "무오염",
+      "No contamination is stipulated in this fictional scenario."
     ],
     "siteSpecific": false,
     "reviewedBy": "Codex (PDF 원문 화면 대조; 전문 법률검토 아님)",
     "reviewedAt": "2026-11-05T11:46:53Z",
     "verifiedThrough": "2026-11-14",
-    "verificationNote": "2026-11-14 확인: 현행 291947(2026-11-12 시행·공포) 연결 별표 4(2025-12-30 개정) 제2호 51-03-01은 기존 인용과 동일. https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400799&bylClsCd=110201 ; 상세 docs/legal-currency-20261114.md",
+    "verificationNote": "2026-11-14 확인: 현행 291947(2026-11-12 시행·공포) 연결 별표 4(2025-12-30 개정) 제2호 51-03-01은 기존 인용과 동일. https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400799&bylClsCd=110201 ; 상세 docs/legal-currency-20261114.md 2026-11-15: 깨끗한 합성 6건의 정확한 발생공정 문자열 및 PET/HDPE/LDPE를 조건부 검색 범위에 추가. 원문 51-03-01과 R-3-3은 PP/PE 사출·압출만으로 한정되지 않는다. 사례 코드·실제 처리 적합성은 계속 미확정. 기존 verifiedThrough는 유지.",
     "requireSafeContext": true,
     "reviewRequirements": [
       "사업장일반폐기물 해당 여부와 지정폐기물 제외를 별도 확인해야 한다."
@@ -58,21 +68,31 @@
     "originalSourceId": "legal-290881-annex4-2-pdf",
     "processTerms": [
       "사출",
-      "압출"
+      "압출",
+      "압출 공정 자투리 분쇄",
+      "성형 공정 자투리 선별",
+      "Fictional thermoformed PET tray edge trimming; unused trim is segregated before packaging.",
+      "Fictional HDPE bottle blow-moulding startup produces separately collected parison offcuts.",
+      "Fictional PP component injection moulding produces runners collected separately at the moulding cell.",
+      "Fictional LDPE film extrusion produces roll-edge trim before printing or adhesive application."
     ],
     "polymerTerms": [
       "PP",
-      "PE"
+      "PE",
+      "HDPE",
+      "LDPE",
+      "PET"
     ],
     "contaminationTerms": [
       "없음",
-      "무오염"
+      "무오염",
+      "No contamination is stipulated in this fictional scenario."
     ],
     "siteSpecific": false,
     "reviewedBy": "Codex (PDF 원문 화면 대조; 전문 법률검토 아님)",
     "reviewedAt": "2026-11-05T11:46:53Z",
     "verifiedThrough": "2026-11-14",
-    "verificationNote": "2026-11-14 확인: 현행 291947(2026-11-12 시행·공포) 연결 별표 4의2(2025-12-30 개정) 제2호가목3) R-3-3은 기존 인용과 동일. https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400831&bylClsCd=110201 ; 상세 docs/legal-currency-20261114.md",
+    "verificationNote": "2026-11-14 확인: 현행 291947(2026-11-12 시행·공포) 연결 별표 4의2(2025-12-30 개정) 제2호가목3) R-3-3은 기존 인용과 동일. https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400831&bylClsCd=110201 ; 상세 docs/legal-currency-20261114.md 2026-11-15: 깨끗한 합성 6건의 정확한 발생공정 문자열 및 PET/HDPE/LDPE를 조건부 검색 범위에 추가. 원문 51-03-01과 R-3-3은 PP/PE 사출·압출만으로 한정되지 않는다. 사례 코드·실제 처리 적합성은 계속 미확정. 기존 verifiedThrough는 유지.",
     "requireSafeContext": true,
     "reviewRequirements": [
       "실제 재활용 공정·산출물·용도가 R-3-3 정의와 일치하는지 확인해야 한다."
@@ -88,21 +108,31 @@
     "originalSourceId": "legal-290881-annex4-3-pdf",
     "processTerms": [
       "사출",
-      "압출"
+      "압출",
+      "압출 공정 자투리 분쇄",
+      "성형 공정 자투리 선별",
+      "Fictional thermoformed PET tray edge trimming; unused trim is segregated before packaging.",
+      "Fictional HDPE bottle blow-moulding startup produces separately collected parison offcuts.",
+      "Fictional PP component injection moulding produces runners collected separately at the moulding cell.",
+      "Fictional LDPE film extrusion produces roll-edge trim before printing or adhesive application."
     ],
     "polymerTerms": [
       "PP",
-      "PE"
+      "PE",
+      "HDPE",
+      "LDPE",
+      "PET"
     ],
     "contaminationTerms": [
       "없음",
-      "무오염"
+      "무오염",
+      "No contamination is stipulated in this fictional scenario."
     ],
     "siteSpecific": false,
     "reviewedBy": "Codex (PDF 원문 화면 대조; 전문 법률검토 아님)",
     "reviewedAt": "2026-11-05T11:46:53Z",
     "verifiedThrough": "2026-11-14",
-    "verificationNote": "2026-11-14 확인: 현행 291947(2026-11-12 시행·공포) 연결 별표 4의3(2025-12-30 개정) 51-03-01 행의 R-3-3 포함 유형·해당 없음은 기존 인용과 동일. https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400843&bylClsCd=110201 ; 상세 docs/legal-currency-20261114.md",
+    "verificationNote": "2026-11-14 확인: 현행 291947(2026-11-12 시행·공포) 연결 별표 4의3(2025-12-30 개정) 51-03-01 행의 R-3-3 포함 유형·해당 없음은 기존 인용과 동일. https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400843&bylClsCd=110201 ; 상세 docs/legal-currency-20261114.md 2026-11-15: 깨끗한 합성 6건의 정확한 발생공정 문자열 및 PET/HDPE/LDPE를 조건부 검색 범위에 추가. 원문 51-03-01과 R-3-3은 PP/PE 사출·압출만으로 한정되지 않는다. 사례 코드·실제 처리 적합성은 계속 미확정. 기존 verifiedThrough는 유지.",
     "requireSafeContext": true,
     "reviewRequirements": [
       "사업장일반폐기물 해당 여부와 지정폐기물 제외를 별도 확인해야 한다.",
@@ -171,6 +201,48 @@
     "intendedUse": "food-container",
     "reviewRequirements": [
       "고시 제3조의 PET 병 적용범위를 PP/PE 공정부산물에 확대 적용하지 않아야 한다."
+    ]
+  },
+  {
+    "sourceId": "legal-public-annex5-4-obligations",
+    "kind": "annex",
+    "claim": "별표 5의4는 재활용자의 오염방지 및 취급 의무다. 분말·미립자 등은 비산·유출 방지 용기에 보관해야 한다. 사례나 업체가 준수했다는 증명이 아니다.",
+    "quote": "폐기물을 재활용하는 과정에서 발생하는 오염은 다음의 방법으로 처리하거나 방지시설을 설치ㆍ운영하여 사람이나 환경에 위해가 발생하지 않도록 해야 한다. 다만, 가)부터 라)까지의 방법은 해당 오염에 대한 배출시설이 설치된 경우에만 해당한다.",
+    "locator": "별표 5의4 제1호가목1), 제2호가목2), PDF 1–2쪽",
+    "sha256": "37ded71bd2a6710e4a2dff0cebc23726cbe526e738dd2aa2c3debfe770011868",
+    "originalSourceId": "legal-public-annex5-4-290881-pdf",
+    "processTerms": [],
+    "polymerTerms": [],
+    "contaminationTerms": [],
+    "siteSpecific": false,
+    "reviewedBy": "OmO (국가법령정보센터 PDF 화면·추출 본문 대조; 전문 법률검토 아님)",
+    "reviewedAt": "2026-11-15T10:36:49Z",
+    "verifiedThrough": "2026-11-15",
+    "requireSafeContext": false,
+    "reviewRequirements": [
+      "처리업체의 배출시설·오염방지시설 설치 및 운영, 해당 배출허용기준 충족 자료가 필요하다.",
+      "분쇄물 등이 분말·미립자에 해당하면 용기·보관 및 비산·유출 방지 상태를 현장에서 확인해야 한다."
+    ]
+  },
+  {
+    "sourceId": "legal-public-annex5-3-r3-3-packaging",
+    "kind": "annex",
+    "claim": "R-3-3의 이 조항은 열거된 폐지·고철·폐포장재의 선별·압축·감용·절단에 대한 조건이다. 합성수지 공정 자투리라는 이유만으로 이 폐포장재 조항에 해당하거나 기준을 충족했다고 확정할 수 없다.",
+    "quote": "폐지ㆍ고철 또는 폐포장재(「자원의 절약과 재활용촉진에 관한 법률」 제16조제1항에 따른 재활용의무대상인 종이팩, 유리병, 금속캔, 합성수지 재질의 포장재 및 1회용 봉투ㆍ쇼핑백만 해당한다)를 선별ㆍ압축ㆍ감용(減容)ㆍ절단하는 경우에는 다음의 기준을 준수해야 한다.",
+    "locator": "별표 5의3 제2호나목1)다)(1)(가)·(나), PDF 6쪽",
+    "sha256": "29cea2a9f019890e0d59a9c24beb17e8334709b66eefcc58720b71baa0816189",
+    "originalSourceId": "legal-290881-annex5-3-pdf",
+    "processTerms": [],
+    "polymerTerms": [],
+    "contaminationTerms": [],
+    "siteSpecific": false,
+    "reviewedBy": "OmO (국가법령정보센터 PDF 화면·추출 본문 대조; 전문 법률검토 아님)",
+    "reviewedAt": "2026-11-15T10:36:49Z",
+    "verifiedThrough": "2026-11-15",
+    "requireSafeContext": false,
+    "reviewRequirements": [
+      "실제 재활용 공정·산출물·용도와 재활용의무대상 폐포장재 해당 여부를 확인해야 한다.",
+      "이 조항 적용 시 이물질·유해물질 및 이를 담았던 용기의 분리·제거 자료가 필요하다."
     ]
   }
 ]
