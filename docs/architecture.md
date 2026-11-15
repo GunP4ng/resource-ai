@@ -93,7 +93,7 @@ MCP는 senpi가 지원하는 별도 client/server 경계다. 도구를 등록했
 
 공개 법령 검색 문맥은 PR #62의 검토된 PP/PE/PET/HDPE/LDPE 공정 자투리 범위를 과거 290881·현행 291947 시행본에 연결했다. 법령 원본·출처 ID·해시·조건부 문구·검증기간은 바꾸지 않았다.
 
-현재 추천 모드의 18건 실구독 개발 실행은 `compared` 5 / `needs-review` 9 / `needs-information` 4다([기록](../data/evaluation/recommendation-mode-20261115/summary.json)). 관련성이 약한 인용·접촉 이력 미확인의 과잉 보류와 `needs-review` 사유에 남은 현장 확인 항목은 후속 개선 대상이다. 목표의 차단 4종만 남기는 작업이 완료됐다는 뜻은 아니다.
+추천 모드 초기 18건 실구독 개발 실행은 `compared` 5 / `needs-review` 9 / `needs-information` 4였다([초기 기록](../data/evaluation/recommendation-mode-20261115/summary.json)). [후속 실행](../data/evaluation/recommendation-followup-20261115/summary.json)은 7 / 4 / 7이다. 추천 전용 근거 조회는 원문·권리·시행일 검증을 유지한 채 약한 관련성의 인용도 낮은 확신도와 실행 전 확인으로 연결한다. 기존 strict 조회·현장 적합성 계약은 유지한다. 접촉·잔류 이력 미확인은 질문하고, `needs-review`의 현장 확인 항목도 `preExecutionChecks`로 분리했다. 혼합·다층/라벨 모순, 설명 모순, 유해 접촉·의심, 금지 및 가짜 인용의 차단 회귀는 유지한다. 이는 노출된 합성 개발셋의 동작 증거이며 독립 정확도나 실행 승인이 아니다.
 
 ## 운영 경계
 

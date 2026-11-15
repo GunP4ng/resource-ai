@@ -143,12 +143,6 @@ function contextMatch(value: string | null, terms: readonly string[], context: "
 }
 
 function candidateIssue(input: CaseInput, candidate: EvidenceCandidate, maxSnapshotAgeDays: number): SearchIssueKind | null {
-  const process = contextMatch(input.process, candidate.processTerms, "process");
-  const polymer = contextMatch(input.polymer, candidate.polymerTerms, "polymer");
-  const contamination = contextMatch(input.contamination, candidate.contaminationTerms, "contamination");
-  if (process === "unrelated" || polymer === "unrelated" || contamination === "unrelated") return "unrelated";
-  if (process === "ambiguous" || polymer === "ambiguous" || contamination === "ambiguous") return "context-ambiguous";
-  if (process === "missing" || polymer === "missing" || contamination === "missing") return "context-missing";
   if (candidate.siteSpecific) return "site-specific";
   if (candidate.requireSafeContext && input.hazardousContact !== "no") return "hazardous-contact-unconfirmed";
   if (candidate.verifiedThrough !== undefined && (!validDate(candidate.verifiedThrough) || input.assessmentDate > candidate.verifiedThrough)) return "currentness-unverified";
@@ -167,7 +161,7 @@ function candidateIssue(input: CaseInput, candidate: EvidenceCandidate, maxSnaps
 
 const registry = loadEvidenceRegistry(registryJson);
 
-export function lookupLegalEvidence(input: CaseInput, candidates?: readonly EvidenceCandidate[], options?: { readonly maxSnapshotAgeDays?: number; readonly intendedUse?: "general-resin" | "food-container" }): EvidenceLookup {
+export function lookupLegalEvidence(input: CaseInput, candidates?: readonly EvidenceCandidate[], options?: { readonly maxSnapshotAgeDays?: number; readonly intendedUse?: "general-resin" | "food-container"; readonly includeWeakContext?: boolean }): EvidenceLookup {
   if (!validDate(input.assessmentDate)) return { evidence: [], citations: [], reviewRequirements: [], issues: [{ kind: "invalid-date", sourceId: null }] };
   const maxSnapshotAgeDays = options?.maxSnapshotAgeDays ?? 30;
   if (!Number.isInteger(maxSnapshotAgeDays) || maxSnapshotAgeDays < 0) return { evidence: [], citations: [], reviewRequirements: [], issues: [{ kind: "invalid-option", sourceId: null }] };
@@ -188,10 +182,20 @@ export function lookupLegalEvidence(input: CaseInput, candidates?: readonly Evid
   const issues: SearchIssue[] = [...loadIssues];
   const reviewRequirements = new Set<string>();
   for (const candidate of applicable) {
-    const issue = candidateIssue(input, candidate, maxSnapshotAgeDays);
+    const context = [contextMatch(input.process, candidate.processTerms, "process"),
+      contextMatch(input.polymer, candidate.polymerTerms, "polymer"),
+      contextMatch(input.contamination, candidate.contaminationTerms, "contamination")];
+    const contextIssue = context.includes("unrelated") ? "unrelated"
+      : context.includes("ambiguous") ? "context-ambiguous"
+      : context.includes("missing") ? "context-missing" : null;
+    const validityIssue = candidateIssue(input, candidate, maxSnapshotAgeDays);
+    // Preserve strict lookup diagnostics and cached assessments. Advisory lookup
+    // must verify the source before retaining a weakly related citation.
+    const issue = options?.includeWeakContext ? validityIssue ?? contextIssue : contextIssue ?? validityIssue;
     if (issue !== null) {
       issues.push({ kind: issue, sourceId: candidate.record.sourceId });
-      continue;
+      // Source validity is checked before relevance; advisory citations never waive it.
+      if (!options?.includeWeakContext || (issue !== "unrelated" && issue !== "context-ambiguous")) continue;
     }
     evidence.set(candidate.record.sourceId, candidate.record);
     for (const requirement of candidate.reviewRequirements ?? []) reviewRequirements.add(requirement);

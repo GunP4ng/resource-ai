@@ -1,0 +1,775 @@
+{
+  "runId": "a69e77c0-aad9-49da-b35f-b48f3f4309da",
+  "gitSha": "09d3110dbc2390b99d642ee4d4187fae23f538cd",
+  "baseMain": "03fcf0e6c23e88e7cb407f70535fefb82dc93ad1",
+  "model": "chatgpt-subscription/gpt-6-sol",
+  "command": "RESOURCE_MODEL_RUNNER=subscription RESOURCE_MODEL_ID=gpt-6-sol bun scripts/eval-development.ts --cases data/evaluation/development.json --out ../evidence/runs --max-cases 18 --max-calls 90 --timeout-ms 60000",
+  "exitCode": 0,
+  "cases": 18,
+  "calls": 72,
+  "failures": 0,
+  "arms": {
+    "A": {
+      "rows": 18,
+      "success": 18,
+      "failures": 0,
+      "calls": 18,
+      "requestIds": 18,
+      "uniqueRequestIds": 18,
+      "tokens": {
+        "input": 4537,
+        "output": 4945,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "total": 9482
+      }
+    },
+    "B": {
+      "rows": 18,
+      "success": 18,
+      "failures": 0,
+      "calls": 18,
+      "requestIds": 18,
+      "uniqueRequestIds": 18,
+      "tokens": {
+        "input": 38759,
+        "output": 8428,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "total": 47187
+      }
+    },
+    "C": {
+      "rows": 18,
+      "success": 18,
+      "failures": 0,
+      "calls": 36,
+      "requestIds": 36,
+      "uniqueRequestIds": 36,
+      "tokens": {
+        "input": 114403,
+        "output": 1851,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "total": 116254
+      }
+    }
+  },
+  "before": {
+    "compared": 5,
+    "needs-review": 9,
+    "needs-information": 4
+  },
+  "after": {
+    "compared": 7,
+    "needs-review": 4,
+    "needs-information": 7
+  },
+  "deltas": [
+    {
+      "caseId": "HYEOB-20261112-001",
+      "before": "compared",
+      "after": "compared",
+      "inputEqual": true,
+      "promptEqual": true,
+      "runnerEqual": true,
+      "sourceEqual": true,
+      "reasons": [],
+      "questions": [],
+      "preExecutionChecks": [
+        "현행 허가의 유효기간·허가 범위와 해당 수지·오염 상태의 처리 가능 여부를 관할기관·업체에 확인하세요.",
+        "업체의 실제 인수 의사·계약 조건을 확인하세요.",
+        "실측 질량·수율·운송 거리와 실제 견적·세금·운송 조건을 확인하세요.",
+        "탄소 계수의 수지·지역·기간·계산 경계와 크레딧 적용 가능성을 확인하세요.",
+        "반출·계약·처리 전 현장 책임자의 별도 검토와 승인을 받으세요.",
+        "일반 조문은 코드·처리경로 적합성의 개별 근거가 아니다.",
+        "사업장일반폐기물 해당 여부와 지정폐기물 제외를 별도 확인해야 한다.",
+        "실제 재활용 공정·산출물·용도가 R-3-3 정의와 일치하는지 확인해야 한다.",
+        "재활용 유형별 세부기준·허가 범위·인수 조건을 별도로 확인해야 한다.",
+        "재활용환경성평가 예외·금지 및 제한·별표 5의4 준수사항·현행 허가를 확인해야 한다.",
+        "용도·이전 신고 및 분류 변경 이력 미입력: 부칙 제18호 제3조 경과조치 적용은 확인되지 않았다.",
+        "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다."
+      ],
+      "providerRequestIds": [
+        "42990e65-7c41-4a31-83d1-002abfe59fd3",
+        "e5e9781e-f636-471a-ae67-5dcf54bd2c83"
+      ],
+      "tokenUsage": {
+        "input": 8722,
+        "output": 104,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "total": 8826
+      }
+    },
+    {
+      "caseId": "HYEOB-20261112-002",
+      "before": "compared",
+      "after": "compared",
+      "inputEqual": true,
+      "promptEqual": true,
+      "runnerEqual": true,
+      "sourceEqual": true,
+      "reasons": [],
+      "questions": [],
+      "preExecutionChecks": [
+        "현행 허가의 유효기간·허가 범위와 해당 수지·오염 상태의 처리 가능 여부를 관할기관·업체에 확인하세요.",
+        "업체의 실제 인수 의사·계약 조건을 확인하세요.",
+        "실측 질량·수율·운송 거리와 실제 견적·세금·운송 조건을 확인하세요.",
+        "탄소 계수의 수지·지역·기간·계산 경계와 크레딧 적용 가능성을 확인하세요.",
+        "반출·계약·처리 전 현장 책임자의 별도 검토와 승인을 받으세요.",
+        "일반 조문은 코드·처리경로 적합성의 개별 근거가 아니다.",
+        "사업장일반폐기물 해당 여부와 지정폐기물 제외를 별도 확인해야 한다.",
+        "실제 재활용 공정·산출물·용도가 R-3-3 정의와 일치하는지 확인해야 한다.",
+        "재활용 유형별 세부기준·허가 범위·인수 조건을 별도로 확인해야 한다.",
+        "재활용환경성평가 예외·금지 및 제한·별표 5의4 준수사항·현행 허가를 확인해야 한다.",
+        "용도·이전 신고 및 분류 변경 이력 미입력: 부칙 제18호 제3조 경과조치 적용은 확인되지 않았다.",
+        "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다."
+      ],
+      "providerRequestIds": [
+        "77379705-2c43-4798-8ff7-d4e459b7817d",
+        "2cb344a5-8062-4934-b405-9af509bb01e1"
+      ],
+      "tokenUsage": {
+        "input": 8711,
+        "output": 104,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "total": 8815
+      }
+    },
+    {
+      "caseId": "HYEOB-20261112-003",
+      "before": "needs-review",
+      "after": "needs-review",
+      "inputEqual": true,
+      "promptEqual": true,
+      "runnerEqual": true,
+      "sourceEqual": true,
+      "reasons": [
+        "혼합·다층 또는 라벨 불일치가 보고되었습니다. 층별·구성 수지의 재질 명세, 라벨 확인 자료와 수지별 분리 가능 여부를 확인할 수 있나요?"
+      ],
+      "questions": [],
+      "preExecutionChecks": [
+        "현행 허가의 유효기간·허가 범위와 해당 수지·오염 상태의 처리 가능 여부를 관할기관·업체에 확인하세요.",
+        "업체의 실제 인수 의사·계약 조건을 확인하세요.",
+        "실측 질량·수율·운송 거리와 실제 견적·세금·운송 조건을 확인하세요.",
+        "탄소 계수의 수지·지역·기간·계산 경계와 크레딧 적용 가능성을 확인하세요.",
+        "반출·계약·처리 전 현장 책임자의 별도 검토와 승인을 받으세요.",
+        "일반 조문은 코드·처리경로 적합성의 개별 근거가 아니다.",
+        "사업장일반폐기물 해당 여부와 지정폐기물 제외를 별도 확인해야 한다.",
+        "실제 재활용 공정·산출물·용도가 R-3-3 정의와 일치하는지 확인해야 한다.",
+        "재활용 유형별 세부기준·허가 범위·인수 조건을 별도로 확인해야 한다.",
+        "재활용환경성평가 예외·금지 및 제한·별표 5의4 준수사항·현행 허가를 확인해야 한다.",
+        "용도·이전 신고 및 분류 변경 이력 미입력: 부칙 제18호 제3조 경과조치 적용은 확인되지 않았다.",
+        "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다.",
+        "공개 인용과 이 사례의 관련성이 약합니다. 적용 행·수지·처리 공정의 관련성을 실행 전에 확인하세요 (legal-291947-annex4-code).",
+        "공개 인용과 이 사례의 관련성이 약합니다. 적용 행·수지·처리 공정의 관련성을 실행 전에 확인하세요 (legal-291947-annex4-2-r3-3).",
+        "공개 인용과 이 사례의 관련성이 약합니다. 적용 행·수지·처리 공정의 관련성을 실행 전에 확인하세요 (legal-291947-annex4-3-types)."
+      ],
+      "providerRequestIds": [
+        "39ba25a2-f88b-4998-b9e8-64a74277778f",
+        "512ef85b-1786-4a3b-be3a-0165c5e80d18"
+      ],
+      "tokenUsage": {
+        "input": 5168,
+        "output": 102,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "total": 5270
+      }
+    },
+    {
+      "caseId": "HYEOB-20261112-004",
+      "before": "needs-review",
+      "after": "needs-information",
+      "inputEqual": true,
+      "promptEqual": true,
+      "runnerEqual": true,
+      "sourceEqual": true,
+      "reasons": [],
+      "questions": [
+        "오염·접촉 이력에 미확인 내용이 있습니다. 이전 내용물·접촉 물질명과 SDS 등 확인 자료, 잔류물·세척 확인 자료가 있나요? 확인 전에는 세척 여부만으로 유해물질 접촉이 없었다고 확정하지 않습니다."
+      ],
+      "preExecutionChecks": [],
+      "providerRequestIds": [
+        "587543a8-1251-9a6a-897a-695ddfad18d9",
+        "776835c6-5697-47a6-aba1-521f33ca325b"
+      ],
+      "tokenUsage": {
+        "input": 4740,
+        "output": 105,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "total": 4845
+      }
+    },
+    {
+      "caseId": "HYEOB-20261112-005",
+      "before": "needs-review",
+      "after": "needs-review",
+      "inputEqual": true,
+      "promptEqual": true,
+      "runnerEqual": true,
+      "sourceEqual": true,
+      "reasons": [
+        "혼합·다층 또는 라벨 불일치가 보고되었습니다. 층별·구성 수지의 재질 명세, 라벨 확인 자료와 수지별 분리 가능 여부를 확인할 수 있나요?",
+        "유해물질과 접촉했는지 확인할 수 있나요?",
+        "확인된 질량은 몇 kg인가요?",
+        "폐플라스틱이 발생한 지역은 어디인가요?"
+      ],
+      "questions": [],
+      "preExecutionChecks": [
+        "현행 허가의 유효기간·허가 범위와 해당 수지·오염 상태의 처리 가능 여부를 관할기관·업체에 확인하세요.",
+        "업체의 실제 인수 의사·계약 조건을 확인하세요.",
+        "실측 질량·수율·운송 거리와 실제 견적·세금·운송 조건을 확인하세요.",
+        "탄소 계수의 수지·지역·기간·계산 경계와 크레딧 적용 가능성을 확인하세요.",
+        "반출·계약·처리 전 현장 책임자의 별도 검토와 승인을 받으세요.",
+        "일반 조문은 코드·처리경로 적합성의 개별 근거가 아니다.",
+        "재활용환경성평가 예외·금지 및 제한·별표 5의4 준수사항·현행 허가를 확인해야 한다.",
+        "용도·이전 신고 및 분류 변경 이력 미입력: 부칙 제18호 제3조 경과조치 적용은 확인되지 않았다.",
+        "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다."
+      ],
+      "providerRequestIds": [
+        "05c8a128-3975-4684-9c63-768f71451abb",
+        "c4eb88fd-5dec-4b83-b9e7-c44f7f133e70"
+      ],
+      "tokenUsage": {
+        "input": 5240,
+        "output": 106,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "total": 5346
+      }
+    },
+    {
+      "caseId": "HYEOB-20261112-006",
+      "before": "needs-review",
+      "after": "compared",
+      "inputEqual": true,
+      "promptEqual": true,
+      "runnerEqual": true,
+      "sourceEqual": true,
+      "reasons": [],
+      "questions": [],
+      "preExecutionChecks": [
+        "현행 허가의 유효기간·허가 범위와 해당 수지·오염 상태의 처리 가능 여부를 관할기관·업체에 확인하세요.",
+        "업체의 실제 인수 의사·계약 조건을 확인하세요.",
+        "실측 질량·수율·운송 거리와 실제 견적·세금·운송 조건을 확인하세요.",
+        "탄소 계수의 수지·지역·기간·계산 경계와 크레딧 적용 가능성을 확인하세요.",
+        "반출·계약·처리 전 현장 책임자의 별도 검토와 승인을 받으세요.",
+        "일반 조문은 코드·처리경로 적합성의 개별 근거가 아니다.",
+        "사업장일반폐기물 해당 여부와 지정폐기물 제외를 별도 확인해야 한다.",
+        "실제 재활용 공정·산출물·용도가 R-3-3 정의와 일치하는지 확인해야 한다.",
+        "재활용 유형별 세부기준·허가 범위·인수 조건을 별도로 확인해야 한다.",
+        "재활용환경성평가 예외·금지 및 제한·별표 5의4 준수사항·현행 허가를 확인해야 한다.",
+        "용도·이전 신고 및 분류 변경 이력 미입력: 부칙 제18호 제3조 경과조치 적용은 확인되지 않았다.",
+        "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다.",
+        "공개 인용과 이 사례의 관련성이 약합니다. 적용 행·수지·처리 공정의 관련성을 실행 전에 확인하세요 (legal-291947-annex4-code).",
+        "공개 인용과 이 사례의 관련성이 약합니다. 적용 행·수지·처리 공정의 관련성을 실행 전에 확인하세요 (legal-291947-annex4-2-r3-3).",
+        "공개 인용과 이 사례의 관련성이 약합니다. 적용 행·수지·처리 공정의 관련성을 실행 전에 확인하세요 (legal-291947-annex4-3-types)."
+      ],
+      "providerRequestIds": [
+        "9970780b-5c85-4087-9dbb-11e673dcccdc",
+        "1fd7afd6-08d5-417f-8575-346cb7c244cf"
+      ],
+      "tokenUsage": {
+        "input": 6516,
+        "output": 106,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "total": 6622
+      }
+    },
+    {
+      "caseId": "HYEOB-20261112-007",
+      "before": "needs-review",
+      "after": "compared",
+      "inputEqual": true,
+      "promptEqual": true,
+      "runnerEqual": true,
+      "sourceEqual": true,
+      "reasons": [],
+      "questions": [],
+      "preExecutionChecks": [
+        "현행 허가의 유효기간·허가 범위와 해당 수지·오염 상태의 처리 가능 여부를 관할기관·업체에 확인하세요.",
+        "업체의 실제 인수 의사·계약 조건을 확인하세요.",
+        "실측 질량·수율·운송 거리와 실제 견적·세금·운송 조건을 확인하세요.",
+        "탄소 계수의 수지·지역·기간·계산 경계와 크레딧 적용 가능성을 확인하세요.",
+        "반출·계약·처리 전 현장 책임자의 별도 검토와 승인을 받으세요.",
+        "일반 조문은 코드·처리경로 적합성의 개별 근거가 아니다.",
+        "사업장일반폐기물 해당 여부와 지정폐기물 제외를 별도 확인해야 한다.",
+        "실제 재활용 공정·산출물·용도가 R-3-3 정의와 일치하는지 확인해야 한다.",
+        "재활용 유형별 세부기준·허가 범위·인수 조건을 별도로 확인해야 한다.",
+        "재활용환경성평가 예외·금지 및 제한·별표 5의4 준수사항·현행 허가를 확인해야 한다.",
+        "용도·이전 신고 및 분류 변경 이력 미입력: 부칙 제18호 제3조 경과조치 적용은 확인되지 않았다.",
+        "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다.",
+        "공개 인용과 이 사례의 관련성이 약합니다. 적용 행·수지·처리 공정의 관련성을 실행 전에 확인하세요 (legal-291947-annex4-code).",
+        "공개 인용과 이 사례의 관련성이 약합니다. 적용 행·수지·처리 공정의 관련성을 실행 전에 확인하세요 (legal-291947-annex4-2-r3-3).",
+        "공개 인용과 이 사례의 관련성이 약합니다. 적용 행·수지·처리 공정의 관련성을 실행 전에 확인하세요 (legal-291947-annex4-3-types)."
+      ],
+      "providerRequestIds": [
+        "095070cb-557f-4861-a5a8-fc58960779f2",
+        "e6034f73-c3bb-4376-a424-f33ecf31a3fc"
+      ],
+      "tokenUsage": {
+        "input": 6516,
+        "output": 103,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "total": 6619
+      }
+    },
+    {
+      "caseId": "HYEOB-20261112-008",
+      "before": "needs-review",
+      "after": "needs-information",
+      "inputEqual": true,
+      "promptEqual": true,
+      "runnerEqual": true,
+      "sourceEqual": true,
+      "reasons": [],
+      "questions": [
+        "오염·접촉 이력에 미확인 내용이 있습니다. 이전 내용물·접촉 물질명과 SDS 등 확인 자료, 잔류물·세척 확인 자료가 있나요? 확인 전에는 세척 여부만으로 유해물질 접촉이 없었다고 확정하지 않습니다."
+      ],
+      "preExecutionChecks": [],
+      "providerRequestIds": [
+        "89a706ef-6508-4523-99fc-0635bd5ed35f",
+        "8ea466b3-7429-4c57-a4ef-0239369f062b"
+      ],
+      "tokenUsage": {
+        "input": 4738,
+        "output": 106,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "total": 4844
+      }
+    },
+    {
+      "caseId": "HYEOB-20261112-009",
+      "before": "needs-information",
+      "after": "needs-information",
+      "inputEqual": true,
+      "promptEqual": true,
+      "runnerEqual": true,
+      "sourceEqual": true,
+      "reasons": [],
+      "questions": [
+        "폐플라스틱이 발생한 공정 또는 발생원은 무엇인가요?",
+        "확인된 수지 종류와 이를 확인한 자료(라벨·재질 명세 등)가 있나요?",
+        "오염이나 이물질이 있나요? 확인된 상태를 알려 주세요.",
+        "유해물질과 접촉했는지 확인할 수 있나요?",
+        "확인된 질량은 몇 kg인가요?",
+        "폐플라스틱이 발생한 지역은 어디인가요?"
+      ],
+      "preExecutionChecks": [],
+      "providerRequestIds": [
+        "1e45b8ca-062e-4976-8167-3d097270e02e",
+        "31faa0d6-3b1c-48d4-825e-46bed43acaec"
+      ],
+      "tokenUsage": {
+        "input": 4949,
+        "output": 100,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "total": 5049
+      }
+    },
+    {
+      "caseId": "HYEOB-20261112-010",
+      "before": "needs-information",
+      "after": "needs-information",
+      "inputEqual": true,
+      "promptEqual": true,
+      "runnerEqual": true,
+      "sourceEqual": true,
+      "reasons": [],
+      "questions": [
+        "폐플라스틱이 발생한 공정 또는 발생원은 무엇인가요?",
+        "확인된 수지 종류와 이를 확인한 자료(라벨·재질 명세 등)가 있나요?",
+        "오염이나 이물질이 있나요? 확인된 상태를 알려 주세요.",
+        "유해물질과 접촉했는지 확인할 수 있나요?",
+        "확인된 질량은 몇 kg인가요?",
+        "폐플라스틱이 발생한 지역은 어디인가요?"
+      ],
+      "preExecutionChecks": [],
+      "providerRequestIds": [
+        "382c7ab4-3ba6-4edb-87d6-888f9d55402f",
+        "3ab95f2f-fa82-42d6-9bc6-e43e592a5bed"
+      ],
+      "tokenUsage": {
+        "input": 5022,
+        "output": 97,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "total": 5119
+      }
+    },
+    {
+      "caseId": "OYS-20261110-001",
+      "before": "compared",
+      "after": "compared",
+      "inputEqual": true,
+      "promptEqual": true,
+      "runnerEqual": true,
+      "sourceEqual": true,
+      "reasons": [],
+      "questions": [],
+      "preExecutionChecks": [
+        "현행 허가의 유효기간·허가 범위와 해당 수지·오염 상태의 처리 가능 여부를 관할기관·업체에 확인하세요.",
+        "업체의 실제 인수 의사·계약 조건을 확인하세요.",
+        "실측 질량·수율·운송 거리와 실제 견적·세금·운송 조건을 확인하세요.",
+        "탄소 계수의 수지·지역·기간·계산 경계와 크레딧 적용 가능성을 확인하세요.",
+        "반출·계약·처리 전 현장 책임자의 별도 검토와 승인을 받으세요.",
+        "일반 조문은 코드·처리경로 적합성의 개별 근거가 아니다.",
+        "사업장일반폐기물 해당 여부와 지정폐기물 제외를 별도 확인해야 한다.",
+        "실제 재활용 공정·산출물·용도가 R-3-3 정의와 일치하는지 확인해야 한다.",
+        "재활용 유형별 세부기준·허가 범위·인수 조건을 별도로 확인해야 한다.",
+        "재활용환경성평가 예외·금지 및 제한·별표 5의4 준수사항·현행 허가를 확인해야 한다.",
+        "용도·이전 신고 및 분류 변경 이력 미입력: 부칙 제18호 제3조 경과조치 적용은 확인되지 않았다.",
+        "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다."
+      ],
+      "providerRequestIds": [
+        "83a297fc-115d-4a48-8574-df2f72bf4a3e",
+        "baffba00-dfb4-43e0-a46b-3f8a89251972"
+      ],
+      "tokenUsage": {
+        "input": 8755,
+        "output": 102,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "total": 8857
+      }
+    },
+    {
+      "caseId": "OYS-20261110-002",
+      "before": "compared",
+      "after": "compared",
+      "inputEqual": true,
+      "promptEqual": true,
+      "runnerEqual": true,
+      "sourceEqual": true,
+      "reasons": [],
+      "questions": [],
+      "preExecutionChecks": [
+        "현행 허가의 유효기간·허가 범위와 해당 수지·오염 상태의 처리 가능 여부를 관할기관·업체에 확인하세요.",
+        "업체의 실제 인수 의사·계약 조건을 확인하세요.",
+        "실측 질량·수율·운송 거리와 실제 견적·세금·운송 조건을 확인하세요.",
+        "탄소 계수의 수지·지역·기간·계산 경계와 크레딧 적용 가능성을 확인하세요.",
+        "반출·계약·처리 전 현장 책임자의 별도 검토와 승인을 받으세요.",
+        "일반 조문은 코드·처리경로 적합성의 개별 근거가 아니다.",
+        "사업장일반폐기물 해당 여부와 지정폐기물 제외를 별도 확인해야 한다.",
+        "실제 재활용 공정·산출물·용도가 R-3-3 정의와 일치하는지 확인해야 한다.",
+        "재활용 유형별 세부기준·허가 범위·인수 조건을 별도로 확인해야 한다.",
+        "재활용환경성평가 예외·금지 및 제한·별표 5의4 준수사항·현행 허가를 확인해야 한다.",
+        "용도·이전 신고 및 분류 변경 이력 미입력: 부칙 제18호 제3조 경과조치 적용은 확인되지 않았다.",
+        "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다."
+      ],
+      "providerRequestIds": [
+        "1ce90c15-8e0f-4e1f-a8ba-4859a986102c",
+        "8ddbb228-db59-4c26-85f4-30e9415ea1f5"
+      ],
+      "tokenUsage": {
+        "input": 8765,
+        "output": 101,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "total": 8866
+      }
+    },
+    {
+      "caseId": "OYS-20261110-003",
+      "before": "needs-information",
+      "after": "needs-information",
+      "inputEqual": true,
+      "promptEqual": true,
+      "runnerEqual": true,
+      "sourceEqual": true,
+      "reasons": [],
+      "questions": [
+        "확인된 질량은 몇 kg인가요?"
+      ],
+      "preExecutionChecks": [],
+      "providerRequestIds": [
+        "a70f263e-6cde-4246-9668-b66750b12792",
+        "f6c967c9-4a1b-4719-bf8c-7ef29c255750"
+      ],
+      "tokenUsage": {
+        "input": 7526,
+        "output": 101,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "total": 7627
+      }
+    },
+    {
+      "caseId": "OYS-20261110-004",
+      "before": "compared",
+      "after": "compared",
+      "inputEqual": true,
+      "promptEqual": true,
+      "runnerEqual": true,
+      "sourceEqual": true,
+      "reasons": [],
+      "questions": [],
+      "preExecutionChecks": [
+        "현행 허가의 유효기간·허가 범위와 해당 수지·오염 상태의 처리 가능 여부를 관할기관·업체에 확인하세요.",
+        "업체의 실제 인수 의사·계약 조건을 확인하세요.",
+        "실측 질량·수율·운송 거리와 실제 견적·세금·운송 조건을 확인하세요.",
+        "탄소 계수의 수지·지역·기간·계산 경계와 크레딧 적용 가능성을 확인하세요.",
+        "반출·계약·처리 전 현장 책임자의 별도 검토와 승인을 받으세요.",
+        "일반 조문은 코드·처리경로 적합성의 개별 근거가 아니다.",
+        "사업장일반폐기물 해당 여부와 지정폐기물 제외를 별도 확인해야 한다.",
+        "실제 재활용 공정·산출물·용도가 R-3-3 정의와 일치하는지 확인해야 한다.",
+        "재활용 유형별 세부기준·허가 범위·인수 조건을 별도로 확인해야 한다.",
+        "재활용환경성평가 예외·금지 및 제한·별표 5의4 준수사항·현행 허가를 확인해야 한다.",
+        "용도·이전 신고 및 분류 변경 이력 미입력: 부칙 제18호 제3조 경과조치 적용은 확인되지 않았다.",
+        "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다."
+      ],
+      "providerRequestIds": [
+        "9048f847-a1b2-47f0-b037-0362b9fe0193",
+        "811217d8-29c0-49a1-9fbc-cec04836164c"
+      ],
+      "tokenUsage": {
+        "input": 8757,
+        "output": 99,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "total": 8856
+      }
+    },
+    {
+      "caseId": "OYS-20261110-006",
+      "before": "needs-review",
+      "after": "needs-review",
+      "inputEqual": true,
+      "promptEqual": true,
+      "runnerEqual": true,
+      "sourceEqual": true,
+      "reasons": [
+        "입력 자체 모순 확인 필요",
+        "확인된 수지 종류와 이를 확인한 자료(라벨·재질 명세 등)가 있나요?",
+        "오염이나 이물질이 있나요? 확인된 상태를 알려 주세요.",
+        "유해물질과 접촉했는지 확인할 수 있나요?",
+        "확인된 질량은 몇 kg인가요?"
+      ],
+      "questions": [],
+      "preExecutionChecks": [
+        "현행 허가의 유효기간·허가 범위와 해당 수지·오염 상태의 처리 가능 여부를 관할기관·업체에 확인하세요.",
+        "업체의 실제 인수 의사·계약 조건을 확인하세요.",
+        "실측 질량·수율·운송 거리와 실제 견적·세금·운송 조건을 확인하세요.",
+        "탄소 계수의 수지·지역·기간·계산 경계와 크레딧 적용 가능성을 확인하세요.",
+        "반출·계약·처리 전 현장 책임자의 별도 검토와 승인을 받으세요.",
+        "일반 조문은 코드·처리경로 적합성의 개별 근거가 아니다.",
+        "재활용환경성평가 예외·금지 및 제한·별표 5의4 준수사항·현행 허가를 확인해야 한다.",
+        "용도·이전 신고 및 분류 변경 이력 미입력: 부칙 제18호 제3조 경과조치 적용은 확인되지 않았다.",
+        "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다."
+      ],
+      "providerRequestIds": [
+        "f883da2b-a874-45db-96e7-6c73f3288b5b",
+        "e5a9fdaf-2956-4aab-bcb1-3b930e122859"
+      ],
+      "tokenUsage": {
+        "input": 5130,
+        "output": 104,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "total": 5234
+      }
+    },
+    {
+      "caseId": "OYS-20261110-008",
+      "before": "needs-review",
+      "after": "needs-review",
+      "inputEqual": true,
+      "promptEqual": true,
+      "runnerEqual": true,
+      "sourceEqual": true,
+      "reasons": [
+        "유해물질 접촉·지정폐기물 해당 여부 검토 필요",
+        "법령 인용 검증 실패: hazardous-contact-unconfirmed (legal-290881-annex4-code)",
+        "법령 인용 검증 실패: hazardous-contact-unconfirmed (legal-290881-annex4-2-r3-3)",
+        "법령 인용 검증 실패: hazardous-contact-unconfirmed (legal-290881-annex4-3-types)",
+        "확인된 질량은 몇 kg인가요?",
+        "오염·접촉 이력에 미확인 내용이 있습니다. 이전 내용물·접촉 물질명과 SDS 등 확인 자료, 잔류물·세척 확인 자료가 있나요? 확인 전에는 세척 여부만으로 유해물질 접촉이 없었다고 확정하지 않습니다."
+      ],
+      "questions": [],
+      "preExecutionChecks": [
+        "현행 허가의 유효기간·허가 범위와 해당 수지·오염 상태의 처리 가능 여부를 관할기관·업체에 확인하세요.",
+        "업체의 실제 인수 의사·계약 조건을 확인하세요.",
+        "실측 질량·수율·운송 거리와 실제 견적·세금·운송 조건을 확인하세요.",
+        "탄소 계수의 수지·지역·기간·계산 경계와 크레딧 적용 가능성을 확인하세요.",
+        "반출·계약·처리 전 현장 책임자의 별도 검토와 승인을 받으세요.",
+        "일반 조문은 코드·처리경로 적합성의 개별 근거가 아니다.",
+        "재활용환경성평가 예외·금지 및 제한·별표 5의4 준수사항·현행 허가를 확인해야 한다.",
+        "용도·이전 신고 및 분류 변경 이력 미입력: 부칙 제18호 제3조 경과조치 적용은 확인되지 않았다.",
+        "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+        "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다."
+      ],
+      "providerRequestIds": [
+        "aef60731-5e61-4c88-801c-e6f514d89518",
+        "71c5c5e7-3777-47e6-bb91-146411fed081"
+      ],
+      "tokenUsage": {
+        "input": 5453,
+        "output": 102,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "total": 5555
+      }
+    },
+    {
+      "caseId": "OYS-20261110-009",
+      "before": "needs-review",
+      "after": "needs-information",
+      "inputEqual": true,
+      "promptEqual": true,
+      "runnerEqual": true,
+      "sourceEqual": true,
+      "reasons": [],
+      "questions": [
+        "유해물질과 접촉했는지 확인할 수 있나요?",
+        "오염·접촉 이력에 미확인 내용이 있습니다. 이전 내용물·접촉 물질명과 SDS 등 확인 자료, 잔류물·세척 확인 자료가 있나요? 확인 전에는 세척 여부만으로 유해물질 접촉이 없었다고 확정하지 않습니다."
+      ],
+      "preExecutionChecks": [],
+      "providerRequestIds": [
+        "02742ea9-b77d-4ee3-9404-00a9ba8afc5f",
+        "4effae2a-7f31-45e1-9de9-d4c28759ed77"
+      ],
+      "tokenUsage": {
+        "input": 4929,
+        "output": 103,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "total": 5032
+      }
+    },
+    {
+      "caseId": "OYS-20261110-010",
+      "before": "needs-information",
+      "after": "needs-information",
+      "inputEqual": true,
+      "promptEqual": true,
+      "runnerEqual": true,
+      "sourceEqual": true,
+      "reasons": [],
+      "questions": [
+        "오염이나 이물질이 있나요? 확인된 상태를 알려 주세요.",
+        "유해물질과 접촉했는지 확인할 수 있나요?",
+        "확인된 질량은 몇 kg인가요?",
+        "폐플라스틱이 발생한 지역은 어디인가요?"
+      ],
+      "preExecutionChecks": [],
+      "providerRequestIds": [
+        "954832d7-ff71-4c45-9734-1f77d5dc1f60",
+        "102febdb-65a7-4884-a1b1-8945b5fea650"
+      ],
+      "tokenUsage": {
+        "input": 4766,
+        "output": 106,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "total": 4872
+      }
+    }
+  ],
+  "sourceVersion": "2e703c95d9c33a3807edf75d0649eee6e2f7a3f6008bd90e9d41e71171de39b0",
+  "sourceVersions": {
+    "evidenceCandidates": "2d47e674f4c3ce2c5738d1724d0eca6633bfbdfe15b95e87a3fd9d946bf5af5a",
+    "manifest": "fe8c9b88a97f8059ffd16220785c5c0eda61ce86c267809caf78985d842f1fc7"
+  },
+  "rawDirectory": "/home/gunp4ng/working/resource-recommend-followup-20261115/evidence/runs/a69e77c0-aad9-49da-b35f-b48f3f4309da",
+  "recommendationAudit": [
+    {
+      "caseId": "HYEOB-20261112-001",
+      "passed": true
+    },
+    {
+      "caseId": "HYEOB-20261112-002",
+      "passed": true
+    },
+    {
+      "caseId": "HYEOB-20261112-006",
+      "passed": true
+    },
+    {
+      "caseId": "HYEOB-20261112-007",
+      "passed": true
+    },
+    {
+      "caseId": "OYS-20261110-001",
+      "passed": true
+    },
+    {
+      "caseId": "OYS-20261110-002",
+      "passed": true
+    },
+    {
+      "caseId": "OYS-20261110-004",
+      "passed": true
+    }
+  ],
+  "verification": {
+    "tests": {
+      "passed": 850,
+      "failed": 0,
+      "log": "evidence/followup-test-verified.log"
+    },
+    "typecheck": {
+      "exitCode": 0,
+      "log": "evidence/followup-typecheck-verified.log"
+    },
+    "build": {
+      "exitCode": 0,
+      "modules": 17,
+      "log": "evidence/followup-build-verified.log"
+    },
+    "http": "evidence/http-final.json",
+    "browserDom": "evidence/browser-dom-checklist-final.json",
+    "screenshot": "Two omowright capture timeouts; owner explicitly accepted HTTP/DOM evidence and prohibited further screenshot investigation."
+  },
+  "projection": {
+    "omittedFields": [
+      "rawOutput"
+    ],
+    "reason": "Only model-internal raw responses omitted; full immutable originals retained locally. Inputs, outputs, request IDs, token usage and all hashes preserved."
+  },
+  "limitations": [
+    "Exposed synthetic text development set, not independent accuracy or field acceptance evidence.",
+    "No photo input or independent labels; no cost/carbon superiority claim.",
+    "Only supported mechanical recycling is ranked; other routes remain unknown.",
+    "Weak relevance retains real public citations for decision support only, with low confidence and execution checks; no case-specific legal approval."
+  ]
+}

@@ -189,7 +189,8 @@ export function renderReport(result: DecisionResult, presentation: ReportPresent
       content = `<h1>추가 정보 필요</h1>${list(result.questions)}`;
       break;
     case "needs-review":
-      content = `<h1>검토 필요</h1>${list(result.reasons)}`;
+      content = `<h1>검토 필요</h1>${list(result.reasons)}
+        ${result.preExecutionChecks ? `<h2>실행 전 확인사항</h2>${list(result.preExecutionChecks)}` : ""}`;
       break;
     case "compared": {
       const labels = result.scenarios.map((_, index) => presentation.scenarioLabels?.[index] ?? `대안 ${index + 1}`);

@@ -89,7 +89,7 @@ RESOURCE_MODEL_RUNNER=local RESOURCE_APP_AUTH=local-operator RESOURCE_STATE_DIR=
 - 지정폐기물·유해 의심, 명백한 법령상 금지, 출처 없는/검증 실패 인용, 입력 모순은 추천 차단 사유로 남긴다.
 - 허가 유효성·업체 인수/계약·실제 견적/질량/거리·탄소계수 적용 검토·현장 승인은 실행 전 확인 목록(`preExecutionChecks`)으로 표시하며, 이것만으로 경로 비교 전체를 보류하지 않는 것이 목표다. 현재 구현은 필수 질량 누락을 `needs-information` 질문으로 처리한다.
 - 비용·탄소는 출처·단위·경계·가정을 확인할 수 있는 범위만 계산한다. 공개 자료 기반 계산은 시나리오 추정으로 표시하고 실제 견적·실측 감축으로 부르지 않는다. 계산 불가 항목은 사유를 남기며 다른 근거 있는 비교는 계속한다.
-- 현재 구현은 검증된 사례별 quote·계수로 계산하거나 `null`·미산정 사유를 제공한다. 공개 법령 추천과 실행 전 확인을 분리했지만, 관련성이 약한 인용·접촉 이력 미확인의 과잉 보류와 보류 사유에 남은 현장 항목은 후속 개선 대상이다([18건 실행 기록](data/evaluation/recommendation-mode-20261115/summary.json): `compared` 5 / `needs-review` 9 / `needs-information` 4).
+- 현재 구현은 검증된 사례별 quote·계수로 계산하거나 `null`·미산정 사유를 제공한다. 검증된 인용의 약한 관련성은 낮은 확신도·실행 전 확인으로, 접촉 이력 미확인은 추가 질문으로 처리한다. 현장 확인 항목은 검토 보류 사유와 분리한다. [초기 18건 실행](data/evaluation/recommendation-mode-20261115/summary.json)의 `compared` 5 / `needs-review` 9 / `needs-information` 4에서 [후속 실구독 실행](data/evaluation/recommendation-followup-20261115/summary.json)은 7 / 4 / 7로 바뀌었다. 개발셋 결과이며 정확도·현장 승인 증거가 아니다.
 - 대회 제출 형식·최종 업로드 시각·Azure 크레딧 금액은 운영진/팀 계정 확인이 남아 있다.
 - 교육용 가상 데이터 정확도는 현장 재활용 판단의 정확도가 아니다.
 - 비공개 저장소다. 교육 영상/자막/로그인 화면·실제 키·개인정보를 업로드하지 않는다.

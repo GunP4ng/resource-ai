@@ -10,6 +10,13 @@ const executionChecks = [
   "반출·계약·처리 전 현장 책임자의 별도 검토와 승인을 받으세요.",
 ] as const;
 
+export function executionChecksFor(assessment: CaseAssessment): readonly string[] {
+  return [...new Set([...executionChecks, ...assessment.legal.reviewRequirements, ...Object.values(assessment.requiredChecks).flat(),
+    ...assessment.legal.issues.filter(({ kind }) => kind === "unrelated" || kind === "context-ambiguous")
+      .map(({ sourceId }) => `공개 인용과 이 사례의 관련성이 약합니다. 적용 행·수지·처리 공정의 관련성을 실행 전에 확인하세요 (${sourceId}).`),
+    ...assessment.routes.flatMap(route => route.eligibility.state === "ineligible" ? route.eligibility.reasons : [])])];
+}
+
 function publicRecyclingEvidence(assessment: CaseAssessment): readonly string[] {
   const citations = assessment.legal.citations;
   const required = ["-annex4-code", "-annex4-2-r3-3", "-annex4-3-types", "-annex5-3-common"] as const;
@@ -17,7 +24,7 @@ function publicRecyclingEvidence(assessment: CaseAssessment): readonly string[] 
   return citations.filter(citation => required.some(suffix => citation.sourceId.endsWith(suffix))).map(citation => citation.sourceId);
 }
 
-/** A nonmatching conditional citation is excluded, not evidence of a prohibition. */
+/** Weak relevance is advisory; source verification and explicit risk still block. */
 export function recommendationBlockers(facts: CaseInput, assessment: CaseAssessment, reviews?: RouteReviewContext): readonly string[] {
   const issues = assessment.legal.issues.filter(({ kind }) =>
     kind !== "unrelated" && kind !== "context-ambiguous" && kind !== "context-missing"
@@ -26,6 +33,8 @@ export function recommendationBlockers(facts: CaseInput, assessment: CaseAssessm
     ...(facts.hazardousContact === "yes" ? ["유해물질 접촉·지정폐기물 해당 여부 검토 필요"] : []),
     ...(/지정폐기물\s*(?:의심|해당(?!\s*(?:없|아님|하지\s*않))|가능)|(?:suspected|confirmed)\s+hazardous\s+waste/iu.test(
       [facts.description, facts.process, facts.contamination].join(" ")) ? ["지정폐기물 의심 입력"] : []),
+    ...(/유해물질\s*접촉\s*(?:있음|의심)|(?:suspected|confirmed)\s+hazardous\s+contact/iu.test(
+      [facts.description, facts.contamination].join(" ")) ? ["유해물질 접촉 의심 입력"] : []),
     ...assessment.reviewIssues,
     ...issues.map(({ kind, sourceId }) => `법령 인용 검증 실패: ${kind} (${sourceId ?? "unknown"})`),
     ...assessment.pendingLegal.issues.map(({ kind }) => `법령 시행본 확인 필요: ${kind}`),
@@ -40,7 +49,7 @@ export function recommendationBlockers(facts: CaseInput, assessment: CaseAssessm
       && (check.requirement.includes("지정폐기물 제외")
         || /(?:법령|법률)상.*금지|명백히\s*금지|\bprohibited\b|\billegal\b/iu.test(check.explanation)))
       .map(check => `${check.requirement}: ${check.explanation}`)) ?? []),
-    ...assessment.questions.filter(question => /혼합·다층 또는 라벨 불일치가 보고|오염·접촉 이력에 미확인/u.test(question)),
+    ...assessment.questions.filter(question => /혼합·다층 또는 라벨 불일치가 보고/u.test(question)),
   ];
 }
 
@@ -84,13 +93,13 @@ export function recommend(facts: CaseInput, assessment: CaseAssessment,
       evidence: [...assessment.legal.evidence, ...assessment.reviewEvidence], humanApproval: "pending", limitations: [] }),
     routes,
     recommendations,
-    confidence: { level: scenarios.length ? "medium" : "low", reasons: [
+    confidence: { level: scenarios.length && !assessment.legal.issues.length ? "medium" : "low", reasons: [
       "입력은 신고된 정보이며 현장 조건의 충족이나 법적 적합성을 확정하지 않았습니다.",
+      ...(assessment.legal.issues.some(({ kind }) => kind === "unrelated" || kind === "context-ambiguous")
+        ? ["검증된 공개 인용과 이 사례의 관련성이 약해 확신도를 낮췄습니다. 개별 적용 여부는 추가 확인이 필요합니다."] : []),
       ...(scenarios.length ? ["검증된 자료의 계산값에도 적용 조건이 있습니다."] : ["비용·탄소 비교값이 없어 검토 순서만 제시합니다."]),
     ] },
-    preExecutionChecks: [...new Set([...executionChecks, ...assessment.legal.reviewRequirements,
-      ...assessment.routes.flatMap(route => route.eligibility.state === "unknown" ? route.eligibility.missingFacts
-        : route.eligibility.state === "ineligible" ? route.eligibility.reasons : [])])],
+    preExecutionChecks: executionChecksFor(assessment),
     limitations: [...(compared?.limitations ?? []), "추천 후보, 실행 전 확인 필요. 실행·반출·계약의 승인 결과가 아닙니다.",
       "추천 순위는 검토 순서입니다. 검증되지 않은 수치·폐기물 코드·업체 허가를 추정하지 않습니다."],
   } satisfies Extract<DecisionResult, { state: "compared" }>;
