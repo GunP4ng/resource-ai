@@ -5,6 +5,7 @@ import { parseCaseInput } from "../src/input.ts";
 import entries from "../data/sources/evidence-candidates.json" with { type: "json" };
 import hdpe from "../data/candidates/oyeonseok-2026-11-10/oys-20261110-002-hdpe-parison.json" with { type: "json" };
 import ldpe from "../data/candidates/oyeonseok-2026-11-10/oys-20261110-004-ldpe-film.json" with { type: "json" };
+import petStrap from "../data/h-candidates/2026-11-12/inputs/HYEOB-20261112-006.json" with { type: "json" };
 
 const input: CaseInput = {
   caseId: "legal-source-reproduction", description: "실제 법령 조회 재현용 입력; 실제 사업장 사례 아님",
@@ -71,6 +72,7 @@ test("uses the reverified 291947 revision on November 15", () => {
 test.each([
   ["HDPE blow-moulding", hdpe],
   ["LDPE film extrusion", ldpe],
+  ["PET strapping cut", petStrap],
 ] as const)("preserves %s source version and original linkage across the legal boundary", (_name, raw) => {
   const parsed = parseCaseInput(raw);
   if (!parsed.ok) throw new Error(JSON.stringify(parsed.issues));
@@ -95,6 +97,19 @@ test.each([
     expect(result.citations.some(item => item.sourceId.startsWith(`legal-${version === "290881" ? "291947" : "290881"}-`))).toBe(false);
     expect(result.issues).toEqual([]);
   }
+});
+
+test.each([
+  [{ polymer: "PVC" }, "unrelated"],
+  [{ contamination: "폐유 혼합" }, "unrelated"],
+  [{ process: "결속밴드 절단 아님" }, "context-ambiguous"],
+  [{ hazardousContact: "unknown" }, "hazardous-contact-unconfirmed"],
+] as const)("PET strapping reference stays held for contradicted context %j", (patch, issue) => {
+  const parsed = parseCaseInput(petStrap);
+  if (!parsed.ok) throw new Error(JSON.stringify(parsed.issues));
+  const result = lookupLegalEvidence({ ...parsed.value, assessmentDate: "2026-11-13", ...patch });
+  expect(result.citations.filter(citation => citation.kind === "waste-code")).toEqual([]);
+  expect(result.issues).toContainEqual({ kind: issue, sourceId: "legal-291947-annex4-code" });
 });
 
 test("keeps dates after the 291947 verification cutoff under review", () => {

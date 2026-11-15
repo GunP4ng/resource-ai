@@ -47,7 +47,8 @@ test("offline CLI preserves legacy evidence and carries synthetic SDK observatio
         photoRef: Type.String(), sha256: Type.String(), usable: Type.Boolean(), resinCandidates: Type.Array(Type.String()) })) })]),
       questions: Type.Array(Type.String()), assessment: Type.Object({ legal: Type.Unknown(), pendingLegal: Type.Unknown(),
         routes: Type.Array(Type.Object({ eligibility: Type.Object({ state: Type.String(), missingFacts: Type.Array(Type.String()) }) })) }),
-      decision: Type.Object({ state: Type.String(), questions: Type.Optional(Type.Array(Type.String())), reasons: Type.Optional(Type.Array(Type.String())) }),
+      decision: Type.Object({ state: Type.String(), questions: Type.Optional(Type.Array(Type.String())), reasons: Type.Optional(Type.Array(Type.String())),
+        recommendations: Type.Optional(Type.Array(Type.Object({ routeId: Type.String(), rank: Type.Number() }))) }),
       execution: Type.Object({ usage: Type.String() }), providerRequestId: Type.Null(), realProviderUsage: Type.Null(), responseOrigin: Type.String(), usageOrigin: Type.String() });
     const schema = Type.Object({ complete: Type.Boolean(), externalModelCalls: Type.Number(), syntheticTransportCalls: Type.Number(),
       realProviderUsage: Type.Null(), realRequestId: Type.Null(), publicPhotos: Type.Number(), rows: Type.Array(row),
@@ -56,10 +57,11 @@ test("offline CLI preserves legacy evidence and carries synthetic SDK observatio
       lifecycle: Type.Object({ modelWithdrawalDenied: Type.Boolean(), previewPreserved: Type.Boolean(), storageRevocationDenied: Type.Boolean(), expiryPurged: Type.Number() }),
       http: Type.Object({ createStatus: Type.Number(), answerStatus: Type.Number(), otherSessionStatus: Type.Number(), mixedQuestionShown: Type.Boolean(), resolvedQuestionRemoved: Type.Boolean() }),
       samePhotoConditionVariants: Type.Array(row), historicalSyntheticBoundaryControl: Type.Object({ variants: Type.Array(row) }),
+      petStrappingControl: Type.Object({ scope: Type.String(), sameImageSha256: Type.String(), variants: Type.Array(row) }),
       fieldAccuracy: Type.String(), humanAcceptance: Type.String(), operationalAcceptance: Type.String() });
     const report: unknown = JSON.parse(await readFile(output, "utf8")); assert.ok(Value.Check(schema, report));
     assert.equal(report.complete, true); assert.equal(report.publicPhotos, 10); assert.equal(report.externalModelCalls, 0);
-    assert.equal(report.syntheticTransportCalls, 21); assert.equal(report.rows.length, 10);
+    assert.equal(report.syntheticTransportCalls, 25); assert.equal(report.rows.length, 10);
     assert.deepEqual(report.lifecycle, { modelWithdrawalDenied: true, previewPreserved: true, storageRevocationDenied: true, expiryPurged: 9 });
     assert.equal(report.http.createStatus, 303); assert.equal(report.http.answerStatus, 303); assert.equal(report.http.otherSessionStatus, 404);
     assert.equal(report.http.mixedQuestionShown, true); assert.equal(report.http.resolvedQuestionRemoved, true);
@@ -75,6 +77,14 @@ test("offline CLI preserves legacy evidence and carries synthetic SDK observatio
     assert.equal(new Set(controls.map(item => item.transmittedImageSha256)).size, 1);
     assert.deepEqual(controls.map(item => item.candidates.wasteCodes.length), [1, 0, 0, 0]);
     assert.deepEqual(controls.map(item => item.decision.state), ["compared", "compared", "needs-review", "needs-review"]);
+    const pet = report.petStrappingControl.variants;
+    assert.equal(pet.length, 5);
+    assert.equal(new Set(pet.map(item => item.transmittedImageSha256)).size, 1);
+    assert.equal(pet[0]?.transmittedImageSha256, report.petStrappingControl.sameImageSha256);
+    assert.deepEqual(pet.map(item => item.candidates.wasteCodes.length), [1, 0, 0, 0, 0]);
+    assert.deepEqual(pet.map(item => item.decision.state), ["compared", "compared", "needs-information", "needs-review", "needs-review"]);
+    assert.deepEqual(pet.map(item => item.decision.recommendations?.map(route => route.rank) ?? []), [[1], [1], [], [], []]);
+    assert.deepEqual(pet.map(item => item.questions.length), [0, 0, 1, 0, 0]);
     assert.deepEqual(report.observationMatrix.map(item => item.scenario), ["matching-reported-resin", "conflicting-resin", "unknown-reported-resin", "unusable-photo"]);
     const expectedResins = [["PP"], ["PET"], ["PET"], []], expectedQuestions = [0, 1, 1, 1];
     for (const [index, item] of report.observationMatrix.entries()) {

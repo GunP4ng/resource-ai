@@ -132,6 +132,15 @@ try {
   const hazardChanged = await run({ ...historicalInput, hazardousContact: "yes" }, mixedReceipt.sha256);
   assert.equal(hazardChanged.decision.state, "needs-review");
   assert.ok(hazardChanged.reviewReasons.some(reason => reason.includes("유해물질 접촉이 보고")));
+  const pet = rows.find(row => row.candidateId === "HYEOB-20261112-006");
+  assert.ok(pet);
+  const petProcessChanged = await run({ ...pet.input, process: "결속밴드 분류" }, pet.transmittedImageSha256);
+  const petProcessMissing = await run({ ...pet.input, process: null }, pet.transmittedImageSha256);
+  const petOil = await run({ ...pet.input, contamination: "폐유 혼합" }, pet.transmittedImageSha256);
+  const petNegated = await run({ ...pet.input, process: "결속밴드 절단 아님" }, pet.transmittedImageSha256);
+  const petVariants = [pet, petProcessChanged, petProcessMissing, petOil, petNegated];
+  assert.deepEqual(petVariants.map(row => row.candidates.wasteCodes.length), [1, 0, 0, 0, 0]);
+  assert.deepEqual(petVariants.map(row => row.decision.state), ["compared", "compared", "needs-information", "needs-review", "needs-review"]);
   // Reuse one stored image; these four payloads are synthetic protocol probes.
   const observationMatrix = [];
   for (const scenario of [
@@ -184,6 +193,8 @@ try {
     boundary: "Real PNG decode/private store/SDK HTTP serialization and loopback app. Synthetic credentials, authority, consent, inputs, SSE responses and counters; no field/provider acceptance or external image access.",
     lifecycle: { modelWithdrawalDenied: true, previewPreserved: true, storageRevocationDenied: true, expiryPurged: purged.removed },
     rows, observationMatrix, samePhotoConditionVariants: [single, resolved, hazardous],
+    petStrappingControl: { scope: "SYNTHETIC PET input changes; no photo inference or legal approval",
+      sameImageSha256: pet.transmittedImageSha256, variants: petVariants },
     historicalSyntheticBoundaryControl: { scope: "Explicit 2026-11-05 synthetic control, not current field evidence or approval",
       sameImageSha256: mixedReceipt.sha256, variants: [historical, processChanged, contaminationChanged, hazardChanged] } };
   await mkdir(dirname(output), { recursive: true }); await writeFile(output, JSON.stringify({ ...report, complete: false, http: null }, null, 2) + "\n");
