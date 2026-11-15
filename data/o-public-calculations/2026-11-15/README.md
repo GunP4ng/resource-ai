@@ -123,7 +123,8 @@ Verified CLI runtime: Bun **1.4.2**. No new dependency is required.
 Run from the repository root with owned output/cache paths:
 
 ```bash
-export TMPDIR=/tmp/resource-ai-o-calculations-run.Rd8ZLx/sol-implementation-oJO0bz
+RUN_TMP=$(mktemp -d)
+export TMPDIR="$RUN_TMP"
 export NODE_COMPILE_CACHE="$TMPDIR/node-compile-cache"
 export BUN_RUNTIME_TRANSPILER_CACHE_PATH="$TMPDIR/bun-transpiler"
 bun scripts/o-public-calculations.ts validate --dataset data/o-public-calculations/2026-11-15
