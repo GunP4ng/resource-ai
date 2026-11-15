@@ -1,0 +1,12 @@
+{
+  "caseId": "PUBLIC-DEV-001",
+  "description": "공개 재활용 가격의 분류를 참고한 사진 없는 합성 개발 사례. 실제 폐기물의 재질·형태·공정·지역·질량을 확인한 자료가 아니다.",
+  "photoRefs": [],
+  "process": null,
+  "polymer": null,
+  "contamination": null,
+  "hazardousContact": "unknown",
+  "massKg": null,
+  "region": null,
+  "assessmentDate": "2026-11-15"
+}

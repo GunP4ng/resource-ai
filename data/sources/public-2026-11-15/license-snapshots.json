@@ -1,0 +1,190 @@
+{
+  "version": 1,
+  "snapshots": [
+    {
+      "id": "keco-price-rights-3a7b2ca1b880",
+      "publisherUrl": "https://www.data.go.kr/data/3076421/fileData.do",
+      "captureAnchor": "source-observations-v3.json#/observations/0",
+      "observedAt": "2026-11-15T02:33:48.655Z",
+      "representation": "extracted-text; not original HTML/archive/file bytes",
+      "extraction": "원문에서 확인한 연속 부분문자열을 편집 순서로 재배열해 LF로 결합; 원문 전체나 원문 순서의 재현 아님. 마지막 LF 포함 UTF-8 text의 SHA-256",
+      "redaction": "탐색 메뉴·개인명/연락처·예제 레코드·이미지·환경 경로 제외; 남긴 발췌 문자열은 변경하지 않음",
+      "text": "공공저작물 : 출처표시 (제 1유형)\n",
+      "sha256": "3a7b2ca1b8807789889bc6fd85d01e7f1ffcc38e6915b1e37f130af2359f4a03",
+      "attribution": "한국환경공단; 한국환경공단_재활용가능자원 가격조사_20261026"
+    },
+    {
+      "id": "kogl-type1-certificate-rights-60f803b298b2",
+      "publisherUrl": "https://www.kogl.or.kr/info/licenseType1.do",
+      "captureAnchor": "source-observations-v3.json#/observations/24",
+      "observedAt": "2026-11-15T03:01:27.297Z",
+      "representation": "extracted-text; not original HTML/archive/file bytes",
+      "extraction": "원문에서 확인한 연속 부분문자열을 편집 순서로 재배열해 LF로 결합; 원문 전체나 원문 순서의 재현 아님. 마지막 LF 포함 UTF-8 text의 SHA-256",
+      "redaction": "탐색 메뉴·개인명/연락처·예제 레코드·이미지·환경 경로 제외; 남긴 발췌 문자열은 변경하지 않음",
+      "text": "제 1유형: 출처 표시\n2차적 저작물로 변경하여 이용 가능\n이 저작물은 영리 목적으로 이용할 수 있습니다.\n저작물의 출처를 표시하셔야 합니다.\n",
+      "sha256": "60f803b298b27f935ee8826af85ab90406ab7711984e8c1b3c56888198771ab8",
+      "attribution": "한국문화정보원 공공누리; 제1유형 일반증서"
+    },
+    {
+      "id": "waste-statistics-rights-ad2b96adce67",
+      "publisherUrl": "https://www.data.go.kr/data/3070174/fileData.do",
+      "captureAnchor": "source-observations-v3.json#/observations/4",
+      "observedAt": "2026-11-15T02:38:12.983Z",
+      "representation": "extracted-text; not original HTML/archive/file bytes",
+      "extraction": "원문에서 확인한 연속 부분문자열을 편집 순서로 재배열해 LF로 결합; 원문 전체나 원문 순서의 재현 아님. 마지막 LF 포함 UTF-8 text의 SHA-256",
+      "redaction": "탐색 메뉴·개인명/연락처·예제 레코드·이미지·환경 경로 제외; 남긴 발췌 문자열은 변경하지 않음",
+      "text": "이용허락범위 제한 없음\n데이터의 임의 변경 및 수정은 불가하오니 이점 유의하여 활용 바랍니다.\n",
+      "sha256": "ad2b96adce672c8132733b77bd96fac50ab401df792d84edecba836a1c84cb11",
+      "attribution": "한국환경공단; 한국환경공단_폐기물배출및처리현황_20241231"
+    },
+    {
+      "id": "law-open-service-rights-a025f5551696",
+      "publisherUrl": "https://open.law.go.kr/LSO/information/guide.do",
+      "captureAnchor": "source-observations-v3.json#/observations/5",
+      "observedAt": "2026-11-15T02:38:53.784Z",
+      "representation": "extracted-text; not original HTML/archive/file bytes",
+      "extraction": "원문에서 확인한 연속 부분문자열을 편집 순서로 재배열해 LF로 결합; 원문 전체나 원문 순서의 재현 아님. 마지막 LF 포함 UTF-8 text의 SHA-256",
+      "redaction": "탐색 메뉴·개인명/연락처·예제 레코드·이미지·환경 경로 제외; 남긴 발췌 문자열은 변경하지 않음",
+      "text": "제공된 법령정보는 영리 목적의 이용을 포함하여 자유로운 활용이 보장됩니다.\n상업적 이용이 불가능한 API에 대해 상업적 활용한 경우\n자료의 출처를 표기하지 않거나 법제처 이외의 기관으로 명기하여 제공하는 행위\n",
+      "sha256": "a025f55516969095da3ee26497f5e2cee7272b7989e8ec82c050b4187644a95d",
+      "attribution": "법제처; 국가법령정보 공동활용 LAW OPEN DATA"
+    },
+    {
+      "id": "kicox-factory-registry-verified-rights-576f6e413807",
+      "publisherUrl": "https://www.data.go.kr/data/15105482/fileData.do",
+      "captureAnchor": "source-observations-v3.json#/observations/9",
+      "observedAt": "2026-11-15T02:41:43.831Z",
+      "representation": "extracted-text; not original HTML/archive/file bytes",
+      "extraction": "원문에서 확인한 연속 부분문자열을 편집 순서로 재배열해 LF로 결합; 원문 전체나 원문 순서의 재현 아님. 마지막 LF 포함 UTF-8 text의 SHA-256",
+      "redaction": "탐색 메뉴·개인명/연락처·예제 레코드·이미지·환경 경로 제외; 남긴 발췌 문자열은 변경하지 않음",
+      "text": "이용허락범위 제한 없음\n",
+      "sha256": "576f6e413807c4b818b1b18a17e6a17a72518847fd16f2af3738da316cd4cddf",
+      "attribution": "한국산업단지공단; 한국산업단지공단_전국등록공장현황_등록공장현황자료_20251231"
+    },
+    {
+      "id": "gir-copyright-rights-cdfaa803dda2",
+      "publisherUrl": "https://www.gir.go.kr/home/index.do?menuId=43",
+      "captureAnchor": "source-observations-v3.json#/observations/22",
+      "observedAt": "2026-11-15T02:54:39.414Z",
+      "representation": "extracted-text; not original HTML/archive/file bytes",
+      "extraction": "원문에서 확인한 연속 부분문자열을 편집 순서로 재배열해 LF로 결합; 원문 전체나 원문 순서의 재현 아님. 마지막 LF 포함 UTF-8 text의 SHA-256",
+      "redaction": "탐색 메뉴·개인명/연락처·예제 레코드·이미지·환경 경로 제외; 남긴 발췌 문자열은 변경하지 않음",
+      "text": "공공누리 표시가 부착된 저작물인지를 확인한 이후에 자유이용하시기 바랍니다.\n공공누리가 부착되지 않은 자료들을 사용하고자 할 경우에는 담당자와 사전에 협의한 이후에 이용하여 주시기 바랍니다.\n본 인터넷 저작권 정책도 함께 링크해 주시기 바랍니다.\n",
+      "sha256": "cdfaa803dda23395b418f94a47a6a0889a182856029c63ca1b8580c2cfc90860",
+      "attribution": "온실가스종합정보센터; 저작권정책 menu43"
+    },
+    {
+      "id": "keiti-lci-detail-rights-5127d220130c",
+      "publisherUrl": "https://www.keiti.re.kr/site/keiti/02/10202100000002023101610.jsp",
+      "captureAnchor": "source-observations-v3.json#/observations/20",
+      "observedAt": "2026-11-15T02:53:03.570Z",
+      "representation": "extracted-text; not original HTML/archive/file bytes",
+      "extraction": "원문에서 확인한 연속 부분문자열을 편집 순서로 재배열해 LF로 결합; 원문 전체나 원문 순서의 재현 아님. 마지막 LF 포함 UTF-8 text의 SHA-256",
+      "redaction": "탐색 메뉴·개인명/연락처·예제 레코드·이미지·환경 경로 제외; 남긴 발췌 문자열은 변경하지 않음",
+      "text": "한국 LCI DB와 평가계수는 상업용 목적으로 사용할 수 없습니다.\n",
+      "sha256": "5127d220130c1ff937ea5c659425e713d81f4bef4d06d897858fd7805521a9b9",
+      "attribution": "한국환경산업기술원 KEITI; 국가 LCI DB 사업 설명"
+    },
+    {
+      "id": "uci-realwaste-rights-55886151e1b4",
+      "publisherUrl": "https://archive.ics.uci.edu/dataset/908/realwaste",
+      "captureAnchor": "source-observations-v3.json#/observations/3",
+      "observedAt": "2026-11-15T02:36:31.604Z",
+      "representation": "extracted-text; not original HTML/archive/file bytes",
+      "extraction": "원문에서 확인한 연속 부분문자열을 편집 순서로 재배열해 LF로 결합; 원문 전체나 원문 순서의 재현 아님. 마지막 LF 포함 UTF-8 text의 SHA-256",
+      "redaction": "탐색 메뉴·개인명/연락처·예제 레코드·이미지·환경 경로 제외; 남긴 발췌 문자열은 변경하지 않음",
+      "text": "This dataset is licensed under a (CC BY 4.0) license.\nThis allows for the sharing and adaptation of the datasets for any purpose, provided that the appropriate credit is given.\n",
+      "sha256": "55886151e1b4efd06ee2f62247704baeee7a76eece057ec44af1ad74bf086d0d",
+      "attribution": "UCI Machine Learning Repository; Single, Iranmanesh, Raad; RealWaste"
+    },
+    {
+      "id": "aihub-open-data-terms-expanded-rights-dba05b206680",
+      "publisherUrl": "https://aihub.or.kr/intrcn/guid/usagepolicy.do",
+      "captureAnchor": "source-observations-v3.json#/observations/13",
+      "observedAt": "2026-11-15T02:45:01.657Z",
+      "representation": "extracted-text; not original HTML/archive/file bytes",
+      "extraction": "원문에서 확인한 연속 부분문자열을 편집 순서로 재배열해 LF로 결합; 원문 전체나 원문 순서의 재현 아님. 마지막 LF 포함 UTF-8 text의 SHA-256",
+      "redaction": "탐색 메뉴·개인명/연락처·예제 레코드·이미지·환경 경로 제외; 남긴 발췌 문자열은 변경하지 않음",
+      "text": "제공 받은 AI데이터 등을 수행기관 등과 한국지능정보사회진흥원의 승인을 받지 않은 다른 법인, 단체 또는 개인에게 열람하게 하거나 제공, 양도, 대여, 판매하여서는 안됩니다.\n",
+      "sha256": "dba05b2066807a1ea87940b26ef84af392c5146f28011345a23353d17edc67d7",
+      "attribution": "AI Hub / 한국지능정보사회진흥원; 확장 개방 데이터 이용정책",
+      "policySection": "AI 허브 개방 데이터",
+      "clauseLocators": [
+        {
+          "section": "데이터 이용정책",
+          "clause": 1,
+          "scope": "원본과 2차 저작물의 NIA 사업결과 표시"
+        },
+        {
+          "section": "데이터 이용정책",
+          "clause": 2,
+          "scope": "국외 이용자 별도 합의"
+        },
+        {
+          "section": "데이터 이용정책",
+          "clause": 3,
+          "scope": "국외 반출 별도 합의"
+        },
+        {
+          "section": "데이터 이용정책",
+          "clause": 4,
+          "scope": "학습용 목적 및 부적합 이용의 거부·중지"
+        },
+        {
+          "section": "데이터 이용정책",
+          "clause": 5,
+          "scope": "지정 승인 없는 대상에 대한 열람·제공 등의 제한; 위 text는 이 조항 발췌"
+        },
+        {
+          "section": "데이터 이용정책",
+          "clause": 7,
+          "scope": "데이터셋 판매 등 상업 이용 별도 협의"
+        },
+        {
+          "section": "데이터 이용정책",
+          "clause": 8,
+          "scope": "개인정보 발견 시 신고·삭제"
+        },
+        {
+          "section": "데이터 이용정책",
+          "clause": 9,
+          "scope": "재식별 금지"
+        },
+        {
+          "section": "데이터 이용정책",
+          "clause": 10,
+          "scope": "활용사례 실태조사 협조"
+        },
+        {
+          "section": "데이터 다운로드 신청방법",
+          "clause": 3,
+          "scope": "NIA가 권리자가 아닌 자료는 해당 기관 정책·절차 적용"
+        }
+      ]
+    },
+    {
+      "id": "kaggle-garbage-metadata-rights-b736749cf093",
+      "publisherUrl": "https://www.kaggle.com/api/v1/datasets/list?search=garbage-classification&user=mostafaabla",
+      "captureAnchor": "source-observations-v3.json#/observations/17",
+      "observedAt": "2026-11-15T02:49:17.946Z",
+      "representation": "extracted-text; not original HTML/archive/file bytes",
+      "extraction": "원문에서 확인한 연속 부분문자열을 편집 순서로 재배열해 LF로 결합; 원문 전체나 원문 순서의 재현 아님. 마지막 LF 포함 UTF-8 text의 SHA-256",
+      "redaction": "탐색 메뉴·개인명/연락처·예제 레코드·이미지·환경 경로 제외; 남긴 발췌 문자열은 변경하지 않음",
+      "text": "Database: Open Database, Contents: © Original Authors\n",
+      "sha256": "b736749cf0937d15f524487e511ef093b70adad9ad834fc19b9c2ee63db5bbda",
+      "attribution": "Kaggle / mostafaabla; Garbage Classification (12 classes)"
+    },
+    {
+      "id": "hf-extendedtaco-card-rights-6c776b842565",
+      "publisherUrl": "https://huggingface.co/datasets/roboticslaburjc/ExtendedTACO-reviewed/raw/main/README.md",
+      "captureAnchor": "source-observations-v3.json#/observations/16",
+      "observedAt": "2026-11-15T02:46:43.301Z",
+      "representation": "extracted-text; not original HTML/archive/file bytes",
+      "extraction": "원문에서 확인한 연속 부분문자열을 편집 순서로 재배열해 LF로 결합; 원문 전체나 원문 순서의 재현 아님. 마지막 LF 포함 UTF-8 text의 SHA-256",
+      "redaction": "탐색 메뉴·개인명/연락처·예제 레코드·이미지·환경 경로 제외; 남긴 발췌 문자열은 변경하지 않음",
+      "text": "license: cc-by-4.0\nannotations are licenced under CC BY 4.0\nimages may be under different specific public licences\n",
+      "sha256": "6c776b84256586ff05db89f240dc7e88ded4aec1eb325ece3033a924116af0d4",
+      "attribution": "roboticslaburjc; ExtendedTACO-reviewed README 카드의 TACO 조건 인용"
+    }
+  ]
+}

@@ -1,0 +1,257 @@
+{
+  "version": 1,
+  "status": "verified public development package; no field installation",
+  "checkedAt": "2026-11-15T04:45:02.227Z",
+  "runtime": "Bun 1.4.2 (744846f84)",
+  "codeRevision": "72a32fb6e7d55709abe274c3fc92663ac815dea8",
+  "codeRevisionMeaning": "생성 시 실제 HEAD를 읽음. 구현 변경은 미커밋 상태이며 전체 코드의 커밋 완료 주장이 아님.",
+  "hashes": {
+    "inputRevision": "f16e34fea8a273edcecc6a090dc3f955f9f4eca414c50c9d882518bd484dc0cb",
+    "artifactCanonicalSha256": "a989207dd08dba0fd40f8a79a9afdcb5954e73c2bfe94fe9b6b43e2460425976",
+    "artifactFileSha256": "7b00beb60754388bd9f24d52238691cf9e6baf0ade61820b55d957b8e4adfae5",
+    "resourcesSha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+    "lineageFileSha256": "aa6337680544690dd4781fa24fda9f36378f4b53106fb05e007652f371b89539",
+    "sourceSha256": "562bf85c2f9a2047649b52d9875da462fdb2ca14be36e21cfd1950ff976dfeb3"
+  },
+  "sourceReader": {
+    "records": 136,
+    "numeric": 60,
+    "null": 76,
+    "skipped": 9,
+    "issues": 0
+  },
+  "checks": [
+    {
+      "command": "bun scripts/o-public-data.ts prepare",
+      "exitCode": 0,
+      "scope": "final catalog and concise rights snapshots; one synthetic artifact regenerated"
+    },
+    {
+      "command": "bun scripts/o-public-data.ts fixture",
+      "exitCode": 0,
+      "scope": "runs final source/subset/catalog/lineage/artifact verification and prepares enabled private development actor/case"
+    },
+    {
+      "command": "bun scripts/o-artifact.ts check (exact private development fixture)",
+      "exitCode": 0,
+      "response": {
+        "status": "checked",
+        "actorId": "public-data-dev",
+        "caseId": "PUBLIC-DEV-001",
+        "inputRevision": "f16e34fea8a273edcecc6a090dc3f955f9f4eca414c50c9d882518bd484dc0cb",
+        "artifactSha256": "a989207dd08dba0fd40f8a79a9afdcb5954e73c2bfe94fe9b6b43e2460425976"
+      },
+      "invariants": {
+        "exitZero": true,
+        "responseMatches": true,
+        "stderrEmpty": true,
+        "stateUnchanged": true,
+        "resourcesUnchanged": true
+      }
+    },
+    {
+      "command": "bun scripts/o-artifact.ts check (five negative fixtures)",
+      "results": [
+        {
+          "scenario": "changed-input-revision",
+          "exitCode": 1,
+          "stdoutEmpty": true,
+          "diagnostic": "Artifact operation failed: target."
+        },
+        {
+          "scenario": "corrupted-artifact",
+          "exitCode": 1,
+          "stdoutEmpty": true,
+          "diagnostic": "Artifact operation failed: artifact."
+        },
+        {
+          "scenario": "disabled-account",
+          "exitCode": 1,
+          "stdoutEmpty": true,
+          "diagnostic": "Artifact operation failed: target."
+        },
+        {
+          "scenario": "different-enabled-owner",
+          "exitCode": 1,
+          "stdoutEmpty": true,
+          "diagnostic": "Artifact operation failed: target."
+        },
+        {
+          "scenario": "missing-state",
+          "exitCode": 1,
+          "stdoutEmpty": true,
+          "diagnostic": "Artifact operation failed: unavailable."
+        }
+      ],
+      "originalStateUnchanged": true,
+      "resourcesUnchanged": true
+    },
+    {
+      "command": "readPriceSnapshot (one-byte-mutated private copy)",
+      "result": {
+        "state": "unavailable",
+        "reason": "hash-mismatch"
+      },
+      "originalUnmodified": true,
+      "scope": "Existing source reader boundary. The artifact CLI does not resolve the public lineage sidecar; its sources array is empty for this unknown-case input."
+    },
+    {
+      "command": "bun run typecheck && bun run typecheck:o-tests",
+      "exitCode": 0,
+      "scope": "all configured typechecks completed before the worktree test run"
+    },
+    {
+      "command": "bun test --timeout 30000 ./tests",
+      "environment": "named linked worktree",
+      "exitCode": 1,
+      "pass": 793,
+      "fail": 4,
+      "reason": "unchanged scripts/eval-development.ts does not resolve Git common-directory refs for a symbolic worktree HEAD",
+      "unchangedFiles": [
+        "scripts/eval-development.ts",
+        "tests/eval-development.test.ts"
+      ]
+    },
+    {
+      "command": "bun test --timeout 30000 ./tests && bun run build && bun run build:app && bun run smoke",
+      "environment": "independent conventional Git clone of the same base plus the exact scoped file snapshot",
+      "base": "72a32fb6e7d55709abe274c3fc92663ac815dea8",
+      "exitCode": 0,
+      "pass": 797,
+      "fail": 0,
+      "files": 38,
+      "build": "passed",
+      "appBuild": "passed",
+      "smoke": "passed; no prompt sent or Azure/domain connectivity claimed"
+    }
+  ],
+  "mutationProof": {
+    "owner": "scripts/o-public-data.ts",
+    "mutation": "replace exact lineage reference SHA equality with nonempty-reference check",
+    "command": "bun test --timeout 30000 ./tests/o-public-data.test.ts -t lineage-bytes",
+    "exitCode": 1,
+    "result": "test failed because tampered lineage wrongly returned exit0; original comparison restored; final test run passed"
+  },
+  "testAuthoringGate": {
+    "observableContracts": "serialized source subset, separate hash identities, unknown synthetic facts, lineage missing/tamper/revision and invalid artifact rejection",
+    "credibleRegressions": "drop/zero-fill selected cell; skip lineage hash or revision binding; infer PE from source category; accept corrupted artifact",
+    "coverageGap": "existing tests own source reader and artifact validator; new tests own persisted public package and sidecar wiring only",
+    "productionSeam": "none; real CLI/public APIs, no test-only exports"
+  },
+  "architecturalReview": {
+    "ownership": "public development package lifecycle",
+    "boundary": "existing parser, TypeBox and artifact validator; no new dependencies/DTOs/registry edits",
+    "variants": "exhaustive test scenario switch; CLI rejects unknown commands",
+    "escapeHatches": "none added",
+    "resources": "fixture closes case store/database in finally; subprocesses inherit environment and have timeout",
+    "pureLoc": {
+      "script": 151,
+      "test": 89
+    }
+  },
+  "admission": {
+    "referencePriceRecords": 2,
+    "newSyntheticDevelopmentPackages": 1,
+    "newIndependentFieldCases": 0,
+    "newHumanLabels": 0,
+    "newUnseenHoldout": 0,
+    "newAdmittedPhotos": 0,
+    "h10": "exposed synthetic development; operator/model consent 0",
+    "raw700": "rights/authenticity unverified; no approved sharing location; originals/evaluation labels not opened"
+  },
+  "concreteBlockers": [
+    "existing evaluation helper is incompatible with symbolic linked-worktree HEAD; conventional clone passed all tests",
+    "auxiliary no-excuse checker previously timed out; no success claimed",
+    "field approval, independent labels, image consents and restricted data rights remain external"
+  ],
+  "implementationChecks": [
+    {
+      "command": "bun scripts/o-public-data.ts prepare",
+      "exitCode": 0,
+      "result": "one synthetic package prepared using actual HEAD; no field installation"
+    },
+    {
+      "command": "bun scripts/o-public-data.ts verify",
+      "exitCode": 0,
+      "result": "source/subset/snapshot/catalog/lineage/artifact binding and unknown/J hold checks passed"
+    },
+    {
+      "command": "bun scripts/o-public-data.ts fixture",
+      "exitCode": 0,
+      "result": "private enabled public-data-dev actor/account and PUBLIC-DEV-001 current case prepared; exact artifact copied privately; CLI check pending"
+    },
+    {
+      "command": "bun test --timeout 30000 ./tests/o-public-data.test.ts ./tests/sources.test.ts ./tests/case-record.test.ts ./tests/o-resources.test.ts",
+      "exitCode": 0,
+      "result": "66 pass / 0 fail; four files"
+    },
+    {
+      "command": "bun test --timeout 30000 ./tests/o-public-data.test.ts",
+      "exitCode": 0,
+      "result": "final test-only exhaustive/narrowing adjustment: 7 pass / 0 fail"
+    },
+    {
+      "command": "bun node_modules/typescript/bin/tsc --noEmit",
+      "exitCode": 0
+    },
+    {
+      "command": "bun node_modules/typescript/bin/tsc --noEmit -p tsconfig.tests.json",
+      "exitCode": 0
+    },
+    {
+      "command": "git diff --check",
+      "exitCode": 0
+    },
+    {
+      "command": "programming skill check-test-junk.ts tests/o-public-data.test.ts (installation path redacted)",
+      "exitCode": 0,
+      "result": "no findings"
+    },
+    {
+      "command": "timeout 20s programming skill check-no-excuse-rules.ts scripts/o-public-data.ts tests/o-public-data.test.ts (installation path redacted)",
+      "exitCode": 124,
+      "result": "no output before timeout; earlier unbounded attempt interrupted with exit130; no success claimed"
+    }
+  ],
+  "runtimeBinding": {
+    "purpose": "disposable synthetic development fixture; not a production or field account",
+    "actorId": "public-data-dev",
+    "username": "public-data-dev",
+    "caseId": "PUBLIC-DEV-001",
+    "inputRevision": "f16e34fea8a273edcecc6a090dc3f955f9f4eca414c50c9d882518bd484dc0cb",
+    "artifactCanonicalSha256": "a989207dd08dba0fd40f8a79a9afdcb5954e73c2bfe94fe9b6b43e2460425976",
+    "installationPerformed": false,
+    "reassessmentPerformed": false
+  },
+  "pending": [
+    "final Astra source and implementation gate",
+    "research ledger/report HTML and delivery gates",
+    "PR submission; no merge"
+  ],
+  "affectedChecks": {
+    "command": "bun test --timeout 30000 ./tests/o-public-data.test.ts",
+    "exitCode": 0,
+    "pass": 7,
+    "fail": 0,
+    "scope": "after the final excerpt order/AIHub qualification/population corrections and regenerated artifact"
+  },
+  "fullSuiteScope": "797-test conventional-clone run covered the unchanged code and scoped implementation before the final source-metadata corrections; the affected7 public-data tests and real artifact positive/five negatives were rerun on the final artifact. Active registry, source bytes, shared code and evaluation code unchanged.",
+  "postMetadataChecks": {
+    "sourceCorrection": "RealWaste file-list metadata reconciled; still no archive/images admitted",
+    "affectedTests": {
+      "command": "bun test --timeout 30000 ./tests/o-public-data.test.ts",
+      "pass": 7,
+      "fail": 0,
+      "exitCode": 0
+    },
+    "canonicalArtifactSha256": "a989207dd08dba0fd40f8a79a9afdcb5954e73c2bfe94fe9b6b43e2460425976",
+    "fullSuiteScope": "797/0 full suite, builds and smoke passed before final source metadata corrections; final affected suite and real CLI repeated after those corrections."
+  },
+  "independentReview": {
+    "model": "gpt-6-astra",
+    "verdict": "PASS",
+    "scope": "thirteen requested files and captured source/CLI/test evidence; auxiliary report separate",
+    "resolvedFinding": "runtimeBinding canonical artifact hash synchronized with final receipt",
+    "reviewSha256": "ffe0294218809712ff7d19c05c73a7adea5860c756d4d35dae6ac648b60ddf5d"
+  }
+}

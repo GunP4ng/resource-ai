@@ -1,0 +1,591 @@
+{
+  "version": 1,
+  "language": "ko",
+  "observationDate": "2026-11-15",
+  "purpose": "#52/#54 공개 출처 조사와 최소 개발 패키지; 활성 SourceSchema/registry와 분리",
+  "sources": [
+    {
+      "id": "keco-price",
+      "title": "한국환경공단_재활용가능자원 가격조사_20261026",
+      "publisher": "한국환경공단",
+      "publisherUrl": "https://www.data.go.kr/data/3076421/fileData.do",
+      "identityEvidence": "화면 제목·제공기관/저자·설명 또는 공식 API ref를 읽어 확인; URL/배지만으로 추정하지 않음",
+      "observedAt": "2026-11-15T02:33:48.655Z",
+      "sourceDates": {
+        "survey": "2026-10-10",
+        "publication": "2026-10-26",
+        "portalRegistered": "2026-10-26",
+        "portalModified": "2026-10-26",
+        "originalRetrievedAt": "2026-11-05T08:53:59Z",
+        "newDownload": false
+      },
+      "declaredLicense": "공공저작물 : 출처표시 (제 1유형)",
+      "commercialScope": "출처표시 조건의 상업·비상업 이용",
+      "derivativeScope": "출처표시 조건으로 변형 가능; 프로젝트 처리 원칙상 통계 왜곡 금지",
+      "attribution": "한국환경공단, 재활용가능자원 가격조사_20261026, 원문 URL, 공공누리 제1유형, 추출 변경 표시",
+      "publishedPopulation": {
+        "declaredItems": 26,
+        "plasticItems": 17,
+        "regions": 8,
+        "unit": "품목/권역; 독립 현장 사례 아님",
+        "localReader": {
+          "records": 136,
+          "numeric": 60,
+          "null": 76,
+          "nonplasticSkipped": 9,
+          "qualityIssues": 0
+        },
+        "previewAgreement": "헤더 포함 297셀 일치; 26개 데이터행"
+      },
+      "intendedUse": "참고 매각가격 두 셀; 견적·매각수입·사례 사실 추정 금지",
+      "access": "파일 로그인 없이 다운로드 안내; API는 회원가입/활용신청; 이번에는 기존 CSV 재사용",
+      "admissionStatus": "기존 KECO 바이트의 참고가격 2레코드만 허용",
+      "remainingDependencies": [
+        "VAT·물류 정의",
+        "권역 상세 매핑",
+        "미리보기 caption 불일치·과거 파일명/등록일 차이"
+      ],
+      "sourceSnapshot": {
+        "id": "keco-price-source-0300b8f46c28",
+        "sha256": "0300b8f46c28f10a08cda2bf4ebbf8e6d0e312addb3591878eaa1702deac6e82"
+      },
+      "rightsSnapshots": [
+        {
+          "id": "keco-price-rights-3a7b2ca1b880",
+          "sha256": "3a7b2ca1b8807789889bc6fd85d01e7f1ffcc38e6915b1e37f130af2359f4a03"
+        },
+        {
+          "id": "kogl-type1-certificate-rights-60f803b298b2",
+          "sha256": "60f803b298b27f935ee8826af85ab90406ab7711984e8c1b3c56888198771ab8"
+        }
+      ],
+      "rightsVerification": {
+        "formalDeedUrl": "https://www.kogl.or.kr/info/licenseType1.do",
+        "observedAt": "2026-11-15T03:01:27.297Z",
+        "scope": "자료 페이지 제1유형 표시와 정식 일반증서 대조; 기관 후원 의미 아님",
+        "formalDeedIsSummary": true,
+        "separatelyLinkedFullTermsReviewed": false
+      }
+    },
+    {
+      "id": "waste-statistics",
+      "title": "한국환경공단_폐기물배출및처리현황_20241231",
+      "publisher": "한국환경공단",
+      "publisherUrl": "https://www.data.go.kr/data/3070174/fileData.do",
+      "identityEvidence": "화면 제목·제공기관/저자·설명 또는 공식 API ref를 읽어 확인; URL/배지만으로 추정하지 않음",
+      "observedAt": "2026-11-15T02:38:12.983Z",
+      "sourceDates": {
+        "versionLabel": "2024-12-31",
+        "portalRegistered": "2019-09-20",
+        "portalModified": "2026-03-19",
+        "effectivePeriod": null
+      },
+      "declaredLicense": "이용허락범위 제한 없음; 데이터의 임의 변경 및 수정은 불가",
+      "commercialScope": "제한 없음 표기와 유의사항을 함께 보존; 목적별 확인 필요",
+      "derivativeScope": "충실한 추출/정규화와 임의변경의 경계 미해결",
+      "attribution": "한국환경공단, 자료명·기간·표·쪽·URL 필요",
+      "publishedPopulation": {
+        "metadataRows": 1,
+        "unit": "포털 PDF 메타데이터행; 폐기물량/사례 수 아님",
+        "actualTables": null
+      },
+      "intendedUse": "배경 통계 후보; 수치 미추출",
+      "access": "공개 메타데이터/PDF 다운로드 안내; 실제 파일 미검사",
+      "admissionStatus": "카탈로그 메타데이터만; 데이터·사진·계수 runtime 미반입",
+      "remainingDependencies": [
+        "원본 PDF 해시·표/주석/단위·기간",
+        "파생 이용 범위 확인"
+      ],
+      "sourceSnapshot": {
+        "id": "waste-statistics-source-da6de5d46556",
+        "sha256": "da6de5d46556bd241c567d521eef81cb06456e9ae0ad17cecda732a8eeb183bd"
+      },
+      "rightsSnapshots": [
+        {
+          "id": "waste-statistics-rights-ad2b96adce67",
+          "sha256": "ad2b96adce672c8132733b77bd96fac50ab401df792d84edecba836a1c84cb11"
+        }
+      ]
+    },
+    {
+      "id": "law-open-service",
+      "title": "국가법령정보 공동활용 LAW OPEN DATA",
+      "publisher": "법제처",
+      "publisherUrl": "https://open.law.go.kr/LSO/information/guide.do",
+      "identityEvidence": "화면 제목·제공기관/저자·설명 또는 공식 API ref를 읽어 확인; URL/배지만으로 추정하지 않음",
+      "observedAt": "2026-11-15T02:38:53.784Z",
+      "sourceDates": {
+        "effectivePeriod": null,
+        "guidePublication": null
+      },
+      "declaredLicense": "제공된 법령정보는 영리 목적의 이용을 포함하여 자유로운 활용이 보장됩니다.",
+      "commercialScope": "개별 API 상업제한/서비스 조건 별도",
+      "derivativeScope": "위조·변조 금지; 법령 원문과 포털 편집물 분리",
+      "attribution": "출처 법제처 표시; 타 기관으로 명기 금지",
+      "publishedPopulation": {
+        "records": null,
+        "unit": "서비스 안내; 새 법령 수집 0"
+      },
+      "intendedUse": "현행 법령 취득 경로 후보; 사례 적용성 보증 아님",
+      "access": "회원가입→공동활용 신청→승인; 모든 DATA 활용 승인 후",
+      "admissionStatus": "카탈로그 메타데이터만; 데이터·사진·계수 runtime 미반입",
+      "remainingDependencies": [
+        "특정 API 승인 및 조건",
+        "실제 취득·현행성·적용일·사례 매핑"
+      ],
+      "sourceSnapshot": {
+        "id": "law-open-service-source-af853b5e5b1f",
+        "sha256": "af853b5e5b1f1c6b272b8646b7d611a0ee8f36469a0f17ff29216542de9bf577"
+      },
+      "rightsSnapshots": [
+        {
+          "id": "law-open-service-rights-a025f5551696",
+          "sha256": "a025f55516969095da3ee26497f5e2cee7272b7989e8ec82c050b4187644a95d"
+        }
+      ]
+    },
+    {
+      "id": "kicox-factory-registry-verified",
+      "title": "한국산업단지공단_전국등록공장현황_등록공장현황자료_20251231",
+      "publisher": "한국산업단지공단",
+      "publisherUrl": "https://www.data.go.kr/data/15105482/fileData.do",
+      "identityEvidence": "화면 제목·제공기관/저자·설명 또는 공식 API ref를 읽어 확인; URL/배지만으로 추정하지 않음",
+      "observedAt": "2026-11-15T02:41:43.831Z",
+      "sourceDates": {
+        "versionLabel": "2025-12-31",
+        "portalRegistered": "2026-09-23",
+        "portalModified": "2026-09-23",
+        "update": "연간; 설명은 월말 출력"
+      },
+      "declaredLicense": "이용허락범위 제한 없음",
+      "commercialScope": "메타데이터 선언상 제한 없음; 원본 권리/개인정보 검사 전 반입 보류",
+      "derivativeScope": "선언상 제한 없음; 실제 행 미검사",
+      "attribution": "한국산업단지공단, 파일 버전·URL·추출 변경 표시",
+      "publishedPopulation": {
+        "metadataRows": 1,
+        "factoryCount": null,
+        "unit": "전체 행 1은 메타데이터; 공장 수 아님"
+      },
+      "intendedUse": "공장 배경 현황; 폐기물 허가/인수 근거 아님",
+      "access": "공개 CSV 다운로드 버튼; 실제 파일/로그인 흐름 미검증",
+      "admissionStatus": "카탈로그 메타데이터만; 데이터·사진·계수 runtime 미반입",
+      "remainingDependencies": [
+        "실제 CSV 헤더·행·고유 공장 수·식별자 검증",
+        "연간/월말 설명 조정"
+      ],
+      "sourceSnapshot": {
+        "id": "kicox-factory-registry-verified-source-ada40b4b8b4c",
+        "sha256": "ada40b4b8b4cf9d87625abb8ab5fb4aef65782ef0cbe93ef5a3752a1f7418d4c"
+      },
+      "rightsSnapshots": [
+        {
+          "id": "kicox-factory-registry-verified-rights-576f6e413807",
+          "sha256": "576f6e413807c4b818b1b18a17e6a17a72518847fd16f2af3738da316cd4cddf"
+        }
+      ]
+    },
+    {
+      "id": "gir-approved-factors-current",
+      "title": "2025년 승인 국가 온실가스 배출·흡수계수",
+      "publisher": "온실가스종합정보센터 GIR",
+      "publisherUrl": "https://www.gir.go.kr/home/board/read.do?boardId=86&boardMasterId=2&menuId=36",
+      "identityEvidence": "화면 제목·제공기관/저자·설명 또는 공식 API ref를 읽어 확인; URL/배지만으로 추정하지 않음",
+      "observedAt": "2026-11-15T02:53:40.726Z",
+      "sourceDates": {
+        "posted": "2025-12-18",
+        "factorValidPeriod": null
+      },
+      "declaredLicense": "menu43 정책: 공공누리 제1유형 부착 저작물 확인 후 자유이용; 미부착 자료는 사전 협의",
+      "commercialScope": "개별 게시물/첨부 KOGL 표시 미검증; 허가 전 사용 보류",
+      "derivativeScope": "표시/권리자 허가와 개별 계수 조건 필요",
+      "attribution": "GIR 구체적 출처 표시 및 저작권 정책 링크",
+      "publishedPopulation": {
+        "factorCount": null,
+        "attachmentBytes": {
+          "pdf": 387652,
+          "hwpx": 86067
+        },
+        "unit": "첨부 크기; 계수 개수 아님"
+      },
+      "intendedUse": "계수 후보 조사; 숫자 registry 등록 금지",
+      "access": "boardId86 게시물과 PDF/HWPX 링크 공개; 8651은 오류",
+      "admissionStatus": "카탈로그 메타데이터만; 데이터·사진·계수 runtime 미반입",
+      "remainingDependencies": [
+        "개별 KOGL 마크·계수 단위/GWP/기간/경계·쪽 검증",
+        "필요 시 권리자 허가"
+      ],
+      "sourceSnapshot": {
+        "id": "gir-approved-factors-current-source-cf90d825ea28",
+        "sha256": "cf90d825ea28c1014f725c7d9709a6f1be1af85ca93155d66bd5485d8761a7e1"
+      },
+      "rightsSnapshots": [
+        {
+          "id": "gir-copyright-rights-cdfaa803dda2",
+          "sha256": "cdfaa803dda23395b418f94a47a6a0889a182856029c63ca1b8580c2cfc90860"
+        }
+      ]
+    },
+    {
+      "id": "keiti-lci-detail",
+      "title": "국가 LCI DB 사업 설명",
+      "publisher": "한국환경산업기술원 KEITI",
+      "publisherUrl": "https://www.keiti.re.kr/site/keiti/02/10202100000002023101610.jsp",
+      "identityEvidence": "화면 제목·제공기관/저자·설명 또는 공식 API ref를 읽어 확인; URL/배지만으로 추정하지 않음",
+      "observedAt": "2026-11-15T02:53:03.570Z",
+      "sourceDates": {
+        "recordPeriod": null,
+        "policyEffectiveDate": null
+      },
+      "declaredLicense": "한국 LCI DB와 평가계수는 상업용 목적으로 사용할 수 없습니다.",
+      "commercialScope": "상업용 사용 명시적 금지",
+      "derivativeScope": "비상업 목적 파생 범위도 별도 조건 확인 필요",
+      "attribution": "KEITI 및 개별 DB 출처/조건 확인 필요",
+      "publishedPopulation": {
+        "records": null,
+        "unit": "설명 페이지; 개별 LCI/계수 미확보"
+      },
+      "intendedUse": "상업 서비스 계수로 반입 금지",
+      "access": "설명 공개; 상세는 에코스퀘어 연계; 레코드 접근/신청 미검증",
+      "admissionStatus": "카탈로그 메타데이터만; 데이터·사진·계수 runtime 미반입",
+      "remainingDependencies": [
+        "개별 레코드 권리·단위·경계",
+        "상업 대체 계수 또는 별도 허가"
+      ],
+      "sourceSnapshot": {
+        "id": "keiti-lci-detail-source-13c2d01aa450",
+        "sha256": "13c2d01aa450fc91a4d873178e08c323b870bcffec7816e4451eb627b6b77376"
+      },
+      "rightsSnapshots": [
+        {
+          "id": "keiti-lci-detail-rights-5127d220130c",
+          "sha256": "5127d220130c1ff937ea5c659425e713d81f4bef4d06d897858fd7805521a9b9"
+        }
+      ]
+    },
+    {
+      "id": "uci-realwaste",
+      "title": "RealWaste",
+      "publisher": "UCI Machine Learning Repository; Single, Iranmanesh, Raad",
+      "publisherUrl": "https://archive.ics.uci.edu/dataset/908/realwaste",
+      "identityEvidence": "화면 제목·제공기관/저자·설명 또는 공식 API ref를 읽어 확인; URL/배지만으로 추정하지 않음",
+      "observedAt": "2026-11-15T03:50:42.172Z",
+      "sourceDates": {
+        "donated": "2023-10-17",
+        "imageCapture": null
+      },
+      "declaredLicense": "CC BY 4.0",
+      "commercialScope": "출처표시 하 목적 무관 공유·변형 선언",
+      "derivativeScope": "CC BY 4.0 표시; 개별 파일/개인정보 미검토",
+      "attribution": "Single, S., Iranmanesh, S., & Raad, R. (2023). RealWaste. UCI. DOI 10.24432/C5SS4G; 변경 표시",
+      "publishedPopulation": {
+        "declaredInstances": 4752,
+        "fileListEntries": 4753,
+        "declaredPlastic": 921,
+        "classCountSum": 4752,
+        "unit": "공표 instance/파일목록 entry; 독립 현장 사례 아님",
+        "uncertainty": "게시처 파일목록 metadata의 4753개는 JPEG 파일명4752개와 README.md1개로 조정됨. 실제 ZIP/이미지 bytes와 고유 이미지·디코딩·개인정보는 미검증."
+      },
+      "intendedUse": "향후 시각 자료 후보; Plastic은 수지/유해성/법적 분류 근거 아님",
+      "access": "공개 페이지 다운로드 안내; archive 취득 안 함",
+      "admissionStatus": "카탈로그 메타데이터만; 데이터·사진·계수 runtime 미반입",
+      "remainingDependencies": [
+        "원본 해시·decodable/unique 이미지·개별 권리/개인정보",
+        "모델 전송 동의"
+      ],
+      "sourceSnapshot": {
+        "id": "uci-realwaste-source-4547b126a0fc",
+        "sha256": "4547b126a0fc5677021a129a1eb47bb9999f6f00b7a2db49f7d2b4e92184d578"
+      },
+      "rightsSnapshots": [
+        {
+          "id": "uci-realwaste-rights-55886151e1b4",
+          "sha256": "55886151e1b4efd06ee2f62247704baeee7a76eece057ec44af1ad74bf086d0d"
+        }
+      ],
+      "fileListVerification": {
+        "sourceUrl": "https://archive.ics.uci.edu/dataset/908/realwaste",
+        "rawHtmlSha256": "487a7cd1690ca926e5c284517ee081b4dee980ffe4d878a09644d67fa0f74f99",
+        "method": "escaped filesInfo records(path,isDirectory,size) parsed from complete publisher HTML; JPEG path count by class compared with displayed class declarations",
+        "metadataFileRecords": 4753,
+        "jpegFileNames": 4752,
+        "nonImageFiles": [
+          {
+            "path": "realwaste-main/README.md",
+            "isDirectory": false,
+            "reportedBytes": 783
+          }
+        ],
+        "declaredClassCountsMatch": true,
+        "scope": "게시처 파일목록 metadata; 실제 archive/JPEG 검증 또는 독립 사례 수 아님"
+      }
+    },
+    {
+      "id": "aihub-recycling-images-verified",
+      "title": "재활용품 분류 및 선별 데이터 (71362)",
+      "publisher": "AI Hub / 한국지능정보사회진흥원; 주관 ㈜뉴컨",
+      "publisherUrl": "https://aihub.or.kr/aihubdata/data/view.do?dataSetSn=71362",
+      "identityEvidence": "화면 제목·제공기관/저자·설명 또는 공식 API ref를 읽어 확인; URL/배지만으로 추정하지 않음",
+      "observedAt": "2026-11-15T02:44:21.778Z",
+      "sourceDates": {
+        "built": "2022",
+        "version1.1": "2023-11-24",
+        "metadataChanged": "2025-06-19",
+        "imageCapturePeriod": null
+      },
+      "declaredLicense": "AI 허브 개방 데이터 이용정책 (확장 본문 1~10항)",
+      "commercialScope": "영리·비영리 연구개발 가능; 학습용 한정; 데이터 판매 등 상업 이용 별도 협의",
+      "derivativeScope": "2차 저작물에도 NIA 사업결과 표시; 무단 제3자 열람/제공/양도/대여/판매 금지",
+      "attribution": "한국지능정보사회진흥원 사업결과임을 원본/2차 저작물에 표시",
+      "publishedPopulation": {
+        "metadata": 1000000,
+        "individualImages": 706101,
+        "videoExtractedImages": 299764,
+        "detailedSum": 1005865,
+        "labelFiles": 1005865,
+        "displaySize": "2.30 TB",
+        "detailedSize": "약 2700GB + 170GB + 6GB",
+        "unit": "공표 이미지/라벨 파일; 영상 프레임은 독립 사례 아님",
+        "uncertainty": "수량·용량 불일치 미해결"
+      },
+      "intendedUse": "학습 후보 조사만; 데모 배포/외부 모델 전송 권한으로 해석 금지",
+      "access": "내국인 신청 안내; 본인확인·정보제공·목적 신청; 설명/도구는 로그인 없이 이용",
+      "admissionStatus": "카탈로그 메타데이터만; 데이터·사진·계수 runtime 미반입",
+      "remainingDependencies": [
+        "개별 적용 조건·승인",
+        "국외 이용자 및 국외 반출 별도 합의",
+        "개인정보 발견 신고/삭제·재식별 금지",
+        "수량/용량 조정 및 이미지별 검토"
+      ],
+      "sourceSnapshot": {
+        "id": "aihub-recycling-images-verified-source-d36480e003da",
+        "sha256": "d36480e003dac1b830e504558a638eab9d6068195e3dad89ef539dc0c492c26d"
+      },
+      "rightsSnapshots": [
+        {
+          "id": "aihub-open-data-terms-expanded-rights-dba05b206680",
+          "sha256": "dba05b2066807a1ea87940b26ef84af392c5146f28011345a23353d17edc67d7"
+        }
+      ]
+    },
+    {
+      "id": "taco-canonical",
+      "title": "TACO: Trash Annotations in Context Dataset Toolkit",
+      "publisher": "pedropro/TACO; Pedro F Proença and Pedro Simões",
+      "publisherUrl": "https://github.com/pedropro/TACO",
+      "identityEvidence": "화면 제목·제공기관/저자·설명 또는 공식 API ref를 읽어 확인; URL/배지만으로 추정하지 않음",
+      "observedAt": "2026-11-15T02:45:53.256Z",
+      "sourceDates": {
+        "currentSnapshotCommitLabel": "70479ad (화면 약식; immutable 전체 SHA 미확보)",
+        "imageCapture": null
+      },
+      "declaredLicense": "저장소 MIT license 표시; 이미지별 권리 별도 (HF 카드가 TACO 조건 인용)",
+      "commercialScope": "MIT 배지를 전체 이미지 상업권으로 확대 금지",
+      "derivativeScope": "annotation CC BY4.0; 이미지는 개별 public licence 확인 필요 (HF 카드의 인용 근거)",
+      "attribution": "Proença & Simões (2020), TACO, arXiv:2003.06975; 이미지별 원 URL/라이선스",
+      "publishedPopulation": {
+        "currentImages": null,
+        "historicalAddition": "2019-12-20: 785 images, 2642 segmentations",
+        "unit": "과거 추가분; 현재 총량 아님"
+      },
+      "intendedUse": "향후 시각 후보; 미검토 annotation은 라벨 증거 아님",
+      "access": "공개 GitHub/다운로드 스크립트; 실행·이미지 취득 안 함",
+      "admissionStatus": "카탈로그 메타데이터만; 데이터·사진·계수 runtime 미반입",
+      "remainingDependencies": [
+        "TACO 원문 이미지 권리 조항 재확인",
+        "image별 URL/라이선스·중복·privacy",
+        "original/VGA 변형 중복 그룹"
+      ],
+      "sourceSnapshot": {
+        "id": "taco-canonical-source-2690b56fda87",
+        "sha256": "2690b56fda87587a0f3678d7c572931d1f246630d659aa03c8dee8214c605f2e"
+      },
+      "rightsSnapshots": [
+        {
+          "id": "hf-extendedtaco-card-rights-6c776b842565",
+          "sha256": "6c776b84256586ff05db89f240dc7e88ded4aec1eb325ece3033a924116af0d4"
+        }
+      ]
+    },
+    {
+      "id": "hf-extendedtaco",
+      "title": "ExtendedTACO-reviewed",
+      "publisher": "roboticslaburjc / Hugging Face",
+      "publisherUrl": "https://huggingface.co/datasets/roboticslaburjc/ExtendedTACO-reviewed",
+      "identityEvidence": "화면 제목·제공기관/저자·설명 또는 공식 API ref를 읽어 확인; URL/배지만으로 추정하지 않음",
+      "observedAt": "2026-11-15T02:46:30.696Z",
+      "sourceDates": {
+        "cardVersion": null,
+        "imageCapture": null
+      },
+      "declaredLicense": "카드 license: cc-by-4.0; TACO 이미지별 조건 유지",
+      "commercialScope": "카드 배지만으로 이미지 일괄 상업권 부여 안 함",
+      "derivativeScope": "annotation CC BY4.0; 이미지별 조건과 출처 확인",
+      "attribution": "TACO 및 개별 이미지 원저작자/URL/라이선스·변경 표시",
+      "publishedPopulation": {
+        "viewerTextRows": "25.2k",
+        "cardSizeCategory": "1K<n<10K",
+        "removedImages": "Around 600 (card claim)",
+        "imageCount": null,
+        "unit": "TEXT rows와 카드 구간; 실제 이미지 수 아님"
+      },
+      "intendedUse": "후보 카탈로그만; TACO와 독립 cohort로 합산 금지",
+      "access": "공개 viewer/text/card; 파일 다운로드 안 함",
+      "admissionStatus": "카탈로그 메타데이터만; 데이터·사진·계수 runtime 미반입",
+      "remainingDependencies": [
+        "25.2k text rows/카드 구간/이미지 수 조정",
+        "원 TACO 중복 관계·권리·개인정보"
+      ],
+      "sourceSnapshot": {
+        "id": "hf-extendedtaco-source-4d09bb2d7364",
+        "sha256": "4d09bb2d7364cfc9e7557f69d959cde9ec04deb84694819f7152e009965b92b0"
+      },
+      "rightsSnapshots": [
+        {
+          "id": "hf-extendedtaco-card-rights-6c776b842565",
+          "sha256": "6c776b84256586ff05db89f240dc7e88ded4aec1eb325ece3033a924116af0d4"
+        }
+      ]
+    },
+    {
+      "id": "kaggle-garbage-metadata",
+      "title": "Garbage Classification (12 classes)",
+      "publisher": "Kaggle / mostafaabla",
+      "publisherUrl": "https://www.kaggle.com/api/v1/datasets/list?search=garbage-classification&user=mostafaabla",
+      "identityEvidence": "화면 제목·제공기관/저자·설명 또는 공식 API ref를 읽어 확인; URL/배지만으로 추정하지 않음",
+      "observedAt": "2026-11-15T02:49:17.946Z",
+      "sourceDates": {
+        "lastUpdated": "2021-01-24T13:53:11.647Z",
+        "version": 1,
+        "imageCapture": null
+      },
+      "declaredLicense": "Database: Open Database, Contents: © Original Authors",
+      "commercialScope": "DB 라이선스와 이미지 contents 권리 분리; 상업 이미지 사용 미승인",
+      "derivativeScope": "contents 원저작자 권리 미확인; 라이선스 세부문구 추가 필요",
+      "attribution": "mostafaabla 및 개별 원저작자·출처·조건 확인",
+      "publishedPopulation": {
+        "classesInTitle": 12,
+        "totalBytes": 250641573,
+        "images": null,
+        "unit": "메타데이터 크기·제목 클래스; files:[]는 이미지 0 증거 아님"
+      },
+      "intendedUse": "후보 메타데이터만",
+      "access": "공식 anonymous API metadata; 이미지 다운로드/인증 흐름 미검증",
+      "admissionStatus": "카탈로그 메타데이터만; 데이터·사진·계수 runtime 미반입",
+      "remainingDependencies": [
+        "개별 이미지 권리·출처·파일 inventory·privacy",
+        "정확한 database licence 전문"
+      ],
+      "sourceSnapshot": {
+        "id": "kaggle-garbage-metadata-source-fe0fd14973c2",
+        "sha256": "fe0fd14973c2e1af82f76855dd203678f3d38a6385c89cbc0a9df77a3d828972"
+      },
+      "rightsSnapshots": [
+        {
+          "id": "kaggle-garbage-metadata-rights-b736749cf093",
+          "sha256": "b736749cf0937d15f524487e511ef093b70adad9ad834fc19b9c2ee63db5bbda"
+        }
+      ]
+    },
+    {
+      "id": "existing-h10",
+      "title": "기존 H10",
+      "publisher": "Wikimedia Commons 개별 원저작자; 기존 H manifest에 저작자·출처 기록",
+      "publisherUrl": null,
+      "identityEvidence": "기존 H manifest의 사진 메타데이터만 재확인; 사진 원본과 평가 라벨 미열람",
+      "observedAt": "2026-11-15T03:17:37.865Z",
+      "sourceDates": {
+        "captured": null,
+        "validPeriod": null
+      },
+      "declaredLicense": "기존 기록: CC BY-SA 4.0 5건, CC0 4건, CC BY 4.0 1건; 이번 출처 페이지 재검증 아님",
+      "commercialScope": "기록된 공개 라이선스의 조건에 따름; 이번 개별 재검증·사례 목적 승인 없음",
+      "derivativeScope": "기록된 BY-SA 조건·출처·변경 표시를 보존; 운영/모델 동의와 별개",
+      "attribution": "사진별 저작자·원문·라이선스·변경 사항은 기존 H manifest 참조",
+      "publishedPopulation": {
+        "claimedLocalItems": 10,
+        "recordedLicenseDeclarations": 10,
+        "recordedLicenseCounts": {
+          "CC BY-SA 4.0": 5,
+          "CC0": 4,
+          "CC BY 4.0": 1
+        },
+        "operatorConsents": 0,
+        "modelApprovals": 0,
+        "underlyingFieldCaseTotal": null,
+        "underlyingHumanLabelTotal": null,
+        "underlyingUnseenHoldoutTotal": null,
+        "admittedIndependentFieldCases": 0,
+        "admittedHumanLabels": 0,
+        "admittedUnseenHoldout": 0,
+        "populationScope": "0은 이번 패키지에 반입·검증한 수이며 미열람 원본 전체의 구성에 대한 단정이 아님"
+      },
+      "intendedUse": "노출된 합성 개발 자료; operator/model consent 0",
+      "access": "새 공개/모델 전송/파일 반입 없음",
+      "admissionStatus": "새 데이터 반입 금지",
+      "remainingDependencies": [
+        "기록된 라이선스의 현재 적용 범위·개인정보·사례 목적별 재검토",
+        "실제 운영/모델 동의·독립 현장 증거·사람 라벨 필요"
+      ],
+      "sourceSnapshot": null,
+      "rightsSnapshots": [],
+      "localEvidence": {
+        "path": "data/h-candidates/2026-11-12/manifest.json",
+        "sha256": "df62053c3db875ce13a8502d27b9b78e5b731ebfdbaf324cd3969ee8d72e9e68",
+        "method": "local metadata only; no image-byte or fresh publisher validation"
+      }
+    },
+    {
+      "id": "raw700",
+      "title": "기존 raw700",
+      "publisher": null,
+      "publisherUrl": null,
+      "identityEvidence": "사용자 지정 기존 자료 경계; 원본/평가 라벨 미열람",
+      "observedAt": null,
+      "sourceDates": {
+        "captured": null,
+        "validPeriod": null
+      },
+      "declaredLicense": null,
+      "commercialScope": "미승인",
+      "derivativeScope": "미승인",
+      "attribution": "권리자 미확인",
+      "publishedPopulation": {
+        "claimedLocalItems": 700,
+        "underlyingFieldCaseTotal": null,
+        "underlyingHumanLabelTotal": null,
+        "underlyingUnseenHoldoutTotal": null,
+        "admittedIndependentFieldCases": 0,
+        "admittedHumanLabels": 0,
+        "admittedUnseenHoldout": 0,
+        "populationScope": "0은 이번 패키지에 반입·검증한 수이며 미열람 원본 전체의 구성에 대한 단정이 아님"
+      },
+      "intendedUse": "권리·진위 미검증; 원본 열람/반입 안 함; 승인 공유 위치 없음",
+      "access": "새 공개/모델 전송/파일 반입 없음",
+      "admissionStatus": "새 데이터 반입 금지",
+      "remainingDependencies": [
+        "수집 출처·권리·진위·승인 공유 위치 필요"
+      ],
+      "sourceSnapshot": null,
+      "rightsSnapshots": []
+    }
+  ],
+  "rejectedDiscoveries": [
+    {
+      "url": "https://www.data.go.kr/data/15272362/fileData.do",
+      "reason": "찾을 수 없는 페이지; HTTP 상태 미기록"
+    },
+    {
+      "url": "https://www.data.go.kr/data/15050671/fileData.do",
+      "reason": "기상청 반응가스 자료; KICOX 아님"
+    },
+    {
+      "url": "https://aihub.or.kr/aihubdata/data/view.do?dataSetSn=645",
+      "reason": "야생동물 영상; 재활용품 아님"
+    },
+    {
+      "url": "https://www.gir.go.kr/home/board/read.do?boardId=8651&boardMasterId=2&menuId=36",
+      "reason": "java.lang.NullPointerException; 계수 자료 확인 불가"
+    }
+  ],
+  "cohortRule": "데이터셋·파생본·영상 프레임·썸네일·지역 가격 레코드를 독립 현장 사례로 합산하지 않음"
+}
