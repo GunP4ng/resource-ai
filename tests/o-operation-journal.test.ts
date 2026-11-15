@@ -129,6 +129,31 @@ test("HTTP failure blocks automatic retry even when request quota remains", asyn
   } finally { await journal.close(); await rm(root, { recursive: true, force: true }); }
 });
 
+const responseCases: readonly { readonly name: string; readonly headers: Record<string, string>; readonly status: number; readonly requestId: string | null }[] = [
+  { name: "subscription success", headers: { "x-oai-request-id": "subscription-request" }, status: 200, requestId: "subscription-request" },
+  { name: "subscription failure", headers: { "x-oai-request-id": "subscription-failure" }, status: 401, requestId: "subscription-failure" },
+  { name: "legacy request ID precedence", headers: { "x-request-id": "legacy-request", "apim-request-id": "azure-request", "x-oai-request-id": "subscription-request" }, status: 200, requestId: "legacy-request" },
+  { name: "Azure ID precedence", headers: { "apim-request-id": "azure-request", "x-oai-request-id": "subscription-request" }, status: 200, requestId: "azure-request" },
+  { name: "invalid ID", headers: { "x-oai-request-id": "invalid request" }, status: 200, requestId: null },
+  { name: "oversized ID", headers: { "x-oai-request-id": "x".repeat(101) }, status: 200, requestId: null },
+  { name: "missing ID", headers: {}, status: 200, requestId: null },
+];
+for (const example of responseCases) test(`transport audit persists sanitized provider evidence for ${example.name}`, async t => {
+  const { journal, root, config } = await fixture(t);
+  await journal.record(audit("start"));
+  await journal.authorizeDispatch(request, new AbortController().signal);
+  await journal.record({ ...audit("dispatch"), requests: [{ attempt: 1, approvalId: config.approvalId, transportStarted: false, status: null, requestId: null }] });
+
+  await journal.wrapTransport(async () => new Response(null, { status: example.status, headers: example.headers }))(SUBSCRIPTION_ENDPOINT, { body: "{}" });
+  await journal.record(audit("finish"));
+  await journal.close();
+
+  const row = inspectOperationJournal(root)[0];
+  assert.ok(row?.response);
+  assert.deepEqual(JSON.parse(row.response), { status: example.status, requestId: example.requestId });
+  assert.equal(row.state, example.status === 200 ? "consumed" : "unresolved");
+});
+
 test("revocation at the final synchronous guard releases a proven uninvoked transport intent", async () => {
   const root = await mkdtemp(join(tmpdir(), "o-final-guard-")), c = parseOperationalConfiguration(configuration());
   let checking = false, guards = 0, calls = 0;

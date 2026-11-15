@@ -106,7 +106,7 @@ test("known hazardous contact remains a review reason even when another fact is 
   assert.ok(!result.questions.some((question) => question.includes("접촉했는지")));
 });
 
-for (const [date, issue] of [["2026-09-30", "out-of-period"], ["2026-11-06", "currentness-unverified"]] as const) {
+for (const [date, issue] of [["2026-09-30", "out-of-period"], ["2026-11-16", "currentness-unverified"]] as const) {
   test(`re-evaluates ${date} without extending source coverage`, () => {
     const result = assessCase(fixture({ assessmentDate: date }));
     assert.deepEqual(codeReferences(result), []);
@@ -240,7 +240,7 @@ test("host gate asks for missing facts and re-evaluates answers instead of accep
 });
 
 test("known risk and evidence failures take precedence without discarding missing questions", () => {
-  for (const patch of [{ hazardousContact: "yes" }, { assessmentDate: "2026-11-06" }, { process: "사출 아님" }] as const) {
+  for (const patch of [{ hazardousContact: "yes" }, { assessmentDate: "2026-11-16" }, { process: "사출 아님" }] as const) {
     const result = decideCase(fixture({ massKg: null, ...patch }));
     assert.equal(result.state, "needs-review");
     if (result.state === "needs-review") assert.ok(result.reasons.some((reason) => reason.includes("kg")));
@@ -275,7 +275,7 @@ for (const [label, mutate, expected] of [
 }
 
 test("a formerly valid reference cannot be reused at a changed assessment date", () => {
-  const result = decideCase(fixture({ assessmentDate: "2026-11-06" }), proposedComparison());
+  const result = decideCase(fixture({ assessmentDate: "2026-11-16" }), proposedComparison());
   assert.equal(result.state, "needs-review");
   assert.deepEqual(result.evidence, []);
   if (result.state === "needs-review") assert.ok(result.reasons.includes("proposal-source-unresolved"));

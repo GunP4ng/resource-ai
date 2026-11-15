@@ -1,0 +1,23 @@
+# #13 독립 사람 라벨 인계 (development-v1)
+
+이 인계는 노출 개발 입력 18건에 대한 빈 양식이다. 정답 작성·검토 완료·동의·전문가 자격을 대신하지 않는다. 각 referenceAnswer 및 판단 칸은 모두 null이다. 할당 이름은 예정 담당자이며 실제 reviewer/시각/자격/서명 확인은 아직 없다. docs/team-tasks.md:303-304에 따라 사례 수집자를 제외한 두 사람이 각자 작성하고 이태용이 불일치를 조정한다.
+
+| 양식 (data/evaluation/labels/) | 할당 검토자 | 수집 트랙 | 건수 |
+| --- | --- | --- | ---: |
+| yun-jeongjun.json | 윤정준 | H + O | 18 |
+| lee-sanghyeop.json | 이상협 | O | 8 |
+| oh-yeonseok.json | 오연석 | H | 10 |
+
+H 수집자는 이상협(hyeobikong), O 수집자는 오연석 담당 AI 보조 작성 트랙이다. collector와 collectorProvenance를 분리해 기록했다. 담당 트랙의 AI 보조 작성 여부를 사람의 직접 수집으로 바꾸지 않는다. H001~010은 윤정준·오연석, O001~004/006/008~010은 윤정준·이상협에게 배정했다. J 후보가 인계되면 윤정준을 제외한 이상협·오연석에게 배정하되 이번 양식에 가짜 J 사례를 추가하지 않는다.
+
+1. 담당자는 자신의 양식만 별도 사본으로 받고 원본 inputPath와 sourceHash를 먼저 대조한다. 양식의 inputPath는 저장소 루트 상대 경로다. development.json의 inputRef는 매니페스트 디렉터리 상대 경로라 기준점이 다르다. 다른 검토자의 양식, 수집자의 제안 질문/의도, AI 예비 검토와 기존 모델 실행 출력은 초안 제출 전 읽지 않는다. 읽었다면 priorAIDraftExposure에 무엇을 언제 보았는지 기록한다. 이미 노출된 사례이며 blind 또는 holdout이라고 표시하지 않는다.
+2. reviewer, reviewedAt(시간대 포함), expertise, scopeOfReview를 실제 작성자가 기록한다. independenceAttestation에 수집 참여 여부와 타인 답안 협의/열람 여부를 구체적으로 적는다. 미상인 priorAIDraftExposure=null을 미노출로 해석하지 않는다. 이름 할당만으로 독립성이 확인되지 않는다.
+3. 입력에 명시된 합성 사실, 출처에서 확인한 사실, 미상을 구분해 referenceAnswer를 독립 작성한다. allowedPolymerCandidates/allowedWasteCodeCandidates에는 근거가 지지하는 허용 후보만 적고 코드를 확정할 수 없으면 이유를 적는다. decisionState, requiredAdditionalInformation, evidenceToReview(sourceId/locator/버전/확인일/SHA), forbiddenUnsupportedClaims, uncertainty를 작성한다. 보류 정답도 필요한 추가정보와 검토 근거가 있어야 하며 무조건 보류를 정답으로 복사하지 않는다.
+4. comparisonReference는 수치 비교가 가능한 경우에만 실제 질량·단위·견적 기간/통화·포함 경계·기능단위·계수/GWP·독립 계산과 반올림 허용오차를 기록한다. 없으면 확인 불가 이유와 필요한 자료를 적으며 0·가격·감축량을 생성하지 않는다. rightsReview는 실제 확인 범위와 미확인을 적고 sourceGroupReview는 같은 사진·사업장·lot 변형 여부를 기록한다. 빈 칸 null은 미작성이다. 완료 후 근거 없음/적용 불가는 이유를 명시하고 빈 배열만으로 모호하게 처리하지 않는다.
+5. 각자 초안을 고정해 이태용에게 별도로 제출한 뒤 두 초안을 비교한다. 이태용은 불일치 항목·두 원판단·근거·조정 사유/시각/담당자·전문가 관여 범위를 별도 기록하고 원본을 보존한다. 전문가 미검토는 그대로 기록한다. 합의가 어려우면 불일치/미확인으로 남기며 AI가 대신 합의 라벨을 만들지 않는다. 이 저장소 양식은 전송이나 제출을 수행하지 않는다.
+
+사진은 이번 런타임 입력과 검토 인계에서 제외한다. 모든 입력 photoRefs=[]를 유지하며 로컬 이미지 경로나 바이트를 모델/외부 서비스에 보내지 않는다. H 공개 사진의 라이선스 선언과 실제 운영자 동의·모델 전송 승인은 별개이며 H manifest는 둘 다 false다. O는 합성 텍스트이고 사진/근거 미확보, license=null이며 새 라이선스를 부여하지 않는다. ZIP 사진 권리를 추론하지 않는다. 합성 입력을 실제 현장 정답/법적 허가로 바꾸지 않는다.
+
+기존 data/o-reviews/h-candidates-2026-11-13/human-review.json은 10건 모두 인간 판단/신원/자격/동의/시각이 비어 있다. H peer-review.json과 O의 ai-preliminary-review.json은 AI 예비 검토 및 실행 관측이므로 독립 사람 정답이 아니다. 이 양식에도 그 답이나 모델 결과를 이식하지 않았다. 현재 필요한 독립 판단은 18건 × 2명 = 36개 전부다. 라벨 완료 전 모델 결과로 정답 기반 정확도·보류 재현율을 계산하지 않는다.
+
+미노출 적격 후보는 0건이고 잠금 목표 12건은 전부 미확보다. 노출 예비 O005/O007도 개발만 가능하다. 새 잠금 후보의 ID·입력·정답은 개발 양식에 쓰지 않으며 이태용이 그룹 단위로 별도 보관한다. 이번 인계의 모델 결과나 라벨 공개가 잠금 평가의 독립성 증거가 되지 않는다. 전체 수량·층별 부족은 docs/evaluation-inventory.md를 따른다.

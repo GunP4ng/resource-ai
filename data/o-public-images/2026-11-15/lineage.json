@@ -1,0 +1,33 @@
+{
+  "version": 1,
+  "caseId": "PUBLIC-IMG-DEV-001",
+  "inputRevision": "98d70132305b45ce10218fdb76b3ac8e4e5edf8d5460092abfb933acf1861138",
+  "inputFileSha256": "69c1c31c89a026f0c16620cf7810b7938b0066122e2512178002b0910f4d2dbe",
+  "files": [
+    {
+      "path": "manifest.json",
+      "sha256": "8cccbbaaaa6baba60340a83624eda7f2d78591cc1b945150202500328fab245d"
+    },
+    {
+      "path": "source-snapshots.json",
+      "sha256": "65686f7218093e41893a6cad1d25f19e0c7971210df3231da44cf812a3f77636"
+    },
+    {
+      "path": "license-snapshots.json",
+      "sha256": "b3d427a4e9721486be9eb7e5b19fb31abb7271bd733273fac9a49ca83126d461"
+    },
+    {
+      "path": "samples/river-fragments.png",
+      "sha256": "4550f1fa24b4c7ca109da850a63edd039aaf717e047961c7d14372fecef83605"
+    },
+    {
+      "path": "samples/gannet-plastic.png",
+      "sha256": "62ff5d4860020132c67ad4a49b860100b58d893703ec40a2c798a548143f5130"
+    },
+    {
+      "path": "samples/strapping.png",
+      "sha256": "dac9bfbe7323264b1ac40e39f6a003c97e55647cf97a668758fbb268eea134ac"
+    }
+  ],
+  "fieldBasis": "non-field synthetic/unknown; photographs are distinct references, not one lot"
+}

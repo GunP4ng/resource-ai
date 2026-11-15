@@ -2,6 +2,8 @@
 
 기준: origin/main 65bb1fe에서 시작한 로컬 jeongjun/j2-j3-legal-evidence. 공통 contracts.ts와 H/O 소유 모듈은 변경하지 않았다. 커밋·푸시·이슈 댓글·PR·배포를 수행하지 않았다.
 
+아래 날짜별 실행 기록과 `data/reference/legal/demo-results.json`은 최초 2026-11-05 당시의 재현 결과다. 이후 구 290881의 적용은 11/11에 종료되고, 신 291947이 11/12부터 적용된다. 팀장 #57의 기존 인용 7건 11/14 문구 재확인과 291947의 11/15 재확인은 [현행 출처 인계](README.md)에 별도로 기록했다. 이 과거 결과 파일을 현재 날짜 조회 결과로 해석하지 않는다.
+
 ## 호출
 
 `lookupLegalEvidence(CaseInput, undefined, { intendedUse: "general-resin" | "food-container" })`
