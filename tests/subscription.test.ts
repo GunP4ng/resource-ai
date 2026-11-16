@@ -7,6 +7,7 @@ import { fileURLToPath } from "node:url";
 import { spawn } from "node:child_process";
 import { createServer } from "node:net";
 import { ModelRuntime } from "@code-yeongyu/senpi";
+import { appendLoginSlot, listSlots, managedSentinelMaterial, pinSlot } from "@earendil-works/pi-ai/auth/pool/slots";
 import { createAssessmentAdapter, createSubscriptionRunner, openCaseSession, SessionFailure } from "../src/session.ts";
 import { decideCase } from "../src/assessment.ts";
 import type { CaseInput } from "../src/contracts.ts";
@@ -21,20 +22,37 @@ const failure = (code: string) => (error: unknown) => {
   assert.doesNotMatch(error.message, /private/);
   return true;
 };
-async function fixture() {
+type AuthShape = "flat" | "pool" | "stale-flat-pool" | "managed-pool" | "signed-out-pool";
+async function fixture(shape: AuthShape = "flat") {
   const root = await mkdtemp(join(tmpdir(), "subscription-test-"));
   const authPath = join(root, "auth.json");
   // Fabricated OAuth credential; all inference below uses an injected HTTP transport.
-  const payload = Buffer.from(JSON.stringify({ "https://api.openai.com/auth": { chatgpt_account_id: "synthetic-account" } })).toString("base64url");
+  const expires = Date.now() + 3_600_000;
+  const payload = Buffer.from(JSON.stringify({ exp: Math.floor(expires / 1000),
+    "https://api.openai.com/auth": { chatgpt_account_id: "synthetic-account", chatgpt_account_user_id: "synthetic-first-user" } })).toString("base64url");
   const runtime = await ModelRuntime.create({ authPath, modelsPath: null, allowModelNetwork: false, refreshOnCreate: false });
   assert.ok(runtime.authStorage);
-  runtime.authStorage.set("chatgpt-subscription", {
-    type: "oauth", access: `synthetic.${payload}.signature`, refresh: "synthetic-refresh", expires: Date.now() + 3_600_000,
-  });
+  const flat = { type: "oauth", access: `synthetic.${payload}.signature`, refresh: "synthetic-refresh", expires } as const;
+  const secondPayload = Buffer.from(JSON.stringify({ exp: Math.floor(expires / 1000),
+    "https://api.openai.com/auth": { chatgpt_account_id: "synthetic-second-account", chatgpt_account_user_id: "synthetic-second-user" } })).toString("base64url");
+  const pool = appendLoginSlot(shape === "stale-flat-pool" ? { ...flat, expires: 0 } : flat,
+    { ...flat, access: `synthetic.${secondPayload}.signature` });
+  assert.ok(pool.type === "oauth");
+  const second = listSlots(pool).find(slot => slot.name !== "default"); assert.ok(second);
+  const marker = managedSentinelMaterial("chatgpt-subscription");
+  switch (shape) {
+    case "flat": runtime.authStorage.set("chatgpt-subscription", flat); break;
+    case "pool": runtime.authStorage.set("chatgpt-subscription", pool); break;
+    case "signed-out-pool": runtime.authStorage.set("chatgpt-subscription", { ...pool, signedOut: true }); break;
+    case "stale-flat-pool": runtime.authStorage.set("chatgpt-subscription", pinSlot(pool, second.name)); break;
+    case "managed-pool": runtime.authStorage.set("chatgpt-subscription", appendLoginSlot(undefined,
+      { type: "oauth", access: marker, refresh: marker, expires: 0, accounts: listSlots(pool) })); break;
+    default: assert.fail(shape satisfies never);
+  }
   return { authPath, close: () => rm(root, { recursive: true, force: true }) };
 }
 
-test("subscription rejects disabled, unknown model and missing credentials without Azure configuration", async () => {
+test("subscription rejects disabled, unknown model, missing and signed-out credentials without Azure configuration", async () => {
   const root = await mkdtemp(join(tmpdir(), "subscription-test-"));
   try {
     for (const options of [{ enabled: false }, { enabled: true, modelId: "not-a-model" }, { enabled: true }]) {
@@ -44,15 +62,24 @@ test("subscription rejects disabled, unknown model and missing credentials witho
     }
     const controller = new AbortController(); controller.abort();
     await assert.rejects(createSubscriptionRunner({ enabled: true })(input, controller.signal), failure("cancelled"));
+    const signedOut = await fixture("signed-out-pool");
+    try {
+      await assert.rejects(createSubscriptionRunner({ enabled: true, authPath: signedOut.authPath,
+        transport: async () => { assert.fail("Signed-out pool must not dispatch"); } })(input, live()), failure("authentication"));
+    } finally { await signedOut.close(); }
   } finally { await rm(root, { recursive: true, force: true }); }
 });
 
-for (const [status, code] of [[200, null], [401, "authentication"], [403, "authentication"], [429, "rate-limit"], [500, "provider"]] as const) {
-  test(`subscription HTTP ${status} returns usage or sanitized failure and closes session`, async () => {
-    const auth = await fixture(); let closed = false, requests = 0;
+for (const [status, code, shape] of [[200, null, "flat"], [200, null, "pool"], [200, null, "stale-flat-pool"], [200, null, "managed-pool"],
+  [401, "authentication", "flat"], [403, "authentication", "flat"], [429, "rate-limit", "flat"], [500, "provider", "flat"]] as const) {
+  test(`subscription HTTP ${status} with ${shape} returns usage or sanitized failure and closes session`, async () => {
+    const auth = await fixture(shape); let closed = false, requests = 0;
     const runner = createSubscriptionRunner({ enabled: true, authPath: auth.authPath, maxOutputTokens: 128,
-      transport: async () => {
+      transport: async (_url, init) => {
         requests++;
+        const account = new Headers(init?.headers).get("chatgpt-account-id");
+        assert.ok(shape === "stale-flat-pool" ? account === "synthetic-second-account"
+          : account === "synthetic-account" || account === "synthetic-second-account");
         if (status !== 200) return Response.json({ error: { message: "private diagnostic" } }, { status });
         const item = { type: "message", id: "msg_synthetic", role: "assistant", status: "completed",
           content: [{ type: "output_text", text: JSON.stringify(decideCase(input)), annotations: [] }] };

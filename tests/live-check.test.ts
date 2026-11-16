@@ -46,12 +46,19 @@ function wire(mode: Mode = "normal") {
     const reference = object(toolOutput) ? toolOutput["decisionReference"] : null;
     const final = mode === "rewrite" ? { decisionReference: reference, humanApproval: "approved" } : { decisionReference: reference };
     const item = tool ? { type: "message", id: "msg_synthetic", role: "assistant", status: "completed",
-      content: [{ type: "output_text", text: mode === "invalid" ? secret : mode === "oversize" ? "x".repeat(530000) : JSON.stringify(final), annotations: [] }] }
+      content: [{ type: "output_text", text: mode === "invalid" ? secret : JSON.stringify(final), annotations: [] }] }
       : { type: "function_call", id: "fc_synthetic", call_id: "call_synthetic", name: "resource_assess_case", arguments: "{}", status: "completed" };
     const events = [{ type: "response.output_item.done", output_index: 0, item },
       { type: "response.completed", response: { id: "resp_must_not_be_a_request_id", status: "completed", output: [item],
         ...(mode === "no-usage" ? {} : { usage: { input_tokens: 7, output_tokens: 11, total_tokens: 18 } }) } }];
-    return new Response(events.map(event => `data: ${JSON.stringify(event)}\n\n`).join(""), { headers: {
+    let sse = events.map(event => `data: ${JSON.stringify(event)}\n\n`).join("");
+    if (mode === "oversize" && tool) {
+      // Valid SSE comments leave model JSON intact; UTF-8 bytes exceed the cap while characters do not.
+      sse = `: ${"\uD55C".repeat(180000)}\n\n${sse}`;
+      assert.ok(sse.length < 524288);
+      assert.ok(Buffer.byteLength(sse, "utf8") > 524288);
+    }
+    return new Response(sse, { headers: {
       "content-type": "text/event-stream", ...(mode === "no-id" ? {} : { "x-oai-request-id": mode === "bad-id" ? secret : `req_${calls}` }) } });
   };
   return { transport, calls: () => calls };
@@ -90,6 +97,11 @@ test("offline command exercises SDK, app, revoked session, comparison and immuta
     assert.match(result.report.gitSha ?? "", /^[a-f0-9]{40}$/);
     assert.equal(fake.calls(), 4);
     assert.deepEqual(result.report.cases.map(c => c.state), ["compared", "needs-information", null]);
+    assert.equal(result.report.cases[0].recommendationCount, 1);
+    assert.equal(result.report.cases[0].preExecutionChecksPresent, true);
+    for (const c of result.report.cases.slice(1)) {
+      assert.equal(c.recommendationCount, null); assert.equal(c.preExecutionChecksPresent, null);
+    }
     for (const c of result.report.cases.slice(0, 2)) {
       assert.equal(c.reportVerified, true); assert.equal(c.dispatches, 2);
       assert.deepEqual(c.usage, { input: 14, output: 22, cacheRead: 0, cacheWrite: 0, total: 36 });
@@ -127,8 +139,11 @@ for (const mode of ["no-id", "bad-id", "no-usage", "rate-limit", "invalid", "tim
     try {
       const timeout = mode === "timeout" || mode === "stream-timeout";
       const result = await withWire(fake.transport, () => runLiveCheck({ ...f, timeoutMs: timeout ? 1500 : 10000 }));
-      persisted(result); assert.equal(result.exitCode, 1); assert.equal(result.report.cases.length, 3);
+      persisted(result); assert.equal(result.report.cases.length, 3);
       for (const c of result.report.cases.slice(0, 2)) {
+        if (mode === "oversize") {
+          assert.equal(c.failure, "response-stream"); assert.equal(c.httpStatus, 502); assert.equal(c.usage, null);
+        }
         assert.equal(c.passed, false); assert.ok(c.failure);
         if (mode === "no-id" || mode === "bad-id") { assert.deepEqual(c.requestIds, []); assert.equal(c.traceId, null); }
         if (mode === "no-usage") assert.equal(c.usage, null);
@@ -136,6 +151,7 @@ for (const mode of ["no-id", "bad-id", "no-usage", "rate-limit", "invalid", "tim
         if (mode === "invalid" || mode === "rewrite") assert.equal(c.failure, "invalid-model-output");
         if (timeout) { assert.equal(c.failure, "timeout"); assert.equal(c.httpStatus, 504); assert.equal(c.usage, null); }
       }
+      assert.equal(result.exitCode, 1);
       assert.equal(fake.calls(), timeout || mode === "rate-limit" ? 2 : 4);
       assert.equal(result.report.cases[2].dispatches, 0);
     } finally { f.close(); }
