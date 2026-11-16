@@ -5,7 +5,10 @@ import type { Stats } from "node:fs";
 import { isAbsolute, join, parse, resolve } from "node:path";
 import { Type } from "typebox";
 import { Value } from "typebox/value";
-import type { prepareCaseRecord } from "./case-record.ts";
+import type { CaseArtifact, LegacyCaseArtifact } from "./o-case-artifact.ts";
+import { ResearchCaseArtifactSchema } from "./o-case-artifact.ts";
+import { readCaseResearchCatalog } from "./o-case-research.ts";
+import { validateResearchCaseArtifact } from "./o-case-research-validation.ts";
 import type { createCaseStore } from "./o-case-store.ts";
 import type { ResourceProvider } from "./session.ts";
 import type { DomainResources } from "./domain.ts";
@@ -18,7 +21,6 @@ import { findProcessorsWithDiagnostics } from "./processors.ts";
 import { canonical, revision, validateDocuments, requireValid } from "./o-validation.ts";
 import { sourceManifest } from "./sources.ts";
 
-type Artifact = Awaited<ReturnType<typeof prepareCaseRecord>>;
 type Store = Pick<ReturnType<typeof createCaseStore>, "currentActor" | "stageResources">;
 /** Sanitized public error: no path, source contents, underlying cause or OS error. */
 export class ResourceUnavailableError extends Error {
@@ -66,9 +68,19 @@ async function directory(path: string) {
   requireValid(await realpath(path) === path, "directory-escape"); return info;
 }
 
-export async function validateResourceArtifact(value: unknown, input: Parameters<ResourceProvider>[0]): Promise<{ artifact: Artifact; resources: DomainResources }> {
+export async function validateResourceArtifact(value: unknown, input: Parameters<ResourceProvider>[0],
+  binding?: { readonly actorId: string }, signal: AbortSignal = new AbortController().signal
+): Promise<{ artifact: CaseArtifact; resources: DomainResources }> {
+  cancelled(signal);
+  if (Value.Check(ResearchCaseArtifactSchema, value)) {
+    requireValid(!!binding?.actorId, "actual-actor-required");
+    const artifact = await validateResearchCaseArtifact(value,
+      { actorId: binding.actorId, input, inputRevision: revision(input) }, await readCaseResearchCatalog(), signal);
+    cancelled(signal);
+    return { artifact, resources: {} };
+  }
   requireValid(Value.Check(artifactSchema, value), "invalid-artifact");
-  const artifact = value as Artifact, r = artifact.record;
+  const artifact = value as LegacyCaseArtifact, r = artifact.record;
   const parsed = parseCaseInput(r.input);
   requireValid(parsed.ok && canonical(r.input) === canonical(parsed.value) && canonical(r.input) === canonical(input)
     && r.caseRevision === revision(input) && artifact.sha256 === revision(r) && r.resourcesSha256 === revision(r.resources), "artifact-binding");
@@ -180,7 +192,8 @@ export async function createFileResourceProvider({ root, caseStore }: { readonly
       }
       requireValid(offset === before.size, "changed-size");
       phase = "artifact";
-      const accepted = await validateResourceArtifact(JSON.parse(new TextDecoder("utf-8", { fatal: true }).decode(bytes.subarray(0, offset))), input);
+      const accepted = await validateResourceArtifact(JSON.parse(new TextDecoder("utf-8", { fatal: true }).decode(bytes.subarray(0, offset))),
+        input, { actorId: actor }, signal);
       cancelled(signal); phase = "filesystem";
       await recheck();
       const after = await file.stat(), named = await lstat(path); privateEntry(named, false); privateEntry(after, false);

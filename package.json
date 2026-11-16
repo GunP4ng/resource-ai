@@ -12,7 +12,7 @@
     "smoke": "bun scripts/smoke.ts",
     "app": "bun scripts/app.ts",
     "live-check": "bun scripts/live-check.ts",
-    "build:app": "bun build scripts/app.ts scripts/o-account.ts scripts/o-artifact.ts scripts/o-journal.ts --target=bun --packages=external --outdir=dist/app && bun scripts/package-app-assets.ts",
+    "build:app": "bun build scripts/app.ts scripts/o-account.ts scripts/o-artifact.ts scripts/o-case-package.ts scripts/o-journal.ts --target=bun --packages=external --outdir=dist/app && bun scripts/package-app-assets.ts",
     "demo:o": "bun scripts/o-demo.ts",
     "test:o": "bun test tests/processors.test.ts tests/comparison.test.ts tests/carbon.test.ts tests/report.test.ts tests/app.test.ts",
     "typecheck:o-tests": "tsc --noEmit -p tsconfig.o-tests.json"

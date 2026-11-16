@@ -10,6 +10,8 @@ import { createResourceDomain } from "../src/domain.ts";
 import { revision } from "../src/o-validation.ts";
 import { syntheticCase, syntheticReviewed } from "./h-fixtures.ts";
 import type { DomainResources } from "../src/domain.ts";
+import { readCaseResearchCatalog, prepareResearchCaseRecord } from "../src/o-case-research.ts";
+import { artifactCodeRevision } from "../src/o-artifact-target.ts";
 
 type Mutable<T> = { -readonly [K in keyof T]: Mutable<T[K]> };
 type Artifact = Mutable<Awaited<ReturnType<typeof prepareCaseRecord>>>;
@@ -62,6 +64,7 @@ test("exact synthetic artifact and actual J snapshots survive staging and commit
   assert.deepEqual(f.store.read(owner, input.caseId)?.review, { hash: f.artifact.sha256,
     origin: f.artifact.record.dataOrigin, caseRevision: revision(input) });
   assert.equal(f.store.read(owner, input.caseId)?.review?.origin.kind, "synthetic");
+  assert.equal(f.store.readReport(owner, input.caseId)?.research, null);
 });
 
 test("another actor/case/revision never discovers or rebinds the installed artifact", async t => {
@@ -142,6 +145,7 @@ test("a missing exact artifact stages null for a new evaluation after an accepte
   await f.store.run(next, input, async signal => { assert.deepEqual(await f.provider(input, signal), {}); });
   f.store.commit(next, { decision: f.artifact.record.decision }, () => undefined);
   assert.equal(f.store.read(owner, input.caseId)?.review, null);
+  assert.equal(f.store.readReport(owner, input.caseId)?.research, null);
 });
 
 for (const mode of ["symlink", "hardlink", "oversize", "public-file", "nested-symlink", "public-directory"] as const) {
@@ -214,3 +218,24 @@ for (const missing of ["mass", "quote", "factor", "currentness"] as const) {
     else assert.equal(decision.state, "needs-review");
   });
 }
+
+for (const mode of ["corrupt", "missing"] as const) test("v2 provider preserves or clears committed research for " + mode, async t => {
+  const f = await fixture(t), catalog = await readCaseResearchCatalog(), source = catalog.calculations.data.cases[0];
+  assert.ok(source);
+  const facts = { ...source.original, caseId: input.caseId };
+  const artifact = await prepareResearchCaseRecord({ actorId: actor, input: facts, inputRevision: revision(facts),
+    codeRevision: artifactCodeRevision(), signal: options().signal }, "OYS-20261110-001", catalog);
+  const first = f.store.begin(owner, facts.caseId, null);
+  await f.store.run(first, facts, async () => f.store.stageResources(artifact));
+  f.store.commit(first, { decision: artifact.record.decision }, () => {});
+  const before = f.store.readReport(owner, facts.caseId), next = f.store.begin(owner, facts.caseId, 1);
+  if (mode === "corrupt") await writeFile(join(f.directory, revision(facts) + ".json"), "{private", { mode: 0o600 });
+  if (mode === "corrupt") {
+    await assert.rejects(f.store.run(next, facts, async signal => f.provider(facts, signal)), unavailable);
+    f.store.rollback(next); assert.deepEqual(f.store.readReport(owner, facts.caseId), before);
+  } else {
+    await f.store.run(next, facts, async signal => { assert.deepEqual(await f.provider(facts, signal), {}); });
+    f.store.commit(next, { decision: artifact.record.decision }, () => {});
+    assert.equal(f.store.readReport(owner, facts.caseId)?.research, null);
+  }
+});

@@ -9,6 +9,9 @@ import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { Type } from "typebox";
 import { Value } from "typebox/value";
+import { readPublicCalculationDataset } from "../src/o-public-calculation-data.ts";
+import { revision } from "../src/o-validation.ts";
+import { readCaseResearchCatalog } from "../src/o-case-research.ts";
 import fixtureJson from "../data/o-public-calculations/2026-11-15/fixtures.json" with { type: "json" };
 import manifestJson from "../data/o-public-calculations/2026-11-15/manifest.json" with { type: "json" };
 
@@ -42,7 +45,8 @@ async function temporary(t: TestContext) {
 }
 async function isolated(t: TestContext) {
   const path = await temporary(t);
-  for (const pin of manifestJson.upstream) {
+  const implementation = (await readPublicCalculationDataset({ root })).implementation.files;
+  for (const pin of [...manifestJson.upstream, ...implementation]) {
     const target = join(path, pin.path); await mkdir(dirname(target), { recursive: true });
     await writeFile(target, await readFile(join(root, pin.path)));
   }
@@ -124,6 +128,19 @@ test("real research CLI retains a complete ledger, independent Decimal arithmeti
   }
   for (const r of first.bundle.routes.filter(r => r.case_id.endsWith("003"))) assert.deepEqual(r.mass_flow, { input_t: null, recycling_t: null, residue_t: null });
 });
+test("implementation receipt covers the shared production modules with actual file hashes", async () => {
+  const verified = await readPublicCalculationDataset({ root });
+  for (const path of ["src/o-public-calculation-schema.ts", "src/o-public-calculation-data.ts",
+    "src/o-public-calculation-validation.ts", "src/o-public-calculation-engine.ts", "src/o-case-research.ts"])
+    assert.ok(verified.implementation.files.some(file => file.path === path));
+  for (const file of verified.implementation.files) assert.equal(file.sha256, sha(await readFile(join(root, file.path))));
+  assert.equal(verified.calculator_sha256, revision(verified.implementation.files));
+  assert.equal(verified.implementation.sha256, verified.calculator_sha256);
+});
+test("importing the CLI wrapper executes no command and emits no output", async () => {
+  const r = await run(["-e", `await import(${JSON.stringify(script)})`], "");
+  assert.deepEqual(r, { code: 0, out: "", err: "" });
+});
 const mutations: readonly [string, string, (f: Fixture) => void][] = [
   ["required property", "E_REQUIRED", f => { Reflect.deleteProperty(input(f,"c"), "value"); }],
   ["false source value", "E_SOURCE_VALUE", f => { input(f,"price.PET").value = 123; }],
@@ -164,6 +181,13 @@ test("explicit null sale price preserves carbon while distance changes only cost
   assert.ok(b.results[0]?.missing_inputs.cost.includes("missing:PET.price"));
   assert.equal(b.results[3]?.net_carbon_kgco2e,base.results[3]?.net_carbon_kgco2e); assert.notEqual(b.results[3]?.net_cost_krw,base.results[3]?.net_cost_krw);
 });
+test("a valid resealed CLI premise experiment cannot replace the fixed case research catalog", async t => {
+  const path = await isolated(t), f = structuredClone(fixtureJson);
+  input(f, "c").value = 20000; await seal(path, f);
+  const alternative = await readPublicCalculationDataset({ root: path });
+  assert.notEqual(alternative.fixture_sha256, manifestJson.fixture_sha256);
+  await assert.rejects(readCaseResearchCatalog({ root: path }), /E_FIXED_DATASET/);
+});
 for (const [mass,y] of [[0,0],[0,1],[.024,0],[.024,1]] as const) test(`mass ${mass} and allocation ${y} conserve mass with defined totals and per-tonne availability`, async t => {
   const path=await isolated(t), f=structuredClone(fixtureJson); input(f,"PET.y").value=y; input(f,"PET.mass").value=mass;
   input(f,"PET.mass").assumption_reason="Explicit alternative synthetic mass premise; historical original retained";
@@ -192,17 +216,18 @@ test("serialized exports reject numeric, dependency and label tampering; commerc
   assert.equal(commercial.code,0,commercial.err); commercialContract(JSON.parse(commercial.out));
 });
 test("temporary actual CLI control passes and four semantic owner mutants reach numeric or export assertions", async t => {
-  const path=await temporary(t); await mkdir(join(path,"scripts")); await symlink(join(root,"src"),join(path,"src")); await symlink(join(root,"node_modules"),join(path,"node_modules"));
-  const source=await readFile(script,"utf8"), owner=join(path,"scripts/calculator.ts"), expected=await oracle();
-  await writeFile(owner,source); arithmetic((await build(root,owner)).bundle,expected);
+  const path=await isolated(t); await symlink(join(root,"node_modules"),join(path,"node_modules"));
+  const engine=join(path,"src/o-public-calculation-engine.ts"), source=await readFile(engine,"utf8");
+  const owner=join(path,"scripts/o-public-calculations.ts"), expected=await oracle();
+  arithmetic((await build(path,owner)).bundle,expected);
   const edits=[[/1000 \/ 0\.90718474/g,"1000 / 1"],[/treatment: recycling \? b \* v\("f"\)/g,'treatment: recycling ? m * v("f")'],[/, 0\) - revenue/g,", 0) + revenue"],
-    [/commercial\(bundle, verified\.data\) : bundle/g,"bundle : bundle"]] as const;
+    [/return item.kind === "derived" && s\?\.source_id === "KECO" && s.commercial_use === "allowed_with_conditions" && s.redistribution === "allowed_with_conditions";/g,"return true;"]] as const;
   for (const [index,[pattern,replacement]] of edits.entries()) {
-    const mutant=source.replace(pattern,replacement); assert.notEqual(mutant,source); await writeFile(owner,mutant);
-    const b=await build(root,owner);
+    const mutant=source.replace(pattern,replacement); assert.notEqual(mutant,source); await writeFile(engine,mutant);
+    const b=await build(path,owner);
     if(index<3) assert.throws(()=>arithmetic(b.bundle,expected),assert.AssertionError);
     else { const inputPath=join(path,"mutant-bundle.json"); await writeFile(inputPath,b.bytes);
-      const r=await run(["export","--root",root,"--dataset",dataset,"--input",inputPath,"--mode","commercial"],owner);
+      const r=await run(["export","--root",path,"--dataset",dataset,"--input",inputPath,"--mode","commercial"],owner);
       assert.equal(r.code,0,r.err); assert.throws(()=>commercialContract(JSON.parse(r.out)),assert.AssertionError); }
   }
 });

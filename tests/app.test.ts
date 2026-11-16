@@ -440,7 +440,8 @@ test("O4 reviewed comparison allows corrections and rejects cached supplements a
       const cookie = await session(app.fetch);
       const path = await submitNative(app.fetch, cookie, { ...nativeFields, polymer: "PP", massKg: "2000" });
       const html = await ownedPage(app.fetch, cookie, path);
-      assert.match(html, /humanApproval: pending/);
+      assert.match(html, /현장 담당자 승인 대기/);
+      assert.doesNotMatch(html, /humanApproval:/);
       assert.match(html, /<form\b/);
       assert.match(html, /기준선/);
       assert.doesNotMatch(await ownedPage(app.fetch, cookie, path + "/report"), /<form\b/);
@@ -500,9 +501,8 @@ test("O4 source and packaged launchers reduce missing questions before review an
       const initial = await page.text();
       const polymerQuestion = "확인된 수지 종류와 이를 확인한 자료(라벨·재질 명세 등)가 있나요?";
       const massQuestion = "확인된 질량은 몇 kg인가요?";
-      const answerGuidance = '추가 답변은 필드별 JSON으로 입력해 주세요. 예: {&quot;massKg&quot;:100,&quot;process&quot;:&quot;사출&quot;}. 숫자에는 따옴표를 붙이지 않습니다.';
       const questions = (html: string): string[] => {
-        const list = html.match(/<h1>추가 정보 필요<\/h1><ul>(.*?)<\/ul>/s);
+        const list = html.match(/<h1>추가 정보 필요<\/h1>[\s\S]*?<ul>(.*?)<\/ul>/s);
         assert.ok(list, `${launcher}: expected needs-information`);
         const contents = list[1];
         assert.ok(typeof contents === "string");
@@ -511,8 +511,8 @@ test("O4 source and packaged launchers reduce missing questions before review an
           assert.ok(question);
           return question;
         });
-        assert.equal(items.filter((item) => item === answerGuidance).length, 1);
-        return items.filter((item) => item !== answerGuidance);
+        assert.ok(!items.some(item => item.includes("JSON")));
+        return items;
       };
       assert.deepEqual(questions(initial), [polymerQuestion, massQuestion]);
       assert.match(initial, /name="answers"/);
