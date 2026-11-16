@@ -18,7 +18,8 @@ No real application state, photos, or field inputs are opened.
 The three sequential checks are:
 
 1. Submit synthetic PP text with server-owned reviewed synthetic resources.
-   Compare the committed decision with fresh host-domain execution, require
+   Require `state=compared`, at least one recommendation and present
+   `preExecutionChecks`. Compare the committed decision with fresh host-domain execution, require
    available cost/carbon scenarios and processor candidates, keep human approval
    pending, and compare the printable app report with host rendering.
 2. Submit the same synthetic text with mass omitted. Require the host's
@@ -40,7 +41,11 @@ model decisions or fallback success are supplied.
 One exclusively created `artifacts/live-check/<random UUID>/result.json` records
 HEAD SHA, date, provider/model, per-case pass/failure category, decision state,
 HTTP status, validated request IDs, safe provider trace, token counters, duration,
-dispatch count, report equality and preservation checks. It is fsynced and made
+dispatch count, report equality and preservation checks. Comparison results also record the safe scalars
+`recommendationCount` and `preExecutionChecksPresent` (null when no comparison
+was observed). These expose the normal acceptance evidence without saving a raw
+decision. Missing or empty recommendations and absent execution checks cannot
+pass merely because host and report agree. The result file is fsynced and made
 read-only (0400); reruns create new directories. SHA describes HEAD; review the
 working patch separately for uncommitted changes. The report contains no prompts,
 raw decisions, provider errors, credential paths, headers, tokens, or accounts.
@@ -76,6 +81,25 @@ separately as `live=false` in QA evidence. The production command cannot detect
 external monkey-patching; its `live` flag describes its configured transport,
 not independent attestation.
 An offline passing report is never evidence of a successful live subscription run.
+
+The executable CLI regression also substitutes a historical recommendation-module
+boundary in its owned process: both host comparison and committed decision omit
+recommendations, while report equality and telemetry still succeed. Normal must
+fail and missing-information/logout must keep passing. Shared historical
+`DecisionResult` fields remain optional. Empty recommendations, or recommendations
+without execution checks, are rejected earlier by today's shared parser. Testing
+the live-check guard independently for those shapes requires isolated QA that
+also substitutes that historical parser boundary; the permanent CLI test does
+not claim to reach those shapes, and production has no extra test seam.
+
+Subscription preflight keeps missing, flat, signed-out and injected-auth checks.
+For multiple SDK account slots, account selection belongs to the SDK stream;
+the provider's flat projection must not reject a valid pooled selection first.
+Offline fabricated flat, pooled, stale-flat/pinned and managed-pool wire tests
+verify this compatibility only. A real profile's cause and successful inference
+remain unverified; no login, refresh or real provider execution is established
+by these tests. The 2026-11-05 synthetic assessment date and authored evidence
+validity are unchanged; no `verifiedThrough` date is extended.
 
 The owner still needs to run real checks after H/O flow PR merges, daily through
 the 11/20 feature freeze, and on 11/24 before the 11/25 presentation. Keep those

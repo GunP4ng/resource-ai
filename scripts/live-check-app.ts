@@ -32,6 +32,8 @@ export interface CaseResult {
   name: "normal" | "missing-information" | "app-logout";
   passed: boolean;
   state: "compared" | "needs-information" | "needs-review" | null;
+  recommendationCount: number | null;
+  preExecutionChecksPresent: boolean | null;
   failure: string | null;
   httpStatus: number | null;
   requestIds: string[];
@@ -43,6 +45,7 @@ export interface CaseResult {
   priorStatePreserved: boolean | null;
 }
 export const emptyCase = (name: CaseResult["name"]): CaseResult => ({ name, passed: false, state: null, failure: null,
+  recommendationCount: null, preExecutionChecksPresent: null,
   httpStatus: null, requestIds: [], traceId: null, usage: null, dispatches: 0, elapsedMs: 0,
   reportVerified: false, priorStatePreserved: null });
 
@@ -103,6 +106,10 @@ export async function checkApp(options: { readonly authPath?: string; readonly t
         priorPath ??= path;
         const decision = snapshot.assessment.decision;
         active.state = decision.state;
+        if (decision.state === "compared") {
+          active.recommendationCount = decision.recommendations?.length ?? 0;
+          active.preExecutionChecksPresent = decision.preExecutionChecks !== undefined;
+        }
         const execution = snapshot.assessment.execution;
         active.usage = usageResponses.get(active) === active.dispatches ? safeUsage(execution?.usage) : null;
         const trace = execution?.traceId;
@@ -117,6 +124,7 @@ export async function checkApp(options: { readonly authPath?: string; readonly t
           execution: execution ? { traceId: execution.traceId, usage: execution.usage ?? null } : undefined });
         const expectedState = massKg === null ? "needs-information" : "compared";
         const validComparison = decision.state !== "compared" || decision.humanApproval === "pending"
+          && (decision.recommendations?.length ?? 0) > 0 && decision.preExecutionChecks !== undefined
           && decision.scenarios.length > 0 && decision.processors.length > 0
           && decision.scenarios.every(s => s.netCost.state === "available" && s.netEmissions.state === "available");
         active.passed = active.failure === null && decision.state === expectedState && canonical(decision) === canonical(expected)

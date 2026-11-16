@@ -9,10 +9,23 @@ import { ModelRuntime } from "@code-yeongyu/senpi";
 const marker = "PRIVATE_DIAGNOSTIC_synthetic@example.invalid_synthetic-refresh";
 if (process.env["H48_OWNED_WIRE_CHILD"] === "1") {
   // Preload affects only this owned subprocess. The shipped entry point is unchanged.
+  if (process.env["H48_SDK_WIRE_CHILD"] === "historical") {
+    const { mock } = await import("bun:test");
+    const recommendation = await import("../src/recommendation.ts");
+    const recommend = recommendation.recommend;
+    mock.module("../src/recommendation.ts", () => ({ ...recommendation,
+      recommend(...args: Parameters<typeof recommend>) {
+        const { recommendations: _recommendations, ...historical } = recommend(...args);
+        return historical;
+      } }));
+    process.env["H48_SDK_WIRE_CHILD"] = "normal";
+    await import("./live-check.test.ts");
+  } else {
   globalThis.fetch = Object.assign(async () => Response.json({ error: { message: marker } },
     { status: 429, headers: { "x-oai-request-id": "req_cli_owned" } }), { preconnect() {} });
+  }
 } else {
-  for (const mode of ["normal", "rate-limit"] as const) {
+  for (const mode of ["normal", "historical", "rate-limit"] as const) {
   test(`shipped CLI ${mode} writes one secret-free result through the SDK and app`, async () => {
     const root = mkdtempSync(join(tmpdir(), "live-check-command-owned-")), authPath = join(root, "auth.json");
     try {
@@ -37,13 +50,25 @@ if (process.env["H48_OWNED_WIRE_CHILD"] === "1") {
       const parsed: unknown = JSON.parse(report); assert.ok(typeof parsed === "object" && parsed !== null && "cases" in parsed);
       assert.ok(Array.isArray(parsed.cases)); assert.equal(parsed.cases.length, 3);
       for (const item of parsed.cases.slice(0, 2)) {
-        assert.equal(item.dispatches, mode === "normal" ? 2 : 1);
-        assert.equal(item.httpStatus, mode === "normal" ? 303 : 429);
+        assert.equal(item.dispatches, mode === "rate-limit" ? 1 : 2);
+        assert.equal(item.httpStatus, mode === "rate-limit" ? 429 : 303);
         if (mode === "normal") {
           assert.equal(item.passed, true); assert.equal(item.reportVerified, true); assert.equal(item.failure, null);
-        } else {
+        } else if (mode === "rate-limit") {
           assert.equal(item.failure, "rate-limit"); assert.deepEqual(item.requestIds, ["req_cli_owned"]);
         }
+      }
+      if (mode === "historical") {
+        // Both host execution and committed result lack recommendations: equality
+        // and report rendering alone cannot prove current live-check acceptance.
+        assert.equal(parsed.cases[0].state, "compared");
+        assert.equal(parsed.cases[0].reportVerified, true);
+        assert.equal(parsed.cases[0].recommendationCount, 0);
+        assert.equal(parsed.cases[0].preExecutionChecksPresent, true);
+        assert.equal(parsed.cases[0].passed, false);
+        assert.equal(parsed.cases[0].failure, "required-result-unverified");
+        assert.equal(parsed.cases[1].state, "needs-information"); assert.equal(parsed.cases[1].passed, true);
+        assert.equal(parsed.cases[2].passed, true); assert.equal(parsed.cases[2].priorStatePreserved, true);
       }
       assert.equal(parsed.cases[2].dispatches, 0); assert.equal(parsed.cases[2].httpStatus, 403);
       // External wire substitution cannot be detected by the production CLI. This is offline QA, never live evidence.

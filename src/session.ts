@@ -384,12 +384,17 @@ function createModelRunner(provider: "azure-openai-responses" | "chatgpt-subscri
       if (provider === "azure-openai-responses" && key) modelRuntime.authStorage?.setRuntimeApiKey(provider, key);
       if (provider === "chatgpt-subscription") {
         if (!await modelRuntime.checkAuth(provider, { signal })) throw new SessionFailure("not-configured");
-        try {
-          const auth = await modelRuntime.getAuth(provider, { signal });
-          if (!auth) throw new SessionFailure("authentication");
-        } catch {
-          if (signal.aborted) throw new SessionFailure("cancelled");
-          throw new SessionFailure("authentication");
+        // A pooled stream resolves its own account; provider-level auth reads only the flat projection.
+        const stored = modelRuntime.authStorage?.get(provider);
+        if ((stored !== undefined && "signedOut" in stored && stored["signedOut"] === true)
+          || (modelRuntime.authStorage?.listSlots(provider).length ?? 0) <= 1) {
+          try {
+            const auth = await modelRuntime.getAuth(provider, { signal });
+            if (!auth) throw new SessionFailure("authentication");
+          } catch {
+            if (signal.aborted) throw new SessionFailure("cancelled");
+            throw new SessionFailure("authentication");
+          }
         }
       }
       const stream = session.agent.streamFunction;
