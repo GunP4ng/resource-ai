@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { mkdtemp, mkdir, writeFile, readFile, stat, readdir, rm, chmod, truncate } from "node:fs/promises";
+import { mkdtemp, mkdir, writeFile, readFile, stat, readdir, rm, chmod, truncate, symlink, link, rename } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -147,7 +147,7 @@ test("concurrent different valid package bytes refuse overwrite", async t => {
   assert.ok([f.bytes, bytes].includes(await readFile(f.target, "utf8"))); assert.equal((await stat(f.target)).nlink, 1);
 });
 
-for (const scenario of ["missing-state", "missing-database", "malformed-state", "disabled", "unknown", "owner", "case", "expected-revision", "artifact-hash", "closed", "changed-input", "invalid-package", "oversize-source", "public-source", "public-root", "target-parent-file", "conflict"] as const) {
+for (const scenario of ["missing-state", "missing-database", "malformed-state", "disabled", "unknown", "owner", "case", "expected-revision", "artifact-hash", "closed", "changed-input", "invalid-package", "oversize-source", "public-source", "public-root", "linked-source", "hardlinked-source", "linked-root", "target-parent-file", "conflict"] as const) {
   test(`CLI refuses ${scenario} without state mutation or replacement`, async t => {
     const f = await fixture(t);
     switch (scenario) {
@@ -175,6 +175,9 @@ for (const scenario of ["missing-state", "missing-database", "malformed-state", 
       case "oversize-source": await truncate(f.source, 64 * 1024 * 1024 + 1); break;
       case "public-source": await chmod(f.source, 0o644); break;
       case "public-root": await chmod(f.resources, 0o755); break;
+      case "linked-source": await rename(f.source, f.source + ".original"); await symlink(f.source + ".original", f.source); break;
+      case "hardlinked-source": await link(f.source, f.source + ".linked"); break;
+      case "linked-root": await rename(f.resources, f.resources + ".original"); await symlink(f.resources + ".original", f.resources); break;
       case "target-parent-file": await writeFile(join(f.resources, "installer-owner"), "blocked", { mode: 0o600 }); break;
       case "conflict": await mkdir(join(f.resources, "installer-owner", f.input.caseId), { recursive: true, mode: 0o700 }); await writeFile(f.target, "existing private conflict", { mode: 0o600 }); break;
     }

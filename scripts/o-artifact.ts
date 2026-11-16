@@ -1,39 +1,11 @@
 import { randomUUID } from "node:crypto";
-import { constants, closeSync, fstatSync, fsyncSync, linkSync, lstatSync, mkdirSync, openSync, readSync, realpathSync, unlinkSync, writeFileSync, type Stats } from "node:fs";
-import { dirname, isAbsolute, join, resolve } from "node:path";
+import { constants, closeSync, fsyncSync, linkSync, mkdirSync, openSync, unlinkSync, writeFileSync, type Stats } from "node:fs";
+import { isAbsolute, join, resolve } from "node:path";
 import { createCaseStore } from "../src/o-case-store.ts";
 import { validateResourceArtifact } from "../src/o-resources.ts";
 import { openRuntimeDatabase } from "../src/o-runtime-db.ts";
-import { revision } from "../src/o-validation.ts";
+import { ArtifactOperatorError as InstallError, privateArtifactEntry as privateEntry, readPrivateArtifact as readPrivate, resolveArtifactTarget } from "../src/o-artifact-target.ts";
 
-class InstallError extends Error {
-  constructor(readonly code: "arguments" | "filesystem" | "target" | "artifact" | "conflict") { super(code); }
-}
-const same = (a: Stats, b: Stats) => a.dev === b.dev && a.ino === b.ino && a.size === b.size && a.mtimeMs === b.mtimeMs && a.ctimeMs === b.ctimeMs;
-function privateEntry(path: string, directory: boolean): Stats {
-  const info = lstatSync(path);
-  if (info.uid !== process.getuid?.() || (info.mode & 0o077) !== 0 || info.isSymbolicLink()
-    || (directory ? !info.isDirectory() || (info.mode & 0o700) !== 0o700 : !info.isFile() || info.nlink !== 1 || (info.mode & 0o600) !== 0o600)) throw new InstallError("filesystem");
-  if (realpathSync(path) !== path) throw new InstallError("filesystem");
-  return info;
-}
-/** Bounded descriptor read; private canonical parent excludes other-UID path writers. */
-function readPrivate(path: string): Buffer {
-  privateEntry(dirname(path), true);
-  const before = privateEntry(path, false);
-  if (before.size > 64 * 1024 * 1024) throw new InstallError("filesystem");
-  const fd = openSync(path, constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_NONBLOCK);
-  try {
-    if (!same(before, fstatSync(fd))) throw new InstallError("filesystem");
-    const bytes = Buffer.alloc(before.size + 1); let offset = 0;
-    while (offset < bytes.length) {
-      const count = readSync(fd, bytes, offset, Math.min(65536, bytes.length - offset), offset);
-      if (!count) break; offset += count;
-    }
-    if (offset !== before.size || !same(before, fstatSync(fd)) || !same(before, privateEntry(path, false))) throw new InstallError("filesystem");
-    return bytes.subarray(0, offset);
-  } finally { closeSync(fd); }
-}
 function syncDirectory(path: string) {
   const fd = openSync(path, constants.O_RDONLY | constants.O_DIRECTORY | constants.O_NOFOLLOW);
   try { fsyncSync(fd); } finally { closeSync(fd); }
@@ -62,27 +34,20 @@ async function artifactMain(args = process.argv.slice(2)): Promise<number> {
     database.exec("PRAGMA busy_timeout=1000");
     cases = createCaseStore(Date.now, undefined, runtime);
     const store = cases, storage = runtime;
-    const current = () => {
-      storage.assertReady();
-      const account = database.query<{ actor_id: string }, [string]>("SELECT actor_id FROM accounts WHERE username=? AND disabled=0").get(username);
-      if (!account || !/^[A-Za-z0-9_-]{1,256}$/.test(account.actor_id)) throw new InstallError("target");
-      const snapshot = store.read(`actor:${account.actor_id}`, caseId);
-      if (!snapshot || snapshot.editUntil <= Date.now() || revision(snapshot.input) !== expected) throw new InstallError("target");
-      return { actor: account.actor_id, input: snapshot.input };
-    };
+    const current = () => resolveArtifactTarget(storage, store, { username, caseId, expectedRevision: expected });
     const initial = database.transaction(current).deferred();
     const bytes = readPrivate(source);
     let accepted: Awaited<ReturnType<typeof validateResourceArtifact>>;
-    try { accepted = await validateResourceArtifact(JSON.parse(new TextDecoder("utf-8", { fatal: true }).decode(bytes)), initial.input); }
+    try { accepted = await validateResourceArtifact(JSON.parse(new TextDecoder("utf-8", { fatal: true }).decode(bytes)), initial.input, { actorId: initial.actorId }); }
     catch { throw new InstallError("artifact"); }
     // No await between the fresh binding check and publication. IMMEDIATE serializes
     // participating SQLite writers, including account disable and case withdrawal.
     database.transaction(() => {
       const target = current();
-      if (target.actor !== initial.actor) throw new InstallError("target");
+      if (target.actorId !== initial.actorId) throw new InstallError("target");
       const pinned: { readonly path: string; readonly info: Stats }[] = [{ path: root, info: rootIdentity }];
       let directory = root;
-      for (const part of [target.actor, caseId]) {
+      for (const part of [target.actorId, caseId]) {
         privateEntry(directory, true);
         const parent = directory; directory = join(directory, part);
         if (command === "install") {
@@ -93,7 +58,7 @@ async function artifactMain(args = process.argv.slice(2)): Promise<number> {
         catch (error) { if (command === "check" && missing(error)) break; throw error; }
         if (command === "install") syncDirectory(parent);
       }
-      const path = join(root, target.actor, caseId, expected + ".json");
+      const path = join(root, target.actorId, caseId, expected + ".json");
       const recheck = () => {
         storage.assertReady();
         for (const entry of pinned) {
@@ -125,7 +90,7 @@ async function artifactMain(args = process.argv.slice(2)): Promise<number> {
       recheck(); privateEntry(path, false); syncDirectory(directory);
     }).immediate();
     process.stdout.write(JSON.stringify({ status: command === "check" ? "checked" : "installed; reassessment pending",
-      actorId: initial.actor, caseId, inputRevision: expected, artifactSha256: accepted.artifact.sha256 }) + "\n");
+      actorId: initial.actorId, caseId, inputRevision: expected, artifactSha256: accepted.artifact.sha256 }) + "\n");
     return 0;
   } catch (error) {
     process.stderr.write(`Artifact operation failed: ${error instanceof InstallError ? error.code : "unavailable"}.\n`);

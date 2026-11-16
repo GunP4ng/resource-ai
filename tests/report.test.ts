@@ -12,7 +12,7 @@ test("reported string zero survives while missing usage stays unavailable; histo
   assert.match(zero, /사용량 0<\/p>/); assert.doesNotMatch(zero, /사용량 미제공/);
   assert.match(missing, /사용량 미제공/); assert.doesNotMatch(missing, /사용량 0/);
   assert.match(zero, /과거 평가: 현재 입력과 평가 당시 입력이 다릅니다/);
-  assert.match(zero, /구성된 실행기 subscription \(실행 성공과 별개\)/);
+  assert.match(zero, /구성된 실행기 구독 연결 \(실행 성공과 별개\)/);
   assert.match(zero, /제공자 요청 ID를 보증하지 않습니다/); assert.match(zero, /청구 비용 미제공/);
 });
 test("live reports without execution metadata explicitly leave Azure success unverified", () => {
@@ -41,7 +41,8 @@ test("compared report reads function results and preserves pending approval and 
   assert.ok(html.includes("240,000 KRW"));
   assert.ok(html.includes("230,000 KRW"));
   assert.ok(html.includes("45 kgCO2e"));
-  assert.ok(html.includes("humanApproval: pending"));
+  assert.ok(html.includes("현장 담당자 승인 대기"));
+  assert.ok(!html.includes("humanApproval:"));
   assert.ok(html.includes("1순위군 · 견적 B · 일괄 청구"));
   assert.ok(html.includes("2순위군 · 견적 A · 항목별 청구"));
   assert.ok(html.includes("합성 데모 · 모델 호출 없음"));
@@ -49,7 +50,8 @@ test("compared report reads function results and preserves pending approval and 
   const unavailable = renderReport({ ...fixture.result, scenarios: fixture.result.scenarios.map((s) => ({ ...s, netCost: { state: "unavailable", missingInputs: ["quote-missing<script>"] } })), humanApproval: "approved" }, { mode: "live", execution: { traceId: "<trace>", usage: null } });
   assert.ok(unavailable.includes("계산 불가"));
   assert.ok(unavailable.includes("quote-missing&lt;script&gt;"));
-  assert.ok(unavailable.includes("humanApproval: approved"));
+  assert.ok(unavailable.includes("인간 승인 기록 있음"));
+  assert.ok(!unavailable.includes("humanApproval:"));
   assert.ok(unavailable.includes("&lt;trace&gt;"));
   assert.ok(unavailable.includes("사용량 미제공"));
   assert.ok(unavailable.includes("순비용 또는 순배출 자료 부족: 순위 보류"));
@@ -69,12 +71,12 @@ test("summary follows approval; disclosed and printable audits retain exact assu
   const fixture = await demo("normal");
   assert.ok(fixture && fixture.result.state === "compared");
   const html = renderReport(fixture.result, fixture.presentation);
-  assert.match(html, /humanApproval: pending<\/p>\s*<h2>대안 비교 요약<\/h2>/);
+  assert.ok(html.indexOf("현장 담당자 승인 대기") < html.indexOf("대안 비교 요약"));
   assert.ok(html.indexOf("240,000 KRW") < html.indexOf("경로와 조건"));
   const screen = html.match(/<details class="screen-only"><summary>.*?<\/summary>([\s\S]*?)<\/details>/)?.[1];
-  const print = html.match(/<div class="print-only">([\s\S]*?)<h2>제약과 다음 확보 항목/)?.[1];
+  const print = html.match(/<div class="print-only">([\s\S]*?)<\/div>\s*<details id="advanced"/)?.[1];
   assert.ok(screen && print);
-  assert.equal(print, `${screen}</div>\n        `);
+  assert.equal(print, screen);
   for (const scenario of fixture.result.scenarios) {
     for (const line of [...scenario.costLines, ...scenario.carbonLines]) {
       assert.equal(line.amount.state, "available");
@@ -190,7 +192,7 @@ for (const mode of ["material", "energy", "both-unavailable", "supported-zero"] 
     assert.equal(row(`${label} 크레딧`).includes(`${label} 대체효과 제외 경계`), excluded);
     assert.equal(row("순배출").includes(`${label} 대체효과 제외 경계`), excluded);
     if (excluded) {
-      assert.ok(html.match(/<div class="print-only">([\s\S]*?)<h2>제약과 다음 확보 항목/)?.[1]?.includes(`${label} 대체효과 제외 경계`));
+      assert.ok(html.match(/<div class="print-only">([\s\S]*?)<\/div>\s*<details id="advanced"/)?.[1]?.includes(`${label} 대체효과 제외 경계`));
     }
   }
   if (mode === "both-unavailable") {

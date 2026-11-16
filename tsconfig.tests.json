@@ -1,5 +1,6 @@
 {
   "extends": "./tsconfig.json",
-  "include": ["tests/**/*.test.ts"],
+  "compilerOptions": { "types": ["node", "bun-types/sqlite", "bun-types/test", "bun-types/html-rewriter"] },
+  "include": ["tests/**/*.test.ts", "tests/bun-html-rewriter.d.ts"],
   "exclude": ["tests/input.test.ts", "tests/sources.test.ts", "tests/evidence.test.ts", "tests/legal-registry.test.ts", "tests/o-auth.test.ts"]
 }

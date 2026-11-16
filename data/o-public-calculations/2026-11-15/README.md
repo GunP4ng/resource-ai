@@ -170,3 +170,136 @@ midpoint rounding and four temporary owner mutants. The unchanged copied CLI
 must pass; conversion, residue accounting, revenue sign and commercial filter
 mutants must reach numeric/export assertions. Originals are never mutated.
 Parent integration owns the full suite, builds, smoke checks and final review.
+
+## Shared engine and case research contracts
+
+The CLI is now an IO wrapper. Importing it performs no command. Production
+arithmetic lives in `src/o-public-calculation-engine.ts`; the CLI and case
+attachments use that same engine. The original arithmetic, units, source IDs,
+dates, assumptions, nulls and commercial projection remain unchanged.
+
+Public entry points (all paths below are repository-relative):
+
+```ts
+// src/o-public-calculation-data.ts
+readPublicCalculationDataset(options?: {
+  readonly root?: string;
+  readonly directory?: string;
+  readonly evidence?: string;
+}): Promise<VerifiedPublicDataset>;
+// src/o-public-calculation-engine.ts
+buildPublicCalculations(data: VerifiedPublicDataset): PublicCalculationBundle;
+projectCommercialReferences(bundle: PublicCalculationBundle): CommercialReferenceBundle;
+
+// src/o-case-research.ts
+readCaseResearchCatalog(options?: { readonly root?: string }): Promise<VerifiedResearchCatalog>;
+buildCaseResearchAttachment(target: ResearchTarget, sourceCaseId: ResearchSourceCaseId,
+  catalog: VerifiedResearchCatalog): CaseResearchAttachment;
+prepareResearchCaseRecord(target: ResearchPreparationTarget, sourceCaseId: ResearchSourceCaseId,
+  catalog: VerifiedResearchCatalog): Promise<ResearchCaseArtifact>;
+
+// src/o-case-research-validation.ts
+validateCaseResearchAttachment(value: unknown, target: ResearchTarget,
+  catalog: VerifiedResearchCatalog): CaseResearchAttachment;
+validateResearchCaseArtifact(value: unknown, target: ResearchTarget,
+  catalog: VerifiedResearchCatalog, signal: AbortSignal): Promise<ResearchCaseArtifact>;
+```
+
+`ResearchTarget` is `{actorId, input: CaseInput, inputRevision}`.
+`ResearchPreparationTarget` additionally requires `{codeRevision, signal}`.
+The server/operator must resolve the actual active actor and owned case first;
+these pure functions do not authenticate a caller-declared actor ID. The
+revision must equal `revision(input)`. Only `caseId` may differ from the selected
+source original. `ResearchSourceCaseId` is exactly the three original IDs
+`OYS-20261110-001`, `OYS-20261110-002`, `OYS-20261110-003`.
+`readCaseResearchCatalog` admits only the fixed fixture and manifest byte hashes;
+it does not accept an attachment-selected dataset, path or source definition.
+The general calculation reader retains CLI synthetic-premise experiments.
+
+`CaseResearchAttachment` and its TypeBox schema are exported from
+`src/o-case-research-schema.ts`. This explicit display-only type has version 1,
+purpose `research-display`, exact calculation label and scenario status,
+actor/case/revision/historical-date binding, `calculations`, `processors` and
+`use`. Its use declarations are authenticated research display, private runtime
+storage, redistribution not authorized by this package, commercial export
+excluded and model transmission excluded. It is never a DomainResources,
+DecisionResult, AssessmentEnvelope or model-metadata field.
+
+`calculations` contains `sourceCaseId`, fixture/manifest/original/provenance and
+provenance-manifest hashes, the implementation receipt, verification
+`pinned-transcriptions`, the existing model version and full source metadata,
+the selected case's transitive input ledger, one original case, three routes,
+three results and limitations. Original JSON/provenance, historical date/law,
+source cells, rights, boundaries, periods, units, assumptions, dependencies,
+display strings and null reasons retain their existing fields. Results keep
+original source-case IDs; the target binding separately identifies the app case.
+Consumers render `results[].display` directly without recomputing numbers.
+
+`CaseArtifact = LegacyCaseArtifact | ResearchCaseArtifact` is exported from
+`src/o-case-artifact.ts`. The v1 type derives from `prepareCaseRecord`. The v2
+record derives from that same production builder, has `version:2`, synthetic
+origin, empty `resources:{}`, and `research`; its outer hash includes all of
+research. `ResearchCaseArtifactSchema` is the untrusted envelope boundary.
+Cached assessment/decision values remain opaque there and are never cast into
+business types: full validation regenerates the typed record with the existing
+domain and licensed bundled source reader, preserves the validated historical
+recording timestamp, then canonical-compares the entire supplied record.
+Attachment validation independently regenerates every attached field from the
+fixed catalog and actual target. Recomputing an outer hash cannot authorize
+changed facts, rights, source lineage, dependencies, display values or fields.
+The builder returns a detached attachment to protect catalog object identity.
+
+`CaseResearchReport` is `{artifactSha256, attachment: CaseResearchAttachment}`.
+Runtime integration must return `{snapshot,research}` atomically from its saved
+review hash, keep research out of model requests, and exclude it server-side
+from default/commercial reports. This unit supplies contracts/builders and
+validation; it does not change the store, loader, routes or renderer.
+
+## Processor inquiry selection
+
+`readPublicProcessorDirectory(root)` verifies the actual permitted sanitized
+CSV and source manifest. `buildPublicProcessorResearch(directory, region)` is
+restricted to the three original source-case regions. Both are exported from
+`src/o-public-processors.ts` with `PublicProcessorResearch` and its TypeBox schema.
+The parser retains original header-inclusive coordinates and every directory
+row, including duplicate-company entries; it does not count facilities.
+
+For all three cases, rows 2–22 are excluded as `municipal-collection-only`.
+Rows 23–24 have explicit Ulsan service areas that do not match the source-case
+regions and are excluded as `listed-service-area-not-matched`. Rows 25–28 are
+incineration inquiry listings, and 29–32 are landfill inquiry listings. These
+eight rows all have blank service areas (`serviceMatch:"unknown"`). Each carries
+its full listing, canonical row SHA-256, purpose `disposal-inquiry`, null case
+waste code, unverified permit and unconfirmed acceptance. The source entry keeps
+rights, original→sanitized SHA lineage and removed personal-data columns; dataset
+and source-manifest byte hashes are included separately. No recycling-directory
+evidence exists. No listing establishes facility location/distance, service
+coverage, waste-code eligibility, acceptance, a permit or energy recovery.
+
+## Packaged asset requirements
+
+Default source execution resolves the repository root relative to the module,
+independently of cwd. Packaged callers pass the trusted asset root explicitly
+(`--root` for the calculation CLI, `{root}` for the readers). Package exactly:
+
+- `data/o-public-calculations/2026-11-15/{fixtures,manifest}.json`;
+- every public upstream path in its pinned manifest: KECO CSV, the three
+  original candidate JSON files and their candidate manifest;
+- `data/reference/ulsan-processors-2025-12.sanitized.csv` and
+  `data/sources/manifest.json`;
+- original implementation source files named by the fixed `implementationPaths`
+  list in `src/o-public-calculation-data.ts`: CLI wrapper; all nine calculation,
+  processor, research and artifact modules; `o-validation.ts`, `input.ts`,
+  `sources.ts` and `case-record.ts`;
+- the existing licensed J registry/snapshot assets required by
+  `prepareCaseRecord` (including historical 290881 assets). Missing J snapshots
+  retain the existing explicit sourceIssues behavior; they are never fetched.
+
+`implementation.files` records actual source-file byte hashes and
+`implementation.sha256` is `revision(files)`; `calculator_sha256` now denotes
+that aggregate, rather than only the CLI wrapper. The full fixed list is used
+for both CLI and attachment receipts. Original source `.ts` files must accompany
+a bundled executable because bundle bytes alone cannot stand in for this list.
+Do not package private WARM PDF/Wonju HTML, the personal-data processor original,
+GIR/KEITI factors, locked labels or raw700. Optional private-evidence checking
+remains an explicitly operator-configured CLI action.
