@@ -1,11 +1,12 @@
 # 검증 게이트 단순화와 동일 개발 18건 재평가
 
-**이번 전후 실행은 모두 compared 7/18이다. 추천 건수 증가 조건은 충족하지 못했다.**
-과거 compared 0/18은 이전 코드의 기록이며 이번 수정 전 값으로 재사용하지 않는다.
+**발표일 2026-11-25 대조에서 compared가 0/18 → 7/18로 증가했다.**
+원래 평가일을 유지한 첫 대조는 양쪽 모두 7/18이다. 두 실험을 구분한다.
+과거 compared 0/18 기록은 이번 수정 전 값으로 재사용하지 않았다.
 기준선 `87e04c5`에는 이미 #65, #67 등의 추천 모드 개선이 포함되어 있다.
-입력·평가일·코퍼스·위험 차단을 바꾸어 증가를 만들지 않았다.
+첫 대조는 입력·평가일·코퍼스를 그대로 유지했다. 리드가 추가 요청한 두 번째 대조에서만 양쪽의 assessmentDate를 동일하게 2026-11-25로 바꿨으며 다른 입력과 위험 차단은 바꾸지 않았다.
 
-## 동일 조건 결과
+## 원래 평가일을 유지한 동일 조건 결과
 
 | C 서버 상태 | 수정 전 | 수정 후 |
 | --- | ---: | ---: |
@@ -101,3 +102,52 @@ RESOURCE_MODEL_RUNNER=subscription RESOURCE_MODEL_ID=gpt-6-sol \
 
 로컬 캡처와 로그는 레인 폴더 `../evidence/`의 `browser-results.json`, `normal.png`, `normal-mobile.png`, `hazard.png`, `contradiction.png`, `full-tests-final.log`, `typecheck-final.log`, `build-final.log`에 보존했다.
 브라우저를 닫고 전용 프로필을 제거했으며 앱 종료 후 3179 포트 연결 거부를 확인했다.
+
+## 추가 대조: 모든 평가일을 2026-11-25로 고정
+
+리드 요청에 따라 같은 18건의 `assessmentDate`만 2026-11-25로 바꿔 한 번 더 대조했다.
+기존 사례의 고정 날짜는 verifiedThrough 만료 전이므로 첫 대조가 이 만료 차단을 실행하지 않았다는 가설을 검사한다.
+이것은 별도 날짜 시나리오이며 원래 코퍼스의 7→7 결과를 대체하지 않는다.
+
+| C 서버 상태 | 기준선 87e04c5 | PR 67bf56a |
+| --- | ---: | ---: |
+| compared | 0 | 7 |
+| needs-review | 18 | 4 |
+| needs-information | 0 | 7 |
+| blocked | 0 | 0 |
+| 오류 | 0 | 0 |
+| 전체 시도 | 18 | 18 |
+
+추천 산출은 **0% → 38.9% (7/18)**다. 날짜와 무관한 유해 접촉·입력 모순 등으로 보류된 H003/H005/O006/O008 네 사례는 계속 needs-review이며, 정보가 부족한 일곱 사례는 needs-information으로 돌아왔다.
+이는 산출 상태 관측으로, 독립 사람 라벨 기반 정확도·위험 탐지 성능을 뜻하지 않는다.
+발표일 비교는 변경 묶음의 효과를 보여주며, 수집 후 30일 경과 검사와 verifiedThrough 검사 각각의 독립 효과를 분리한 실험은 아니다.
+
+### 통제와 실행
+
+- 기준선: `87e04c541408df6c6f3aed14d08548c621de738c`의 별도 detached worktree.
+- PR: `67bf56a6c8a6bd1add2bf21de861c39d261d93e0`. 양쪽 원시 gitSha가 실제 실행 커밋과 일치한다.
+- [공유 manifest](../data/evaluation/simplify-presentation/development.json)와 그 하위 18개 입력을 양쪽에서 그대로 사용했다. manifest SHA는 `9754dfe060db420839750f4c8c1004a78a168739f8c9ee0f17b0a32e8a351c30`이다.
+- [날짜 변경 증명](../data/evaluation/simplify-presentation/date-only-changes.json): 원본 JSON에서 assessmentDate 문자열만 교체했고, 모든 다른 필드는 동일하다. manifest의 inputRef/sourceHash만 복사본 경로와 실제 바이트에 맞춰 갱신했다.
+- H 입력 10개의 원래 CRLF도 보존했다. 따라서 `git diff --check`는 그 복사본 120행의 CR을 trailing whitespace로 보고한다. 평가 입력 SHA와 날짜 외 바이트 동일성을 보존하기 위해 줄바꿈을 정규화하지 않았으며 그 검사를 통과했다고 주장하지 않는다.
+- 팔별로 입력 SHA·실제 입력 SHA·코퍼스·모델·프롬프트·러너·출처 버전·토큰/호출 한도·timeout이 전부 일치한다. 사진 전송은 없다.
+- 각각 1건 smoke를 먼저 실행: 기준선 `e0368b1b-2119-4a8e-928c-2ad3773ced47`, PR `b4cc16e5-4451-4118-b357-502f2897330a`. 각각 4회 호출·오류 0·exit 0이며 동일 첫 사례는 needs-review → compared다.
+- 이후 양쪽 전체 18건: 각각 A/B/C 54행, 72회 호출, 오류 0, **exit 0**. A/B/C 모두 18/18 성공이다. 실패를 없애기 위한 재시도는 없다.
+
+각 체크아웃에서 같은 명령을 실행하고 출력 디렉터리만 구분했다.
+
+```sh
+RESOURCE_MODEL_RUNNER=subscription RESOURCE_MODEL_ID=gpt-6-sol \
+  bun scripts/eval-development.ts \
+  --cases /home/gunp4ng/working/resource-simplify-20261117/resource-ai/data/evaluation/simplify-presentation/development.json \
+  --out /home/gunp4ng/working/resource-simplify-20261117/resource-ai/data/evaluation/simplify-presentation-before \
+  --max-cases 18 --max-calls 90 --timeout-ms 60000
+```
+
+PR 실행의 `--out`은 `simplify-presentation-after`다. 각 smoke는 같은 입력에 `--max-cases 1 --max-calls 5`, 출력에 `-smoke`를 붙였다.
+기존 설치한 잠금 의존성을 공유했고 실행 Bun은 모두 1.4.4다. 평가 이후 기준선 node_modules 링크와 임시 worktree를 제거했다.
+
+- [발표일 전후 집계·통제 조건·사례별 상태](../data/evaluation/simplify-presentation-summary.json)
+- [기준선 전체 원시 기록](../data/evaluation/simplify-presentation-before/1845efdf-054d-45fd-9eb6-1443150e50ba/)
+- [PR 전체 원시 기록](../data/evaluation/simplify-presentation-after/84f0a096-7379-473e-b0b2-dd6dc8c3631d/)
+- [기준선 smoke](../data/evaluation/simplify-presentation-before-smoke/e0368b1b-2119-4a8e-928c-2ad3773ced47/)
+- [PR smoke](../data/evaluation/simplify-presentation-after-smoke/b4cc16e5-4451-4118-b357-502f2897330a/)

@@ -1,0 +1,12 @@
+{
+  "caseId": "OYS-20261110-009",
+  "description": "SYNTHETIC — newly authored text-only fictional scenario: Reuse and recycling comparison question. No field records, photos or external evidence supplied. massKg=30 is a fictional scenario parameter, not a measured value. No legal eligibility, price or emissions factor is asserted.",
+  "photoRefs": [],
+  "process": "Fictional PP transport inserts are retired from an assembly line after internal circulation. The scenario asks about further reuse versus mechanical recycling; remaining service life, functional unit, system boundary, transport and evidence are unknown.",
+  "polymer": "PP",
+  "contamination": "Dust is stipulated; cleaning condition and residue composition are unknown.",
+  "hazardousContact": "unknown",
+  "massKg": 30,
+  "region": "대구광역시",
+  "assessmentDate": "2026-11-25"
+}
