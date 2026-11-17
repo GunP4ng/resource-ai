@@ -9,7 +9,7 @@ available independently. H issue #8 is closed; this work stays under #12.
 
 ## One execution authority
 
-**2026-11-12 correction:** PR #28 (`2ee1cb2`) added a subscription target next to the Azure target described below. `SubscriptionTarget` (`src/photo-execution.ts`) binds `chatgpt-subscription`, the fixed endpoint, model ID and account hash. Subscription photo execution is therefore implemented but opt-in: the default `bun run app` launcher never publishes an authority, so photos are not sent to any model unless a server integrator publishes approved mappings. No live account or field photo run has been accepted.
+**2026-11-12 correction:** PR #28 (`2ee1cb2`) added a subscription target next to the Azure target described below. `SubscriptionTarget` (`src/photo-execution.ts`) binds `chatgpt-subscription`, the selected finite endpoint, model ID and account hash. Subscription photo execution is therefore implemented but opt-in: the default `bun run app` launcher never publishes an authority, so photos are not sent to any model unless a server integrator publishes approved mappings. No live account or field photo run has been accepted.
 
 H owns an in-process execution authority containing a checked Azure
 configuration and explicit target-to-scope mappings. O consumes its issued
@@ -143,5 +143,51 @@ claim to reverse provider processing or billing.
   dispatch and commit are refused.
 - Same-label different-target changes, A-to-B-to-A changes, forged tickets,
   different authority instances and same-origin wrong deployments fail closed.
-- Tests use synthetic images and injected transport only. Subscription photos
-  remain disabled; no production mapping or live execution is invented.
+- Tests use synthetic images and injected transport only. No production mapping
+  or live execution is invented.
+
+## Explicit subscription routes
+
+`SubscriptionConfiguration.route` defaults to `codex`, preserving the legacy
+endpoint and account-header gate. Explicit `siwc` selects only
+`https://api.openai.com/v1/responses`. The issued photo target contains that
+endpoint, model and approved account hash; route changes invalidate the old
+ticket and consent binding. O/H operational configuration must pair
+`target.route="siwc"` with that exact `target.endpoint` and matching photo scope
+mapping. Arbitrary endpoints and mismatched route/endpoint pairs are rejected.
+
+SiWC selects a flat credential or an explicitly named `credentialSlot` in a
+managed OAuth store, without following or changing pin/order. The selected
+credential must have `route="siwc"`, `planUsageEnabled=true`, the
+`chatgpt.tokens.use.direct` scope and sufficient remaining expiry. Canonical
+SiWC credentials require the selected slot's SDK-verified `subject`, fixed
+`issuer="https://auth.openai.com"` and nonempty issued `clientId`.
+`dynamic_agent_client` is the registration entrypoint and is rejected here.
+`accountIdSha256` is SHA-256 of `JSON.stringify([issuer, subject, clientId])`
+using those exact selected strings. Subject/email alone do not identify a
+workspace; a different issued registration changes the approved connection
+and invalidates the old photo binding. Slot projection preserves all three
+selected identity fields without inheriting pool-envelope metadata.
+JWT or opaque access tokens need no legacy account claim. Missing canonical
+metadata is rejected on SiWC; legacy Codex retains its account-ID/header
+contract. This app does not revalidate ID-token signatures or perform login.
+The emitted Bearer must equal the selected credential. No refresh, rotation
+or store mutation is performed.
+
+The pinned subscription catalog supplies the configured model object; the SiWC
+route explicitly adapts it to `provider=openai`, `api=openai-responses` and the
+public Responses base URL. The operator must select a model available to the
+approved account. The real SDK serializes text/images and consumes SSE. Before
+dispatch the host verifies method, exact endpoint, model, `store=false`,
+`stream=true`, output allowance and image SHA, retaining approval/audit/photo
+checks and the final current-ticket assertion. Failed/incomplete/interrupted
+SSE and streams over 512 KiB cannot commit an assessment. Usage stays unknown
+on failure. Subscription policy still conservatively requires its existing
+uncapped-usage acknowledgement and request quota acknowledgement.
+
+For the direct text launcher only, set `RESOURCE_SUBSCRIPTION_ROUTE=siwc`,
+`RESOURCE_AUTH_PATH`, `RESOURCE_ACCOUNT_ID_SHA256`, and optionally
+`RESOURCE_CREDENTIAL_SLOT`. Operational mode instead takes route/account/slot
+from its explicit private configuration. Azure and default subscription model
+selection are unchanged. Synthetic photos remain functional observations, not
+chemistry, hazardous classification or accuracy evidence.

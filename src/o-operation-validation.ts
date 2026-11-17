@@ -2,7 +2,7 @@ import { Type } from "typebox";
 import { Value } from "typebox/value";
 import type { Database } from "bun:sqlite";
 import { OperationJournalError } from "./o-operation-storage.ts";
-import { SUBSCRIPTION_ENDPOINT } from "./subscription-configuration.ts";
+import { SUBSCRIPTION_ENDPOINT, SIWC_ENDPOINT, subscriptionEndpoint } from "./subscription-configuration.ts";
 
 const strict = { additionalProperties: false } as const;
 const id = Type.String({ pattern: "^[A-Za-z0-9_.-]{1,128}$" }), hash = Type.String({ pattern: "^[a-f0-9]{64}$" });
@@ -21,13 +21,15 @@ export function checkOperationBinding(value: unknown) {
 }
 const payload = Type.Object({ outboundSha256: hash, intendedPhotoSha256: Type.Array(hash, { maxItems: 5 }) }, strict);
 const response = Type.Object({ status: Type.Integer({ minimum: 100, maximum: 599 }), requestId: Type.Union([id, Type.Null()]) }, strict);
-const dispatch = Type.Object({ runId: id, caseRevision: hash, endpoint: Type.Literal(SUBSCRIPTION_ENDPOINT), deployment: Type.Literal(""), modelId: id,
+const endpoint = Type.Union([Type.Literal(SUBSCRIPTION_ENDPOINT), Type.Literal(SIWC_ENDPOINT)]);
+const dispatch = Type.Object({ runId: id, caseRevision: hash, endpoint, deployment: Type.Literal(""), modelId: id,
   attempt: Type.Integer({ minimum: 1, maximum: 10 }), maxOutputTokens: Type.Integer({ minimum: 16, maximum: 8192 }),
   provider: Type.Literal("chatgpt-subscription"), outputLimitEnforced: Type.Literal(false) }, strict);
-const policy = Type.Object({ target: Type.Object({ provider: Type.Literal("chatgpt-subscription"), endpoint: Type.Literal(SUBSCRIPTION_ENDPOINT), modelId: id, accountIdSha256: hash }, strict),
+const policy = Type.Object({ target: Type.Object({ provider: Type.Literal("chatgpt-subscription"), endpoint, modelId: id, accountIdSha256: hash,
+  route: Type.Optional(Type.Union([Type.Literal("codex"), Type.Literal("siwc")])), credentialSlot: Type.Optional(id) }, strict),
   purposeSha256: hash, validFrom: integer, validUntil: integer, requestAllowance: Type.Integer({ minimum: 1, maximum: 1000000 }), concurrentRuns: Type.Integer({ minimum: 1, maximum: 100 }),
   grants: Type.Array(Type.Object({ actorSha256: hash, caseId: id, inputRevision: hash, artifactSha256: Type.Union([hash, Type.Null()]) }, strict), { minItems: 1, maxItems: 100 }) }, strict);
-export function checkOperationPolicy(value: unknown) { if (!Value.Check(policy, value)) throw new OperationJournalError(); return value; }
+export function checkOperationPolicy(value: unknown) { if (!Value.Check(policy, value) || value.target.endpoint !== subscriptionEndpoint(value.target)) throw new OperationJournalError(); return value; }
 export function checkTransportEvidence(value: string | null, kind: "payload" | "response") {
   if (value !== null && !Value.Check(kind === "payload" ? payload : response, JSON.parse(value))) throw new OperationJournalError();
 }

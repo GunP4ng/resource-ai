@@ -9,6 +9,7 @@ import { canonical } from "../src/o-validation.ts";
 import { renderReport } from "../src/report.ts";
 import { syntheticCase, syntheticReviewed } from "./live-check-fixtures.ts";
 import { boundedResponse } from "./live-check-wire.ts";
+import { checkedSubscriptionConfiguration, type SubscriptionRoute } from "../src/subscription-configuration.ts";
 
 const origin = "http://localhost:3148";
 const tokenKeys = ["input", "output", "cacheRead", "cacheWrite", "total"] as const;
@@ -50,15 +51,17 @@ export const emptyCase = (name: CaseResult["name"]): CaseResult => ({ name, pass
   reportVerified: false, priorStatePreserved: null });
 
 /** Same app composition as startApp; only temporary app identity/state is created here. */
-export async function checkApp(options: { readonly authPath?: string; readonly timeoutMs: number },
+export async function checkApp(options: { readonly authPath?: string; readonly timeoutMs: number; readonly route?: SubscriptionRoute; readonly accountIdSha256?: string; readonly credentialSlot?: string },
   results: readonly [CaseResult, CaseResult, CaseResult]) {
+  const subscription = options.route === "siwc" ? checkedSubscriptionConfiguration({ provider: "chatgpt-subscription", route: "siwc", modelId: "gpt-6-sol",
+    authPath: options.authPath ?? "", accountIdSha256: options.accountIdSha256 ?? "", credentialSlot: options.credentialSlot }) : undefined;
   const runtime = createMemoryRuntimeDatabase(), store = createCaseStore(Date.now, undefined, runtime);
   const auth = createLocalAuth(runtime, { origin });
   const [normal, missing, logout] = results;
   let active = normal;
   let totalDispatches = 0;
   const usageResponses = new Map<CaseResult, number>();
-  const runner = createSubscriptionRunner({ enabled: true, modelId: "gpt-6-sol", authPath: options.authPath,
+  const runner = createSubscriptionRunner({ enabled: true, modelId: "gpt-6-sol", authPath: options.authPath, route: options.route, subscription,
     maxTurns: 3, maxOutputTokens: 1500,
     transport: async (url, init) => {
       const result = active;

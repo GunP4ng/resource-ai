@@ -22,6 +22,8 @@ import { revision } from "./o-validation.ts";
 import { photoObservationInstructions, photoObservationParser } from "./photo-observations.ts";
 import type { PhotoObservations } from "./photo-observations.ts";
 import { createDecisionReferences } from "./decision-references.ts";
+import { subscriptionRoute, subscriptionCredentials, siwcAccessToken, SIWC_ENDPOINT, type SubscriptionConfiguration, type SubscriptionRoute } from "./subscription-configuration.ts";
+import { completedSubscriptionResponse } from "./subscription-response.ts";
 
 export type SessionFailureCode = "cancelled" | "timeout" | "authentication" | "rate-limit" | "provider" | "not-configured" | "invalid-model-output" | "case-not-found" | "case-busy" | "capacity" | "turn-limit";
 export class SessionFailure extends Error {
@@ -290,7 +292,7 @@ export interface OpenedCaseSession {
   readonly close: () => Promise<void>;
   readonly resolveDecisionReference?: (value: unknown) => DecisionResult;
 }
-export async function openCaseSession(input: CaseInput, options: { readonly provider?: "azure-openai-responses" | "chatgpt-subscription"; readonly modelId?: string; readonly authPath?: string; readonly credentials?: CredentialStore; readonly resources?: DomainResources } = {}): Promise<OpenedCaseSession> {
+export async function openCaseSession(input: CaseInput, options: { readonly provider?: "azure-openai-responses" | "chatgpt-subscription"; readonly modelId?: string; readonly authPath?: string; readonly credentials?: CredentialStore; readonly resources?: DomainResources; readonly route?: SubscriptionRoute } = {}): Promise<OpenedCaseSession> {
   const facts = checked(input);
   // Photo observation envelopes retain their existing full decision contract.
   const references = facts.photoRefs.length === 0 ? createDecisionReferences(facts.caseId) : undefined;
@@ -310,8 +312,10 @@ export async function openCaseSession(input: CaseInput, options: { readonly prov
     // Subscription credentials belong to the SDK's existing auth store, not the disposable case.
     const authPath = provider === "chatgpt-subscription" ? options.authPath : join(agentDir, "auth.json");
     const modelRuntime = await ModelRuntime.create({ authPath, credentials: options.credentials, agentDir, settingsManager, modelsPath: null, allowModelNetwork: false, refreshOnCreate: false });
-    const model = modelRuntime.getModel(provider, options.modelId ?? (provider === "chatgpt-subscription" ? "gpt-6-sol" : "gpt-4.1"));
-    if (model === undefined) throw new SessionFailure("not-configured");
+    const catalogModel = modelRuntime.getModel(provider, options.modelId ?? (provider === "chatgpt-subscription" ? "gpt-6-sol" : "gpt-4.1"));
+    if (catalogModel === undefined) throw new SessionFailure("not-configured");
+    const model = provider === "chatgpt-subscription" && options.route === "siwc"
+      ? { ...catalogModel, provider: "openai", api: "openai-responses" as const, baseUrl: "https://api.openai.com/v1" } : catalogModel;
     const tools = createCaseTools(facts, options.resources, references?.issue);
     const created = await createAgentSession({ cwd, agentDir, authStorage: modelRuntime.authStorage, settingsManager, modelRuntime, model,
       resourceLoader: isolatedLoader(), sessionManager: SessionManager.inMemory(),
@@ -338,11 +342,12 @@ export interface RunnerOptions {
   readonly photoLimits?: PhotoLimits;
 }
 /** Uses the SDK auth.json by default. No Azure environment or login flow is required here. */
-export function createSubscriptionRunner(options: RunnerOptions & { readonly authPath?: string }, open: typeof openCaseSession = openCaseSession): CaseRunner {
+export function createSubscriptionRunner(options: RunnerOptions & { readonly authPath?: string; readonly route?: SubscriptionRoute; readonly subscription?: SubscriptionConfiguration }, open: typeof openCaseSession = openCaseSession): CaseRunner {
   return createModelRunner("chatgpt-subscription", options, open);
 }
 
-function createModelRunner(provider: "azure-openai-responses" | "chatgpt-subscription", options: RunnerOptions & { readonly authPath?: string }, open: typeof openCaseSession): CaseRunner {
+function createModelRunner(provider: "azure-openai-responses" | "chatgpt-subscription", options: RunnerOptions & { readonly authPath?: string; readonly route?: SubscriptionRoute; readonly subscription?: SubscriptionConfiguration }, open: typeof openCaseSession): CaseRunner {
+  const route = subscriptionRoute(options.route);
   const modelId = options.modelId ?? (provider === "chatgpt-subscription" ? "gpt-6-sol" : "gpt-4.1"), maxTurns = options.maxTurns ?? 3, maxOutputTokens = options.maxOutputTokens ?? 1500;
   const limits: Required<PhotoLimits> = { maxImages: options.photoLimits?.maxImages ?? 3,
     maxBytesPerImage: options.photoLimits?.maxBytesPerImage ?? 5 * 1024 * 1024, maxTotalBytes: options.photoLimits?.maxTotalBytes ?? 10 * 1024 * 1024 };
@@ -368,7 +373,16 @@ function createModelRunner(provider: "azure-openai-responses" | "chatgpt-subscri
     const parsePhotos = photos.images.length ? photoObservationParser(facts,
       photos.hashes.map((sha256, i) => ({ photoRef: facts.photoRefs[i]!, sha256 }))) : undefined;
     let owned: Awaited<ReturnType<typeof openCaseSession>>;
-    try { owned = await open(facts, { provider, modelId, resources, authPath: options.authPath }); }
+    let siwcToken: string | undefined;
+    try {
+      const config = options.subscription;
+      if (provider === "chatgpt-subscription" && route === "siwc") {
+        if (!config || config.route !== route || config.modelId !== modelId || config.authPath !== options.authPath) throw new SessionFailure("not-configured");
+        siwcToken = siwcAccessToken(config);
+      }
+      owned = await open(facts, { provider, modelId, resources, authPath: options.authPath, route,
+        ...(siwcToken && config ? { credentials: subscriptionCredentials(config, () => signal.throwIfAborted()) } : {}) });
+    }
     catch (error) {
       if (signal.aborted) throw new SessionFailure("cancelled");
       if (error instanceof SessionFailure) throw error;
@@ -382,7 +396,7 @@ function createModelRunner(provider: "azure-openai-responses" | "chatgpt-subscri
       if (signal.aborted) throw new SessionFailure("cancelled");
       if (photos.images.length && !session.model?.input.includes("image")) throw new PhotoFailure("image-not-supported");
       if (provider === "azure-openai-responses" && key) modelRuntime.authStorage?.setRuntimeApiKey(provider, key);
-      if (provider === "chatgpt-subscription") {
+      if (provider === "chatgpt-subscription" && route === "codex") {
         if (!await modelRuntime.checkAuth(provider, { signal })) throw new SessionFailure("not-configured");
         // A pooled stream resolves its own account; provider-level auth reads only the flat projection.
         const stored = modelRuntime.authStorage?.get(provider);
@@ -401,15 +415,21 @@ function createModelRunner(provider: "azure-openai-responses" | "chatgpt-subscri
       session.agent.streamFunction = (model, context, config) => {
         if (++turns > maxTurns) throw new SessionFailure("turn-limit");
         return stream(model, context, { ...config, maxTokens: maxOutputTokens, maxRetries: 0,
+          ...(siwcToken ? { apiKey: siwcToken } : {}),
           // SSE makes the injected transport, status classification and retry limit authoritative.
           ...(provider === "chatgpt-subscription" ? { transport: "sse" as const } : {}),
           // Record structured HTTP status even when the SDK throws before onResponse.
           fetch: async (request, init) => {
+            if (siwcToken) {
+              const url = typeof request === "string" ? request : request instanceof URL ? request.href : request.url;
+              if (!options.subscription || siwcAccessToken(options.subscription) !== siwcToken || url !== SIWC_ENDPOINT
+                || init?.method !== "POST" || new Headers(init.headers).get("authorization") !== `Bearer ${siwcToken}`) throw new SessionFailure("not-configured");
+            }
             const response = await (options.transport ?? fetch)(request, init);
             responseStatus = response.status;
             const id = providerRequestId(response.headers);
             if (id) requestId = id;
-            return response;
+            return route === "siwc" ? completedSubscriptionResponse(response) : response;
           },
           ...(azureEnv ? { env: azureEnv } : {}),
           onResponse(response) {

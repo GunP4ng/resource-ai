@@ -6,21 +6,25 @@ import { fileURLToPath } from "node:url";
 import { parseArgs } from "node:util";
 import { checkApp, emptyCase } from "./live-check-app.ts";
 import type { CaseResult } from "./live-check-app.ts";
+import { subscriptionRoute, type SubscriptionRoute } from "../src/subscription-configuration.ts";
 
 const repository = fileURLToPath(new URL("../", import.meta.url));
 export interface LiveCheckOptions {
   readonly out: string;
   readonly timeoutMs?: number;
   readonly authPath?: string;
+  readonly route?: SubscriptionRoute;
+  readonly accountIdSha256?: string;
+  readonly credentialSlot?: string;
 }
 export async function runLiveCheck(options: LiveCheckOptions) {
   const started = performance.now();
   // Mutable accumulator: every case is finalized before the single report write.
   const report: { schema: number; gitSha: string | null; date: string; live: boolean;
-    provider: string; model: string; syntheticTextOnly: boolean; passed: boolean;
+    provider: string; model: string; route: SubscriptionRoute; syntheticTextOnly: boolean; passed: boolean;
     elapsedMs: number; failure: string | null; cases: [CaseResult, CaseResult, CaseResult] } = {
     schema: 1, gitSha: null, date: new Date().toISOString(),
-    live: true, provider: "chatgpt-subscription", model: "gpt-6-sol",
+    live: true, provider: "chatgpt-subscription", model: "gpt-6-sol", route: options.route ?? "codex",
     syntheticTextOnly: true, passed: false, elapsedMs: 0, failure: null,
     cases: [emptyCase("normal"), emptyCase("missing-information"), emptyCase("app-logout")] };
   mkdirSync(options.out, { recursive: true, mode: 0o700 });
@@ -35,7 +39,7 @@ export async function runLiveCheck(options: LiveCheckOptions) {
     const sha = execFileSync("git", ["rev-parse", "HEAD"], { cwd: repository, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] }).trim();
     if (!/^[a-f0-9]{40}$/.test(sha)) throw new Error("version");
     report.gitSha = sha;
-    await checkApp({ timeoutMs, authPath: options.authPath }, report.cases);
+    await checkApp({ ...options, timeoutMs, route: subscriptionRoute(options.route) }, report.cases);
     report.passed = report.cases.every(c => c.passed);
   } catch {
     report.failure = "setup-or-execution";
@@ -52,10 +56,12 @@ export async function runLiveCheck(options: LiveCheckOptions) {
 export async function liveCheckCommand(args: string[]) {
   try {
     const { values } = parseArgs({ args, options: { out: { type: "string", default: "artifacts/live-check" },
-      "timeout-ms": { type: "string", default: "60000" } }, strict: true, allowPositionals: false });
+      "timeout-ms": { type: "string", default: "60000" }, "subscription-route": { type: "string", default: "codex" },
+      "account-id-sha256": { type: "string" }, "credential-slot": { type: "string" } }, strict: true, allowPositionals: false });
     if (values.out === undefined) throw new RangeError("output-required");
     const result = await runLiveCheck({ out: values.out, timeoutMs: Number(values["timeout-ms"]),
-      authPath: process.env["RESOURCE_AUTH_PATH"] });
+      authPath: process.env["RESOURCE_AUTH_PATH"], route: subscriptionRoute(values["subscription-route"]),
+      accountIdSha256: values["account-id-sha256"], credentialSlot: values["credential-slot"] });
     // Path arguments may contain secrets, so stdout contains only fixed scalars.
     console.log(JSON.stringify({ passed: result.report.passed, live: result.report.live, exitCode: result.exitCode }));
     return result;

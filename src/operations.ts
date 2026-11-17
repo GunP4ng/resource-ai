@@ -14,7 +14,7 @@ import type { AppDependencies } from "./app.ts";
 import { checkedConfiguration, AzureConfigurationError } from "./azure-configuration.ts";
 import type { AzureConfiguration } from "./azure-configuration.ts";
 import type { PhotoExecutionAuthority, PhotoExecutionTicket } from "./photo-execution.ts";
-import { checkedSubscriptionConfiguration, subscriptionCredentials, SubscriptionConfigurationError, SUBSCRIPTION_ENDPOINT, type SubscriptionConfiguration } from "./subscription-configuration.ts";
+import { checkedSubscriptionConfiguration, subscriptionCredentials, siwcAccessToken, subscriptionEndpoint, SubscriptionConfigurationError, type SubscriptionConfiguration } from "./subscription-configuration.ts";
 export type { AzureConfiguration } from "./azure-configuration.ts";
 
 /** Monotonic scheduling boundary; injectable for deterministic deadline regressions. */
@@ -215,7 +215,7 @@ const sha = (value: string | Uint8Array) => createHash("sha256").update(value).d
 const isSubscription = (config: AzureConfiguration | SubscriptionConfiguration): config is SubscriptionConfiguration => "provider" in config;
 function matchesExecutionTarget(config: AzureConfiguration | SubscriptionConfiguration, target: PhotoExecutionTicket["target"]): boolean {
   if (isSubscription(config)) return "provider" in target && target.provider === config.provider
-    && target.endpoint === SUBSCRIPTION_ENDPOINT && target.modelId === config.modelId && target.accountIdSha256 === config.accountIdSha256;
+    && target.endpoint === subscriptionEndpoint(config) && target.modelId === config.modelId && target.accountIdSha256 === config.accountIdSha256;
   return "deployment" in target && target.endpoint === config.endpoint && target.deployment === config.deployment
     && target.modelId === config.modelId && target.apiVersion === config.apiVersion;
 }
@@ -296,7 +296,7 @@ export function createOperationalRunner(options: OperationalRunnerOptions | Subs
         : checkedConfiguration(supplied as AzureConfiguration | null);
       // A miswired authority must not move an issued consent to another target.
       if (ticket && !matchesExecutionTarget(config, ticket.target)) throw new SessionFailure("not-configured");
-      const endpoint = isSubscription(config) ? SUBSCRIPTION_ENDPOINT : config.endpoint;
+      const endpoint = isSubscription(config) ? subscriptionEndpoint(config) : config.endpoint;
       if (facts.photoRefs.length && !options.photos) throw new SessionFailure("provider");
       const transport: FetchFunction = async (request, init) => {
         try {
@@ -310,8 +310,13 @@ export function createOperationalRunner(options: OperationalRunnerOptions | Subs
           if (isSubscription(config)) {
             const snapshot = subscriptionPayload(dispatchInit); dispatchInit = snapshot.init; serialized = snapshot.body;
             const account = new Headers(dispatchInit.headers).get("chatgpt-account-id");
-            if (actual.href !== SUBSCRIPTION_ENDPOINT || dispatchInit.method !== "POST" || !account || sha(account) !== config.accountIdSha256
+            const credentialMatches = config.route === "siwc"
+              ? new Headers(dispatchInit.headers).get("authorization") === `Bearer ${siwcAccessToken(config)}`
+              : !!account && sha(account) === config.accountIdSha256;
+            if (actual.href !== endpoint || dispatchInit.method !== "POST" || !credentialMatches
               || typeof serialized !== "object" || !serialized || !("model" in serialized) || serialized.model !== config.modelId) throw new SessionFailure("not-configured");
+            if (config.route === "siwc" && (!("store" in serialized) || serialized.store !== false || !("stream" in serialized) || serialized.stream !== true
+              || !("max_output_tokens" in serialized) || serialized.max_output_tokens !== options.maxOutputTokens)) throw new SessionFailure("not-configured");
           } else if (ticket) {
             serialized = JSON.parse(typeof dispatchInit.body === "string" ? dispatchInit.body : "null");
             if (actual.pathname !== "/openai/v1/responses" || actual.hash || actual.username || actual.password
@@ -351,6 +356,8 @@ export function createOperationalRunner(options: OperationalRunnerOptions | Subs
           check();
           if (permit.expiresAt <= Date.now()) throw new SessionFailure("not-configured");
           assertPhotoExecution();
+          if (isSubscription(config) && config.route === "siwc"
+            && new Headers(dispatchInit.headers).get("authorization") !== `Bearer ${siwcAccessToken(config)}`) throw new SessionFailure("not-configured");
           sentImages = resolved.map((image) => ({ photoRefSha256: sha(image.photoRef), sha256: image.sha256, mimeType: image.mimeType }));
           row.transportStarted = true; // Invocation evidence, not proof of provider processing or billing.
           const response = await (options.transport ?? fetch)(ticket || isSubscription(config) ? actual.href : request, { ...dispatchInit, signal: controller.signal, redirect: "error" });
@@ -366,14 +373,14 @@ export function createOperationalRunner(options: OperationalRunnerOptions | Subs
       const common = { enabled: true, modelId: config.modelId, maxTurns: options.maxTurns,
         maxOutputTokens: options.maxOutputTokens, transport, photos: options.photos ? photos : undefined };
       const runner = isSubscription(config)
-        ? createSubscriptionRunner({ ...common, authPath: config.authPath }, async (facts, settings) => {
+        ? createSubscriptionRunner({ ...common, authPath: config.authPath, route: config.route, subscription: config }, async (facts, settings) => {
           let credentials;
           try { credentials = subscriptionCredentials(config, check); }
           catch (error) { if (error instanceof SubscriptionConfigurationError) throw new SessionFailure("not-configured"); throw error; }
           const owned = await open(facts, { ...settings, credentials });
           try {
             check();
-            if (owned.session.model?.api !== "openai-codex-responses") throw new SessionFailure("not-configured");
+            if (owned.session.model?.api !== (config.route === "siwc" ? "openai-responses" : "openai-codex-responses")) throw new SessionFailure("not-configured");
             return owned;
           } catch (error) { await owned.close(); throw error; }
         })

@@ -17,6 +17,7 @@ import { createOperatorRuntime } from "../src/o-operational-runtime.ts";
 import type { FetchFunction } from "@earendil-works/pi-ai";
 import type { OpenOperatorSuppliers } from "../src/o-operational-backend.ts";
 import type { HOperationalConfiguration } from "../src/o-operations-config.ts";
+import { subscriptionRoute, checkedSubscriptionConfiguration } from "../src/subscription-configuration.ts";
 // Run with Bun 1.4.2. Node HTTP keeps launch types within existing dependencies.
 /** Streaming bridge shared by the launcher and task-local synthetic QA harness. */
 export function requestBridge(origin: string, fetchRequest: (request: Request) => Promise<Response>) {
@@ -109,7 +110,8 @@ const configPath = process.env["RESOURCE_OPERATIONAL_CONFIG"];
 if (injection.suppliers !== undefined && (!injection.suppliers || typeof injection.suppliers.open !== "function")) throw new RangeError("Incomplete H supplier injection");
 if (injection.suppliers && (mode !== "operational" || configPath !== undefined)) throw new RangeError("H injection requires explicit operational mode without journal configuration");
 if (mode === "operational" && (authMode !== "local-operator" || !state || !resourcesRoot || !(configPath || injection.suppliers)
-  || ["RESOURCE_MODEL_ID", "RESOURCE_AUTH_PATH", "AZURE_OPENAI_API_KEY", "AZURE_OPENAI_BASE_URL", "AZURE_OPENAI_DEPLOYMENT_NAME_MAP", "AZURE_OPENAI_API_VERSION"]
+  || ["RESOURCE_MODEL_ID", "RESOURCE_AUTH_PATH", "RESOURCE_SUBSCRIPTION_ROUTE", "RESOURCE_ACCOUNT_ID_SHA256", "RESOURCE_CREDENTIAL_SLOT",
+    "AZURE_OPENAI_API_KEY", "AZURE_OPENAI_BASE_URL", "AZURE_OPENAI_DEPLOYMENT_NAME_MAP", "AZURE_OPENAI_API_VERSION"]
     .some(key => Object.hasOwn(process.env, key)))) throw new RangeError("Explicit operational configuration required; direct runner settings conflict");
 const journalConfiguration = mode === "operational" && configPath ? readOperationalConfiguration(configPath) : undefined;
 const configuration = injection.suppliers?.configuration ?? journalConfiguration;
@@ -127,8 +129,12 @@ const localAuth = operator?.localAuth ?? (authMode === "local-operator" ? create
 const resources = operator || resourcesRoot === undefined ? undefined : await createFileResourceProvider({ root: resourcesRoot, caseStore });
 const retentionMs = 3_600_000;
 const photoStore = operator?.photoStore ?? (privatePhotos === "on" && state ? await createPhotoStore({ root: join(state, "photos"), authorize: caseStore.authorize, retentionMs, maxPhotos: 300 }) : undefined);
+const route = subscriptionRoute(process.env["RESOURCE_SUBSCRIPTION_ROUTE"]);
+const subscription = mode === "subscription" && route === "siwc" ? checkedSubscriptionConfiguration({ provider: "chatgpt-subscription", route,
+  modelId: process.env["RESOURCE_MODEL_ID"] ?? "gpt-6-sol", authPath: process.env["RESOURCE_AUTH_PATH"] ?? "",
+  accountIdSha256: process.env["RESOURCE_ACCOUNT_ID_SHA256"] ?? "", credentialSlot: process.env["RESOURCE_CREDENTIAL_SLOT"] }) : undefined;
 const runner = mode === "subscription"
-  ? createSubscriptionRunner({ enabled: true, modelId: process.env["RESOURCE_MODEL_ID"], authPath: process.env["RESOURCE_AUTH_PATH"] })
+  ? createSubscriptionRunner({ enabled: true, modelId: process.env["RESOURCE_MODEL_ID"], authPath: process.env["RESOURCE_AUTH_PATH"], route, subscription })
   : mode === "azure" ? createAzureRunner({ enabled: true, modelId: process.env["RESOURCE_MODEL_ID"] }) : undefined;
 const app = operator?.app ?? createOperationalApp({ origin, runner, resources, localAuth, caseStore, photoStore,
   presentationMode: mode === "local" ? "offline" : "live",
