@@ -56,7 +56,7 @@ export function form(action: string, answers = false, version?: number, selectio
     <textarea id="answers" name="answers" aria-describedby="answers-help" required maxlength="10000"></textarea>${selection}<button type="submit">사례 필드 수정 제출</button></form></details>`;
 }
 
-const runners = { local: "로컬", subscription: "구독 연결", azure: "Azure 연결", unspecified: "미지정" } as const;
+const runners = { local: "로컬", subscription: "구독 경로 모델 실행", azure: "Azure 연결", unspecified: "미지정" } as const;
 export interface InputView {
   readonly authenticated: boolean;
   readonly localAuth: boolean;

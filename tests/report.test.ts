@@ -12,14 +12,27 @@ test("reported string zero survives while missing usage stays unavailable; histo
   assert.match(zero, /사용량 0<\/p>/); assert.doesNotMatch(zero, /사용량 미제공/);
   assert.match(missing, /사용량 미제공/); assert.doesNotMatch(missing, /사용량 0/);
   assert.match(zero, /과거 평가: 현재 입력과 평가 당시 입력이 다릅니다/);
-  assert.match(zero, /구성된 실행기 구독 연결 \(실행 성공과 별개\)/);
+  assert.match(zero, /구성된 실행기 구독 경로 모델 실행 \(실행 성공과 별개\)/);
   assert.match(zero, /제공자 요청 ID를 보증하지 않습니다/); assert.match(zero, /청구 비용 미제공/);
 });
-test("live reports without execution metadata explicitly leave Azure success unverified", () => {
-  const html = renderReport({ state: "needs-information", caseId: "no-execution", questions: ["질량 확인"], evidence: [] }, { mode: "live" });
+for (const [runner, label, missing] of [
+  [undefined, null, "실행 성공 미검증"],
+  ["unspecified", "미지정", "실행 성공 미검증"],
+  ["subscription", "구독 경로 모델 실행", "구독 경로 모델 실행 성공 미검증"],
+  ["azure", "Azure 연결", "Azure 성공 미검증"],
+  ["local", "로컬", "로컬 실행 · 외부 모델 호출 없음"],
+] as const) test(`live report without execution uses saved runtime ${runner ?? "absent"} without claiming success`, () => {
+  const html = renderReport({ state: "needs-information", caseId: "no-execution", questions: ["질량 확인"], evidence: [] }, {
+    mode: "live", ...(runner ? { runtime: { identity: "local-operator", storage: "sqlite", runner } } : {}),
+  });
   assert.match(html, /모델 실행 정보 미제공/);
-  assert.match(html, /Azure 성공 미검증/);
-  assert.doesNotMatch(html, /모델 호출 없음|추적 /);
+  assert.ok(html.includes(`<p>모델 실행 정보 미제공 · ${missing}</p>`), `missing execution disclosure for ${runner ?? "absent"}`);
+  if (label) assert.ok(html.includes(`구성된 실행기 ${label} (실행 성공과 별개)`), `configured label for ${runner}`);
+  else assert.match(html, /평가 당시 인증·저장·실행기 설정 미제공/);
+  if (runner !== "azure") assert.ok(!html.includes("Azure"), "must not assume Azure");
+  if (runner !== "local") assert.doesNotMatch(html, /모델 호출 없음/);
+  assert.doesNotMatch(html, /추적 |SiWC|인증 성공/);
+  assert.match(html, /<details id="advanced"><summary>/);
 });
 test("question and review states escape hostile text and disallow executable source URLs", () => {
   const evidence = documents({}).documents.map((d) => ({ ...d.record, title: '<img src=x onerror="alert(1)">', url: "javascript:alert(1)", locator: "<script>" }));
