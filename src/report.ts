@@ -86,12 +86,14 @@ function reasons(result: DecisionResult, references: EvidenceReferences, present
   }
 }
 function executionMetadata(presentation: ReportPresentation): string {
+  const runtime = presentation.runtime;
+  const missingExecution = runtime?.runner === "local" ? "로컬 실행 · 외부 모델 호출 없음"
+    : `${runtime?.runner === "azure" ? "Azure" : runtime?.runner === "subscription" ? "구독 경로 모델 실행" : "실행"} 성공 미검증`;
   const execution = presentation.execution
     ? `<p>실행 추적 ${escapeHtml(presentation.execution.traceId)} · 사용량 ${escapeHtml(presentation.execution.usage ?? "미제공")}</p><p>실행기가 보고한 사용량입니다. 추적 식별자는 제공자 요청 ID를 보증하지 않습니다. 청구 비용 미제공.</p>`
-    : presentation.mode === "live" ? "<p>모델 실행 정보 미제공 · Azure 성공 미검증</p>" : "<p>실행 사용량 미제공</p>";
-  const runtime = presentation.runtime;
+    : presentation.mode === "live" ? `<p>모델 실행 정보 미제공 · ${missingExecution}</p>` : "<p>실행 사용량 미제공</p>";
   const identities = { anonymous: "익명 세션", trusted: "서버 인증 사용자", "local-operator": "로컬 운영자" } as const;
-  const runners = { local: "로컬", subscription: "구독 연결", azure: "Azure 연결", unspecified: "미지정" } as const;
+  const runners = { local: "로컬", subscription: "구독 경로 모델 실행", azure: "Azure 연결", unspecified: "미지정" } as const;
   return `<p>계산 ${escapeHtml(presentation.calculationVersion ?? "미제공")} · 출처 묶음 ${escapeHtml(presentation.sourceVersion ?? "미제공")}</p>
     ${runtime ? `<p>평가 당시: ${identities[runtime.identity]} · ${runtime.storage === "sqlite" ? "SQLite 보관" : "임시 보관"} · 구성된 실행기 ${runners[runtime.runner]} (실행 성공과 별개)</p>` : "<p>평가 당시 인증·저장·실행기 설정 미제공</p>"}
     ${execution}<p>사용량은 청구·비용 증빙이 아닙니다. 사진 실행은 설정이나 실행 식별자만으로 확인되지 않습니다.</p>`;
