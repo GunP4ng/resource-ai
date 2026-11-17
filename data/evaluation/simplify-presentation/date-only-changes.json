@@ -1,0 +1,187 @@
+{
+  "baseManifest": "data/evaluation/development.json",
+  "overriddenField": "assessmentDate",
+  "value": "2026-11-25",
+  "cases": [
+    {
+      "caseId": "HYEOB-20261112-001",
+      "originalDate": "2026-11-12",
+      "assessmentDate": "2026-11-25",
+      "changedKeys": [
+        "assessmentDate"
+      ],
+      "originalHash": "99a243a95f2500e350512a3ffbe53c896b76df41eb2e9be5b97d305cd96f0f40",
+      "sourceHash": "a0b0f7bf6ad06c3fe8f0f75f2a0e4feee9b5d12ed25853087e40bfe376258b68"
+    },
+    {
+      "caseId": "HYEOB-20261112-002",
+      "originalDate": "2026-11-12",
+      "assessmentDate": "2026-11-25",
+      "changedKeys": [
+        "assessmentDate"
+      ],
+      "originalHash": "140d4db53120d25db32c3d70a982d2de8cf2e45ac90c934550ed76fff7e76db5",
+      "sourceHash": "225cea1b6dff692b768149a462fa11d5b834fc0280120718a0bb07d8440954bd"
+    },
+    {
+      "caseId": "HYEOB-20261112-003",
+      "originalDate": "2026-11-12",
+      "assessmentDate": "2026-11-25",
+      "changedKeys": [
+        "assessmentDate"
+      ],
+      "originalHash": "e99456505b42ee03d6b8f1e87771791750e1262a43047db72c613e85504a5b07",
+      "sourceHash": "a89aaf37045c7a8e93683854fb56beb08a038a6b8a94abb20d549949b282416c"
+    },
+    {
+      "caseId": "HYEOB-20261112-004",
+      "originalDate": "2026-11-12",
+      "assessmentDate": "2026-11-25",
+      "changedKeys": [
+        "assessmentDate"
+      ],
+      "originalHash": "26eb5e7d5d21df9ed16f6c00cab3dba7e5e810bd3b354e5f9851abcd8217e493",
+      "sourceHash": "3d9443b4a346235a87131cf3ef8a790e87e91f9cacfcf3eb296b0a7959685065"
+    },
+    {
+      "caseId": "HYEOB-20261112-005",
+      "originalDate": "2026-11-12",
+      "assessmentDate": "2026-11-25",
+      "changedKeys": [
+        "assessmentDate"
+      ],
+      "originalHash": "41f6f74e6551b3aae5449a1a0d11d2d1a37b7291974f9a1bc70618023de404fd",
+      "sourceHash": "636f6a8ef4e74604a7fbc7d5491f4660334a7d941af206f26467c35f091580af"
+    },
+    {
+      "caseId": "HYEOB-20261112-006",
+      "originalDate": "2026-11-12",
+      "assessmentDate": "2026-11-25",
+      "changedKeys": [
+        "assessmentDate"
+      ],
+      "originalHash": "aa6104ac7f7461c952fc95b314002860bb01107d59d3814d1e61282d1ac7a87b",
+      "sourceHash": "9f443f8d215c61e3f52417e0d7b90f60fb64fa9d40411e35a697606134b37ece"
+    },
+    {
+      "caseId": "HYEOB-20261112-007",
+      "originalDate": "2026-11-12",
+      "assessmentDate": "2026-11-25",
+      "changedKeys": [
+        "assessmentDate"
+      ],
+      "originalHash": "dd530034e235f514b61ee5a8d585978ead905acdfc04a3530e462a09e18ff320",
+      "sourceHash": "9ff0420a00f5ecf1211421117a3fe0c0b6f55e0b012f6c10355c3bc311cebfaa"
+    },
+    {
+      "caseId": "HYEOB-20261112-008",
+      "originalDate": "2026-11-12",
+      "assessmentDate": "2026-11-25",
+      "changedKeys": [
+        "assessmentDate"
+      ],
+      "originalHash": "978a57423199674dee21982375171258ab9908701ea6f69934d95afc8ff31dbb",
+      "sourceHash": "e0f5e5ed2859e7285337a920cb0a8e219149cd463688851df00168f2a8e02241"
+    },
+    {
+      "caseId": "HYEOB-20261112-009",
+      "originalDate": "2026-11-12",
+      "assessmentDate": "2026-11-25",
+      "changedKeys": [
+        "assessmentDate"
+      ],
+      "originalHash": "65c54b7dcfa5d975474542a5675a7c6bb64850d2a4e320845ad67ccaa5d2498e",
+      "sourceHash": "e6e63eceac0fb25cd5f5c560bc2ded66f3ac1e79e5a4f25710a26edf02fbb13e"
+    },
+    {
+      "caseId": "HYEOB-20261112-010",
+      "originalDate": "2026-11-12",
+      "assessmentDate": "2026-11-25",
+      "changedKeys": [
+        "assessmentDate"
+      ],
+      "originalHash": "898699ed96ab28225c9a2bbf9e1c0770fdb571e49af581832a96d92bf46a090f",
+      "sourceHash": "2f4a699286e79e4c13bec45289821ca5991f7d3b5d78121b73c63d58a60f01e1"
+    },
+    {
+      "caseId": "OYS-20261110-001",
+      "originalDate": "2026-11-10",
+      "assessmentDate": "2026-11-25",
+      "changedKeys": [
+        "assessmentDate"
+      ],
+      "originalHash": "1f1163e501b1ade17ed9207933242a51120bb15584f8e95b6e6d736fe0cd67ff",
+      "sourceHash": "d165f808f4e09382ce0625d3052b5c83806f5cc4ce58e8ea00c3df7b4dde5149"
+    },
+    {
+      "caseId": "OYS-20261110-002",
+      "originalDate": "2026-11-10",
+      "assessmentDate": "2026-11-25",
+      "changedKeys": [
+        "assessmentDate"
+      ],
+      "originalHash": "0b052aeeb9e97a93699267d68662d8c1b1efee32107f2711d7be6fab78764b2c",
+      "sourceHash": "10ebb854fb4c91bf7250a3e7ae70a9cc3475e1982cbfd12cf6df5a9373829a09"
+    },
+    {
+      "caseId": "OYS-20261110-003",
+      "originalDate": "2026-11-10",
+      "assessmentDate": "2026-11-25",
+      "changedKeys": [
+        "assessmentDate"
+      ],
+      "originalHash": "6c09027b9a767e917d5b3ffc45a437fd8153ff7b8eec3750ddb9f410eb4403b4",
+      "sourceHash": "b28a2f962e075474d732f1aa2451a61692abc240384301f466f1fc8e060be64f"
+    },
+    {
+      "caseId": "OYS-20261110-004",
+      "originalDate": "2026-11-10",
+      "assessmentDate": "2026-11-25",
+      "changedKeys": [
+        "assessmentDate"
+      ],
+      "originalHash": "7ccbf029c826be106e753dc15997bf608b856a9e893b45497eed4ef533c04d7f",
+      "sourceHash": "7d24618bfc2ff30d297428654918c72f5cc7def01a19b12590cce6f69a759f58"
+    },
+    {
+      "caseId": "OYS-20261110-006",
+      "originalDate": "2026-11-10",
+      "assessmentDate": "2026-11-25",
+      "changedKeys": [
+        "assessmentDate"
+      ],
+      "originalHash": "29c76c30e310148b0ab270ef51e2a4fee92d35aab35106560e4ac36d4947bda0",
+      "sourceHash": "d433ba5b18bbddbcb4ea9a987abc66bf7ddc211781c2bc1ba4eef05bb35f9c74"
+    },
+    {
+      "caseId": "OYS-20261110-008",
+      "originalDate": "2026-11-10",
+      "assessmentDate": "2026-11-25",
+      "changedKeys": [
+        "assessmentDate"
+      ],
+      "originalHash": "f3833e8d39ff4b96f94c784d69889c59db17390bd2993d6f5e0883aecd842fa9",
+      "sourceHash": "a2aa0166b75bd11f49043d6169441fbea8bfba03a964453318d4a48afaa940ea"
+    },
+    {
+      "caseId": "OYS-20261110-009",
+      "originalDate": "2026-11-10",
+      "assessmentDate": "2026-11-25",
+      "changedKeys": [
+        "assessmentDate"
+      ],
+      "originalHash": "acadb919168dc522ac98cbbc8ba2b27bd6d2224f0bb4779a689f079768da17b7",
+      "sourceHash": "188678887699767d822f669aa6dd9fdad9b696e376702802d1fbef7925ce4a79"
+    },
+    {
+      "caseId": "OYS-20261110-010",
+      "originalDate": "2026-11-10",
+      "assessmentDate": "2026-11-25",
+      "changedKeys": [
+        "assessmentDate"
+      ],
+      "originalHash": "e83d1f30b91e37a38e70a20963a4db2ecb13287aae67a54e10f92b3509d51d2d",
+      "sourceHash": "3d8407c654f0097a36f6462f394282df12ae0bba62c86b2224b6a75d0d0dc104"
+    }
+  ]
+}

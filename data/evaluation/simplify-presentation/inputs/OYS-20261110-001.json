@@ -1,0 +1,12 @@
+{
+  "caseId": "OYS-20261110-001",
+  "description": "SYNTHETIC — newly authored text-only fictional scenario: Clean single-resin PET. No field records, photos or external evidence supplied. massKg=24 is a fictional scenario parameter, not a measured value. No legal eligibility, price or emissions factor is asserted.",
+  "photoRefs": [],
+  "process": "Fictional thermoformed PET tray edge trimming; unused trim is segregated before packaging.",
+  "polymer": "PET",
+  "contamination": "No contamination is stipulated in this fictional scenario.",
+  "hazardousContact": "no",
+  "massKg": 24,
+  "region": "경기도",
+  "assessmentDate": "2026-11-25"
+}

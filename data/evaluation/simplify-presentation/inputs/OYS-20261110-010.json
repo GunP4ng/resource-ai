@@ -1,0 +1,12 @@
+{
+  "caseId": "OYS-20261110-010",
+  "description": "SYNTHETIC — newly authored text-only fictional scenario: Missing regional and comparison basis. No field records, photos or external evidence supplied. Mass is unknown. No legal eligibility, price or emissions factor is asserted.",
+  "photoRefs": [],
+  "process": "Fictional PET sheet cutting produces offcuts. The scenario asks about processing options and cost/carbon comparison, but mass, region, contamination history, quotations, factors, document versions and processor permit/code/service-area evidence are absent. No processor is named.",
+  "polymer": "PET",
+  "contamination": null,
+  "hazardousContact": "unknown",
+  "massKg": null,
+  "region": null,
+  "assessmentDate": "2026-11-25"
+}

@@ -40,6 +40,6 @@ export function evidenceSection(result: DecisionResult): string {
       <p>시행본 ${escapeHtml(evidence.datasetVersion)} · 조회 ${escapeHtml(evidence.retrievedAt)}</p>
       <p>사용권 ${escapeHtml(evidence.license ?? "미확인")} · 확인 ${evidence.licenseVerified ? "예" : "아니오"}</p>
       <details><summary>근거 식별자와 원본 연결 확인하기</summary><p>출처 ID ${escapeHtml(evidence.sourceId)} · SHA-256 ${escapeHtml(evidence.sha256)}</p>
-      ${provenance ? `<p>원본 ${escapeHtml(provenance.originalSourceId)} · SHA-256 ${escapeHtml(provenance.originalSha256)}</p>` : ""}</details></section>`;
+      ${provenance ? `<p>원본 ${escapeHtml(provenance.originalSourceId ?? "미확인")} · SHA-256 ${escapeHtml(provenance.originalSha256 ?? "미확인")}</p>` : ""}</details></section>`;
   }).join("") : "<p>연결된 근거 없음</p>"}</section>`;
 }

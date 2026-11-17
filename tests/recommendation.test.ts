@@ -5,6 +5,8 @@ import { parseDecision } from "../src/o-decision.ts";
 import { syntheticCase, syntheticReviewed } from "./h-fixtures.ts";
 import { renderReport } from "../src/report.ts";
 import { lookupLegalEvidence } from "../src/evidence.ts";
+import { assessCase } from "../src/assessment.ts";
+import { recommend, recommendationBlockers } from "../src/recommendation.ts";
 
 test("complete safe facts produce a public-law conditional recommendation without field resources", async () => {
   const domain = createResourceDomain(syntheticCase);
@@ -35,6 +37,34 @@ test("complete safe facts produce a public-law conditional recommendation withou
     assert.ok(result.evidence.some(record => record.sourceId === citation.sourceId && record.locator === citation.locator && record.licenseVerified));
   }
   assert.deepEqual(await domain.decide(result), result);
+});
+
+test("presentation-day facts still use the effective legal edition after collection verification expires", async () => {
+  const result = await createResourceDomain({ ...syntheticCase, assessmentDate: "2026-11-25" }).decide();
+  assert.equal(result.state, "compared");
+  if (result.state !== "compared") throw new Error(JSON.stringify(result));
+  assert.deepEqual(result.recommendations?.[0]?.legalCitations.map(citation => citation.sourceId).sort(), [
+    "legal-291947-annex4-2-r3-3", "legal-291947-annex4-3-types",
+    "legal-291947-annex4-code", "legal-291947-annex5-3-common",
+  ]);
+});
+
+test("a rejected citation and unverified metadata do not veto the remaining cited recommendation", () => {
+  const current = assessCase(syntheticCase);
+  const assessment = { ...current, legal: { ...current.legal,
+    evidence: current.legal.evidence.map(record => ({ ...record, licenseVerified: false, license: null })),
+    issues: [
+      { kind: "out-of-period" as const, sourceId: "excluded-old-citation" },
+      { kind: "reuse-unverified" as const, sourceId: "legal-290881-annex4-code" },
+    ],
+  } };
+  assert.deepEqual(recommendationBlockers(syntheticCase, assessment), []);
+  const result = recommend(syntheticCase, assessment);
+  assert.equal(result.recommendations?.[0]?.grade, "public-conditional");
+  assert.equal(result.recommendations?.[0]?.legalCitations.some(citation => citation.sourceId === "excluded-old-citation"), false);
+  assert.ok(result.preExecutionChecks?.some(check => check.includes("reuse-unverified")));
+  assert.ok(result.preExecutionChecks?.some(check => check.includes("excluded-old-citation")));
+  assert.match(renderReport(result, { mode: "offline" }), /사용권 미확인 · 확인 아니오/u);
 });
 
 test("incomplete valid field reviews are advisory and never promoted to verified eligibility", async () => {

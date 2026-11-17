@@ -1,0 +1,332 @@
+{
+  "date": "2026-11-17",
+  "baseCommit": "87e04c541408df6c6f3aed14d08548c621de738c",
+  "implementationCommit": "e5d4bbf7c2d6670b3ff61f189770a58ff1903c68",
+  "implementationNote": "After run started on uncommitted source bytes subsequently committed unchanged as implementationCommit; both raw runs record baseCommit.",
+  "beforeRun": "f34e9651-d6c8-42cc-91a6-16046a1e61eb",
+  "afterRun": "df09d11d-c4cc-4a92-a6b3-2d424cdf05e7",
+  "controlledFields": [
+    "corpusVersion",
+    "manifestSha256",
+    "inputSha256",
+    "effectiveInputSha256",
+    "modelDeployment",
+    "promptVersion",
+    "runnerVersion",
+    "sourceVersion",
+    "maxOutputTokens",
+    "timeoutMs",
+    "maxCalls",
+    "photosSent"
+  ],
+  "controlMismatches": [],
+  "before": {
+    "A": {
+      "rows": 18,
+      "calls": 18,
+      "errors": [
+        {
+          "caseId": "HYEOB-20261112-005",
+          "errorCategory": "timeout"
+        }
+      ],
+      "states": {},
+      "requestIds": [
+        "43b23834-ec65-4fc7-8f1d-ce507228099e",
+        "4ed79059-e33d-989b-956a-cac9cb521951",
+        "73b45ba6-979c-4aab-b853-162d9ec1d9a1",
+        "b8746edf-3c27-43fd-8101-779509085c2e",
+        "2e601542-5f13-468d-a2b3-2b58d85b75a8",
+        "ff7fcb96-d169-49f4-8178-5793a4faafea",
+        "628253ba-2096-4abb-974c-4c26e41d3265",
+        "d41c9572-0e36-43a6-b22c-0c4e5b44335d",
+        "62c044b6-259d-4cce-894a-7540d4b8d410",
+        "172849dd-caa3-4a91-b8e0-bbf08272e71f",
+        "25470095-b289-489f-9dcd-713f0e83d261",
+        "5d3b8317-9af6-46fe-b075-da02bcebacda",
+        "92004626-10d5-4461-ab95-17113d19690c",
+        "146354c5-bbd0-4042-8a10-0a67e94ae7c0",
+        "cdc707af-5022-45ad-8613-444a959c8818",
+        "54047f3f-f3a2-4fbb-9ccf-4a30f2e840fe",
+        "bbc28a87-8f1f-4482-8465-80cd3df4504c",
+        "88783929-7619-4082-bffb-cbef49f266b6"
+      ]
+    },
+    "B": {
+      "rows": 18,
+      "calls": 18,
+      "errors": [],
+      "states": {},
+      "requestIds": [
+        "085fd533-b577-4bdf-af1e-e132391779fe",
+        "40830a37-baa0-43cf-8dd8-1dbfb5d60aa9",
+        "33e17400-5322-48a8-ab1c-19d022f11ddc",
+        "d49b4fae-7270-4ba3-b97d-4e2a21e138e1",
+        "2df4159b-e62e-4800-b532-042ca69dd3f5",
+        "eb9df234-e428-45e3-9c93-b8a2867881dc",
+        "bb49866e-49a4-4f74-b8e2-9e67ae0224b4",
+        "ab33474b-2deb-4cbd-bac2-f8456b136f39",
+        "7b47f3eb-0e9c-4d6a-9bac-dbdb3e87f1c8",
+        "77149985-0233-4a27-b271-7cdd3fcd006e",
+        "688ae8dc-cf67-4588-9117-aaa8e49895b2",
+        "688c5e6f-b26e-4a9e-9ea7-ecd7e89bb702",
+        "afdec398-0066-4800-a11f-094d26148af5",
+        "a0dd9520-def9-4ead-9140-b5027e605794",
+        "dabbf5ba-4833-451e-9088-e910c8e36b1a",
+        "d759827f-cacd-4121-beaa-e451840280b2",
+        "cdc0677f-3806-4487-aaf3-849c91974479",
+        "bcaab777-3d4e-43ca-8777-e2445bc3b37c"
+      ]
+    },
+    "C": {
+      "rows": 18,
+      "calls": 36,
+      "errors": [],
+      "states": {
+        "compared": 7,
+        "needs-review": 4,
+        "needs-information": 7
+      },
+      "requestIds": [
+        "74787abf-f542-49a0-b909-7ff5873c5a6d",
+        "7b9b3208-df36-4470-8e88-61f563be2ebb",
+        "f2792469-049f-48e0-b5c6-43f2ee944211",
+        "ce9f195f-8e26-4eeb-937c-6d8b8afa0a94",
+        "11b988ad-4257-41a7-aff4-e72f253129fb",
+        "6dabdfed-1f60-4fe7-988d-21b22f2945ae",
+        "0d781743-5f9b-457d-9622-f164c103cf60",
+        "f9d72f40-85bb-4a66-8a75-03616ddf9b89",
+        "c1b23c1d-0c51-4242-833b-3fbb7c05180d",
+        "fbd8cbc4-26f7-41fd-b24c-7dd9de47ad57",
+        "f43fc813-6825-4c8b-b951-2370a537e22a",
+        "b63cdce5-f6e9-4199-a05e-17a806602d25",
+        "20fc7286-ced4-45d0-b9b9-01fe7be8ebf5",
+        "5014c2a5-7ca2-40fd-871f-d28c9f949cab",
+        "e49523d8-da51-475f-801c-9900a77578ed",
+        "c2a169fa-6d17-4b52-bca1-964fca37bbba",
+        "0cc2d7d0-0a3d-45eb-a80f-ffe0f65ec833",
+        "819eed28-fd4d-43c2-9a3f-e685a330f69a",
+        "911a420e-dfea-4412-9c27-34d2e1305855",
+        "5368e258-250d-4351-90a2-0c24ea9479b6",
+        "03088dd6-5a57-42a4-8fc6-612d7e5d9499",
+        "37a9fb85-f251-41a0-819b-a332474f999d",
+        "bf65de14-f817-49f8-ad9a-375b01507d4f",
+        "929b0acb-b01c-40d4-8c93-d70b635dabdf",
+        "6fab61d8-75db-41a5-b85a-213bc1be0a06",
+        "017f0e1b-b212-403e-9a5d-ea668388c269",
+        "6a3aa12c-20c9-498f-8c6f-bae1f3de79e3",
+        "22de24fd-6ec0-40fd-bcfb-a28209a0e3f0",
+        "972511c2-60f1-4e4c-a84a-439d8324ef5d",
+        "cabdd44f-ed91-4ddb-9fe1-2bd5ef6c6ab4",
+        "653ccef7-1ae9-445f-8427-294c0e3116d4",
+        "eb8d30ef-24c2-4439-af49-bedd8aae514d",
+        "0ffdfc36-b6cd-444e-9e9f-ab97876fb07e",
+        "308ba0be-d601-4c3c-945c-c21e186d452d",
+        "3141c52b-df3d-4838-96da-7e4fd0751b6d",
+        "4c82ef29-a980-44d3-b5f5-35a2fa33c762"
+      ]
+    }
+  },
+  "after": {
+    "A": {
+      "rows": 18,
+      "calls": 18,
+      "errors": [
+        {
+          "caseId": "HYEOB-20261112-006",
+          "errorCategory": "invalid-model-output"
+        }
+      ],
+      "states": {},
+      "requestIds": [
+        "ef1b44f8-a359-4371-a8e3-a5b8bcd99ea6",
+        "12e2e955-457f-424a-993d-fac88c476906",
+        "0787a1a9-7924-41bd-871b-20d82d6718b9",
+        "04101026-f584-47e3-b63a-8f8925ea08e9",
+        "68908ce4-ba29-4cc3-93b0-29cf558a7a10",
+        "4fa5b6ce-111e-4b6c-b683-bde893d936e8",
+        "b5e9f655-8859-430e-a609-d6d2dd200d99",
+        "4eecf487-56a0-43ff-946a-68bac411fe7e",
+        "53cd0da9-4288-4f1f-a49b-158012b59372",
+        "ed25afc2-156d-95d9-8253-bee3f025382f",
+        "01bcc4d6-efed-43da-bbec-c8b98839f078",
+        "7e94946c-c6aa-4e7a-804b-053c6a77d35d",
+        "82af4c2f-bc3d-473c-b62f-9925b61f8f2d",
+        "bf4265d0-c08f-47fc-b729-c1d35064920f",
+        "0cd2a816-f5b1-4577-81ab-204d40232df1",
+        "bc0274eb-a2a3-4889-a687-f7034d99bca3",
+        "7572492a-6226-4be9-92e7-128fbd870922",
+        "81237b74-cb3b-4851-8e7a-014b6efd182a"
+      ]
+    },
+    "B": {
+      "rows": 18,
+      "calls": 18,
+      "errors": [],
+      "states": {},
+      "requestIds": [
+        "4e20f1ba-bdeb-4409-92f1-d5bcdabdd60b",
+        "cda840a9-0c54-43fc-b9fd-921c3a62a29e",
+        "2956f498-b9b5-40d9-9072-7c761298f8a9",
+        "997568aa-7861-4376-a3d8-b362cd677c27",
+        "62e150e6-57a5-465f-b5f2-d64f9e0e3599",
+        "796f4132-3966-440d-86c8-2e6c6056ef85",
+        "13bfac02-20f5-457f-9ee1-8abb008af278",
+        "1e7722ba-3dc8-4070-95ae-e6fa0f08a868",
+        "2178cdeb-f8c0-44fd-b6b5-6c4eae986b55",
+        "2fb0a3f1-2b3c-4932-aa62-c62cc77ea272",
+        "6d18ef47-5b73-4168-b669-ebcfb9b03a5f",
+        "3d127b5b-af82-43bb-a5c6-d30c5e5f93b0",
+        "96caaf7d-e8f3-4e96-91fd-04737de7d729",
+        "0ff4deba-da29-4c02-8516-79e042bf1e01",
+        "a3d50076-7da1-4a54-a329-8f4a9501413c",
+        "20ab9016-d815-4e70-8831-22d5e31500a4",
+        "5542451d-2092-4015-8c06-0e0ea0a4fb04",
+        "8150c03e-af00-4d86-8962-b8f389b4fe2b"
+      ]
+    },
+    "C": {
+      "rows": 18,
+      "calls": 36,
+      "errors": [],
+      "states": {
+        "compared": 7,
+        "needs-review": 4,
+        "needs-information": 7
+      },
+      "requestIds": [
+        "9787c06d-63a1-44bd-9bcf-cc1cd729c4d5",
+        "5f369d0d-9c82-455e-8567-723ddf70393c",
+        "be12eb69-e794-4094-94e9-c02eb5d43766",
+        "b5f2a5e9-7ccc-4a89-9249-184b3118c17d",
+        "6f47aff2-9cb0-41c2-b8ac-bd4e1d6ed4ba",
+        "5d3fb8ed-d109-48e9-896e-df0d80dae9ce",
+        "21db0869-dd10-474d-9440-9eeb33c663e8",
+        "94391f1c-6474-4702-8580-5b7dae0f320e",
+        "b2539777-b315-430b-bfe5-54fcbde611c1",
+        "e62c94b8-19da-4b08-867c-3b3ad5b75fbf",
+        "dd4582fd-6b39-4899-b6d5-8e28b6714de3",
+        "b726840f-c375-4fb9-8147-0ca56f21877c",
+        "8ce309e6-785e-4c33-a8e1-f74c526162a8",
+        "ae7eeb53-e388-4d24-a2dd-5e777be09308",
+        "1a9a5a74-e5c0-4254-bcfd-c51073ea9fe9",
+        "92a888c5-dd19-4d6b-af8c-78463a0c70e5",
+        "8ffd679e-7b12-4026-927d-0a4a6655d5ae",
+        "6c407e8e-fb66-406f-a22e-091e2a3942c0",
+        "3169142f-5eea-98fd-9f6f-d30ff0b5d5a1",
+        "8319d59e-5f98-4f46-b09a-70d700ebd3ae",
+        "98f77269-1883-417b-9a68-aa15b6a4ca1a",
+        "ac4c0d07-7a38-4237-9ac3-01dffd752150",
+        "4bbeaf22-b962-4d43-b6df-88f2bed4328d",
+        "96b5ea9c-a0a3-4699-836c-d1936b8e2846",
+        "e3e4cdbe-b96f-4e8f-8cbb-a8306bc94af9",
+        "036b50a1-0275-43c0-84e1-15d826ae6d6b",
+        "4f01ff29-2d9a-46b4-acbd-6a20b209e960",
+        "77796b69-fd71-486e-a503-000fd6bb727b",
+        "ab03d89c-da11-44ba-85e7-fae644d16e1d",
+        "86936abf-c189-4ee3-933d-23ceff384e0b",
+        "0bd32cad-cb67-4eb3-be6d-915c3c2e3480",
+        "bfab9d5d-df80-4032-9fa2-2161d7977bf2",
+        "d1925be8-36ca-4df9-ac9f-692cc91b71d0",
+        "a14e2723-442f-4e5c-9baf-041747d7fb99",
+        "f4ba9b82-5064-40f9-819b-cc72d346473a",
+        "938839e8-6e8a-428e-8876-f4c86bc7235b"
+      ]
+    }
+  },
+  "caseStates": [
+    {
+      "caseId": "HYEOB-20261112-001",
+      "before": "compared",
+      "after": "compared"
+    },
+    {
+      "caseId": "HYEOB-20261112-002",
+      "before": "compared",
+      "after": "compared"
+    },
+    {
+      "caseId": "HYEOB-20261112-003",
+      "before": "needs-review",
+      "after": "needs-review"
+    },
+    {
+      "caseId": "HYEOB-20261112-004",
+      "before": "needs-information",
+      "after": "needs-information"
+    },
+    {
+      "caseId": "HYEOB-20261112-005",
+      "before": "needs-review",
+      "after": "needs-review"
+    },
+    {
+      "caseId": "HYEOB-20261112-006",
+      "before": "compared",
+      "after": "compared"
+    },
+    {
+      "caseId": "HYEOB-20261112-007",
+      "before": "compared",
+      "after": "compared"
+    },
+    {
+      "caseId": "HYEOB-20261112-008",
+      "before": "needs-information",
+      "after": "needs-information"
+    },
+    {
+      "caseId": "HYEOB-20261112-009",
+      "before": "needs-information",
+      "after": "needs-information"
+    },
+    {
+      "caseId": "HYEOB-20261112-010",
+      "before": "needs-information",
+      "after": "needs-information"
+    },
+    {
+      "caseId": "OYS-20261110-001",
+      "before": "compared",
+      "after": "compared"
+    },
+    {
+      "caseId": "OYS-20261110-002",
+      "before": "compared",
+      "after": "compared"
+    },
+    {
+      "caseId": "OYS-20261110-003",
+      "before": "needs-information",
+      "after": "needs-information"
+    },
+    {
+      "caseId": "OYS-20261110-004",
+      "before": "compared",
+      "after": "compared"
+    },
+    {
+      "caseId": "OYS-20261110-006",
+      "before": "needs-review",
+      "after": "needs-review"
+    },
+    {
+      "caseId": "OYS-20261110-008",
+      "before": "needs-review",
+      "after": "needs-review"
+    },
+    {
+      "caseId": "OYS-20261110-009",
+      "before": "needs-information",
+      "after": "needs-information"
+    },
+    {
+      "caseId": "OYS-20261110-010",
+      "before": "needs-information",
+      "after": "needs-information"
+    }
+  ],
+  "comparedIncrease": 0,
+  "criterion": "not-met",
+  "interpretation": "Current main already compares 7 cases. Historical 0/18 is not this baseline. Inputs and safety blocks were not changed to force an increase."
+}

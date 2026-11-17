@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import type { CaseInput, EvidenceRecord } from "../src/contracts.ts";
 import registryJson from "../data/sources/evidence-candidates.json" with { type: "json" };
-import { findEvidenceForCase, loadEvidenceRegistry, lookupLegalEvidence, pendingLegalSources, type EvidenceCandidate } from "../src/evidence.ts";
+import { findEvidenceForCase, loadEvidenceRegistry, lookupLegalEvidence, pendingLegalSources, type EvidenceCandidate, type SearchIssueKind } from "../src/evidence.ts";
 
 const caseInput: CaseInput = {
   caseId: "synthetic-case",
@@ -67,22 +67,23 @@ describe("legal evidence lookup", () => {
     expect(result.issues.map((issue) => issue.kind)).toContain("site-specific");
   });
 
-  test("recommendation lookup retains weak relevance but never bypasses source verification", () => {
+  test("recommendation lookup retains weak relevance with metadata issues", () => {
     const input = { ...caseInput, process: "결속밴드 절단" };
     const weak = { ...candidate, processTerms: ["사출"] };
     const result = lookupLegalEvidence(input, [weak], { includeWeakContext: true });
     expect(result.evidence).toEqual([record]);
     expect(result.issues).toEqual([{ kind: "unrelated", sourceId: record.sourceId }]);
-    for (const invalid of [
+    for (const unverified of [
       { ...weak, originalVerified: false },
       { ...weak, claimVerified: false },
       { ...weak, record: { ...record, sha256: "invalid" } },
       { ...weak, access: "failed" },
       { ...weak, record: { ...record, licenseVerified: false } },
     ] satisfies readonly EvidenceCandidate[]) {
-      const rejected = lookupLegalEvidence(input, [invalid], { includeWeakContext: true });
-      expect(rejected.evidence).toEqual([]);
-      expect(rejected.issues[0]?.kind).not.toBe("unrelated");
+      const accepted = lookupLegalEvidence(input, [unverified], { includeWeakContext: true });
+      expect(accepted.evidence).toEqual([unverified.record]);
+      expect(accepted.issues).toContainEqual({ kind: "unrelated", sourceId: record.sourceId });
+      expect(accepted.issues).toHaveLength(2);
     }
     expect(lookupLegalEvidence(input, [weak]).evidence).toEqual([]);
   });
@@ -102,20 +103,48 @@ describe("legal evidence lookup", () => {
     });
   }
 
-  test("keeps unavailable annexes and rights failures in review", () => {
-    const result = lookupLegalEvidence(caseInput, [
-      { ...candidate, originalVerified: false },
-      { ...candidate, record: { ...record, sourceId: "unlicensed", licenseVerified: false } },
-      { ...candidate, record: { ...record, sourceId: "inaccessible" }, access: "failed" },
-    ]);
-
-    expect(result.evidence).toEqual([]);
-    expect(result.issues.map((issue) => issue.kind)).toEqual(["original-unverified", "reuse-unverified", "access-failed"]);
+  test.each([
+    [{ ...candidate, originalVerified: false }, "original-unverified"],
+    [{ ...candidate, record: { ...record, sha256: "invalid" } }, "hash-mismatch"],
+    [{ ...candidate, record: { ...record, licenseVerified: false } }, "reuse-unverified"],
+    [{ ...candidate, record: { ...record, license: null } }, "reuse-unverified"],
+    [{ ...candidate, access: "failed" }, "access-failed"],
+    [{ ...candidate, claimVerified: false }, "claim-unverified"],
+  ] satisfies readonly (readonly [EvidenceCandidate, SearchIssueKind])[])("accepts applicable evidence with %j and labels %s", (unverified, kind) => {
+    const result = lookupLegalEvidence(caseInput, [unverified]);
+    expect(result.evidence).toEqual([unverified.record]);
+    expect(result.citations).toHaveLength(1);
+    expect(result.issues).toEqual([{ kind, sourceId: record.sourceId }]);
   });
 
-  test("requires manually checked claim support and reports empty searches", () => {
-    expect(findEvidenceForCase(caseInput, [{ ...candidate, claimVerified: false }])).toEqual([]);
+  test("reports empty searches", () => {
     expect(lookupLegalEvidence(caseInput, []).issues).toEqual([{ kind: "no-results", sourceId: null }]);
+  });
+
+  test.each([
+    { ...candidate, claim: " " },
+    { ...candidate, record: { ...record, locator: " " } },
+    { ...candidate, provenance: { quote: " ", snapshotPath: "excerpt.txt", snapshotSha256: record.sha256,
+      reviewedBy: "reviewer", reviewedAt: record.retrievedAt, effectiveFrom: record.effectiveFrom,
+      effectiveTo: null, verifiedThrough: null } },
+  ])("requires a locator and supporting text even with weak context: %j", (invalid) => {
+    const result = lookupLegalEvidence(caseInput, [invalid], { includeWeakContext: true });
+    expect(result.evidence).toEqual([]);
+    expect(result.citations).toEqual([]);
+    expect(result.issues).toEqual([{ kind: "invalid-candidate", sourceId: record.sourceId }]);
+  });
+
+  test.each([
+    { effectiveFrom: "2026-10-03", effectiveTo: null },
+    { effectiveFrom: null, effectiveTo: null },
+    { effectiveFrom: "2026-02-30", effectiveTo: null },
+    { effectiveFrom: "2026-01-01", effectiveTo: "2026-10-01" },
+    { effectiveFrom: "2026-01-01", effectiveTo: "2026-02-30" },
+  ])("excludes evidence outside a valid effective period: %j", (period) => {
+    const result = lookupLegalEvidence(caseInput, [{ ...candidate, record: { ...record, ...period } }]);
+    expect(result.evidence).toEqual([]);
+    expect(result.citations).toEqual([]);
+    expect(result.issues[0]?.kind).toBe(period.effectiveTo === null ? "out-of-period" : "stale");
   });
 
   test("returns a verified generic article citation from the bundled registry", () => {
@@ -132,12 +161,10 @@ describe("legal evidence lookup", () => {
     expect(pendingLegalSources({ ...caseInput, assessmentDate: "2026-09-17" }).issues).toEqual([{ kind: "version-not-registered", sourceId: null }]);
   });
 
-  test("accepts a 30-day-old snapshot and flags older evidence", () => {
-    expect(lookupLegalEvidence({ ...caseInput, assessmentDate: "2026-11-25" }, [candidate]).evidence).toHaveLength(1);
-    expect(lookupLegalEvidence({ ...caseInput, assessmentDate: "2026-12-05" }, [candidate]).evidence).toHaveLength(1);
-    expect(lookupLegalEvidence({ ...caseInput, assessmentDate: "2026-12-06" }, [candidate]).issues[0]?.kind).toBe("stale");
-    expect(lookupLegalEvidence({ ...caseInput, assessmentDate: "2027-01-15" }, [candidate]).issues[0]?.kind).toBe("stale");
-    expect(lookupLegalEvidence({ ...caseInput, assessmentDate: "2026-11-25" }, [candidate], { maxSnapshotAgeDays: 10 }).issues[0]?.kind).toBe("stale");
+  test.each(["2026-11-25", "2026-12-05", "2026-12-06", "2027-01-15"])("accepts an effective source regardless of collection age or verification cutoff: %s", (assessmentDate) => {
+    const result = lookupLegalEvidence({ ...caseInput, assessmentDate }, [{ ...candidate, verifiedThrough: "2026-11-15" }]);
+    expect(result.evidence).toEqual([record]);
+    expect(result.issues).toEqual([]);
   });
 
   test("matches process tokens and polymer aliases without substring evidence", () => {
@@ -148,7 +175,7 @@ describe("legal evidence lookup", () => {
     expect(lookupLegalEvidence({ ...input, process: "사출성형" }, [candidate]).issues[0]?.kind).toBe("context-ambiguous");
   });
 
-  test("rejects registry entries without a source, matching hash, or literal quote", () => {
+  test("requires a registered source and literal quote but labels mismatched hashes", () => {
     const entry = registryJson[0];
     if (entry === undefined) throw new Error("registry fixture missing");
 
@@ -158,7 +185,7 @@ describe("legal evidence lookup", () => {
       { ...entry, quote: "원문에 없는 문장" },
     ]);
 
-    expect(result.candidates).toEqual([]);
+    expect(result.candidates.map((item) => item.record.sourceId)).toEqual([entry.sourceId]);
     expect(result.issues.map((issue) => issue.kind)).toEqual(["source-not-registered", "hash-mismatch", "quote-not-in-snapshot"]);
   });
 

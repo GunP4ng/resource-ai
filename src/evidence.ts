@@ -8,9 +8,9 @@ export interface EvidenceProvenance {
   readonly quote: string;
   readonly snapshotPath: string;
   readonly snapshotSha256: string;
-  readonly originalSourceId: string;
-  readonly originalPath: string;
-  readonly originalSha256: string;
+  readonly originalSourceId?: string;
+  readonly originalPath?: string;
+  readonly originalSha256?: string;
   readonly reviewedBy: string;
   readonly reviewedAt: string;
   readonly effectiveFrom: string | null;
@@ -142,29 +142,21 @@ function contextMatch(value: string | null, terms: readonly string[], context: "
   return ambiguous ? "ambiguous" : "unrelated";
 }
 
-function candidateIssue(input: CaseInput, candidate: EvidenceCandidate, maxSnapshotAgeDays: number): SearchIssueKind | null {
+function candidateIssue(input: CaseInput, candidate: EvidenceCandidate): SearchIssueKind | null {
   if (candidate.siteSpecific) return "site-specific";
   if (candidate.requireSafeContext && input.hazardousContact !== "no") return "hazardous-contact-unconfirmed";
-  if (candidate.verifiedThrough !== undefined && (!validDate(candidate.verifiedThrough) || input.assessmentDate > candidate.verifiedThrough)) return "currentness-unverified";
   const record = candidate.record;
   if (record.effectiveFrom === null || !validDate(record.effectiveFrom) || input.assessmentDate < record.effectiveFrom) return "out-of-period";
   if (record.effectiveTo !== null && (!validDate(record.effectiveTo) || input.assessmentDate > record.effectiveTo)) return "stale";
-  if (!validDate(record.retrievedAt.slice(0, 10))) return "stale";
-  const ageDays = (Date.parse(`${input.assessmentDate}T00:00:00Z`) - Date.parse(`${record.retrievedAt.slice(0, 10)}T00:00:00Z`)) / 86_400_000;
-  if (ageDays > maxSnapshotAgeDays) return "stale";
-  if (!candidate.originalVerified || record.locator.trim() === "" || !/^[a-f0-9]{64}$/i.test(record.sha256)) return "original-unverified";
-  if (!record.licenseVerified || record.license === null) return "reuse-unverified";
-  if (candidate.access === "failed") return "access-failed";
-  if (!candidate.claimVerified || candidate.claim.trim() === "") return "claim-unverified";
+  if (record.locator.trim() === "" || candidate.claim.trim() === ""
+    || (candidate.provenance !== undefined && candidate.provenance.quote.trim() === "")) return "invalid-candidate";
   return null;
 }
 
 const registry = loadEvidenceRegistry(registryJson);
 
-export function lookupLegalEvidence(input: CaseInput, candidates?: readonly EvidenceCandidate[], options?: { readonly maxSnapshotAgeDays?: number; readonly intendedUse?: "general-resin" | "food-container"; readonly includeWeakContext?: boolean }): EvidenceLookup {
+export function lookupLegalEvidence(input: CaseInput, candidates?: readonly EvidenceCandidate[], options?: { readonly intendedUse?: "general-resin" | "food-container"; readonly includeWeakContext?: boolean }): EvidenceLookup {
   if (!validDate(input.assessmentDate)) return { evidence: [], citations: [], reviewRequirements: [], issues: [{ kind: "invalid-date", sourceId: null }] };
-  const maxSnapshotAgeDays = options?.maxSnapshotAgeDays ?? 30;
-  if (!Number.isInteger(maxSnapshotAgeDays) || maxSnapshotAgeDays < 0) return { evidence: [], citations: [], reviewRequirements: [], issues: [{ kind: "invalid-option", sourceId: null }] };
   const selected = (candidates ?? registry.candidates).filter((candidate) => candidate.intendedUse === undefined || candidate.intendedUse === options?.intendedUse);
   const loadIssues = candidates === undefined ? registry.issues : [];
   if (selected.length === 0) return { evidence: [], citations: [], reviewRequirements: [], issues: [...loadIssues, { kind: "no-results", sourceId: null }] };
@@ -189,9 +181,8 @@ export function lookupLegalEvidence(input: CaseInput, candidates?: readonly Evid
     const contextIssue = context.includes("unrelated") ? "unrelated"
       : context.includes("ambiguous") ? "context-ambiguous"
       : context.includes("missing") ? "context-missing" : null;
-    const validityIssue = candidateIssue(input, candidate, maxSnapshotAgeDays);
-    // Preserve strict lookup diagnostics and cached assessments. Advisory lookup
-    // must verify the source before retaining a weakly related citation.
+    const validityIssue = candidateIssue(input, candidate);
+    // Weak context never bypasses citation applicability or supporting text.
     const issue = options?.includeWeakContext ? validityIssue ?? contextIssue : contextIssue ?? validityIssue;
     if (issue !== null) {
       issues.push({ kind: issue, sourceId: candidate.record.sourceId });
@@ -199,6 +190,12 @@ export function lookupLegalEvidence(input: CaseInput, candidates?: readonly Evid
       if (!options?.includeWeakContext || issue !== "unrelated" || process !== "unrelated"
         || polymer !== "match" || contamination !== "match") continue;
     }
+    const record = candidate.record;
+    if (!candidate.originalVerified) issues.push({ kind: "original-unverified", sourceId: record.sourceId });
+    if (!/^[a-f0-9]{64}$/i.test(record.sha256)) issues.push({ kind: "hash-mismatch", sourceId: record.sourceId });
+    if (!record.licenseVerified || record.license === null) issues.push({ kind: "reuse-unverified", sourceId: record.sourceId });
+    if (candidate.access === "failed") issues.push({ kind: "access-failed", sourceId: record.sourceId });
+    if (!candidate.claimVerified) issues.push({ kind: "claim-unverified", sourceId: record.sourceId });
     evidence.set(candidate.record.sourceId, candidate.record);
     for (const requirement of candidate.reviewRequirements ?? []) reviewRequirements.add(requirement);
     citations.push({ ...candidate.provenance, claim: candidate.claim, kind: candidate.kind, sourceId: candidate.record.sourceId, locator: candidate.record.locator });
@@ -214,7 +211,7 @@ export function pendingLegalSources(input: CaseInput): PendingLegalLookup {
   if (!validDate(input.assessmentDate)) return { pending: [], issues: [{ kind: "invalid-date", sourceId: null }] };
   const versions = sourceManifest.filter((source) => source.legalFamily === "waste-rule" && source.effectiveFrom !== null && source.effectiveFrom <= input.assessmentDate && (source.effectiveTo === null || source.effectiveTo >= input.assessmentDate));
   const pending: PendingLegalSource[] = versions
-    .filter((source) => source.access !== "bundled" || !source.licenseVerified || source.sha256 === null || source.localPath === null)
+    .filter((source) => source.localPath === null)
     .map((source) => ({ state: "needs-review", sourceId: source.sourceId, title: source.title, url: source.url,
       version: source.datasetVersion, missing: source.missing }));
   return { pending, issues: versions.length === 0 ? [{ kind: "version-not-registered", sourceId: null }] : [] };

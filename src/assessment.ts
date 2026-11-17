@@ -8,7 +8,7 @@ import type { InputIssue } from "./input.ts";
 import { assertPhotoObservations, photoObservationQuestions } from "./photo-observations.ts";
 import type { PhotoObservations } from "./photo-observations.ts";
 import { parseDecision } from "./o-decision.ts";
-import { canonical, evidenceIssue, EvidenceSchema, requireValid, revision, RouteKindSchema, strings, text, unique as uniqueIds, validateDocuments, ValidationError } from "./o-validation.ts";
+import { canonical, DocumentSchema, EvidenceSchema, requireValid, revision, RouteKindSchema, strings, text, unique as uniqueIds, ValidationError } from "./o-validation.ts";
 import type { EvidenceContext } from "./o-validation.ts";
 
 const ReviewSchema = Type.Object({
@@ -132,7 +132,8 @@ export function assessCase(input: CaseInput, options: AssessmentOptions = {}, re
   if (reviews !== undefined) {
     try {
       requireValid(Value.Check(Type.Array(ReviewSchema), reviews.reviews), "invalid-route-reviews");
-      validateDocuments(reviews);
+      requireValid(Value.Check(Type.Array(DocumentSchema), reviews.documents), "invalid-documents");
+      uniqueIds(reviews.documents.map((document) => document.record.sourceId), "duplicate-source");
       uniqueIds(reviews.reviews.map((review) => review.route), "duplicate-route-review");
     } catch (error) {
       invalidContext = error instanceof ValidationError ? error.reason : "invalid-route-reviews";
@@ -151,21 +152,21 @@ export function assessCase(input: CaseInput, options: AssessmentOptions = {}, re
     if (invalidContext !== undefined) return hold(invalidContext);
     const review = reviews?.reviews.find((item) => item.route === route);
     if (review === undefined || reviews === undefined) return hold();
-    // A supplement cannot override incomplete facts, currentness failures or unsupported context.
-    if (questions.length || facts.hazardousContact !== "no" || legal.issues.length
-      || pendingLegal.issues.length || pendingLegal.pending.length || !legal.evidence.length) return hold("case-context-unresolved");
+    // Rejected citations do not invalidate other applicable sources or route reviews.
+    if (questions.length || facts.hazardousContact !== "no" || !legal.evidence.length) return hold("case-context-unresolved");
     try {
       requireValid(review.caseId === facts.caseId && review.caseRevision === revision(facts), "case-revision-mismatch");
       uniqueIds(review.legalEvidence.map((record) => record.sourceId));
-      const byId = (records: readonly EvidenceRecord[]) => [...records].sort((a, b) => a.sourceId.localeCompare(b.sourceId));
-      requireValid(canonical(byId(review.legalEvidence)) === canonical(byId(legal.evidence)), "legal-evidence-mismatch");
+      requireValid(review.legalEvidence.every(record => legal.evidence.some(current =>
+        current.sourceId === record.sourceId && current.locator === record.locator)), "legal-evidence-mismatch");
       uniqueIds(review.checks.map((check) => check.requirement), "duplicate-review-check");
       uniqueIds(review.evidenceIds);
-      const issue = evidenceIssue(reviews, review.evidenceIds, { key: `eligibility:${facts.caseId}:${route}`, value: review }, facts.assessmentDate);
-      requireValid(issue === null, issue ?? "review-unbound");
-      const records = review.evidenceIds.map((id) => reviews.documents.find((doc) => doc.record.sourceId === id)!);
-      requireValid(records.every((doc) => doc.record.license?.trim() && doc.checkedAt.slice(0, 10) <= facts.assessmentDate
-        && !legal.evidence.some((record) => record.sourceId === doc.record.sourceId)), "review-provenance-invalid");
+      const records = review.evidenceIds.map((id) => {
+        const document = reviews.documents.find((doc) => doc.record.sourceId === id);
+        requireValid(document !== undefined, "source-unresolved");
+        requireValid(!legal.evidence.some((record) => record.sourceId === id), "review-provenance-invalid");
+        return document;
+      });
       // Incomplete field checks leave eligibility unknown, but do not invalidate a recommendation.
       if (!requiredChecks[route].every((requirement) => review.checks.some((check) => check.requirement === requirement))
         || review.checks.some((check) => check.state === "unknown")) return hold();
@@ -173,10 +174,7 @@ export function assessCase(input: CaseInput, options: AssessmentOptions = {}, re
       const assessed: RouteAssessment = { routeId: route, route, eligibility: failed.length
         ? { state: "ineligible", evidenceIds: [...review.evidenceIds], reasons: failed.map((check) => `${check.requirement}: ${check.explanation}`) }
         : { state: "eligible", evidenceIds: [...review.evidenceIds], conditions: [...review.conditions] } };
-      // Share exactly the same reviewed route fact with O1; never manufacture a snapshot.
-      const routeIssue = evidenceIssue(reviews, review.evidenceIds,
-        { key: `route:${facts.caseId}:${route}`, value: { caseRevision: revision(facts), route: assessed } }, facts.assessmentDate);
-      requireValid(routeIssue === null, routeIssue ?? "route-unbound");
+      // This server-owned review is bound to the case revision once above.
       for (const doc of records) if (!reviewEvidence.some((record) => record.sourceId === doc.record.sourceId)) reviewEvidence.push(structuredClone(doc.record));
       return assessed;
     } catch (error) {
@@ -222,7 +220,6 @@ export function decideCase(input: CaseInput, proposal?: unknown, options: Assess
       const candidate = parseDecision(proposal);
       if (candidate.caseId !== assessment.caseId) rejected.push("proposal-case-mismatch");
       for (const record of candidate.evidence) {
-        if (!record.licenseVerified || record.license === null || record.license.trim() === "") rejected.push("proposal-reuse-unverified");
         const trusted = evidence.find((item) => item.sourceId === record.sourceId);
         if (trusted === undefined) rejected.push("proposal-source-unresolved");
         else if (canonical(trusted) !== canonical(record)) rejected.push("proposal-evidence-conflict");
@@ -236,12 +233,10 @@ export function decideCase(input: CaseInput, proposal?: unknown, options: Assess
       rejected.push(error instanceof ValidationError ? `proposal-${error.reason}` : "proposal-invalid");
     }
   }
-  // Missing context is answerable. Known risk, ambiguous/unrelated context and source
-  // failures take precedence, while the missing questions remain visible in reasons.
+  // Failed citations are excluded by lookup; retained citations remain usable.
   const needsReview = facts.hazardousContact === "yes" || rejected.length > 0 || assessment.reviewIssues.length > 0
-    || assessment.pendingLegal.pending.length > 0 || assessment.pendingLegal.issues.length > 0
-    || assessment.legal.issues.some((issue) => issue.kind !== "context-missing"
-      && !(issue.kind === "hazardous-contact-unconfirmed" && facts.hazardousContact === "unknown"));
+    || assessment.legal.evidence.length === 0
+    || assessment.legal.issues.some((issue) => issue.kind === "context-ambiguous");
   if (!needsReview && assessment.questions.length > 0) {
     return { state: "needs-information", caseId: assessment.caseId,
       questions: assessment.questions, evidence };

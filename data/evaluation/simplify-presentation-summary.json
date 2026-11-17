@@ -1,0 +1,321 @@
+{
+  "date": "2026-11-17",
+  "assessmentDateOverride": "2026-11-25",
+  "baseCommit": "87e04c541408df6c6f3aed14d08548c621de738c",
+  "prCommit": "67bf56a6c8a6bd1add2bf21de861c39d261d93e0",
+  "beforeRun": "1845efdf-054d-45fd-9eb6-1443150e50ba",
+  "afterRun": "84f0a096-7379-473e-b0b2-dd6dc8c3631d",
+  "manifest": "simplify-presentation/development.json",
+  "dateOnlyChanges": "simplify-presentation/date-only-changes.json",
+  "controlledFields": [
+    "corpusVersion",
+    "manifestSha256",
+    "inputSha256",
+    "effectiveInputSha256",
+    "modelDeployment",
+    "promptVersion",
+    "runnerVersion",
+    "sourceVersion",
+    "maxOutputTokens",
+    "timeoutMs",
+    "maxCalls",
+    "photosSent"
+  ],
+  "controlMismatches": [],
+  "before": {
+    "A": {
+      "rows": 18,
+      "calls": 18,
+      "errors": [],
+      "states": {},
+      "requestIds": [
+        "5de67df6-5d02-4c68-84e1-fb9f82597de6",
+        "314a8988-5b12-422e-983b-e24c0735c876",
+        "9af696ca-7aa2-45aa-96ac-cd39cc7f130e",
+        "c3f2b7ad-01ed-4c58-adbf-d695b2a8140a",
+        "7b535d6f-380a-4cea-b47e-d9927a906048",
+        "6f303d9e-e089-4ce4-8622-9baf953fcdfd",
+        "58497ff9-e38b-44da-9e28-dca7df00102b",
+        "1087c8b4-f58a-49fe-83a6-97ea79dbd26e",
+        "64d0ea29-1fbf-4162-8d47-5c5a208ccd91",
+        "4ea99c20-d39e-4f24-a897-a214cc8e5ec1",
+        "7069f8b5-dfaa-431b-b9b7-ded9c69e88bc",
+        "83611a01-d2ff-4159-a1f7-1834f0f27077",
+        "ccfe51c0-217a-47a2-a89b-1635d274aa79",
+        "78e64787-c5ce-4c12-a4dc-2f38ad0c41f7",
+        "677e73e9-8986-46f1-a947-10259d20969b",
+        "211462a8-5359-469f-8e5f-d96c3ff6de60",
+        "5c30746f-59cc-4bf4-900e-4b4baaf9aeaa",
+        "bee36c78-1435-42a9-896f-16abf2c8708a"
+      ]
+    },
+    "B": {
+      "rows": 18,
+      "calls": 18,
+      "errors": [],
+      "states": {},
+      "requestIds": [
+        "46413efd-5638-42a0-a6e9-61871f434741",
+        "97e95738-e591-43c1-b18e-5ba4a3f700a1",
+        "2ddefd0d-8d29-4f58-a0ce-833ddac8a20e",
+        "24b227d9-3d8c-4225-9a15-4c8812ad22fb",
+        "27759cfb-25c8-42a1-b087-82a9f08b77bc",
+        "b9e89cc7-2129-4662-98d7-9e41b65b408f",
+        "88e90ee5-76ad-4ec8-ac01-5cd4674bf4c6",
+        "52107175-da09-4a89-99fc-27bbea1cf36a",
+        "d51f5ba3-f405-4287-9285-125c5eee89d4",
+        "c9dd528d-f9db-4cfe-82b4-325af79e3be3",
+        "953ec981-a724-96d9-b0d4-82cc161eeb23",
+        "46fc474b-1f24-4ecd-84d0-f10395f99141",
+        "e74457ea-8739-428e-902a-c8a77535eab0",
+        "6bea1fde-0e55-4050-b247-d87750860c30",
+        "534fb8c0-78d5-485f-a8cc-e444cf9b8b4d",
+        "38135fb5-f385-4b90-ac51-e9669a8d8792",
+        "e0a4b9d6-6527-43fe-864e-e4587efe5221",
+        "04e55f97-f9a2-4972-a301-196f5ba552c2"
+      ]
+    },
+    "C": {
+      "rows": 18,
+      "calls": 36,
+      "errors": [],
+      "states": {
+        "needs-review": 18
+      },
+      "requestIds": [
+        "eb0b98c2-a516-4608-bf05-7c0c628d4e16",
+        "02af9f8f-eb04-4eb7-a283-22963d540c88",
+        "3ac58f63-42fc-4f34-bc5d-3ecc7040ab00",
+        "4e1617b6-41dc-4535-9800-b32854a60409",
+        "bba11362-f3e0-4711-8416-4088630da00e",
+        "57f1f3e6-0880-449c-8803-2d1bc089df93",
+        "8e63fbf5-d11b-4a9b-aa79-8bc7b6a77d38",
+        "2b190196-de49-457e-a7e9-06251710934a",
+        "d382ac9f-9759-477e-972e-482a687bb1d6",
+        "155ee028-bcb4-4216-96c5-9e8d638f8d30",
+        "4f93f5b0-a9ea-43c5-b54f-8fa47712f254",
+        "a5478c14-bc7c-470f-9cdd-b4f8f5acc1b5",
+        "ea7daa0a-fdb5-4106-b967-af07dab12727",
+        "6833cb60-5fa6-4b42-a25f-647f54c0ca1c",
+        "41f063bc-448f-4697-b322-a97183d071bc",
+        "abf199bb-4107-4b2e-9100-a992d8f67ac5",
+        "8da7a2fc-5acf-441c-93d3-0814e662e252",
+        "bd5f818a-09b8-4734-af48-8621e1ce4772",
+        "6a2227cd-fc58-49be-bf82-52c7f40b168c",
+        "b7463a8d-59d8-4f9a-be1f-9f4edba099a2",
+        "1ec8529e-e22c-4b41-9730-0b1303eb59aa",
+        "6197578b-b4c6-4921-b9e6-8579a0d89e21",
+        "c27e3528-818d-4ce5-800a-ca45d620d9bb",
+        "f336d9f1-213d-4c19-a96b-e0d4e4c63c12",
+        "5a2240b8-598f-48a0-abbb-7664b78625c1",
+        "65e7793f-9a59-4997-8cb3-b13ae7a88920",
+        "37dfda7a-74ad-46db-8be2-83fbf135bbac",
+        "8d538738-a814-4f7e-b1b1-f04d0c9ccad8",
+        "3475b459-a3b1-4fea-ac67-401561c4a7d5",
+        "c20d162c-f228-4a51-8056-5d2b2fb2ef49",
+        "89cc55bb-a140-46dc-801d-3bab185d120d",
+        "1042d631-4502-4f0d-95c6-511517835d1e",
+        "3042d990-5ae7-4443-be7f-91ef7271792f",
+        "69baf173-73d3-401e-8ce6-3b8de59463c4",
+        "e6d93dfd-641d-435a-81ec-648a0d01e7c0",
+        "c600f709-a5be-4a59-b6be-331568485092"
+      ]
+    }
+  },
+  "after": {
+    "A": {
+      "rows": 18,
+      "calls": 18,
+      "errors": [],
+      "states": {},
+      "requestIds": [
+        "db7b440a-1575-4bb7-81aa-ab355e4b59bd",
+        "714fbd70-14fb-455a-9ba7-176b404929aa",
+        "b54a44ef-c77e-4707-9ab5-cb87ee532433",
+        "11219699-8c2a-415f-ba60-117057e7d458",
+        "f7617953-e302-4e8d-8459-c16f618499b4",
+        "8986534d-c55c-43ef-ba92-2e88ef13ffcb",
+        "4b278013-79d2-40d4-b9e3-e804964436f8",
+        "7bd3e0c3-f2de-4e77-99d1-b840a3075060",
+        "1bfd1697-db65-468e-8840-5d9104b17609",
+        "0c0536d5-2bf7-4e85-8fb8-a8a561d868be",
+        "d829dbbe-77e7-4f6e-937a-f9aec204345c",
+        "8e42ca50-24cc-435a-b54e-94c286deb207",
+        "0992ef81-53cc-45ad-90a8-da387a5dbf69",
+        "764d362b-dae2-41f2-a5b7-5a0f62d4d3e5",
+        "137c9693-a64d-4304-85d2-3c342132a678",
+        "2c5ee744-bc66-40b4-bfe7-dae3ee860a8f",
+        "e1f6add2-2e97-416b-b99e-4485d7b840e4",
+        "fa2651b5-ee2e-4d2c-8dc1-ac90ba915e1b"
+      ]
+    },
+    "B": {
+      "rows": 18,
+      "calls": 18,
+      "errors": [],
+      "states": {},
+      "requestIds": [
+        "2f839253-31ca-4b2a-8e0b-6b50a30f5ca0",
+        "7a65769c-2465-4811-ba5c-5ad9b49f1ee6",
+        "c9375f97-99db-4475-84da-6a44f4547d32",
+        "2ce3b9aa-7ec1-413a-8d92-3982d362a60e",
+        "e6fdeef4-136a-4c64-a0be-df50389bc4cb",
+        "9ffaff79-c8e4-4033-a570-a3fbcf5ec69b",
+        "47ee8134-ac72-4748-90ce-dab3b65b9ea9",
+        "c73699d2-f533-44bc-9f73-235352500a6c",
+        "b5669365-cac3-4409-a5fb-9a6e5f46ba80",
+        "37be3ab7-9cbd-4a71-98c2-37a734317036",
+        "10d1dee6-0827-4d5f-b307-14f1be47793d",
+        "1b538d7a-7eae-4820-861d-f8b1b5c8feda",
+        "0c4ea9b6-dc2c-4457-ae05-db0dcbafe486",
+        "d3cc047f-21ba-4770-b669-45f27c42f146",
+        "1aae6865-9cf9-4239-83c6-4188a9c38134",
+        "8e328a0e-0cb4-4d33-a500-0a3b2f388cd4",
+        "68d86de2-977f-421b-b39e-8e102ca402b8",
+        "001d36ea-2b0d-4bc9-b629-599e03a325df"
+      ]
+    },
+    "C": {
+      "rows": 18,
+      "calls": 36,
+      "errors": [],
+      "states": {
+        "compared": 7,
+        "needs-review": 4,
+        "needs-information": 7
+      },
+      "requestIds": [
+        "c4b85ad2-feba-4691-88e5-5496d305b41f",
+        "d7a7cba2-2387-473e-a8b6-1cabc2909d89",
+        "c49828f8-ec4c-4a1f-8902-8ab723909b1b",
+        "1122afaf-5a30-4d21-aea2-3854b7ec3400",
+        "ba245d28-2cdc-43f9-8794-a6228703677a",
+        "9389afea-8557-444d-aeb6-e99ff01473ec",
+        "b0b240e1-a304-4aff-8e24-0efe9907760c",
+        "05879e0c-54a0-4326-ac46-0ca1b1b91a07",
+        "daf540d1-6a8a-451c-b5dc-00e36e48144e",
+        "53552962-4333-9bfb-a3b8-2678bb02f3db",
+        "cddfa552-336e-415b-992a-369adbce8397",
+        "df512810-40fe-4cc6-a525-377006a4f448",
+        "8b085c6f-04f0-48ab-af9b-d22a5109fb3e",
+        "643ccf7f-4921-44fd-8b7e-e3cee9c37c7c",
+        "79032bf9-281c-4857-8e55-32fcf3ede485",
+        "b1ca59fa-0a10-4b0e-85d4-ff466a6a3a94",
+        "970d010f-6920-4b86-ab48-4b611f324677",
+        "04d67e01-96d4-490d-9ac4-9911f43a0115",
+        "0f8eed53-8d5c-4d39-bb9f-93b7afc2e842",
+        "a50b8c16-a477-45b1-b4de-f3ecd1c9eb1d",
+        "3227ef13-881d-4b60-8de0-34432d2891ee",
+        "23dfcabb-c7e5-42b6-8f50-bbec16a2c3dc",
+        "bef94046-f80b-4789-9c5d-db3eef87f5ab",
+        "df1c3a8e-5b68-49f1-8ba6-249235a4d9d3",
+        "0fd09b00-4aa2-4089-80fb-41e633cf7ae5",
+        "685fbc20-c604-4d9a-a670-83ad425074d4",
+        "b0e3c8e8-19bf-495c-bbba-d22d398c3d36",
+        "e29bff58-5b86-4057-887c-9a80f72cb10a",
+        "fa57e741-4c13-43b7-9571-f2265b0bc0f2",
+        "d8734cd8-d02f-43f1-9e9d-90f84e2ab40f",
+        "66f026ff-4bb1-423e-8541-8d607a1ba871",
+        "de41fd6c-deb4-4efb-90df-59aec6153d5c",
+        "9998e88f-51f0-4c7b-9554-cdda1eca62f4",
+        "29c58ef4-9b58-42a8-b7e9-126405a6b0ff",
+        "02a41bca-b8c5-44e1-a72b-c2e0d8ad2d41",
+        "bccf3131-c77b-4ca5-98da-11015d22f42f"
+      ]
+    }
+  },
+  "caseStates": [
+    {
+      "caseId": "HYEOB-20261112-001",
+      "before": "needs-review",
+      "after": "compared"
+    },
+    {
+      "caseId": "HYEOB-20261112-002",
+      "before": "needs-review",
+      "after": "compared"
+    },
+    {
+      "caseId": "HYEOB-20261112-003",
+      "before": "needs-review",
+      "after": "needs-review"
+    },
+    {
+      "caseId": "HYEOB-20261112-004",
+      "before": "needs-review",
+      "after": "needs-information"
+    },
+    {
+      "caseId": "HYEOB-20261112-005",
+      "before": "needs-review",
+      "after": "needs-review"
+    },
+    {
+      "caseId": "HYEOB-20261112-006",
+      "before": "needs-review",
+      "after": "compared"
+    },
+    {
+      "caseId": "HYEOB-20261112-007",
+      "before": "needs-review",
+      "after": "compared"
+    },
+    {
+      "caseId": "HYEOB-20261112-008",
+      "before": "needs-review",
+      "after": "needs-information"
+    },
+    {
+      "caseId": "HYEOB-20261112-009",
+      "before": "needs-review",
+      "after": "needs-information"
+    },
+    {
+      "caseId": "HYEOB-20261112-010",
+      "before": "needs-review",
+      "after": "needs-information"
+    },
+    {
+      "caseId": "OYS-20261110-001",
+      "before": "needs-review",
+      "after": "compared"
+    },
+    {
+      "caseId": "OYS-20261110-002",
+      "before": "needs-review",
+      "after": "compared"
+    },
+    {
+      "caseId": "OYS-20261110-003",
+      "before": "needs-review",
+      "after": "needs-information"
+    },
+    {
+      "caseId": "OYS-20261110-004",
+      "before": "needs-review",
+      "after": "compared"
+    },
+    {
+      "caseId": "OYS-20261110-006",
+      "before": "needs-review",
+      "after": "needs-review"
+    },
+    {
+      "caseId": "OYS-20261110-008",
+      "before": "needs-review",
+      "after": "needs-review"
+    },
+    {
+      "caseId": "OYS-20261110-009",
+      "before": "needs-review",
+      "after": "needs-information"
+    },
+    {
+      "caseId": "OYS-20261110-010",
+      "before": "needs-review",
+      "after": "needs-information"
+    }
+  ],
+  "comparedIncrease": 7,
+  "independentAccuracyClaim": false
+}
