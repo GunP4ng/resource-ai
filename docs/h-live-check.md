@@ -6,6 +6,33 @@ With Bun 1.4.2 and the pinned SDK installed, run from the repository root:
 bun run live-check
 ```
 
+The legacy Codex route remains the default. To select the approved SiWC account
+explicitly, use `RESOURCE_AUTH_PATH=/absolute/private/auth.json bun run live-check
+--subscription-route siwc --account-id-sha256 <approved-account-sha256>` on one
+shell line. For a managed store also pass `--credential-slot <approved-slot>`.
+This uses the same route selection and credential validation as the app, with
+`POST https://api.openai.com/v1/responses`, OAuth Bearer auth, `store=false`,
+`stream=true`, zero retries and required `response.completed`. There is no
+endpoint/account fallback. The selected credential must carry `route=siwc`,
+`planUsageEnabled=true` and `chatgpt.tokens.use.direct`, remain unexpired beyond
+the SDK refresh window, and match the approved account hash. For canonical
+SiWC credentials this hash is SHA-256 of
+`JSON.stringify([issuer, subject, clientId])` from the selected slot. The
+`issuer` must be `https://auth.openai.com`, and `clientId` must be the saved
+issued registration ID. The registration entrypoint `dynamic_agent_client`
+is rejected. Different registrations for the same subject require different
+approval hashes. SiWC requires canonical metadata and does not derive
+identity from legacy access-token account claims. Pool-envelope identity
+must not substitute for the selected slot's metadata. Selection never
+changes the pool pin or writes provider credentials. The operator must choose a
+model available to that account; this command retains its fixed `gpt-6-sol`
+acceptance contract and performs no model-catalog request.
+
+The result records the selected `route`. All three checks below, including the
+normal comparison, recommendations, execution checks and revoked-session gate,
+are required on both routes. Offline SDK wire tests also invoke the actual
+`bun run live-check` package entrypoint with explicit SiWC selection.
+
 This dispatches real inference through the existing subscription SDK runner and
 `createOperationalApp`, as used by `startApp`. Defaults are
 `RESOURCE_MODEL_RUNNER=subscription`, provider `chatgpt-subscription`, model

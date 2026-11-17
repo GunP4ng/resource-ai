@@ -3,7 +3,7 @@ import { dirname, isAbsolute, resolve } from "node:path";
 import { Type, type Static } from "typebox";
 import { Value } from "typebox/value";
 import { CASE_LEASE_MS } from "./o-case-store.ts";
-import { SUBSCRIPTION_ENDPOINT } from "./subscription-configuration.ts";
+import { SUBSCRIPTION_ENDPOINT, SIWC_ENDPOINT, subscriptionEndpoint } from "./subscription-configuration.ts";
 
 export class OperationalConfigurationError extends Error {
   constructor() { super("invalid-operational-configuration"); this.name = "OperationalConfigurationError"; }
@@ -13,12 +13,13 @@ const id = Type.String({ pattern: "^[A-Za-z0-9_.-]{1,128}$" });
 const hash = Type.String({ pattern: "^[a-f0-9]{64}$" });
 const integer = (minimum: number, maximum = Number.MAX_SAFE_INTEGER) => Type.Integer({ minimum, maximum });
 const scope = Type.Object({ provider: Type.String({ minLength: 1, maxLength: 200, pattern: "\\S" }), purpose: Type.String({ minLength: 1, maxLength: 500, pattern: "\\S" }) }, strict);
-const target = Type.Object({ provider: Type.Literal("chatgpt-subscription"), endpoint: Type.Literal(SUBSCRIPTION_ENDPOINT), modelId: id, accountIdSha256: hash }, strict);
+const target = Type.Object({ provider: Type.Literal("chatgpt-subscription"), endpoint: Type.Union([Type.Literal(SUBSCRIPTION_ENDPOINT), Type.Literal(SIWC_ENDPOINT)]), modelId: id, accountIdSha256: hash }, strict);
 const execution = {
   approvalId: id, validFrom: integer(0), validUntil: integer(1),
   grants: Type.Array(Type.Object({ actorId: Type.String({ pattern: "^[A-Za-z0-9_-]{1,100}$" }), caseId: Type.String({ pattern: "^[A-Za-z0-9_-]{1,100}$" }),
     inputRevision: hash, artifactSha256: Type.Union([hash, Type.Null()]) }, strict), { minItems: 1, maxItems: 100 }),
-  target: Type.Object({ ...target.properties, authPath: Type.String({ minLength: 1, maxLength: 4096 }) }, strict),
+  target: Type.Object({ ...target.properties, authPath: Type.String({ minLength: 1, maxLength: 4096 }),
+    route: Type.Optional(Type.Union([Type.Literal("codex"), Type.Literal("siwc")])), credentialSlot: Type.Optional(id) }, strict),
   purpose: scope.properties.purpose,
   photos: Type.Object({ enabled: Type.Boolean(), mappings: Type.Array(Type.Object({ target, scope }, strict), { maxItems: 1 }) }, strict),
   requestAllowance: integer(1, 1000000), concurrentRuns: integer(1, 100), permitLifetimeMs: integer(1, 60000),
@@ -45,6 +46,7 @@ export function parseHOperationalConfiguration(raw: unknown): Readonly<HOperatio
 function checkExecution<C extends ExecutionConfiguration>(config: C): Readonly<C> {
   const t = config.target, mappings = config.photos.mappings;
   if (!isAbsolute(t.authPath) || resolve(t.authPath) !== t.authPath || t.authPath.includes("\0")
+    || t.endpoint !== subscriptionEndpoint(t)
     || config.validFrom >= config.validUntil || config.runnerTimeoutMs > config.requestTimeoutMs
     || config.shutdownGraceMs < config.requestTimeoutMs || config.concurrentRuns > config.requestAllowance
     || config.photos.enabled !== (mappings.length === 1)

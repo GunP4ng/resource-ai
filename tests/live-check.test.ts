@@ -17,15 +17,15 @@ async function fixture() {
   assert.ok(runtime.authStorage);
   const payload = Buffer.from(JSON.stringify({ "https://api.openai.com/auth": { chatgpt_account_id: "synthetic-account" } })).toString("base64url");
   runtime.authStorage.set("chatgpt-subscription", { type: "oauth", access: `synthetic.${payload}.signature`,
-    refresh: "synthetic-refresh", expires: Date.now() + 3600000 });
+    refresh: "synthetic-refresh", expires: Date.now() + 3600000, route: "siwc", planUsageEnabled: true, scopes: ["chatgpt.tokens.use.direct"] });
   return { root, authPath, out: join(root, "results"), close: () => rmSync(root, { recursive: true, force: true }) };
 }
 function object(value: unknown): value is Record<string, unknown> { return typeof value === "object" && value !== null && !Array.isArray(value); }
-function wire(mode: Mode = "normal") {
+function wire(mode: Mode = "normal", route: "codex" | "siwc" = "codex") {
   let calls = 0;
   const transport: FetchFunction = async (url, init) => {
     calls++;
-    assert.equal(String(url), "https://chatgpt.com/backend-api/codex/responses");
+    assert.equal(String(url), route === "siwc" ? "https://api.openai.com/v1/responses" : "https://chatgpt.com/backend-api/codex/responses");
     const request = new Request(url, init), bytes = Buffer.from(await request.arrayBuffer());
     const body: unknown = JSON.parse((request.headers.get("content-encoding") === "zstd" ? zstdDecompressSync(bytes) : bytes).toString());
     assert.ok(object(body)); assert.equal(body["model"], "gpt-6-sol");
@@ -77,8 +77,8 @@ async function withWire<T>(transport: FetchFunction, action: () => Promise<T>): 
   finally { globalThis.fetch = previous; }
 }
 
-if (process.env["H48_SDK_WIRE_CHILD"] === "normal") {
-  const fake = wire();
+if (process.env["H48_SDK_WIRE_CHILD"] === "normal" || process.env["H48_SDK_WIRE_CHILD"] === "siwc") {
+  const fake = wire("normal", process.env["H48_SDK_WIRE_CHILD"] === "siwc" ? "siwc" : "codex");
   globalThis.fetch = Object.assign(async (url: string | URL | Request, init?: RequestInit) => fake.transport(url, init),
     { preconnect() {} });
 } else {

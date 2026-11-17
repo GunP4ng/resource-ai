@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { createHash } from "node:crypto";
-import { mkdtemp, rm } from "node:fs/promises";
+import { mkdtemp, rm, writeFile, readFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { createRequire } from "node:module";
@@ -25,19 +25,25 @@ const signal = () => new AbortController().signal;
 const post = (path: string, value: unknown) => new Request(origin + path, {
   method: "POST", headers: { origin, "content-type": "application/json" }, body: JSON.stringify(value),
 });
-async function fixture() {
+async function fixture(route: "codex" | "siwc" = "codex") {
   const root = await mkdtemp(join(tmpdir(), "h-subscription-guarded-")), authPath = join(root, "auth.json");
   const runtime = await ModelRuntime.create({ authPath, modelsPath: null, allowModelNetwork: false, refreshOnCreate: false });
   const account = "synthetic-account";
-  const payload = Buffer.from(JSON.stringify({ "https://api.openai.com/auth": { chatgpt_account_id: account } })).toString("base64url");
+  const identity = { issuer: "https://auth.openai.com", subject: "synthetic-verified-subject", clientId: "synthetic-client-A" };
+  const payload = Buffer.from(JSON.stringify(route === "siwc"
+    ? { iss: identity.issuer, sub: identity.subject, client_id: identity.clientId,
+      "https://api.openai.com/auth": { per_user_salt: "synthetic", encrypted_auth_metadata: "synthetic" } }
+    : { "https://api.openai.com/auth": { chatgpt_account_id: account } })).toString("base64url");
   const access = `synthetic.${payload}.signature`;
-  runtime.authStorage!.set("chatgpt-subscription", { type: "oauth", access, refresh: "synthetic-refresh", expires: Date.now() + 3600000 });
-  const config: SubscriptionConfiguration = { provider: "chatgpt-subscription", modelId: "gpt-6-sol", authPath, accountIdSha256: sha(account) };
-  const target = { provider: config.provider, endpoint: SUBSCRIPTION_ENDPOINT, modelId: config.modelId, accountIdSha256: config.accountIdSha256 } as const;
+  runtime.authStorage!.set("chatgpt-subscription", { type: "oauth", access, refresh: "synthetic-refresh", expires: Date.now() + 3600000,
+    route: "siwc", planUsageEnabled: true, scopes: ["chatgpt.tokens.use.direct"], ...(route === "siwc" ? identity : {}) });
+  const config = { provider: "chatgpt-subscription", modelId: "gpt-6-sol", authPath,
+    accountIdSha256: route === "siwc" ? sha(JSON.stringify([identity.issuer, identity.subject, identity.clientId])) : sha(account), route } as const;
+  const target = { provider: config.provider, endpoint: route === "siwc" ? "https://api.openai.com/v1/responses" : SUBSCRIPTION_ENDPOINT, modelId: config.modelId, accountIdSha256: config.accountIdSha256 } as const;
   const authority = createSubscriptionPhotoExecutionAuthority();
   const publish = () => authority.publish(config, [{ target, scope }]);
   publish();
-  return { root, runtime, access, config, target, authority, publish, close: () => rm(root, { recursive: true, force: true }) };
+  return { root, runtime, access, identity, config, target, authority, publish, close: () => rm(root, { recursive: true, force: true }) };
 }
 function response(input = syntheticCase) {
   const item = { type: "message", id: "msg_synthetic", role: "assistant", status: "completed",
@@ -48,8 +54,9 @@ function response(input = syntheticCase) {
   ].map(event => `data: ${JSON.stringify(event)}\n\n`).join(""), { headers: { "content-type": "text/event-stream", "x-request-id": "synthetic-request" } });
 }
 function payload(init: RequestInit) {
+  const bytes = typeof init.body === "string" ? Buffer.from(init.body) : Buffer.from(init.body as ArrayBuffer);
   return JSON.parse(new Headers(init.headers).get("content-encoding") === "zstd"
-    ? zstdDecompressSync(Buffer.from(init.body as ArrayBuffer)).toString() : String(init.body));
+    ? zstdDecompressSync(bytes).toString() : bytes.toString());
 }
 
 test("guarded subscription with local operator auth preserves the SQLite case when identity is disabled during transport", async () => {
@@ -169,8 +176,9 @@ test("actual subscription x-oai-request-id is retained in the report and termina
   } finally { await f.close(); }
 });
 
-test("a subscription ticket cannot resolve photos using a different account configuration", async () => {
-  const f = await fixture(); let resolutions = 0;
+for (const route of ["codex", "siwc"] as const) {
+test(`a ${route} subscription ticket cannot resolve photos using a different account configuration`, async () => {
+  const f = await fixture(route); let resolutions = 0;
   try {
     f.authority.publish({ ...f.config, accountIdSha256: sha("other-account") }, [{ target: { ...f.target, accountIdSha256: sha("other-account") }, scope }]);
     const runner = createOperationalRunner({ provider: "subscription", enabled: true, timeoutMs: 5000, maxTurns: 1, maxOutputTokens: 128,
@@ -184,6 +192,7 @@ test("a subscription ticket cannot resolve photos using a different account conf
     assert.equal(resolutions, 0);
   } finally { await f.close(); }
 });
+}
 
 test("subscription approval refusal and a mismatched account prevent transmission", async () => {
   const f = await fixture();
@@ -284,10 +293,12 @@ test("subscription HTTP deadline/cancellation abort the transport and retain an 
   } finally { await f.close(); }
 });
 
-test("O4 upload, consent, selection and guarded subscription dispatch use one authority and actual image SHA", async () => {
-  const f = await fixture(), cases = createCaseStore(Date.now, f.authority), events: OperationalAudit[] = [];
+for (const route of ["codex", "siwc"] as const) {
+test(`O4 ${route} upload, consent, selection and guarded subscription dispatch use one authority and actual image SHA`, async () => {
+  const f = await fixture(route), cases = createCaseStore(Date.now, f.authority), events: OperationalAudit[] = [];
   const store = await createPhotoStore({ root: join(f.root, "photos"), authorize: cases.authorize, retentionMs: 60000, maxPhotos: 3, photoExecution: f.authority });
-  let input = syntheticCase, sent = 0, changeDuringPermit = false, tamperImage = false;
+  let input = syntheticCase, sent = 0, changeDuringPermit = false, tamperImage = false, observedUrl = "";
+  let terminal: "completed" | "failed" | "incomplete" | "eof" = "completed";
   const app = createOperationalApp({ origin, actorForRequest: async () => "owner", caseStore: cases, photoStore: store,
     photoPolicy: { retentionMs: 60000 }, resources: value => { input = value; return {}; },
     operations: { provider: "subscription", enabled: true, timeoutMs: 5000, maxTurns: 1, maxOutputTokens: 128,
@@ -295,13 +306,26 @@ test("O4 upload, consent, selection and guarded subscription dispatch use one au
       authorizeDispatch: async () => { if (changeDuringPermit) f.publish(); return { approvalId: "synthetic", expiresAt: Date.now() + 60000 }; },
       record: async event => { events.push(event); }, transport: async (_url, init) => {
         sent++;
+        observedUrl = String(_url);
+        assert.equal(String(_url), route === "siwc" ? "https://api.openai.com/v1/responses" : SUBSCRIPTION_ENDPOINT);
+        assert.equal(init?.method, "POST");
+        assert.equal(payload(init!).store, false); assert.equal(payload(init!).stream, true);
+        assert.equal(payload(init!).model, "gpt-6-sol");
+        if (route === "siwc") assert.equal(new Headers(init?.headers).get("authorization"), `Bearer ${f.access}`);
         if (input.photoRefs.length) {
-          const images = payload(init!).input.flatMap((message: { content?: { type: string; image_url?: string }[] }) => message.content?.filter(part => part.type === "input_image") ?? []);
+          const images = payload(init!).input.flatMap((message: { content?: { type: string; image_url?: string }[] }) => Array.isArray(message.content) ? message.content.filter(part => part.type === "input_image") : []);
           assert.equal(images.length, 1);
           const bytes = Buffer.from(images[0].image_url.split(",")[1], "base64");
           assert.equal(sha(bytes), cases.read("actor:owner", input.caseId)!.photos[0]!.sha256);
         }
-        return response(input);
+        const received = response(input);
+        if (terminal === "completed") return received;
+        const text = await received.text();
+        const failed = terminal === "eof" ? text.slice(0, text.indexOf('data: {"type":"response.completed"'))
+          : text.replaceAll("response.completed", `response.${terminal}`).replace('"id":"resp_synthetic","status":"completed"',
+            terminal === "incomplete" ? '"id":"resp_synthetic","status":"incomplete","incomplete_details":{"reason":"max_output_tokens"}'
+              : '"id":"resp_synthetic","status":"failed","error":{"code":"subscription_sharing_usage_limit_exceeded","message":"synthetic only"}');
+        return new Response(failed, { headers: received.headers });
       } } }, async (...args) => {
         const owned = await openCaseSession(...args), stream = owned.session.agent.streamFunction;
         owned.session.agent.streamFunction = (model, context, settings) => stream(model, context, { ...settings, fetch: async (url, init) => {
@@ -317,7 +341,9 @@ test("O4 upload, consent, selection and guarded subscription dispatch use one au
       });
   try {
     const { caseId: _id, ...fields } = syntheticCase;
-    const created = await app.fetch(post("/cases", fields)); assert.equal(created.status, 303);
+    const created = await app.fetch(post("/cases", fields));
+    assert.equal(observedUrl, route === "siwc" ? "https://api.openai.com/v1/responses" : SUBSCRIPTION_ENDPOINT);
+    assert.equal(created.status, 303);
     const path = created.headers.get("location")!, id = path.slice(7), ticket = f.authority.current()!;
     const photon = createRequire(import.meta.resolve("@code-yeongyu/senpi"))("@silvia-odwyer/photon-node") as typeof import("@silvia-odwyer/photon-node");
     const image = new photon.PhotonImage(new Uint8Array([255, 0, 0, 255]), 1, 1);
@@ -325,7 +351,8 @@ test("O4 upload, consent, selection and guarded subscription dispatch use one au
     try { form.set("file", new File([new Uint8Array(image.get_bytes())], "synthetic.png", { type: "image/png" })); } finally { image.free(); }
     assert.equal((await app.fetch(new Request(origin + path + "/photos", { method: "POST", headers: { origin }, body: form }))).status, 303);
     const stored = cases.read("actor:owner", id)!.photos[0]!;
-    assert.equal((await app.fetch(post(path + "/answers", { baseVersion: 2, patch: { photoRefs: [stored.photoRef] } }))).status, 303);
+    const selected = await app.fetch(post(path + "/answers", { baseVersion: 2, patch: { photoRefs: [stored.photoRef] } }));
+    assert.equal(selected.status, 303, JSON.stringify({ sent, events }));
     assert.equal(sent, 2);
     assert.deepEqual(events.at(-1)?.images, [{ photoRefSha256: sha(stored.photoRef), sha256: stored.sha256, mimeType: "image/png" }]);
     const previous = cases.read("actor:owner", id)!, report = await (await app.fetch(new Request(origin + path + "/report"))).text();
@@ -338,7 +365,106 @@ test("O4 upload, consent, selection and guarded subscription dispatch use one au
     assert.equal((await app.fetch(post(path + "/answers", { baseVersion: 3, patch: { massKg: 999 } }))).status, 502);
     assert.equal(sent, 2); assert.deepEqual(cases.read("actor:owner", id), previous);
     assert.equal(await (await app.fetch(new Request(origin + path + "/report"))).text(), report);
+    if (route === "siwc") {
+      changeDuringPermit = false;
+      for (const failure of ["failed", "incomplete", "eof"] as const) {
+        terminal = failure;
+        assert.equal((await app.fetch(post(path + "/answers", { baseVersion: 3, patch: { massKg: 777 } }))).status, 502);
+        assert.deepEqual(cases.read("actor:owner", id), previous);
+        assert.equal(events.at(-1)?.outcome, "provider"); assert.equal(events.at(-1)?.usage, null);
+        assert.equal(await (await app.fetch(new Request(origin + path + "/report"))).text(), report);
+      }
+      assert.equal(sent, 5);
+    }
     const readiness = await (await app.fetch(new Request(origin + "/operations/readiness"))).json();
     assert.equal(readiness.modelProvider, "chatgpt-subscription"); assert.equal(readiness.liveModelVerified, false);
   } finally { app.dispose(); await f.close(); }
 });
+}
+
+test("SiWC selects only the approved slot with direct-use permission and never mutates the managed store", async () => {
+  const f = await fixture("siwc");
+  try {
+    const slot = { name: "approved", ...f.identity, access: f.access, refresh: "synthetic-refresh", expires: Date.now() + 3600000,
+      route: "siwc", planUsageEnabled: true, scopes: ["chatgpt.tokens.use.direct"] };
+    for (const mode of ["approved", "flat", "opaque", "changed-client", "approved-other-client", "issuer", "subject", "missing-client", "dynamic-client", "legacy-only",
+      "unselected", "wrong-slot", "scope", "permission", "route", "expiry", "signed-out", "account", "duplicate"] as const) {
+      const clientId = mode === "changed-client" || mode === "approved-other-client" ? "synthetic-client-B" : f.identity.clientId;
+      const tokenPayload = Buffer.from(JSON.stringify(mode === "legacy-only"
+        ? { "https://api.openai.com/auth": { chatgpt_account_id: "synthetic-account" } }
+        : { iss: f.identity.issuer, sub: f.identity.subject, client_id: clientId,
+          "https://api.openai.com/auth": { per_user_salt: "synthetic", encrypted_auth_metadata: "synthetic" } })).toString("base64url");
+      const access = mode === "opaque" ? "synthetic-opaque-siwc-access" : `synthetic.${tokenPayload}.signature`;
+      const selected = { ...slot, access,
+        clientId: mode === "missing-client" ? undefined : mode === "dynamic-client" ? "dynamic_agent_client" : clientId,
+        ...(mode === "issuer" ? { issuer: "https://example.invalid" } : {}), ...(mode === "subject" ? { subject: "another-subject" } : {}),
+        ...(mode === "legacy-only" ? { issuer: undefined, subject: undefined, clientId: undefined } : {}),
+        ...(mode === "scope" ? { scopes: [] } : {}), ...(mode === "permission" ? { planUsageEnabled: false } : {}),
+        ...(mode === "route" ? { route: "codex" } : {}), ...(mode === "expiry" ? { expires: 0 } : {}), ...(mode === "signed-out" ? { signedOut: true } : {}) };
+      const config = { ...f.config, credentialSlot: mode === "unselected" ? undefined : mode === "wrong-slot" ? "absent" : mode === "flat" ? "default" : "approved",
+        accountIdSha256: mode === "account" ? sha("another-account") : mode === "legacy-only" ? sha("synthetic-account")
+          : mode === "approved-other-client" ? sha(JSON.stringify([f.identity.issuer, f.identity.subject, clientId])) : f.config.accountIdSha256 };
+      await writeFile(f.config.authPath, JSON.stringify({ "chatgpt-subscription": mode === "flat"
+        ? { type: "oauth", ...selected }
+        : { type: "oauth", access: "chatgpt-subscription-managed", refresh: "chatgpt-subscription-managed", expires: 0,
+          subject: "synthetic-wrong-parent-subject", issuer: "https://auth.openai.com", clientId: "synthetic-parent-client",
+          accounts: [selected, ...(mode === "duplicate" ? [slot] : [])] } }));
+      const before = await readFile(f.config.authPath, "utf8");
+      let sent = 0, approved = 0;
+      const runner = createOperationalRunner({ provider: "subscription", enabled: true, timeoutMs: 5000, maxTurns: 1, maxOutputTokens: 128,
+        configuration: async () => config, record: async () => {},
+        authorizeDispatch: async () => { approved++; return { approvalId: "synthetic", expiresAt: Date.now() + 60000 }; },
+        transport: async (_url, init) => { sent++; assert.equal(new Headers(init?.headers).get("authorization"), `Bearer ${access}`); return response(); } });
+      if (mode === "approved" || mode === "flat" || mode === "opaque" || mode === "approved-other-client") { await runner(syntheticCase, signal()); assert.equal(sent, 1); assert.equal(approved, 1); }
+      else { await assert.rejects(runner(syntheticCase, signal()), (error: unknown) => error instanceof SessionFailure, mode); assert.equal(sent, 0); assert.equal(approved, 0); }
+      assert.equal(await readFile(f.config.authPath, "utf8"), before);
+    }
+  } finally { await f.close(); }
+});
+
+test("SiWC rejects SDK route, bearer, model, storage, streaming and output-limit changes before approval", async () => {
+  const f = await fixture("siwc");
+  try {
+    for (const mode of ["url", "bearer", "model", "store", "stream", "cap"] as const) {
+      let sent = 0, approved = 0;
+      const intercept: typeof openCaseSession = async (...args) => {
+        const owned = await openCaseSession(...args), stream = owned.session.agent.streamFunction;
+        owned.session.agent.streamFunction = (model, context, settings) => stream(model, context, { ...settings, fetch: async (url, init) => {
+          const headers = new Headers(init?.headers), body = payload(init!);
+          switch (mode) {
+            case "bearer": headers.set("authorization", "Bearer synthetic-other"); break;
+            case "model": body.model = "other-model"; break;
+            case "store": body.store = true; break;
+            case "stream": body.stream = false; break;
+            case "cap": body.max_output_tokens = 8192; break;
+            case "url": break;
+            default: assert.fail(mode satisfies never);
+          }
+          return settings!.fetch!(mode === "url" ? SUBSCRIPTION_ENDPOINT : url, { ...init, headers, body: JSON.stringify(body) });
+        } });
+        return owned;
+      };
+      const runner = createOperationalRunner({ provider: "subscription", enabled: true, timeoutMs: 5000, maxTurns: 1, maxOutputTokens: 128,
+        configuration: async () => f.config, record: async () => {}, authorizeDispatch: async () => { approved++; return null; },
+        transport: async () => { sent++; return response(); } }, intercept);
+      await assert.rejects(runner(syntheticCase, signal())); assert.equal(sent, 0); assert.equal(approved, 0);
+    }
+  } finally { await f.close(); }
+});
+
+for (const change of ["route", "registration"] as const) {
+test(`changing subscription ${change} invalidates issued photo tickets and old consent`, async () => {
+  const f = await fixture(change === "route" ? "codex" : "siwc");
+  try {
+    const old = f.authority.current()!;
+    const accountIdSha256 = change === "registration"
+      ? sha(JSON.stringify([f.identity.issuer, f.identity.subject, "synthetic-client-B"])) : f.config.accountIdSha256;
+    const config = { ...f.config, route: "siwc" as const, accountIdSha256 };
+    f.authority.publish(config, [{ target: { ...f.target, endpoint: "https://api.openai.com/v1/responses", accountIdSha256 }, scope }]);
+    const current = f.authority.current(); assert.ok(current);
+    assert.notEqual(current.bindingId, old.bindingId);
+    assert.throws(() => f.authority.assertCurrent(old));
+    assert.equal(matchesPhotoConsent({ model: true, visibleContentReviewed: true, modelBindingId: old.bindingId, modelScope: scope }, current), false);
+  } finally { await f.close(); }
+});
+}

@@ -1,10 +1,10 @@
 import { randomUUID } from "node:crypto";
 import { checkedConfiguration, type AzureConfiguration } from "./azure-configuration.ts";
-import { checkedSubscriptionConfiguration, SUBSCRIPTION_ENDPOINT, type SubscriptionConfiguration } from "./subscription-configuration.ts";
+import { checkedSubscriptionConfiguration, subscriptionEndpoint, type SubscriptionConfiguration } from "./subscription-configuration.ts";
 
 export type ModelScope = Readonly<{ provider: string; purpose: string }>;
 export type AzureTarget = Readonly<Pick<AzureConfiguration, "endpoint" | "deployment" | "modelId" | "apiVersion">>;
-export type SubscriptionTarget = Readonly<{ provider: "chatgpt-subscription"; endpoint: typeof SUBSCRIPTION_ENDPOINT; modelId: string; accountIdSha256: string }>;
+export type SubscriptionTarget = Readonly<{ provider: "chatgpt-subscription"; endpoint: ReturnType<typeof subscriptionEndpoint>; modelId: string; accountIdSha256: string }>;
 type Target = AzureTarget | SubscriptionTarget;
 type Configuration = AzureConfiguration | SubscriptionConfiguration;
 export type ScopeMapping<T extends Target = AzureTarget> = Readonly<{ target: T; scope: ModelScope }>;
@@ -27,7 +27,7 @@ export function createPhotoExecutionAuthority() {
 /** Uses the same O consent/lease contract; production mappings are never inferred. */
 export function createSubscriptionPhotoExecutionAuthority() {
   return createAuthority(checkedSubscriptionConfiguration,
-    config => Object.freeze({ provider: config.provider, endpoint: SUBSCRIPTION_ENDPOINT, modelId: config.modelId, accountIdSha256: config.accountIdSha256 }),
+    config => Object.freeze({ provider: config.provider, endpoint: subscriptionEndpoint(config), modelId: config.modelId, accountIdSha256: config.accountIdSha256 }),
     (a, b) => a.provider === b.provider && a.endpoint === b.endpoint && a.modelId === b.modelId && a.accountIdSha256 === b.accountIdSha256);
 }
 

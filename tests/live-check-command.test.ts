@@ -5,6 +5,7 @@ import { mkdtempSync, readFileSync, readdirSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { ModelRuntime } from "@code-yeongyu/senpi";
+import { createHash } from "node:crypto";
 
 const marker = "PRIVATE_DIAGNOSTIC_synthetic@example.invalid_synthetic-refresh";
 if (process.env["H48_OWNED_WIRE_CHILD"] === "1") {
@@ -25,23 +26,32 @@ if (process.env["H48_OWNED_WIRE_CHILD"] === "1") {
     { status: 429, headers: { "x-oai-request-id": "req_cli_owned" } }), { preconnect() {} });
   }
 } else {
-  for (const mode of ["normal", "historical", "rate-limit"] as const) {
+  for (const mode of ["normal", "siwc", "historical", "rate-limit"] as const) {
   test(`shipped CLI ${mode} writes one secret-free result through the SDK and app`, async () => {
     const root = mkdtempSync(join(tmpdir(), "live-check-command-owned-")), authPath = join(root, "auth.json");
     try {
       const runtime = await ModelRuntime.create({ authPath, modelsPath: null, allowModelNetwork: false, refreshOnCreate: false });
-      const payload = Buffer.from(JSON.stringify({ "https://api.openai.com/auth": { chatgpt_account_id: "synthetic-account" } })).toString("base64url");
+      const identity = { issuer: "https://auth.openai.com", subject: "synthetic-verified-subject", clientId: "synthetic-client-A" };
+      const payload = Buffer.from(JSON.stringify(mode === "siwc"
+        ? { iss: identity.issuer, sub: identity.subject, client_id: identity.clientId,
+          "https://api.openai.com/auth": { per_user_salt: "synthetic", encrypted_auth_metadata: "synthetic" } }
+        : { "https://api.openai.com/auth": { chatgpt_account_id: "synthetic-account" } })).toString("base64url");
       assert.ok(runtime.authStorage);
       runtime.authStorage.set("chatgpt-subscription", { type: "oauth", access: `synthetic.${payload}.signature`,
-        refresh: "synthetic-refresh", expires: Date.now() + 3600000 });
-      const preload = mode === "normal" ? join(dirname(import.meta.filename), "live-check.test.ts") : import.meta.filename;
-      const result = spawnSync(process.execPath, ["--preload", preload, "scripts/live-check.ts", "--out", join(root, "results")], {
+        refresh: "synthetic-refresh", expires: Date.now() + 3600000, route: "siwc", planUsageEnabled: true, scopes: ["chatgpt.tokens.use.direct"],
+        ...(mode === "siwc" ? identity : {}) });
+      const success = mode === "normal" || mode === "siwc";
+      const preload = success ? join(dirname(import.meta.filename), "live-check.test.ts") : import.meta.filename;
+      const result = spawnSync(process.execPath, mode === "siwc"
+        ? ["run", "--preload", preload, "live-check", "--subscription-route", "siwc", "--account-id-sha256", createHash("sha256").update(JSON.stringify([identity.issuer, identity.subject, identity.clientId])).digest("hex"), "--out", join(root, "results")]
+        : ["--preload", preload, "scripts/live-check.ts", "--out", join(root, "results")], {
         env: { ...process.env, H48_OWNED_WIRE_CHILD: "1", H48_SDK_WIRE_CHILD: mode,
+          ...(mode === "siwc" ? { BUN_OPTIONS: `${process.env["BUN_OPTIONS"] ?? ""} --preload=${preload}` } : {}),
           RESOURCE_AUTH_PATH: authPath, RESOURCE_MODEL_RUNNER: "subscription" },
         encoding: "utf8", timeout: 20000 });
-      assert.equal(result.error, undefined); assert.equal(result.status, mode === "normal" ? 0 : 1);
-      assert.equal(result.stderr, "");
-      assert.deepEqual(JSON.parse(result.stdout), { passed: mode === "normal", live: true, exitCode: mode === "normal" ? 0 : 1 });
+      assert.equal(result.error, undefined); assert.equal(result.status, success ? 0 : 1, result.stdout + result.stderr);
+      if (mode !== "siwc") assert.equal(result.stderr, "");
+      assert.deepEqual(JSON.parse(result.stdout), { passed: success, live: true, exitCode: success ? 0 : 1 });
       const directories = readdirSync(join(root, "results")); assert.equal(directories.length, 1);
       const directory = directories[0]; assert.ok(directory);
       const report = readFileSync(join(root, "results", directory, "result.json"), "utf8");
@@ -52,7 +62,7 @@ if (process.env["H48_OWNED_WIRE_CHILD"] === "1") {
       for (const item of parsed.cases.slice(0, 2)) {
         assert.equal(item.dispatches, mode === "rate-limit" ? 1 : 2);
         assert.equal(item.httpStatus, mode === "rate-limit" ? 429 : 303);
-        if (mode === "normal") {
+        if (success) {
           assert.equal(item.passed, true); assert.equal(item.reportVerified, true); assert.equal(item.failure, null);
         } else if (mode === "rate-limit") {
           assert.equal(item.failure, "rate-limit"); assert.deepEqual(item.requestIds, ["req_cli_owned"]);
@@ -71,8 +81,9 @@ if (process.env["H48_OWNED_WIRE_CHILD"] === "1") {
         assert.equal(parsed.cases[2].passed, true); assert.equal(parsed.cases[2].priorStatePreserved, true);
       }
       assert.equal(parsed.cases[2].dispatches, 0); assert.equal(parsed.cases[2].httpStatus, 403);
+      console.log(`OFFLINE_CLI_REPORT live=false mode=${mode} ${report.trim()}`);
       // External wire substitution cannot be detected by the production CLI. This is offline QA, never live evidence.
-      console.log(`OFFLINE_CLI_QA live=false mode=${mode} exit=${result.status} stderr=empty owned-auth-removed-in-finally`);
+      console.log(`OFFLINE_CLI_QA live=false mode=${mode} exit=${result.status} stderr=${mode === "siwc" ? "package-script-echo" : "empty"} owned-auth-removed-in-finally`);
     } finally { rmSync(root, { recursive: true, force: true }); }
   });
   }
