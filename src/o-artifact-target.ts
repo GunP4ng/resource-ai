@@ -36,10 +36,10 @@ export function privateArtifactEntry(path: string, directory: boolean): Stats {
   return info;
 }
 /** Descriptor identity and bounded reads share the installer's existing private path boundary. */
-export function readPrivateArtifact(path: string): Buffer {
+export function readPrivateArtifact(path: string, maxBytes = 64 * 1024 * 1024): Buffer {
   privateArtifactEntry(dirname(path), true);
   const before = privateArtifactEntry(path, false);
-  if (before.size > 64 * 1024 * 1024) throw new ArtifactOperatorError("filesystem");
+  if (!Number.isSafeInteger(maxBytes) || maxBytes < 0 || before.size > maxBytes) throw new ArtifactOperatorError("filesystem");
   const fd = openSync(path, constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_NONBLOCK);
   try {
     if (!same(before, fstatSync(fd))) throw new ArtifactOperatorError("filesystem");

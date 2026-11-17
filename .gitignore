@@ -7,3 +7,4 @@ dist/
 .qa-o4-photos/
 artifacts/
 *.log
+.omo/

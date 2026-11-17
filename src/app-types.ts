@@ -1,3 +1,4 @@
+import type { AcceptedHistoryArchive } from "./o-history.ts";
 import type { DecisionResult, CaseInput } from "./contracts.ts";
 import type { ReportPresentation } from "./report.ts";
 import type { createLocalAuth } from "./o-auth.ts";
@@ -57,4 +58,16 @@ export interface RouteRequest {
   readonly owner: string;
   readonly caseMatch: RegExpExecArray | null;
   readonly photoMatch: RegExpExecArray | null;
+}
+
+/** Accepted historical data has display authority only; the reader is a current local account. */
+export interface HistoryMount {
+  readonly archive: AcceptedHistoryArchive;
+  readonly readerActorId: string;
+}
+export interface HistoryRouteOptions {
+  readonly origin: string;
+  readonly localAuth?: ReturnType<typeof createLocalAuth>;
+  readonly mount?: HistoryMount;
+  readonly timeoutMs?: number;
 }

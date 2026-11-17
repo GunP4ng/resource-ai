@@ -1,4 +1,6 @@
 import { createServer } from "node:http";
+import { historyConfiguration, loadHistoryMount } from "../src/o-history-runtime.ts";
+import { createHistoryRoutes } from "../src/app-history-routes.ts";
 import type { IncomingHttpHeaders } from "node:http";
 import { Readable } from "node:stream";
 import { isAbsolute, join, resolve } from "node:path";
@@ -94,6 +96,7 @@ export function createPhotoCleanupWorker(runtime: RuntimeDatabase, caseStore: Re
 
 export async function startApp(injection: { readonly transport?: FetchFunction;
   readonly suppliers?: { readonly configuration: Readonly<HOperationalConfiguration>; readonly open: OpenOperatorSuppliers } } = {}) {
+const historyConfig = historyConfiguration(process.env);
 const port = Number(process.env["PORT"] ?? 3000);
 if (!Number.isInteger(port) || port < 1 || port > 65535) throw new RangeError("Invalid PORT");
 const origin = `http://localhost:${port}`;
@@ -126,6 +129,7 @@ let startupStore: ReturnType<typeof createCaseStore> | undefined;
 try {
 const caseStore = operator?.caseStore ?? createCaseStore(Date.now, undefined, runtime); startupStore = caseStore;
 const localAuth = operator?.localAuth ?? (authMode === "local-operator" ? createLocalAuth(runtime, { origin }) : undefined);
+const historyMount = loadHistoryMount(historyConfig, runtime);
 const resources = operator || resourcesRoot === undefined ? undefined : await createFileResourceProvider({ root: resourcesRoot, caseStore });
 const retentionMs = 3_600_000;
 const photoStore = operator?.photoStore ?? (privatePhotos === "on" && state ? await createPhotoStore({ root: join(state, "photos"), authorize: caseStore.authorize, retentionMs, maxPhotos: 300 }) : undefined);
@@ -145,7 +149,8 @@ await cleanup?.run();
 const cleanupTimer = cleanup ? setInterval(() => { void cleanup.run(); }, 30000) : undefined;
 cleanupTimer?.unref();
 const handlers = new Set<Promise<void>>();
-const bridge = requestBridge(origin, app.fetch);
+const history = createHistoryRoutes(app.fetch, { origin, localAuth, mount: historyMount });
+const bridge = requestBridge(origin, history.fetch);
 const server = createServer((incoming, outgoing) => {
   const work = bridge(incoming, outgoing); handlers.add(work);
   void work.then(() => handlers.delete(work), () => { handlers.delete(work); outgoing.destroy(); });
@@ -157,7 +162,7 @@ function shutdown(exitCode: number): void {
   shuttingDown = true;
   clearInterval(cleanupTimer); const closingCleanup = cleanup?.close();
   const stopped = new Promise<void>(done => server.close(() => done()));
-  app.dispose();
+  history.dispose(); app.dispose();
   const deadline = setTimeout(() => {
     server.closeAllConnections();
     process.exit(Math.max(1, exitCode));
@@ -167,6 +172,7 @@ function shutdown(exitCode: number): void {
     await Promise.allSettled([...handlers]);
     await reloadWork;
     await closingCleanup;
+    await history.settled();
     await app.close();
     if (operator) await operator.close(); else { caseStore.dispose(); runtime.close(); }
     clearTimeout(deadline); process.exitCode = exitCode;

@@ -1,3 +1,4 @@
+import { historyCommandMain } from "./o-case-history.ts";
 import { Value } from "typebox/value";
 import { createCaseStore } from "../src/o-case-store.ts";
 import { openRuntimeDatabase } from "../src/o-runtime-db.ts";
@@ -44,7 +45,8 @@ function handoff(artifact: ResearchCaseArtifact, snapshot: CaseSnapshot) {
     },
   };
 }
-export async function casePackageMain(args = process.argv.slice(2)): Promise<number> {
+export async function casePackageMain(args: readonly string[] = process.argv.slice(2)): Promise<number> {
+  if (args[0] === "receive-history" || args[0] === "history-receipt") return historyCommandMain(args);
   let runtime: Awaited<ReturnType<typeof openRuntimeDatabase>> | undefined;
   let cases: ReturnType<typeof createCaseStore> | undefined;
   try {
