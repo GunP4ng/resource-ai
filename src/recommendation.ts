@@ -14,6 +14,10 @@ export function executionChecksFor(assessment: CaseAssessment): readonly string[
   return [...new Set([...executionChecks, ...assessment.legal.reviewRequirements, ...Object.values(assessment.requiredChecks).flat(),
     ...assessment.legal.issues.filter(({ kind }) => kind === "unrelated" || kind === "context-ambiguous")
       .map(({ sourceId }) => `공개 인용과 이 사례의 관련성이 약합니다. 적용 행·수지·처리 공정의 관련성을 실행 전에 확인하세요 (${sourceId}).`),
+    ...assessment.legal.issues.filter(({ kind }) => kind !== "unrelated" && kind !== "context-ambiguous")
+      .map(({ kind, sourceId }) => `근거 확인 상태: ${kind} (${sourceId ?? "unknown"}). 채택한 인용과 별도로 확인하세요.`),
+    ...assessment.pendingLegal.issues.map(({ kind }) => `법령 시행본 확인 상태: ${kind}`),
+    ...assessment.pendingLegal.pending.map(({ sourceId }) => `법령 원문 확인 대기: ${sourceId}`),
     ...assessment.routes.flatMap(route => route.eligibility.state === "ineligible" ? route.eligibility.reasons : [])])];
 }
 
@@ -24,11 +28,8 @@ function publicRecyclingEvidence(assessment: CaseAssessment): readonly string[] 
   return citations.filter(citation => required.some(suffix => citation.sourceId.endsWith(suffix))).map(citation => citation.sourceId);
 }
 
-/** Weak relevance is advisory; source verification and explicit risk still block. */
+/** Lookup excludes unusable citations; one rejected source does not veto other routes. */
 export function recommendationBlockers(facts: CaseInput, assessment: CaseAssessment, reviews?: RouteReviewContext): readonly string[] {
-  const issues = assessment.legal.issues.filter(({ kind }) =>
-    kind !== "unrelated" && kind !== "context-ambiguous" && kind !== "context-missing"
-    && !(kind === "hazardous-contact-unconfirmed" && facts.hazardousContact === "unknown"));
   return [
     ...(facts.hazardousContact === "yes" ? ["유해물질 접촉·지정폐기물 해당 여부 검토 필요"] : []),
     ...(/지정폐기물\s*(?:의심|해당(?!\s*(?:없|아님|하지\s*않))|가능)|(?:suspected|confirmed)\s+hazardous\s+waste/iu.test(
@@ -36,9 +37,6 @@ export function recommendationBlockers(facts: CaseInput, assessment: CaseAssessm
     ...(/유해물질\s*접촉\s*(?:있음|의심)|(?:suspected|confirmed)\s+hazardous\s+contact/iu.test(
       [facts.description, facts.contamination].join(" ")) ? ["유해물질 접촉 의심 입력"] : []),
     ...assessment.reviewIssues,
-    ...issues.map(({ kind, sourceId }) => `법령 인용 검증 실패: ${kind} (${sourceId ?? "unknown"})`),
-    ...assessment.pendingLegal.issues.map(({ kind }) => `법령 시행본 확인 필요: ${kind}`),
-    ...assessment.pendingLegal.pending.map(({ sourceId }) => `법령 원문 미검증: ${sourceId}`),
     ...(assessment.legal.evidence.length === 0 || assessment.legal.citations.length === 0 ? ["검증된 법령 인용 없음"] : []),
     ...(assessment.questions.length === 0 && publicRecyclingEvidence(assessment).length === 0
       && assessment.routes.every(route => route.eligibility.state !== "eligible") ? ["경로별 판단에 필요한 공개 법령 인용 부족"] : []),

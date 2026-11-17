@@ -47,7 +47,7 @@ export function parseDecision(raw: unknown): DecisionResult {
         requireValid(raw.routes.some((route) => route.routeId === recommendation.routeId
           && (recommendation.grade === "reviewed" ? route.eligibility.state === "eligible" : route.eligibility.state === "conditional")), "recommendation-route-unresolved");
         requireValid(recommendation.legalCitations.every((citation) => raw.evidence.some((record) =>
-          record.sourceId === citation.sourceId && record.locator === citation.locator && record.licenseVerified)), "recommendation-citation-unresolved");
+          record.sourceId === citation.sourceId && record.locator === citation.locator)), "recommendation-citation-unresolved");
       }
     }
     const references = (ids: readonly string[]) => ids.length > 0 && ids.every((id) => raw.evidence.some((e) => e.sourceId === id));

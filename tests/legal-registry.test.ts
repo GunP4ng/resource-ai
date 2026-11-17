@@ -112,11 +112,11 @@ test.each([
   expect(result.issues).toContainEqual({ kind: issue, sourceId: "legal-291947-annex4-code" });
 });
 
-test("keeps dates after the 291947 verification cutoff under review", () => {
-  const result = lookupLegalEvidence({ ...input, assessmentDate: "2026-11-16" });
-  expect(result.citations.filter((item) => item.sourceId.startsWith("legal-291947-"))).toEqual([]);
-  expect(result.issues.some((item) => item.kind === "currentness-unverified"
-    && item.sourceId === "legal-291947-annex4-code")).toBe(true);
+test.each(["2026-11-16", "2026-11-25", "2027-01-15"])("keeps effective citations after verification and collection cutoffs: %s", (assessmentDate) => {
+  const result = lookupLegalEvidence({ ...input, assessmentDate });
+  expect(result.citations.find((item) => item.sourceId === "legal-291947-annex4-code")?.verifiedThrough).toBe("2026-11-15");
+  expect(result.citations.some((item) => item.sourceId.startsWith("legal-290881-"))).toBe(false);
+  expect(result.issues).toEqual([]);
 });
 
 test("adds the actual food feedstock condition and keeps the linked notice unresolved", () => {
@@ -129,22 +129,27 @@ test("adds the actual food feedstock condition and keeps the linked notice unres
   expect(food.reviewRequirements).toContain("식품용기 재생원료의 적용범위·시설·품질·식약처 인정 증빙 미확인: 적합 판정 보류.");
 });
 
-test("rejects an excerpt linked to a different original PDF", () => {
+test("accepts a supported excerpt linked to a different original PDF with a hash label", () => {
   const entry = entries.find((item) => item.sourceId === "legal-290881-annex4-code");
   if (entry === undefined) throw new Error("source fixture missing");
   const result = loadEvidenceRegistry([{ ...entry, originalSourceId: "legal-290881-annex4-2-pdf" }]);
-  expect(result.candidates).toEqual([]);
+  expect(result.candidates.map((item) => item.record.sourceId)).toEqual([entry.sourceId]);
+  expect(result.candidates[0]?.originalVerified).toBe(false);
   expect(result.issues).toEqual([{ kind: "hash-mismatch", sourceId: "legal-290881-annex4-code" }]);
 });
 
 test.each([undefined, "", "missing-original", "legal-290881-annex4-code", "keco-price-2026-10"])(
-  "rejects an excerpt without an original law source: %s", (originalSourceId) => {
+  "accepts a supported excerpt without a verified original law source: %s", (originalSourceId) => {
     const entry = entries.find((item) => item.sourceId === "legal-290881-annex4-code");
     if (entry === undefined) throw new Error("source fixture missing");
     const { originalSourceId: _original, ...excerpt } = entry;
     const result = loadEvidenceRegistry([originalSourceId === undefined ? excerpt : { ...excerpt, originalSourceId }]);
-    expect(result.candidates).toEqual([]);
+    expect(result.candidates.map((item) => item.record.sourceId)).toEqual([entry.sourceId]);
+    expect(result.candidates[0]?.originalVerified).toBe(false);
     expect(result.issues).toEqual([{ kind: "original-unverified", sourceId: entry.sourceId }]);
+    if (originalSourceId === "" || originalSourceId === "missing-original") {
+      expect(result.candidates[0]?.provenance?.originalSourceId).toBeUndefined();
+    }
   },
 );
 

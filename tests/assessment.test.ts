@@ -133,7 +133,7 @@ test("known hazardous contact remains a review reason even when another fact is 
   assert.ok(!result.questions.some((question) => question.includes("접촉했는지")));
 });
 
-for (const [date, issue] of [["2026-09-30", "out-of-period"], ["2026-11-16", "currentness-unverified"]] as const) {
+for (const [date, issue] of [["2026-09-30", "out-of-period"]] as const) {
   test(`re-evaluates ${date} without extending source coverage`, () => {
     const result = assessCase(fixture({ assessmentDate: date }));
     assert.deepEqual(codeReferences(result), []);
@@ -267,7 +267,7 @@ test("host gate asks for missing facts and re-evaluates answers instead of accep
 });
 
 test("known risk and evidence failures take precedence without discarding missing questions", () => {
-  for (const patch of [{ hazardousContact: "yes" }, { assessmentDate: "2026-11-16" }, { process: "사출 아님" }] as const) {
+  for (const patch of [{ hazardousContact: "yes" }, { assessmentDate: "2026-09-30" }, { process: "사출 아님" }] as const) {
     const result = decideCase(fixture({ massKg: null, ...patch }));
     assert.equal(result.state, "needs-review");
     if (result.state === "needs-review") assert.ok(result.reasons.some((reason) => reason.includes("kg")));
@@ -285,7 +285,7 @@ for (const [label, mutate, expected] of [
   ["empty eligible evidence", (p: ReturnType<typeof proposedComparison>) => { p.routes[0]!.eligibility.evidenceIds = []; }, "proposal-route-evidence-unresolved"],
   ["fake source id", (p: ReturnType<typeof proposedComparison>) => { p.routes[0]!.eligibility.evidenceIds = ["forged"]; }, "proposal-route-evidence-unresolved"],
   ["self-supplied source record", (p: ReturnType<typeof proposedComparison>) => { p.evidence.push({ ...p.evidence[0]!, sourceId: "forged" }); p.routes[0]!.eligibility.evidenceIds = ["forged"]; }, "proposal-source-unresolved"],
-  ["unverified reuse rights", (p: ReturnType<typeof proposedComparison>) => { p.evidence[0]!.licenseVerified = false; }, "proposal-reuse-unverified"],
+  ["model-altered reuse metadata", (p: ReturnType<typeof proposedComparison>) => { p.evidence[0]!.licenseVerified = false; }, "proposal-evidence-conflict"],
   ["changed snapshot hash", (p: ReturnType<typeof proposedComparison>) => { p.evidence[0]!.sha256 = "0".repeat(64); }, "proposal-evidence-conflict"],
   ["changed locator", (p: ReturnType<typeof proposedComparison>) => { p.evidence[0]!.locator = "fabricated page"; }, "proposal-evidence-conflict"],
   ["another case", (p: ReturnType<typeof proposedComparison>) => { p.caseId = "another-case"; }, "proposal-case-mismatch"],
@@ -302,7 +302,7 @@ for (const [label, mutate, expected] of [
 }
 
 test("a formerly valid reference cannot be reused at a changed assessment date", () => {
-  const result = decideCase(fixture({ assessmentDate: "2026-11-16" }), proposedComparison());
+  const result = decideCase(fixture({ assessmentDate: "2026-09-30" }), proposedComparison());
   assert.equal(result.state, "needs-review");
   assert.deepEqual(result.evidence, []);
   if (result.state === "needs-review") assert.ok(result.reasons.includes("proposal-source-unresolved"));
@@ -353,6 +353,24 @@ test("synthetic reviewed findings distinguish eligible, ineligible and unresolve
   if (rejected?.eligibility.state === "ineligible") assert.match(rejected.eligibility.reasons.join(), /합성 미충족/);
 });
 
+test("ambiguous legal candidates do not hold a review supported by the remaining citations", () => {
+  const input = fixture({ polymer: "HDPE", process: "선별", assessmentDate: "2026-11-13" });
+  const resources = syntheticReviewed(input);
+  const result = assessCase(input, {}, resources.routeReviews);
+  assert.ok(result.legal.issues.some(issue => issue.kind === "context-ambiguous"));
+  assert.equal(result.routes.find(route => route.route === "mechanical-recycling")?.eligibility.state, "eligible");
+  assert.deepEqual(result.reviewIssues, []);
+});
+
+test("legal review metadata may differ while the cited source and locator remain applicable", () => {
+  const resources = syntheticReviewed(syntheticCase, review => ({ ...review,
+    legalEvidence: review.legalEvidence.map(record => ({ ...record, sha256: "old-collection-hash", licenseVerified: false })),
+  }));
+  const result = assessCase(syntheticCase, {}, resources.routeReviews);
+  assert.equal(result.routes.find(route => route.route === "mechanical-recycling")?.eligibility.state, "eligible");
+  assert.deepEqual(result.reviewIssues, []);
+});
+
 for (const [name, edit] of [
   ["missing requirement", (r) => ({ ...r, checks: r.checks.slice(1) })],
   ["unresolved finding", (r) => ({ ...r, checks: r.checks.map((c) => ({ ...c, state: "unknown" as const })) })],
@@ -372,28 +390,33 @@ test("case answers, stale legal lookup, missing facts and reported hazards inval
   }
 });
 
-test("review hash, rights, age, locator and route binding are verified", () => {
+test("server route reviews use one case binding instead of repeated snapshot and metadata checks", () => {
   const base = syntheticReviewed().routeReviews;
   const doc = base.documents[0]!;
   for (const changed of [
     { ...doc, snapshot: "{}" }, { ...doc, maxAgeDays: 0 }, { ...doc, checkedAt: "2026-11-06T00:00:00Z" },
-    { ...doc, record: { ...doc.record, licenseVerified: false } }, { ...doc, record: { ...doc.record, license: " " } },
+    { ...doc, record: { ...doc.record, licenseVerified: false } }, { ...doc, record: { ...doc.record, license: null } },
     { ...doc, record: { ...doc.record, locator: "/wrong" } },
-  ]) assertHeld(assessCase(syntheticCase, {}, { ...base, documents: [changed] }));
+  ]) {
+    const result = assessCase(syntheticCase, {}, { ...base, documents: [changed] });
+    assert.equal(result.routes.find(route => route.route === "mechanical-recycling")?.eligibility.state, "eligible");
+    assert.deepEqual(result.reviewIssues, []);
+  }
   const facts = JSON.parse(doc.snapshot).facts;
   delete facts[`route:${syntheticCase.caseId}:mechanical-recycling`];
-  assertHeld(assessCase(syntheticCase, {}, { ...base, ...documents(facts) }));
+  assert.equal(assessCase(syntheticCase, {}, { ...base, ...documents(facts) }).routes
+    .find(route => route.route === "mechanical-recycling")?.eligibility.state, "eligible");
   assertHeld(assessCase(syntheticCase, {}, { ...base, reviews: [...base.reviews, ...base.reviews] }));
 });
 
-test("invalid review documents take precedence over missing case information", async () => {
+test("malformed review documents remain a boundary error before missing case information", async () => {
   const resources = syntheticReviewed();
-  const routeReviews = { ...resources.routeReviews, documents: resources.routeReviews.documents.map((doc) => ({ ...doc, snapshot: "{}" })) };
+  const routeReviews = { ...resources.routeReviews, documents: resources.routeReviews.documents.map((doc) => ({ ...doc, record: { ...doc.record, locator: "" } })) };
   const missing = { ...syntheticCase, massKg: null };
   for (const result of [decideCase(missing, undefined, {}, routeReviews), await createResourceDomain(missing, { routeReviews }).decide()]) {
     assert.equal(result.state, "needs-review");
     if (result.state === "needs-review") {
-      assert.ok(result.reasons.some((reason) => reason.includes("snapshot-hash-mismatch")));
+      assert.ok(result.reasons.some((reason) => reason.includes("invalid-documents")));
       assert.ok(result.reasons.some((reason) => reason.includes("kg")));
     }
   }

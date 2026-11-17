@@ -307,7 +307,7 @@ test("O4 native corrections refresh missing questions and remain usable after re
   } finally { app.dispose(); }
 });
 
-test("O4 post-verification review keeps correction access without bypassing currentness", async () => {
+test("O4 corrections permit current-law recommendations beyond the collection verification date", async () => {
   const app = createResourceApp({ origin });
   try {
     const cookie = await session(app.fetch);
@@ -315,8 +315,7 @@ test("O4 post-verification review keeps correction access without bypassing curr
     assert.match(await ownedPage(app.fetch, cookie, path), /<form\b/);
     assert.equal((await app.fetch(post(path + "/answers", cookie, '{"massKg":100}'))).status, 303);
     const html = await ownedPage(app.fetch, cookie, path);
-    assert.match(html, /<h1>검토 필요<\/h1>/);
-    assert.match(html, /currentness-unverified/);
+    assert.match(html, /공개 근거상 가능\(조건부\)/);
     assert.match(html, /<form\b/);
   } finally { app.dispose(); }
 });

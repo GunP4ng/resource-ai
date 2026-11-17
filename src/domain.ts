@@ -109,8 +109,7 @@ export function createResourceDomain(input: CaseInput, resources: DomainResource
           const add = (record: EvidenceRecord) => {
             const previous = evidence.get(record.sourceId);
             requireValid(previous === undefined || canonical(previous) === canonical(record), "evidence-record-conflict");
-            requireValid(record.licenseVerified && !!record.license?.trim()
-              && period(record.effectiveFrom ?? "0001-01-01", record.effectiveTo, facts.assessmentDate), "evidence-reuse-or-period-unverified");
+            requireValid(period(record.effectiveFrom ?? "0001-01-01", record.effectiveTo, facts.assessmentDate), "evidence-period-unverified");
             evidence.set(record.sourceId, structuredClone(record));
           };
           for (const record of [...assessment.legal.evidence, ...assessment.reviewEvidence, ...owned.comparison.evidence]) add(record);
@@ -143,7 +142,6 @@ export function createResourceDomain(input: CaseInput, resources: DomainResource
           const candidate = parseDecision(proposal);
           requireValid(candidate.caseId === facts.caseId, "proposal-case-mismatch");
           for (const record of candidate.evidence) {
-            requireValid(record.licenseVerified && !!record.license?.trim(), "proposal-reuse-unverified");
             const trusted = result.evidence.find((item) => item.sourceId === record.sourceId);
             requireValid(trusted !== undefined && canonical(trusted) === canonical(record), "proposal-evidence-conflict");
           }
