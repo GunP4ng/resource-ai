@@ -23,6 +23,7 @@
 system-ui, sans-serif를 사용하며 코드만 ui-monospace, monospace다. --body=17px, --secondary=15px(600·muted), --h3=22px, --h2=28px, --h1=36px, 본문 행간 1.7, 제목 1.3. 각 제목 단계는 1.25배 이상이다. h4는 별도 작은 제목 대신 본문 크기의 굵은 내역 표제다. 짧은 한국어 결론과 자연스러운 줄바꿈을 사용한다. 숫자는 tabular-nums다. 인쇄는 body 10.5pt, h1 21pt/h2 16pt/h3 12.5pt로 문서 공간을 보존한다.
 
 ## 4. 간격과 레이아웃
+Layout: 결과 첫 화면 - 결론과 다음 행동을 먼저 읽기 -> stack + content-limiter (https://github.com/changeroa/StyleGallery/blob/main/patterns/stacking/stack.md); scroll owner: document; anti-patterns: 고정 높이, 중첩 세로 스크롤, 단서로 결론 밀어내기.
 --s8/12/16/20/24/32/48은 각각 8/12/16/20/24/32/48px. --target=44px, --radius=4px, --border=1px, --focus-width=2px, --focus-offset=3px. 사진 미리보기 최대 높이는 기존 240px, textarea 최소 높이는 136px. 인쇄 여백은 기존 A4 18mm다.
 
 결과·폼·보고서는 [stack](https://github.com/changeroa/StyleGallery/blob/main/patterns/stacking/stack.md)으로 세로 읽기 순서를 유지하고 [content-limiter](https://github.com/changeroa/StyleGallery/blob/main/patterns/containment/content-limiter.md)로 최대 68ch 안에 둔다. 최초 74ch에서 실제 영문 출처 설명이 한 줄 86자로 측정되어 80자 이내로 줄였다. document/body가 유일한 세로 스크롤 소유자이며 모바일 양옆은 20px이다. 탐색·동작은 줄바꿈 가능한 [cluster](https://github.com/changeroa/StyleGallery/blob/main/patterns/in-line-grouping/cluster.md)이며 DOM·시각·포커스 순서가 같다. 중첩 스크롤 shell, 고정 높이, 강제 동일 카드 높이는 없다. 표만 필요할 때 가로로 넘길 수 있고 세로 스크롤은 만들지 않는다. 사례 목록은 좁은 화면에서 행을 세로 정보로 전개한다.
@@ -30,6 +31,7 @@ system-ui, sans-serif를 사용하며 코드만 ui-monospace, monospace다. --bo
 좁은 목록·정의 목록의 재배치 기준은 600px이다. 링크 밑줄 간격은 .2em이다. 인쇄 본문 행간은 1.45이며 모든 색 토큰을 밝은 테마로 고정한다. 인쇄 세부 간격은 위 8/12/20px 토큰을 재사용한다.
 
 ## 5. 재사용 요소와 정보 순서
+3차 결과 화면 우선순위: 결론 한 문장 → 다음 행동 하나와 실행 보류/미승인 → 공개 비용·탄소 비교 → 조건별 대안·근거·확인사항. 주 동작은 질문/보류이면 답변·입력 확인, 비교이면 실행 전 확인이다. 확신도 이유·실행 메타데이터·자세한 단서는 details로 접되 안전 상태와 과거 평가 경고는 항상 보인다. 기존 내용과 출처를 삭제하지 않는다. 반복 요약 카드·장식·새 색상은 추가하지 않는다. 변경 전 캡처는 lane evidence/round3-ui/before-*이며 로컬 실제 앱에서 촬영했다.
 page는 의미 있는 nav/main/footer, 건너뛰기 링크, 공유 스타일·same-origin defer script를 제공한다. 결론 → 확신도·이유 → 연구 계산 → 처분 문의 행 → 실행 전 확인 → 법적 원문 → 고급 메타데이터 순서다. 근거 확인하기 / 실행 전 확인하기는 실제 anchor로 연결한다. 서버 전용 연구 context는 일반 보고서에서 완전히 제외한다.
 
 form은 label·단위·미상 안내와 native POST를 사용한다. 한국어 일반 수정 입력이 주 기능이고 JSON은 details로 접는다. 자료 반영해 다시 평가하기는 현재 입력의 실제 값을 제출한다. 사진 선택·동의는 기존 제약을 그대로 적용한다. 버튼·summary·독립 원문 링크는 최소 44px, focus-visible은 테마 포커스 링이다. 빈 결과와 null에는 원인을 함께 쓴다. 실패 화면은 기존 마지막 저장 결과 링크를 유지한다.

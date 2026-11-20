@@ -6,6 +6,8 @@ import { renderReport } from "./report.ts";
 import { HttpFailure, body, idPattern, redirect, response, sessionFailures, versionOf } from "./app-http.ts";
 import { form, nativeAnswer } from "./app-views.ts";
 import { photoUI, photoRoute } from "./app-photo-routes.ts";
+import { readCaseResearchCatalog } from "./o-case-research.ts";
+import { buildPublicInputScenario } from "./o-input-public-scenario.ts";
 
 export async function caseRoute(services: RouteServices, context: RouteRequest): Promise<Response> {
   const { dependencies, caseStore, maxBodyBytes, origin, now, cancelLease } = services;
@@ -32,8 +34,12 @@ export async function caseRoute(services: RouteServices, context: RouteRequest):
     const stored = snapshot.assessment;
     const notice = snapshot.permissionChanged ? '<p class="notice">사진 권한이 변경되었습니다. 이전 보고서는 과거 평가입니다. 이미 전송된 사진을 회수하지 않습니다. 사진 없이 다시 평가할 수 있습니다.</p>' : "";
     const selection = `<input type="hidden" name="photoSelection" value="explicit">${snapshot.photos.map(photo => `<label class="consent"><input type="checkbox" name="photo_${photo.photoRef}" value="yes" ${matchesPhotoConsent(photo.consent, ticket) && photo.expiresAt > now() && !snapshot.denied.includes(photo.photoRef) ? "" : "disabled"}>다음 평가에 이 사진 선택</label>`).join("")}`;
-    const audience = actor && (suffix !== "report" || url.searchParams.get("purpose") === "research")
-      ? { audience: "authenticated-research", research: report?.research ?? null } as const
+    const privateAudience = actor && (suffix !== "report" || url.searchParams.get("purpose") === "research");
+    const publicScenario = privateAudience && !report?.research && snapshot.evaluated.revision === revision(snapshot.input)
+      ? buildPublicInputScenario({ actorId: actor, input: snapshot.input, inputRevision: snapshot.evaluated.revision },
+        await readCaseResearchCatalog()) : null;
+    const audience = privateAudience
+      ? { audience: "authenticated-research", research: report?.research ?? null, publicScenario } as const
       : { audience: "commercial" } as const;
     const editable = snapshot.editUntil > now();
     const optionalMass = stored.decision.state === "compared" && snapshot.input.massKg === null && editable

@@ -54,6 +54,8 @@ test("committed research uses one atomic report read and only explicit private r
       inputRevision: revision(initial.input), codeRevision: "a".repeat(40), signal: new AbortController().signal }, "OYS-20261110-001", data);
     const before = await (await app.fetch(new Request(origin + path))).text();
     assert.doesNotMatch(before, /data-research-result/);
+    assert.match(before, /data-public-scenario-result/);
+    assert.equal(store.readReport("actor:ui-private-actor", id)?.research, null);
     const reevaluated = await app.fetch(post(path + "/answers", { baseVersion: initial.version, patch: { description: initial.input.description } }));
     assert.equal(reevaluated.status, 303);
     // When GET renders the committed pair through each output audience.
@@ -65,8 +67,9 @@ test("committed research uses one atomic report read and only explicit private r
     const exported = await app.fetch(new Request(origin + path + "/input"));
     // Then commercial bytes and model inputs never receive the attachment.
     assert.match(normal, /data-research-result/);
+    assert.doesNotMatch(normal, /data-public-scenario-result/);
     assert.match(research, /data-research-result/);
-    assert.doesNotMatch(commercial, /data-research-result|data-directory-row|data-recycling-directory-row|WARM|Wonju|-13867|-27\.51/);
+    assert.doesNotMatch(commercial, /data-public-scenario-result|data-research-result|data-directory-row|data-recycling-directory-row|WARM|Wonju|-13867|-27\.51/);
     assert.doesNotMatch(commercial, /<form\b/);
     assert.deepEqual(await exported.json(), initial.input);
     assert.doesNotMatch(JSON.stringify(modelInputs), /research|WARM|Wonju|net_carbon_kgco2e/);
@@ -89,6 +92,81 @@ test("anonymous session cannot opt into research purpose", async () => {
     const response = await app.fetch(new Request(origin + "/cases/unknown/report?purpose=research", { headers: { cookie } }));
     assert.equal(response.status, 403);
     assert.doesNotMatch(await response.text(), /data-research-result/);
+  } finally { app.dispose(); await app.close(); }
+});
+
+test("ordinary held PET and HDPE inputs show private automatic scenarios without storing or transmitting them", async () => {
+  const store = createCaseStore();
+  const modelInputs: unknown[] = [];
+  let historical = false, revokeOnRead = false, current = true;
+  const app = createResourceApp({ origin, actorForRequest: async () => ({
+    actorId: "ordinary-owner", validUntil: Date.now() + 60000, assertCurrent: () => { assert.ok(current); },
+  }), caseStore: { ...store, readReport: (owner, id) => {
+    const report = store.readReport(owner, id);
+    if (revokeOnRead) current = false;
+    return report && historical ? { ...report, snapshot: { ...report.snapshot,
+      input: { ...report.snapshot.input, description: "현재 변경된 입력" } } } : report;
+  } }, runtime: { identity: "trusted", storage: "ephemeral", runner: "local" },
+  runner: async (input, _signal, resources) => { modelInputs.push({ input, resources }); return {}; } });
+  try {
+    for (const [polymer, massKg] of [["PET", 24], ["HDPE", 18]] as const) {
+      const response = await app.fetch(post("/cases", { description: "실제 사용자가 작성한 비정형 자투리 설명",
+        process: "사용자 공정", polymer, contamination: "확인 필요", hazardousContact: "yes",
+        massKg, region: "서울특별시", assessmentDate: "2026-11-19", photoRefs: [] }));
+      assert.equal(response.status, 303);
+      const path = response.headers.get("location");
+      assert.ok(path);
+      const id = path.slice("/cases/".length);
+      const saved = store.readReport("actor:ordinary-owner", id);
+      assert.ok(saved);
+      const before = structuredClone(saved);
+      for (const suffix of ["", "/report?purpose=research"]) {
+        const privateResponse = await app.fetch(new Request(origin + path + suffix));
+        assert.equal(privateResponse.status, 200);
+        const html = await privateResponse.text();
+        assert.equal((html.match(/data-public-scenario-result=/g) ?? []).length, 3);
+        assert.doesNotMatch(html, /data-research-result=/);
+        assert.deepEqual(await decisionSurface(html), await decisionSurface(renderReport(saved.snapshot.assessment.decision,
+          { mode: "live" })));
+        assert.match(html, /검토 필요/);
+      }
+      const commercial = await (await app.fetch(new Request(origin + path + "/report"))).text();
+      assert.doesNotMatch(commercial, /data-public-scenario-result|WARM|Wonju|parentFixtureSha256/);
+      assert.deepEqual(await (await app.fetch(new Request(origin + path + "/input"))).json(), saved.snapshot.input);
+      assert.deepEqual(store.readReport("actor:ordinary-owner", id), before);
+      historical = true;
+      const old = await (await app.fetch(new Request(origin + path))).text();
+      assert.doesNotMatch(old, /data-public-scenario-result|data-research-result/);
+      assert.match(old, /과거 평가/);
+      historical = false;
+      revokeOnRead = true;
+      const revoked = await app.fetch(new Request(origin + path));
+      assert.notEqual(revoked.status, 200);
+      assert.doesNotMatch(await revoked.text(), /data-public-scenario-result|WARM|Wonju/);
+      revokeOnRead = false;
+      current = true;
+    }
+    assert.doesNotMatch(JSON.stringify(modelInputs), /research|public.scenario|WARM|Wonju|net_carbon_kgco2e/);
+  } finally { app.dispose(); await app.close(); store.dispose(); }
+});
+
+test("ordinary anonymous PET input cannot expose automatic public scenarios", async () => {
+  const app = createResourceApp({ origin });
+  try {
+    const home = await app.fetch(new Request(origin));
+    const cookie = home.headers.get("set-cookie")?.split(";")[0];
+    assert.ok(cookie);
+    const response = await app.fetch(new Request(origin + "/cases", { method: "POST",
+      headers: { origin, cookie, "content-type": "application/json" },
+      body: JSON.stringify({ description: "익명 PET", process: null, contamination: null, region: null, polymer: "PET", massKg: 24,
+        assessmentDate: "2026-11-19", hazardousContact: "no", photoRefs: [] }) }));
+    assert.equal(response.status, 303);
+    const path = response.headers.get("location");
+    assert.ok(path);
+    for (const suffix of ["", "/report"]) {
+      const html = await (await app.fetch(new Request(origin + path + suffix, { headers: { cookie } }))).text();
+      assert.doesNotMatch(html, /data-public-scenario-result|WARM|Wonju/);
+    }
   } finally { app.dispose(); await app.close(); }
 });
 

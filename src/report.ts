@@ -1,9 +1,10 @@
 import type { DecisionResult } from "./contracts.ts";
 import { parseDecision } from "./o-decision.ts";
 import type { CaseResearchReport } from "./o-case-research-schema.ts";
+import type { PublicInputScenario } from "./o-input-public-scenario.ts";
 import { escapeHtml, list, page } from "./report-html.ts";
 import { evidenceSection, readableReason } from "./report-evidence.ts";
-import { researchCalculations, researchDirectory } from "./report-research.ts";
+import { researchCalculations, researchDirectory, publicInputCalculations } from "./report-research.ts";
 import { comparisonSummary, comparisonConditions, prioritySummary, routeConditions, scenarioAudit } from "./report-comparison.ts";
 import type { EvidenceReferences } from "./report-comparison.ts";
 export interface ReportPresentation {
@@ -20,7 +21,7 @@ export { escapeHtml, safeLink, list, page } from "./report-html.ts";
 
 export type ReportContext =
   | { readonly audience: "commercial" }
-  | { readonly audience: "authenticated-research"; readonly research: CaseResearchReport | null };
+  | { readonly audience: "authenticated-research"; readonly research: CaseResearchReport | null; readonly publicScenario?: PublicInputScenario | null };
 /** Trusted server view fragments; never taken from model output or input metadata. */
 export interface ReportView {
   readonly actions?: string;
@@ -55,14 +56,14 @@ function processorCandidates(result: Extract<DecisionResult, { state: "compared"
 function conclusion(result: DecisionResult): string {
   switch (result.state) {
     case "needs-information":
-      return '<p class="state question">? 추가 정보 필요</p><h1>추가 정보 필요</h1>';
+      return '<p class="state question">추가 정보 필요 · 실행 보류</p><h1>추가 정보 필요</h1><p id="decision-summary">입력 정보가 부족해 처리 경로를 확정하지 않았습니다.</p>';
     case "needs-review":
-      return `<p class="state held">! 검토 필요 · 실행 보류</p><h1>검토 필요</h1><p class="held">${escapeHtml(readableReason(result.reasons[0] ?? "실행 전에 사례와 근거를 검토해야 합니다."))}</p>`;
+      return '<p class="state held">검토 필요 · 실행 보류</p><h1>검토 필요</h1><p id="decision-summary">확인되지 않은 조건이 있어 처리·반출·계약을 보류합니다.</p>';
     case "compared": {
       const recommendation = result.recommendations?.[0];
       const route = result.routes.find(item => item.routeId === recommendation?.routeId);
-      return `<p class="state recommended">✓ ${recommendation ? "추천 · 공개 근거상 가능한 경로" : "조건부 비교 · 실행 전 확인 필요"}</p><h1>${route ? `${routeNames[route.route]} 추천` : "조건부 비교"}</h1>
-        ${result.confidence ? `<p><strong>확신도: ${result.confidence.level === "medium" ? "중간" : "낮음"}</strong></p>${list(result.confidence.reasons.map(readableReason))}` : ""}
+      return `<p class="state recommended">${recommendation ? "추천 · 공개 근거상 가능한 경로" : "조건부 비교 · 실행 전 확인 필요"}</p><h1>${route ? `${routeNames[route.route]} 추천` : "조건부 비교"}</h1>
+        <p id="decision-summary">${route ? `현재 자료에서는 ${routeNames[route.route]}을 우선 검토할 수 있습니다.` : "확인된 조건으로 처리 경로를 비교했습니다."}</p>
         <p>판단 지원 추천 · 실행·반출·계약 승인 아님. ${result.humanApproval === "pending" ? "현장 담당자 승인 대기" : "인간 승인 기록 있음"}</p>`;
     }
   }
@@ -72,7 +73,7 @@ function reasons(result: DecisionResult, references: EvidenceReferences, present
     case "needs-information":
       return list(result.questions.filter(question => !question.startsWith("추가 답변은 필드별 JSON")).map(readableReason));
     case "needs-review":
-      return list(result.reasons.slice(1).map(readableReason));
+      return list(result.reasons.map(readableReason));
     case "compared": {
       const labels = result.scenarios.map((_, index) => presentation.scenarioLabels?.[index] ?? `대안 ${index + 1}`);
       return `${recommendationSummary(result, references)}
@@ -123,12 +124,25 @@ export function renderReport(result: DecisionResult, presentation: ReportPresent
     : presentation.mode === "synthetic" ? "<p>합성 입력·계산 예시 · 현장 근거 아님</p>" : "<p>미검토 사용자 입력 · 입력에 결합된 검토 자료 없음 · 운영 자료 미제공</p>";
   const checks = "preExecutionChecks" in result ? result.preExecutionChecks ?? [] : [];
   const answerAction = result.state !== "compared" ? view.answerTarget : undefined;
+  const nextAction = result.state === "needs-information"
+    ? "누락된 사례 정보를 확인해 답변란에 입력하세요."
+    : result.state === "needs-review"
+      ? result.conditionalAlternatives?.some(item => item.condition.code === "hazard-classification")
+        ? "접촉 물질의 SDS와 시험 자료를 확보해 폐기물 분류를 확인하세요."
+        : "재질·오염·접촉 이력의 확인 자료를 확보하세요."
+      : "추천 경로의 실제 인수 가능 여부를 업체에 확인하세요.";
   const audit = result.state === "compared" ? result.scenarios.map((scenario, index) => scenarioAudit(scenario, presentation.scenarioLabels?.[index] ?? `대안 ${index + 1}`, references)).join("") : "";
   const researchSections = research ? researchCalculations(research) + researchDirectory(research) : "";
-  return page("조건부 보고서", `${conclusion(result)}<p>${mode}</p>${data}
+  const publicScenario = context.audience === "authenticated-research" ? context.publicScenario : null;
+  return page("조건부 보고서", `${conclusion(result)}
+    <p id="next-action"><strong>다음 행동:</strong> ${escapeHtml(nextAction)}</p>
+    <p class="screen-only"><a class="primary-action" href="${answerAction ?? "#checks"}">${answerAction ? result.state === "needs-information" ? "답변 입력하기" : "입력 다시 확인하기" : "실행 전 확인하기"}</a></p>
     ${presentation.historical ? '<p class="notice">과거 평가: 현재 입력과 평가 당시 입력이 다릅니다. 명시적으로 다시 평가해 주세요.</p>' : ""}
-    <div class="cluster screen-only">${answerAction ? `<a class="primary-action" href="${answerAction}">${result.state === "needs-information" ? "답변 입력하기" : "입력 다시 확인하기"}</a>` : ""}<a class="primary-action${answerAction ? " secondary-action" : ""}" href="#evidence">근거 확인하기</a><a class="primary-action secondary-action" href="#checks">실행 전 확인하기</a></div>
-    ${view.actions ?? ""}${view.researchFirst ? researchSections : ""}${reasons(result, references, presentation)}
+    <details id="result-context"><summary>판단 이유·자료 범위 확인하기</summary><p>${mode}</p>${data}
+    ${result.state === "compared" && result.confidence ? `<p><strong>확신도: ${result.confidence.level === "medium" ? "중간" : "낮음"}</strong></p>${list(result.confidence.reasons.map(readableReason))}` : ""}
+    <p><a class="primary-action secondary-action" href="#evidence">근거 확인하기</a> <a class="primary-action secondary-action" href="#checks">실행 전 확인하기</a></p>${view.actions ?? ""}</details>
+    ${publicScenario ? publicInputCalculations(publicScenario) : ""}${view.researchFirst ? researchSections : ""}
+    <details id="decision-detail"><summary>판정 상세·확인할 조건 펼치기</summary>${reasons(result, references, presentation)}</details>
     ${result.state !== "compared" && result.conditionalAlternatives?.length ? `<section id="alternatives" aria-label="조건별 대안 비교"><h2>조건별 대안 비교</h2><p>현재 실행 보류는 유지됩니다. 아래는 확인할 조건에 따른 검토 경로이며 처리·반출·계약 승인이 아닙니다.</p>${result.conditionalAlternatives.map(alternative => `<article data-conditional-alternative="${escapeHtml(alternative.routeId)}"><h3>${escapeHtml(alternative.title)}</h3><p><strong>이 조건이라면:</strong> ${escapeHtml(alternative.condition.description)}</p><p>${escapeHtml(alternative.rationale)}</p><p><strong>${alternative.support.state === "route-supported" ? "조건을 확인한 뒤 검토할 공개 근거가 있습니다." : "이 처리 경로의 적합성은 아직 확인하지 못했습니다."}</strong></p>${alternative.support.missingEvidence.length ? list(alternative.support.missingEvidence) : ""}<p><strong>먼저 확인할 것</strong></p>${list(alternative.nextChecks)}<details><summary>이 대안의 근거와 적용 범위</summary>${alternative.citations.map(citation => `<p>${references([citation.sourceId])} ${escapeHtml(citation.locator)} · ${citation.scope === "route-specific" ? "해당 경로의 조건부 근거" : "분류·검토를 위한 일반 기준"}</p><blockquote>${escapeHtml(citation.quote)}</blockquote><p>${escapeHtml(citation.claim)}</p>`).join("")}</details></article>`).join("")}</section>` : ""}
     ${view.researchFirst ? "" : researchSections}
     ${evidenceSection(result)}

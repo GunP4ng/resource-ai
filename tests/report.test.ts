@@ -14,6 +14,21 @@ test("held alternatives stay informational and precede source and next-action se
   if (decision.state !== "needs-review") assert.fail("hazard must retain review");
   assert.ok(decision.conditionalAlternatives?.length);
   const html = renderReport(decision, { mode: "offline" });
+  const primaryTargets: (string | null)[] = [];
+  const closedDetails: string[] = [];
+  const leadingContent: string[] = [];
+  await new HTMLRewriter()
+    .on("main > #decision-summary, main > #next-action, main > .state.held", {
+      element(element) { leadingContent.push(element.getAttribute("id") ?? "held"); },
+    })
+    .on("a.primary-action:not(.secondary-action)", { element(element) { primaryTargets.push(element.getAttribute("href")); } })
+    .on("#result-context, #decision-detail", { element(element) {
+      assert.equal(element.hasAttribute("open"), false);
+      closedDetails.push(element.getAttribute("id") ?? "");
+    } }).transform(new Response(html)).text();
+  assert.deepEqual(leadingContent, ["held", "decision-summary", "next-action"]);
+  assert.deepEqual(primaryTargets, ["#checks"]);
+  assert.deepEqual(closedDetails, ["result-context", "decision-detail"]);
   assert.match(html, /현재 실행 보류는 유지됩니다/);
   assert.match(html, /이 처리 경로의 적합성은 아직 확인하지 못했습니다/);
   assert.match(html, /이 대안의 근거와 적용 범위/);
