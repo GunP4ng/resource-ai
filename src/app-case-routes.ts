@@ -36,12 +36,15 @@ export async function caseRoute(services: RouteServices, context: RouteRequest):
       ? { audience: "authenticated-research", research: report?.research ?? null } as const
       : { audience: "commercial" } as const;
     const actions = suffix === "report" ? notice : `${notice}<p class="cluster screen-only"><a href="/cases/${id}/report">상업용 보고서</a>${actor ? `<a href="/cases/${id}/report?purpose=research">비공개 연구용 보고서</a>` : ""}<a href="/cases/${id}/input">정확한 입력 내보내기</a><a href="/cases">내 사례</a></p>`;
-    const editing = suffix === "report" ? "" : `<p>버전 ${snapshot.version}</p>${form(`/cases/${id}/answers`, true, snapshot.version, selection, snapshot.input)}${photoUI(snapshot, ticket, services)}`;
+    const editable = snapshot.editUntil > now();
+    const editing = suffix === "report" ? "" : `<p>버전 ${snapshot.version}</p>${editable
+      ? `<p>수정 가능 기한 (UTC): ${new Date(snapshot.editUntil).toISOString()}</p>${form(`/cases/${id}/answers`, true, snapshot.version, selection, snapshot.input)}`
+      : '<p class="notice">수정 기한이 지났습니다. 보관 중인 보고서와 입력은 확인할 수 있습니다. 다시 평가하려면 <a href="/">새 사례를 입력하세요</a>.</p>'}${photoUI(snapshot, ticket, services)}`;
     const result = response(renderReport(stored.decision, {
       ...snapshot.presentation, mode: snapshot.presentation?.mode ?? "live", review: snapshot.review,
       historical: snapshot.evaluated.revision !== revision(snapshot.input),
       execution: stored.execution ? { traceId: stored.execution.traceId, usage: stored.execution.usage ?? null } : undefined,
-    }, audience, { actions, editing, ...(suffix === "report" ? {} : { answerTarget: "#answer-fields" as const }) }));
+    }, audience, { actions, editing, ...(suffix === "report" || !editable ? {} : { answerTarget: "#answer-fields" as const }) }));
     privateGuard();
     return result;
   }

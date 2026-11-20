@@ -395,6 +395,27 @@ test("O4 expired H cases return restart guidance while the owned report survives
   } finally { adapter.dispose(); }
 });
 
+test("committed case editing controls expire while report and input remain accessible", async () => {
+  let now = 0;
+  const adapter = createAssessmentAdapter();
+  const app = createApp({ origin, now: () => now, preparer: adapter });
+  try {
+    const cookie = await session(app), path = await submitNative(app, cookie);
+    const before = await ownedPage(app, cookie, path + "/report");
+    now = 1_799_999;
+    assert.match(await ownedPage(app, cookie, path), /action="[^"]+\/answers"/);
+    for (const time of [1_800_000, 1_800_001]) {
+      now = time;
+      const html = await ownedPage(app, cookie, path);
+      assert.doesNotMatch(html, /action="[^"]+\/answers"|href="#answer-fields"/);
+      assert.match(html, /href="\/"/);
+      assert.equal(await ownedPage(app, cookie, path + "/report"), before);
+      assert.equal((await app(new Request(origin + path + "/input", { headers: { cookie } }))).status, 200);
+      assert.equal((await app(post(path + "/answers", cookie, '{"massKg":100}'))).status, 404);
+    }
+  } finally { app.dispose(); await app.settled(); adapter.dispose(); }
+});
+
 test("O4 composed app rejects overlapping answers and disposal aborts active work", async () => {
   let block = false, entered = () => {}, aborted = false;
   const started = new Promise<void>((resolve) => { entered = resolve; });

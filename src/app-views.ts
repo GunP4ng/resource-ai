@@ -31,7 +31,7 @@ export function nativeAnswer(raw: Readonly<Record<string, unknown>>): Readonly<R
 }
 function fields(input?: CaseInput, editing = false): string {
   const prefix = editing ? "field_" : "";
-  const massField = `<label for="${prefix}massKg">질량 (kg, 미상은 공란)</label><input id="${prefix}massKg" name="${prefix}massKg" type="number" min="0.001" step="any" value="${input?.massKg ?? ""}">`;
+  const massField = `<label for="${prefix}massKg">질량 (kg, 0보다 큰 숫자, 미상은 공란)</label><input id="${prefix}massKg" name="${prefix}massKg" type="number" min="0" step="any" value="${input?.massKg ?? ""}">`;
   const text = textFields.map(([field, label]) => {
     const id = prefix + field;
     const value = input?.[field] ?? "";
@@ -78,5 +78,6 @@ export function inputPage(options: InputView): string {
           <p class="notice">${connected ? "입력·세션 어댑터 연결됨 · 실행 후 상태를 확인하세요." : "입력·세션 연결 준비 중 · 현재 제출하면 503 준비 상태를 표시합니다."}</p>
           <p>실제 자료와 합성 데모를 구분합니다. 설명·사진만으로 법적 코드나 처리 허가를 확정하지 않습니다.</p>
           <p>${authenticated ? "서버 인증 사용자" : "익명 임시 세션 · 재시작하면 사례를 복구할 수 없습니다."}${runner ? ` 구성된 실행기 ${runnerLabel} · 실행 성공은 평가 후 확인하세요.` : ""}</p>
+          <p><a href="/cases">내 사례·복구</a></p>
           ${form("/cases")}<p>사진 저장: ${photoEnabled ? "인증된 사례에서 사용 가능" : "인증된 비공개 사진 저장소를 사용할 수 없습니다."}</p><p><a href="/demo/review">합성 위험·검토 예시 보기</a></p>`);
 }
