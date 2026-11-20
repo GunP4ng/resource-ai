@@ -300,13 +300,14 @@ test("O4 native corrections refresh missing questions and remain usable after re
     const cookie = await session(app.fetch), path = await submitNative(app.fetch, cookie);
     const before = await ownedPage(app.fetch, cookie, path);
     assert.match(before, /수지/);
-    assert.match(before, /확인된 질량은 몇 kg인가요/);
+    assert.doesNotMatch(before, /확인된 질량은 몇 kg인가요/);
     assert.match(before, /<textarea[^>]*name="answers"[^>]*><\/textarea>/);
     const polymer = await app.fetch(post(path + "/answers", cookie, new URLSearchParams({ answers: '{"polymer":"PP"}' }).toString(), formHeaders));
     assert.equal(polymer.headers.get("location"), path);
     const middle = await ownedPage(app.fetch, cookie, path);
     assert.doesNotMatch(middle, /수지 종류/);
-    assert.match(middle, /확인된 질량은 몇 kg인가요/);
+    assert.match(middle, /기계적 재활용 추천/);
+    assert.match(middle, /질량을 입력하면 비용·탄소를 계산해요/);
     assert.equal((await app.fetch(post(path + "/answers", cookie, '{"massKg":100}'))).status, 303);
     const reviewed = await ownedPage(app.fetch, cookie, path);
     assert.match(reviewed, /공개 근거상 가능\(조건부\)/);
@@ -315,6 +316,33 @@ test("O4 native corrections refresh missing questions and remain usable after re
     assert.doesNotMatch(await ownedPage(app.fetch, cookie, path + "/report"), /<form\b/);
     assert.doesNotMatch(reviewed, /추적 |humanApproval: approved/);
   } finally { app.dispose(); }
+});
+
+test("optional mass answer updates the same recommended case with supported cost and carbon", async () => {
+  const app = createResourceApp({ origin, resources: async input => syntheticReviewed(input) });
+  try {
+    const cookie = await session(app.fetch);
+    const path = await submitNative(app.fetch, cookie, { ...nativeFields, polymer: "PP", massKg: "" });
+    const before = await ownedPage(app.fetch, cookie, path);
+    assert.match(before, /기계적 재활용 추천/);
+    assert.match(before, /질량을 입력하면 비용·탄소를 계산해요/);
+    assert.match(before, /질량을 몰라 비용을 계산하지 않았어요/);
+    assert.doesNotMatch(before, /240,000 KRW|45 kgCO2e/);
+    const answer = new URLSearchParams({
+      answerMode: "fields", baseVersion: "1", photoSelection: "explicit",
+      field_description: nativeFields.description, field_process: "사출", field_polymer: "PP",
+      field_contamination: "없음", field_hazardousContact: "no", field_massKg: "2000",
+      field_region: "울산", field_assessmentDate: "2026-11-05",
+    });
+    const response = await app.fetch(post(path + "/answers", cookie, answer.toString(), formHeaders));
+    assert.equal(response.status, 303);
+    assert.equal(response.headers.get("location"), path);
+    const after = await ownedPage(app.fetch, cookie, path);
+    assert.match(after, /240,000 KRW/);
+    assert.match(after, /45 kgCO2e/);
+    assert.match(after, /name="baseVersion" value="2"/);
+    assert.doesNotMatch(after, /질량을 입력하면 비용·탄소를 계산해요/);
+  } finally { app.dispose(); await app.close(); }
 });
 
 test("O4 corrections permit current-law recommendations beyond the collection verification date", async () => {
@@ -544,7 +572,7 @@ test("O4 source and packaged launchers reduce missing questions before review an
         assert.ok(!items.some(item => item.includes("JSON")));
         return items;
       };
-      assert.deepEqual(questions(initial), [polymerQuestion, massQuestion]);
+      assert.deepEqual(questions(initial), [polymerQuestion]);
       assert.match(initial, /name="answers"/);
       assert.ok(initial.includes(`사례 ${caseId}</p>`));
       assert.doesNotMatch(initial, /snapshot-unavailable/);
@@ -554,7 +582,8 @@ test("O4 source and packaged launchers reduce missing questions before review an
       const middlePage = await fetch(url + path, { headers: { cookie }, signal: AbortSignal.timeout(2000) });
       assert.equal(middlePage.status, 200);
       const middle = await middlePage.text();
-      assert.deepEqual(questions(middle), [massQuestion]);
+      assert.match(middle, /기계적 재활용 추천/);
+      assert.doesNotMatch(middle, /확인된 질량은 몇 kg인가요/);
       assert.ok(middle.includes(`사례 ${caseId}</p>`));
       assert.doesNotMatch(middle, /snapshot-unavailable/);
       const corrected = await fetch(url + path + "/answers", { method: "POST", redirect: "manual", headers: { ...formHeaders, cookie, origin: url }, body: new URLSearchParams({ answers: '{"massKg":100}' }), signal: AbortSignal.timeout(2000) });

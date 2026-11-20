@@ -1,6 +1,7 @@
 import type { CaseInput, DecisionResult, Estimate, RecommendationMetric, RouteAssessment, RouteRecommendation } from "./contracts.ts";
 import type { CaseAssessment, RouteReviewContext } from "./assessment.ts";
 import { parseDecision } from "./o-decision.ts";
+import { massQuestion } from "./input.ts";
 
 const executionChecks = [
   "현행 허가의 유효기간·허가 범위와 해당 수지·오염 상태의 처리 가능 여부를 관할기관·업체에 확인하세요.",
@@ -38,7 +39,7 @@ export function recommendationBlockers(facts: CaseInput, assessment: CaseAssessm
       [facts.description, facts.contamination].join(" ")) ? ["유해물질 접촉 의심 입력"] : []),
     ...assessment.reviewIssues,
     ...(assessment.legal.evidence.length === 0 || assessment.legal.citations.length === 0 ? ["검증된 법령 인용 없음"] : []),
-    ...(assessment.questions.length === 0 && publicRecyclingEvidence(assessment).length === 0
+    ...(assessment.questions.every(question => question === massQuestion) && publicRecyclingEvidence(assessment).length === 0
       && assessment.routes.every(route => route.eligibility.state !== "eligible") ? ["경로별 판단에 필요한 공개 법령 인용 부족"] : []),
     ...(/불일치|상충|일치하지|labels?\s*(?:conflict|mismatch)|conflicting\s+labels?/iu.test(
       [facts.polymer, facts.process, facts.description].join(" "))
@@ -51,7 +52,10 @@ export function recommendationBlockers(facts: CaseInput, assessment: CaseAssessm
   ];
 }
 
-function metric<Unit extends "KRW" | "kgCO2e">(estimate: Estimate<Unit> | undefined, unit: Unit): RecommendationMetric<Unit> {
+function metric<Unit extends "KRW" | "kgCO2e">(estimate: Estimate<Unit> | undefined, unit: Unit, massMissing: boolean): RecommendationMetric<Unit> {
+  if (massMissing) return { value: null, unit, label: "unavailable",
+    reasons: [unit === "KRW" ? "질량을 몰라 비용을 계산하지 않았어요. 질량과 견적·운송·처리 비용 자료가 필요해요."
+      : "질량을 몰라 탄소량을 계산하지 않았어요. 질량과 같은 계산 범위의 탄소 계수 자료가 필요해요."] };
   if (estimate === undefined) return { value: null, unit, label: "unavailable",
     reasons: [unit === "KRW" ? "사례별 검증된 견적·운송·처리 비용 자료 없음" : "동일 계산 경계의 활동량·적용 가능한 탄소 계수 없음"] };
   switch (estimate.state) {
@@ -84,7 +88,7 @@ export function recommend(facts: CaseInput, assessment: CaseAssessment,
       basis: "공개 법령의 폐합성수지류 분류·허용 유형·R-3-3 정의·공통기준을 연결한 원료물질 제조 후보입니다. 실제 발생 공정을 처리 공정으로 간주하지 않으며 비용·탄소 우월성을 뜻하지 않습니다.",
       legalCitations: assessment.legal.citations.filter(citation => publicEvidence.includes(citation.sourceId))
         .map(({ sourceId, locator, claim }) => ({ sourceId, locator, claim })),
-      cost: metric(scenario?.netCost, "KRW"), carbon: metric(scenario?.netEmissions, "kgCO2e") }];
+      cost: metric(scenario?.netCost, "KRW", facts.massKg === null), carbon: metric(scenario?.netEmissions, "kgCO2e", facts.massKg === null) }];
   });
   const result = {
     ...(compared ?? { state: "compared", caseId: facts.caseId, processors: [], scenarios: [],
