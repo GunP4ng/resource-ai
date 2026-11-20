@@ -45,6 +45,22 @@ const candidate: EvidenceCandidate = {
 };
 
 describe("legal evidence lookup", () => {
+  test("equivalent complete clean declarations match without requiring magic wording", () => {
+    for (const contamination of ["없음", "잔류물 없음", "세척 완료, 잔류물 없음", "세척 후 오염 없습니다"]) {
+      const result = lookupLegalEvidence({ ...caseInput, hazardousContact: "no", contamination },
+        [{ ...candidate, requireSafeContext: true }]);
+      expect(result.citations.map(item => item.sourceId)).toEqual(["synthetic-law-v2"]);
+    }
+  });
+
+  test("clean words embedded in uncertainty or oil do not borrow clean evidence", () => {
+    for (const contamination of ["세척 완료, 잔류물 없음(미확인)", "잔류물 없음, 폐유 부착", "없음이라고 들었음", "세척 완료, 잔류 정도 미확인"]) {
+      const result = lookupLegalEvidence({ ...caseInput, hazardousContact: "no", contamination },
+        [{ ...candidate, requireSafeContext: true }], { includeWeakContext: true });
+      expect(result.citations).toEqual([]);
+    }
+  });
+
   test("changes the cited version when the assessment date changes", () => {
     const old: EvidenceCandidate = { ...candidate, record: { ...record, sourceId: "synthetic-law-v1", effectiveFrom: "2026-01-01", effectiveTo: "2026-10-01", datasetVersion: "v1" } };
 
