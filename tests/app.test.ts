@@ -35,10 +35,11 @@ for (const localAuth of [true, false]) for (const [runner, label] of [
   ["subscription", "구독 경로 모델 실행"], ["azure", "Azure 연결"], ["local", "로컬"], ["unspecified", "미지정"],
 ] as const) test(`input page ${localAuth ? "local operator" : "session"} shows configured ${runner} without claiming successful execution`, () => {
   const html = inputPage({ authenticated: true, localAuth, connected: true, photoEnabled: false, runner });
-  assert.ok(html.includes(`구성된 실행기 ${label} · 실행 성공은 평가 후 확인`), `configured ${runner} label and pending success`);
+  assert.ok(html.includes(`${localAuth ? "검토 방식" : "구성된 실행기"} ${label} · 실행 성공은 평가 후 확인`), `configured ${runner} label and pending success`);
   assert.doesNotMatch(html, /SiWC|인증 성공|실행 성공 확인됨/);
   assert.match(html, /<form method="post" action="\/cases">/);
-  assert.equal(html.includes("로컬 운영자 · SQLite 사례 보관"), localAuth);
+  assert.equal(html.includes("로그인한 담당자 · 사례 보관 최대 1시간"), localAuth);
+  assert.doesNotMatch(html, /SQLite/);
 });
 test("adapter absent: visible input, real 503, health readiness, allowlisted demos and real snapshots", async () => {
   const app = createApp({ origin });

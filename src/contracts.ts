@@ -181,12 +181,39 @@ export interface RecommendationMetric<Unit extends "KRW" | "kgCO2e"> {
   readonly reasons: readonly string[];
 }
 
+/** Host-authored route questions, never eligibility, ranking or execution approval. */
+export interface ConditionalAlternative {
+  readonly routeId: RouteAssessment["route"];
+  readonly title: string;
+  readonly state: "informational";
+  readonly executable: false;
+  readonly condition: {
+    readonly code: "clean-separated" | "contaminated-or-inseparable" | "hazard-classification" | "reuse-purpose";
+    readonly description: string;
+  };
+  readonly rationale: string;
+  readonly nextChecks: readonly string[];
+  readonly support: {
+    readonly state: "route-supported" | "unavailable";
+    readonly missingEvidence: readonly string[];
+  };
+  readonly citations: readonly {
+    readonly sourceId: string;
+    readonly locator: string;
+    readonly claim: string;
+    readonly quote: string;
+    readonly scope: "general-requirement" | "route-specific";
+  }[];
+}
+
 export type DecisionResult =
   | {
       readonly state: "needs-information";
       readonly caseId: string;
       readonly questions: readonly string[];
       readonly evidence: readonly EvidenceRecord[];
+      /** Absent on historical records; informational only, including unavailable route questions. */
+      readonly conditionalAlternatives?: readonly ConditionalAlternative[];
     }
   | {
       readonly state: "needs-review";
@@ -194,6 +221,7 @@ export type DecisionResult =
       readonly reasons: readonly string[];
       readonly evidence: readonly EvidenceRecord[];
       readonly preExecutionChecks?: readonly string[];
+      readonly conditionalAlternatives?: readonly ConditionalAlternative[];
     }
   | {
       readonly state: "compared";

@@ -10,6 +10,7 @@ import type { PhotoObservations } from "./photo-observations.ts";
 import { parseDecision } from "./o-decision.ts";
 import { canonical, DocumentSchema, EvidenceSchema, requireValid, revision, RouteKindSchema, strings, text, unique as uniqueIds, ValidationError } from "./o-validation.ts";
 import type { EvidenceContext } from "./o-validation.ts";
+import { conditionalAlternatives } from "./conditional-alternatives.ts";
 
 const ReviewSchema = Type.Object({
   caseId: text, caseRevision: text, route: RouteKindSchema,
@@ -213,11 +214,16 @@ export function decideCase(input: CaseInput, proposal?: unknown, options: Assess
   if (!parsed.ok) throw new AssessmentInputError(parsed.issues);
   const facts = parsed.value;
   const assessment = assessCase(facts, options, reviews, photoObservations);
-  const evidence = [...assessment.legal.evidence, ...assessment.reviewEvidence];
+  const alternativeResult = conditionalAlternatives(facts, assessment.legal);
+  const evidence = [...alternativeResult.evidence, ...assessment.reviewEvidence];
   const rejected: string[] = [];
   if (proposal !== undefined) {
     try {
       const candidate = parseDecision(proposal);
+      if (candidate.state !== "compared" && candidate.conditionalAlternatives !== undefined
+        && canonical(candidate.conditionalAlternatives) !== canonical(alternativeResult.alternatives)) {
+        rejected.push("proposal-alternatives-mismatch");
+      }
       if (candidate.caseId !== assessment.caseId) rejected.push("proposal-case-mismatch");
       for (const record of candidate.evidence) {
         const trusted = evidence.find((item) => item.sourceId === record.sourceId);
@@ -239,10 +245,10 @@ export function decideCase(input: CaseInput, proposal?: unknown, options: Assess
     || assessment.legal.issues.some((issue) => issue.kind === "context-ambiguous");
   if (!needsReview && assessment.questions.length > 0) {
     return { state: "needs-information", caseId: assessment.caseId,
-      questions: assessment.questions, evidence };
+      questions: assessment.questions, evidence, conditionalAlternatives: alternativeResult.alternatives };
   }
   return {
-    state: "needs-review", caseId: assessment.caseId, evidence,
+    state: "needs-review", caseId: assessment.caseId, evidence, conditionalAlternatives: alternativeResult.alternatives,
     reasons: unique([
       ...rejected, ...assessment.reviewReasons, ...assessment.reviewIssues, ...assessment.questions,
       ...assessment.routes.flatMap((route) => route.eligibility.state === "unknown" ? route.eligibility.missingFacts

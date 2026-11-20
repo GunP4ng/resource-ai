@@ -5,6 +5,23 @@ import { demo } from "../src/o-demo.ts";
 import { route as assessment, documents } from "../src/o-synthetic-evidence.ts";
 import { createComparisonCalculator, calculateRouteCost } from "../src/cost.ts";
 import { bindSynthetic, carbonFixture, calculationFixture, treatment, transport, sales } from "../src/o-synthetic.ts";
+import { createResourceDomain } from "../src/domain.ts";
+test("held alternatives stay informational and precede source and next-action sections", async () => {
+  const decision = await createResourceDomain({ caseId: "held-alternatives", description: "합성 유해 접촉 사례",
+    photoRefs: [], process: "사출", polymer: "HDPE", contamination: "용제 잔류 의심",
+    hazardousContact: "yes", massKg: null, region: "인천", assessmentDate: "2026-11-10" }).decide();
+  assert.equal(decision.state, "needs-review");
+  if (decision.state !== "needs-review") assert.fail("hazard must retain review");
+  assert.ok(decision.conditionalAlternatives?.length);
+  const html = renderReport(decision, { mode: "offline" });
+  assert.match(html, /현재 실행 보류는 유지됩니다/);
+  assert.match(html, /이 처리 경로의 적합성은 아직 확인하지 못했습니다/);
+  assert.match(html, /이 대안의 근거와 적용 범위/);
+  assert.match(html, /먼저 확인할 것/);
+  assert.doesNotMatch(html, /aria-label="추천 경로 순위"|1순위/);
+  assert.ok(html.indexOf('id="alternatives"') < html.indexOf('id="evidence"'));
+  assert.ok(html.indexOf('id="evidence"') < html.indexOf('id="checks"'));
+});
 test("reported string zero survives while missing usage stays unavailable; history keeps configured execution separate", () => {
   const decision = { state: "needs-information", caseId: "metadata-case", questions: ["질량 확인"], evidence: [] } as const;
   const zero = renderReport(decision, { mode: "live", runtime: { identity: "local-operator", storage: "sqlite", runner: "subscription" }, execution: { traceId: "senpi:trace", usage: "0" }, historical: true });

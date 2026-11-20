@@ -7,7 +7,10 @@ import { caseRoute } from "./app-case-routes.ts";
 import { demo } from "./o-demo.ts";
 import { referencePage } from "./o-reference.ts";
 import { escapeHtml, renderReport } from "./report.ts";
-import { requireValid } from "./o-validation.ts";
+import type { ReportContext } from "./report.ts";
+import { requireValid, revision } from "./o-validation.ts";
+import { readCaseResearchCatalog, buildCaseResearchAttachment } from "./o-case-research.ts";
+import { createResourceDomain } from "./domain.ts";
 import { CaseConflict, createCaseStore, parseAssessment } from "./o-case-store.ts";
 import type { OCaseStore } from "./o-case-store.ts";
 import { LocalAuthError } from "./o-auth.ts";
@@ -90,7 +93,8 @@ export function createApp(dependencies: AppDependencies) {
         let actor: string | null = null;
         let validUntil = Infinity;
         let assertCurrent: (() => void) | undefined;
-        if ((dependencies.localAuth || dependencies.actorForRequest) && (url.pathname === "/" || url.pathname.startsWith("/cases"))) {
+        const normalDemo = request.method === "GET" && url.pathname === "/demo/normal";
+        if ((dependencies.localAuth || dependencies.actorForRequest) && (url.pathname === "/" || url.pathname.startsWith("/cases") || normalDemo)) {
           try {
             const identity = dependencies.localAuth ? dependencies.localAuth.resolve(request, signal) : await dependencies.actorForRequest?.(request, signal);
             actor = typeof identity === "string" ? identity : identity?.actorId ?? null;
@@ -105,7 +109,7 @@ export function createApp(dependencies: AppDependencies) {
             throw new HttpFailure(503, "인증 서비스를 사용할 수 없습니다.");
           }
           guard(signal);
-          if (!actor || !/^[A-Za-z0-9_-]{1,128}$/.test(actor) || validUntil <= now() || Number.isNaN(validUntil)) throw new HttpFailure(403, "인증이 필요합니다.");
+          if ((!actor && !normalDemo) || (actor && !/^[A-Za-z0-9_-]{1,128}$/.test(actor)) || validUntil <= now() || Number.isNaN(validUntil)) throw new HttpFailure(403, "인증이 필요합니다.");
         }
         const privateGuard = () => {
           guard(signal);
@@ -159,9 +163,33 @@ export function createApp(dependencies: AppDependencies) {
           }
           const fixture = await demo(fixtureMatch[1] ?? "", origin);
           if (fixture === null) throw new HttpFailure(404, "데모를 찾을 수 없습니다.");
-          return response(renderReport(fixture.result, fixture.presentation, { audience: "commercial" }, {
+          let decision = fixture.result, presentation = fixture.presentation;
+          let context: ReportContext = { audience: "commercial" };
+          let actions = "";
+          if (normalDemo) {
+            if (url.searchParams.get("purpose") === "research" && !actor) throw new HttpFailure(403, "연구 계산은 인증된 사용자만 확인할 수 있습니다.");
+            actions = '<nav class="cluster screen-only" aria-label="공개 시나리오 계산"><a href="/demo/normal?purpose=research">PET 비용·탄소</a><a href="/demo/normal?purpose=research&amp;material=HDPE">HDPE 비용·탄소</a><a href="/demo/normal?purpose=commercial">상업용 합성 데모</a></nav>';
+            if (actor && url.searchParams.get("purpose") !== "commercial") {
+              const sourceCaseId = url.searchParams.get("material") === "HDPE" ? "OYS-20261110-002" : "OYS-20261110-001";
+              const catalog = await readCaseResearchCatalog();
+              const source = catalog.calculations.data.cases.find(item => item.case_id === sourceCaseId);
+              if (!source) throw new HttpFailure(503, "공개 시나리오 원본을 찾을 수 없습니다.");
+              const attachment = buildCaseResearchAttachment({ actorId: actor, input: source.original,
+                inputRevision: revision(source.original) }, sourceCaseId, catalog);
+              decision = await createResourceDomain(source.original).decide();
+              presentation = { mode: "synthetic", calculationVersion: attachment.calculations.model_version,
+                sourceVersion: attachment.calculations.fixtureSha256, ...(dependencies.runtime ? { runtime: dependencies.runtime } : {}) };
+              context = { audience: "authenticated-research", research: { attachment, artifactSha256: revision(attachment) } };
+            } else if (url.searchParams.get("purpose") !== "commercial") {
+              actions += `<p>공개 시나리오의 비용·탄소는 인증된 비공개 연구 화면에서 제공합니다.${dependencies.localAuth ? ' <a href="/login">운영자 로그인</a>' : ""}</p>`;
+            }
+          }
+          const result = response(renderReport(decision, presentation, context, {
+            actions, researchFirst: normalDemo,
             editing: '<p class="screen-only"><a href="/demo/review">합성 위험·검토 예시</a></p>',
           }));
+          privateGuard();
+          return result;
         }
         const caseMatch = /^\/cases\/([A-Za-z0-9_-]{1,100})(?:\/(answers|report|input))?$/.exec(url.pathname);
         const caseId = caseMatch?.[1];

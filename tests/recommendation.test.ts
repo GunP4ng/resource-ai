@@ -203,6 +203,89 @@ test("empty structured facts stay answerable even though the resin question ment
   if (result.state === "needs-information") assert.equal(result.questions.length, 5);
 });
 
+for (const [name, patch, state, routes] of [
+  ["missing information", { polymer: null, contamination: null, hazardousContact: "unknown" }, "needs-information",
+    ["mechanical-recycling", "other-recovery", "disposal"]],
+  ["missing contamination", { contamination: null, hazardousContact: "unknown" }, "needs-information",
+    ["mechanical-recycling", "other-recovery", "disposal"]],
+  ["hazardous contact", { hazardousContact: "yes" }, "needs-review", ["disposal"]],
+  ["mixed material", { polymer: "PP/PE 다층" }, "needs-review",
+    ["mechanical-recycling", "other-recovery", "disposal"]],
+] as const) {
+  test(`conditional alternatives preserve ${name} hold and expose source-bounded route questions`, async () => {
+    const input = { ...syntheticCase, ...patch };
+    const domain = createResourceDomain(input);
+    const result = await domain.decide();
+    assert.equal(result.state, state);
+    assert.equal(result.caseId, input.caseId);
+    assert.deepEqual(result.conditionalAlternatives?.map(item => item.routeId), routes);
+    for (const alternative of result.conditionalAlternatives ?? []) {
+      assert.equal(alternative.state, "informational");
+      assert.equal(alternative.executable, false);
+      const supported = (name === "mixed material" || name === "missing contamination") && alternative.routeId === "mechanical-recycling";
+      assert.equal(alternative.support.state, supported ? "route-supported" : "unavailable");
+      assert.equal(alternative.support.missingEvidence.length === 0, supported);
+      assert.notDeepEqual(alternative.nextChecks, []);
+      assert.equal("rank" in alternative || "eligibility" in alternative, false);
+      assert.ok(alternative.citations.every(citation =>
+        result.evidence.some(record => record.sourceId === citation.sourceId && record.locator === citation.locator)));
+      if (!supported) assert.ok(alternative.citations.every(citation => citation.scope === "general-requirement"));
+    }
+    assert.deepEqual(parseDecision(result), result);
+    assert.ok((await domain.assessRoutes(input)).every(route => route.eligibility.state === "unknown"));
+  });
+}
+
+test("alternative parser preserves historical holds and rejects fabricated evidence, scope and execution", async () => {
+  const result = await createResourceDomain({ ...syntheticCase, polymer: null }).decide();
+  if (result.state === "compared") throw new Error("expected information hold");
+  const { conditionalAlternatives, ...historical } = result;
+  assert.deepEqual(parseDecision(historical), historical);
+  assert.doesNotThrow(() => renderReport(historical, { mode: "offline" }));
+  const alternative = conditionalAlternatives?.[0];
+  assert.ok(alternative);
+  for (const patch of [
+    { executable: true }, { state: "eligible" }, { routeId: "incineration" }, { rank: 1 },
+    { condition: { code: "hazard-classification", description: "forged route condition" } },
+    { support: { state: "route-supported", missingEvidence: [] } },
+    { citations: [] },
+    { citations: alternative.citations.map(citation => ({ ...citation, sourceId: "forged" })) },
+    { citations: alternative.citations.map(citation => ({ ...citation, locator: "invented locator" })) },
+    { citations: alternative.citations.map(citation => ({ ...citation, claim: "incineration licensed" })) },
+    { citations: alternative.citations.map(citation => ({ ...citation, quote: "invented quotation" })) },
+    { citations: alternative.citations.map(citation => ({ ...citation, scope: "route-specific" })) },
+  ]) assert.throws(() => parseDecision({ ...result, conditionalAlternatives: [{ ...alternative, ...patch }] }));
+  assert.throws(() => parseDecision({ ...result, evidence: result.evidence.map(record => ({ ...record, sha256: "0".repeat(64) })) }));
+});
+
+test("model alternative text cannot replace host route questions even with genuine registered citations", async () => {
+  const domain = createResourceDomain({ ...syntheticCase, polymer: null });
+  const expected = await domain.decide();
+  if (expected.state === "compared") throw new Error("expected information hold");
+  assert.ok(expected.conditionalAlternatives?.length);
+  for (const proposal of [
+    { ...expected, conditionalAlternatives: expected.conditionalAlternatives.map(item => ({ ...item, rationale: "execute invented route" })) },
+    { ...expected, conditionalAlternatives: expected.conditionalAlternatives.map(item => ({ ...item, routeId: "disposal" })) },
+    { ...expected, conditionalAlternatives: expected.conditionalAlternatives.map(item => ({ ...item, executable: true })) },
+    { ...expected, conditionalAlternatives: expected.conditionalAlternatives.map(item => ({ ...item,
+      citations: item.citations.map(citation => ({ ...citation, claim: "execute invented route" })) })) },
+    { ...expected, caseId: "forged-case" },
+    { ...expected, state: "compared", routes: [], processors: [], scenarios: [], limitations: [], humanApproval: "approved" },
+  ]) {
+    const actual = await domain.decide(proposal);
+    assert.equal(actual.state, "needs-review");
+    assert.equal(actual.caseId, expected.caseId);
+    assert.deepEqual(actual.conditionalAlternatives, expected.conditionalAlternatives);
+    assert.equal(JSON.stringify(actual).includes("execute invented route"), false);
+  }
+});
+
+test("unsupported assessment period cannot fabricate a conditional alternative source", async () => {
+  const result = await createResourceDomain({ ...syntheticCase, assessmentDate: "2026-09-30", polymer: null }).decide();
+  assert.equal(result.state, "needs-review");
+  assert.deepEqual(result.conditionalAlternatives, []);
+});
+
 for (const [name, patch, expected] of [
   ["unknown contact", { hazardousContact: "unknown" }, "needs-information"],
   ["unknown residue history", { contamination: "세척 완료, 이전 내용물·잔류물은 미확인" }, "needs-information"],

@@ -1,5 +1,6 @@
 import type { CaseResearchReport } from "./o-case-research-schema.ts";
 import { escapeHtml, list, safeLink } from "./report-html.ts";
+import recyclingDirectory from "../data/reference/public-recycling-candidates-20261121.json" with { type: "json" };
 
 const routeNames = { recycling: "재활용 시나리오", landfill: "매립 시나리오", energy_recovery: "에너지 회수 시나리오" } as const;
 const missingNames: Readonly<Record<string, string>> = {
@@ -19,14 +20,18 @@ function originalLink(url: string, title: string): string {
 export function researchCalculations(research: CaseResearchReport): string {
   const { attachment } = research;
   const c = attachment.calculations;
-  return `<section id="research-calculations" aria-labelledby="research-heading"><h2 id="research-heading">공개 자료 기반 연구 계산</h2>
+  return `<section id="research-calculations" aria-labelledby="research-heading"><h2 id="research-heading">${escapeHtml(c.cases[0].material)} 공개 자료 기반 연구 계산</h2>
     <p><strong>${escapeHtml(attachment.label)}</strong> · ${escapeHtml(attachment.status)}</p>
+    <p>같은 ${escapeHtml(c.cases[0].material)} ${escapeHtml(String(c.cases[0].original.massKg ?? "질량 미확보"))} kg 시나리오의 대안 비교입니다. 탄소는 미국 WARM 계수이며 국내 실측값이 아닙니다.</p>
+    <div class="table-wrap" role="region" aria-label="공개 시나리오 비용·탄소 비교" tabindex="0"><table><thead><tr><th>대안</th><th>순비용</th><th>순탄소</th></tr></thead><tbody>${c.results.map(result => `<tr><td data-label="대안">${routeNames[result.route_id]}</td><td data-label="순비용">${value(result.display.net_cost_krw, "KRW", result.missing_inputs.cost)}</td><td data-label="순탄소">${value(result.display.net_carbon_kgco2e, "kgCO2e", result.missing_inputs.carbon)}</td></tr>`).join("")}</tbody></table></div>
+    <details><summary>계산 가정·출처·적용 범위 확인하기</summary>
+    <p>공개 시나리오 원본 ${escapeHtml(c.sourceCaseId)} · ${escapeHtml(c.cases[0].original.description)} · 질량 ${escapeHtml(String(c.cases[0].original.massKg ?? "미확보"))} kg · 지역 ${escapeHtml(c.cases[0].original.region ?? "미확보")}. 합성 시나리오 입력이며 실제 견적이 아닙니다.</p>
     <p>평가 기준일 ${escapeHtml(attachment.binding.assessmentDate)} · 법령 시행본 ${escapeHtml(c.cases[0].law_version)}. 연구 숫자는 추천 순위·확신도를 바꾸지 않으며 운영 견적이 아닙니다.</p>
     <p>WARM·Wonju 자료의 상업 이용·재배포 권리 미확인. 인증된 비공개 연구 표시만 제공하며 상업용 보고서·모델 전송에서 제외합니다.</p>
     <p>미국 기본 조건의 WARM 순 전과정 시나리오입니다. 국내 시설의 실측 배출이나 감축 실적이 아닙니다. 기간·GWP·운송 포함 경계 차이로 직접 비교에 한계가 있습니다. 음의 순비용은 계약 이익이 아니며 음의 배출은 탄소 제거가 아닙니다.</p>
     <p>합성 제조 자투리를 단일 수지로 보고 미국의 소비 후 폐플라스틱 폐쇄형 재활용 모형에 가정으로 대응했습니다. 잔재물도 같은 수지로 가정합니다.</p>
     ${c.cases[0].material === "HDPE" ? '<p>HDPE 가격에는 일반 PE(generic PE) 참고가격을 대용했습니다. HDPE 개별 계약가격이 아닙니다.</p>' : ""}
-    ${c.results.map(result => `<section data-research-result="${result.route_id}"><h3>${routeNames[result.route_id]}</h3>
+    </details>${c.results.map(result => `<section data-research-result="${result.route_id}"><h3>${routeNames[result.route_id]}</h3>
       <p><strong>${escapeHtml(result.label)}</strong> · 시나리오 추정, 현장 미검증</p>
       <dl><dt>순비용</dt><dd>${value(result.display.net_cost_krw, "KRW", result.missing_inputs.cost)}</dd>
       <dt>순탄소</dt><dd>${value(result.display.net_carbon_kgco2e, "kgCO2e", result.missing_inputs.carbon)}</dd>
@@ -50,7 +55,7 @@ export function researchCalculations(research: CaseResearchReport): string {
       · 의존 입력 ${escapeHtml(input.depends_on_input_ids.join(", ") || "없음")}</p>`).join("")}
     <p>원본 사례 ${escapeHtml(c.sourceCaseId)} · 원본 SHA-256 ${escapeHtml(c.originalSha256)} · provenance SHA-256 ${escapeHtml(c.provenanceSha256)} · manifest ${escapeHtml(c.provenanceManifestSha256)}</p>
     <p>고정 입력 ${escapeHtml(c.fixtureSha256)} · manifest ${escapeHtml(c.manifestSha256)} · 구현 ${escapeHtml(c.implementation.sha256)} · 모델 ${escapeHtml(c.model_version)}</p>
-    <p>저장 아티팩트 ${escapeHtml(research.artifactSha256)} · 평가 입력 결합 ${escapeHtml(attachment.binding.inputRevision)}</p>
+    <p>연구 표시 자료 SHA-256 ${escapeHtml(research.artifactSha256)} · 평가 입력 결합 ${escapeHtml(attachment.binding.inputRevision)}</p>
     </details></section>`;
 }
 export function researchDirectory(research: CaseResearchReport): string {
@@ -66,5 +71,19 @@ export function researchDirectory(research: CaseResearchReport): string {
       <details><summary>명부 행 출처 확인하기</summary><p>출처 ${escapeHtml(row.listing.sourceId)} · 행 SHA-256 ${escapeHtml(row.rowSha256)}</p></details></section>`).join("")}
     ${list(directory.missing)}<details><summary>명부 선택·제외 내역 확인하기</summary>
     ${list(directory.excludedRows.map(row => `${row.rowNumber}행: ${row.reason === "municipal-collection-only" ? "생활폐기물 수집운반 전용" : "명시된 영업권역과 사례 지역 불일치"}`))}
-    <p>정제 명부 SHA-256 ${escapeHtml(directory.datasetSha256)} · 원본 SHA-256 ${escapeHtml(directory.source.derivedFrom)} · manifest ${escapeHtml(directory.sourceManifestSha256)}</p></details></section>`;
+    <p>정제 명부 SHA-256 ${escapeHtml(directory.datasetSha256)} · 원본 SHA-256 ${escapeHtml(directory.source.derivedFrom)} · manifest ${escapeHtml(directory.sourceManifestSha256)}</p></details></section>
+    <section id="recycling-directory"><h2>${escapeHtml(recyclingDirectory.label)}</h2>
+    ${originalLink(recyclingDirectory.source.url, recyclingDirectory.source.title)}
+    <p>명부 기준일 ${escapeHtml(recyclingDirectory.source.sourceDate)} · 조회 ${escapeHtml(recyclingDirectory.source.retrievedAt)}
+      · 수집 근거 ${escapeHtml(recyclingDirectory.source.collectionBasis)} · 사용권 ${escapeHtml(recyclingDirectory.source.license)}</p>
+    ${list(recyclingDirectory.limitations)}
+    ${recyclingDirectory.rows.map(row => `<section data-recycling-directory-row="${row.rowNumber}"><h3>${escapeHtml(row.name)} · 원본 명부 ${row.rowNumber}행</h3>
+      <p>업종 ${escapeHtml(row.activity)} · 대상폐기물 ${escapeHtml(row.wasteScope)}</p>
+      <p>명부상 소재지 ${escapeHtml(row.address)} · 행 기준일 ${escapeHtml(row.sourceDate)}</p>
+      <p>현재 허가·영업·인수 의사 미확인 · 사례 지역·운송·수지·오염 조건 적합성 미확인</p></section>`).join("")}
+    <details><summary>재활용업 명부 출처 확인하기</summary>
+      <p>원본 ${escapeHtml(recyclingDirectory.source.originalFilename)} · 제공기관 ${escapeHtml(recyclingDirectory.source.publisher)}
+      · 원본 지역 ${escapeHtml(recyclingDirectory.source.geographicScope)}</p>
+      <p>원본 SHA-256 ${escapeHtml(recyclingDirectory.source.rawSha256)} · 첨부 ${escapeHtml(recyclingDirectory.source.attachmentId)}</p>
+      ${originalLink(recyclingDirectory.source.licenseUrl, "사용권 안내 열기")}</details></section>`;
 }

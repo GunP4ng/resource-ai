@@ -75,9 +75,10 @@ export function caseListPage(rows: string, localAuth: boolean): string {
 export function inputPage(options: InputView): string {
   const { authenticated, localAuth, connected, photoEnabled, runner } = options;
   const runnerLabel = runner ? runners[runner] : "미제공";
-  if (authenticated && localAuth) return page("사례 입력", `<h1>폐자원 조건부 검토</h1><p class="notice">${localAuth ? "로컬 운영자 · SQLite 사례 보관 (최대 1시간)" : "서버 인증 사용자"} · 구성된 실행기 ${runnerLabel} · 실행 성공은 평가 후 확인</p><p>입력은 미검토 자료입니다. 로그인은 자료나 법적 승인을 뜻하지 않습니다.</p><p><a href="/cases">내 사례·복구</a></p>${form("/cases")}<p>사진: ${photoEnabled ? "비공개 저장 전용" : "저장 비활성"}</p><p><a href="/demo/normal">합성 비교 데모</a></p>`);
+  const purpose = "<p>공정에서 나온 폐기물·부산물의 재사용·재활용·처리 대안을 비교합니다. 재질과 오염 상태를 입력하면 조건별 대안, 공개 근거, 비용·탄소 자료와 다음 확인할 일을 보여 줍니다.</p><p>정보가 부족하거나 위험이 의심되면 실행을 보류하고, 어떤 조건을 확인해야 다음 대안을 검토할 수 있는지 안내합니다.</p>";
+  if (authenticated && localAuth) return page("사례 입력", `<h1>폐자원 조건부 검토</h1>${purpose}<p class="notice">로그인한 담당자 · 사례 보관 최대 1시간 · 검토 방식 ${runnerLabel} · 실행 성공은 평가 후 확인</p><p>입력은 미검토 자료입니다. 로그인은 자료나 법적 승인을 뜻하지 않습니다.</p><p><a href="/cases">내 사례·복구</a></p>${form("/cases")}<p>사진: ${photoEnabled ? "비공개 저장 전용" : "저장 비활성"}</p><p><a href="/demo/normal">합성 비교 데모</a></p>`);
   return page("사례 입력", `<h1>폐자원 조건부 검토</h1>
-          <p class="notice">${connected ? "입력·세션 어댑터 연결됨 · 실행 후 상태를 확인하세요." : "입력·세션 연결 준비 중 · 현재 제출하면 503 준비 상태를 표시합니다."}</p>
+          ${purpose}<p class="notice">${connected ? "입력을 받아 검토할 준비가 됐습니다. 제출 후 결과를 확인하세요." : "사례 검토 연결을 준비 중입니다. 지금 제출하면 준비 상태를 안내합니다."}</p>
           <p>실제 자료와 합성 데모를 구분합니다. 설명·사진만으로 법적 코드나 처리 허가를 확정하지 않습니다.</p>
           <p>${authenticated ? "서버 인증 사용자" : "익명 임시 세션 · 재시작하면 사례를 복구할 수 없습니다."}${runner ? ` 구성된 실행기 ${runnerLabel} · 실행 성공은 평가 후 확인하세요.` : ""}</p>
           <p><a href="/cases">내 사례·복구</a></p>

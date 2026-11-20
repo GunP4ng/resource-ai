@@ -26,6 +26,7 @@ export interface ReportView {
   readonly actions?: string;
   readonly editing?: string;
   readonly answerTarget?: "#answer-fields" | "#answers";
+  readonly researchFirst?: boolean;
 }
 export const routeNames = { reuse: "재사용", "mechanical-recycling": "기계적 재활용", "other-recovery": "기타 회수", disposal: "처분" } as const;
 function recommendationSummary(result: Extract<DecisionResult, { state: "compared" }>, references: EvidenceReferences): string {
@@ -123,13 +124,16 @@ export function renderReport(result: DecisionResult, presentation: ReportPresent
   const checks = "preExecutionChecks" in result ? result.preExecutionChecks ?? [] : [];
   const answerAction = result.state !== "compared" ? view.answerTarget : undefined;
   const audit = result.state === "compared" ? result.scenarios.map((scenario, index) => scenarioAudit(scenario, presentation.scenarioLabels?.[index] ?? `대안 ${index + 1}`, references)).join("") : "";
+  const researchSections = research ? researchCalculations(research) + researchDirectory(research) : "";
   return page("조건부 보고서", `${conclusion(result)}<p>${mode}</p>${data}
     ${presentation.historical ? '<p class="notice">과거 평가: 현재 입력과 평가 당시 입력이 다릅니다. 명시적으로 다시 평가해 주세요.</p>' : ""}
     <div class="cluster screen-only">${answerAction ? `<a class="primary-action" href="${answerAction}">${result.state === "needs-information" ? "답변 입력하기" : "입력 다시 확인하기"}</a>` : ""}<a class="primary-action${answerAction ? " secondary-action" : ""}" href="#evidence">근거 확인하기</a><a class="primary-action secondary-action" href="#checks">실행 전 확인하기</a></div>
-    ${view.actions ?? ""}${reasons(result, references, presentation)}
-    ${research ? researchCalculations(research) + researchDirectory(research) : ""}
+    ${view.actions ?? ""}${view.researchFirst ? researchSections : ""}${reasons(result, references, presentation)}
+    ${result.state !== "compared" && result.conditionalAlternatives?.length ? `<section id="alternatives" aria-label="조건별 대안 비교"><h2>조건별 대안 비교</h2><p>현재 실행 보류는 유지됩니다. 아래는 확인할 조건에 따른 검토 경로이며 처리·반출·계약 승인이 아닙니다.</p>${result.conditionalAlternatives.map(alternative => `<article data-conditional-alternative="${escapeHtml(alternative.routeId)}"><h3>${escapeHtml(alternative.title)}</h3><p><strong>이 조건이라면:</strong> ${escapeHtml(alternative.condition.description)}</p><p>${escapeHtml(alternative.rationale)}</p><p><strong>${alternative.support.state === "route-supported" ? "조건을 확인한 뒤 검토할 공개 근거가 있습니다." : "이 처리 경로의 적합성은 아직 확인하지 못했습니다."}</strong></p>${alternative.support.missingEvidence.length ? list(alternative.support.missingEvidence) : ""}<p><strong>먼저 확인할 것</strong></p>${list(alternative.nextChecks)}<details><summary>이 대안의 근거와 적용 범위</summary>${alternative.citations.map(citation => `<p>${references([citation.sourceId])} ${escapeHtml(citation.locator)} · ${citation.scope === "route-specific" ? "해당 경로의 조건부 근거" : "분류·검토를 위한 일반 기준"}</p><blockquote>${escapeHtml(citation.quote)}</blockquote><p>${escapeHtml(citation.claim)}</p>`).join("")}</details></article>`).join("")}</section>` : ""}
+    ${view.researchFirst ? "" : researchSections}
+    ${evidenceSection(result)}
     <section id="checks"><h2>실행 전 확인사항</h2>${checks.length ? list(checks.map(readableReason)) : "<p>질문에 답하고 실제 질량·물질·접촉 이력을 확인하세요. 반출·계약·처리는 현장 담당자의 별도 검토와 승인이 필요합니다.</p>"}</section>
-    ${view.editing ?? ""}${evidenceSection(result)}
+    ${view.editing ?? ""}
     ${audit ? `<h2>비용·탄소 상세 감사</h2><details class="screen-only"><summary>계산 조건·비용 항목·탄소 활동과 계수 펼치기</summary>${audit}</details><div class="print-only">${audit}</div>` : ""}
     <details id="advanced"><summary>실행 기록·사례·자료 식별자 확인하기</summary><p>사례 ${escapeHtml(result.caseId)}</p>
     ${presentation.review ? `<p>자료 선언 ${escapeHtml(presentation.review.origin.reference)} · 아티팩트 SHA-256 ${escapeHtml(presentation.review.hash)} · 결합 입력 ${escapeHtml(presentation.review.caseRevision)}</p>` : ""}

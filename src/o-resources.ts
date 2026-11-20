@@ -107,7 +107,14 @@ export async function validateResourceArtifact(value: unknown, input: Parameters
   } else requireValid(resources.comparison === undefined && resources.comparisonEvidenceIds === undefined, "comparison-context-missing");
   const decision = await domain.decide();
   // Validate cached envelopes against fresh public domain execution; they never authorize execution.
-  requireValid(canonical(parseDecision(r.decision)) === canonical(decision) && canonical(r.assessment) === canonical(assessment), "cached-envelope-invalid");
+  const cachedDecision = parseDecision(r.decision);
+  let expectedDecision = decision;
+  if (cachedDecision.state !== "compared" && decision.state !== "compared"
+    && !Object.hasOwn(cachedDecision, "conditionalAlternatives")) {
+    const { conditionalAlternatives: _alternatives, ...historicalDecision } = decision;
+    expectedDecision = historicalDecision;
+  }
+  requireValid(canonical(cachedDecision) === canonical(expectedDecision) && canonical(r.assessment) === canonical(assessment), "cached-envelope-invalid");
   const requests = new Map<string, { sourceId: string; expectedSha256: string }>();
   const add = (sourceId: string, expectedSha256: string) => requests.set(`${sourceId}:${expectedSha256}`, { sourceId, expectedSha256 });
   for (const e of [...assessment.legal.evidence, ...assessment.reviewEvidence, ...decision.evidence]) add(e.sourceId, e.sha256);

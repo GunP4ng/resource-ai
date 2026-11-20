@@ -5,13 +5,15 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { prepareCaseRecord, createBundledSnapshotReader } from "../src/case-record.ts";
 import { createCaseStore } from "../src/o-case-store.ts";
-import { createFileResourceProvider, ResourceUnavailableError } from "../src/o-resources.ts";
+import { createFileResourceProvider, ResourceUnavailableError, validateResourceArtifact } from "../src/o-resources.ts";
 import { createResourceDomain } from "../src/domain.ts";
 import { revision } from "../src/o-validation.ts";
 import { syntheticCase, syntheticReviewed } from "./h-fixtures.ts";
 import type { DomainResources } from "../src/domain.ts";
 import { readCaseResearchCatalog, prepareResearchCaseRecord } from "../src/o-case-research.ts";
 import { artifactCodeRevision } from "../src/o-artifact-target.ts";
+import { parseCaseInput } from "../src/input.ts";
+import historicalPublicArtifact from "../data/o-public-development/2026-11-15/artifact.json" with { type: "json" };
 
 type Mutable<T> = { -readonly [K in keyof T]: Mutable<T[K]> };
 type Artifact = Mutable<Awaited<ReturnType<typeof prepareCaseRecord>>>;
@@ -44,6 +46,33 @@ async function fixture(t: { after(fn: () => unknown): void }, resources: DomainR
   return { root, store, directory, path, artifact, install, provider, load };
 }
 function rehash(artifact: Artifact) { artifact.record.resourcesSha256 = revision(artifact.record.resources); artifact.sha256 = revision(artifact.record); return artifact; }
+
+test("historical held bundles omit only absent alternatives while present fields remain exact", async () => {
+  const parsed = parseCaseInput(historicalPublicArtifact.record.input);
+  assert.ok(parsed.ok);
+  assert.equal(Object.hasOwn(historicalPublicArtifact.record.decision, "conditionalAlternatives"), false);
+  const accepted = await validateResourceArtifact(historicalPublicArtifact, parsed.value);
+  assert.deepEqual(accepted.artifact, historicalPublicArtifact);
+  const fresh = await createResourceDomain(parsed.value).decide();
+  assert.equal(fresh.state, "needs-information");
+  assert.ok(fresh.conditionalAlternatives?.length);
+  const currentRecord = { ...historicalPublicArtifact.record, decision: fresh };
+  assert.deepEqual((await validateResourceArtifact({ record: currentRecord, sha256: revision(currentRecord) }, parsed.value)).artifact.record.decision, fresh);
+  for (const decision of [
+    { ...historicalPublicArtifact.record.decision, questions: ["invented cached question"] },
+    { ...historicalPublicArtifact.record.decision, evidence: [] },
+    { ...fresh, conditionalAlternatives: [] },
+    { ...fresh, conditionalAlternatives: fresh.conditionalAlternatives.map(item => ({ ...item, rationale: "forged alternative" })) },
+    { ...fresh, conditionalAlternatives: fresh.conditionalAlternatives.map(item => ({ ...item,
+      citations: item.citations.map(citation => ({ ...citation, claim: "forged registered claim" })) })) },
+  ]) {
+    const record = { ...historicalPublicArtifact.record, decision };
+    await assert.rejects(validateResourceArtifact({ record, sha256: revision(record) }, parsed.value),
+      /cached-envelope-invalid|alternative-citation-unregistered/);
+  }
+  const record = { ...historicalPublicArtifact.record, assessment: { ...historicalPublicArtifact.record.assessment, questions: [] } };
+  await assert.rejects(validateResourceArtifact({ record, sha256: revision(record) }, parsed.value), /cached-envelope-invalid/);
+});
 
 test("corrupt configured file fails with a typed sanitized error; missing exact artifact clears staging", async t => {
   const f = await fixture(t); assert.deepEqual(await f.load(), {});

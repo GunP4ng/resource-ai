@@ -5,12 +5,25 @@ import { createCaseStore } from "../src/o-case-store.ts";
 import type { CaseArtifact } from "../src/o-case-artifact.ts";
 import { prepareResearchCaseRecord, readCaseResearchCatalog } from "../src/o-case-research.ts";
 import { revision } from "../src/o-validation.ts";
+import { createApp } from "../src/app.ts";
+import { createResourceDomain } from "../src/domain.ts";
+import { renderReport } from "../src/report.ts";
 
 const origin = "http://localhost:3000";
 const catalog = readCaseResearchCatalog();
 const post = (path: string, raw: unknown) => new Request(origin + path, {
   method: "POST", headers: { origin, "content-type": "application/json" }, body: JSON.stringify(raw),
 });
+async function decisionSurface(html: string) {
+  const surface = { heading: "", recommendations: "", checks: "", caseIdentity: "" };
+  await new HTMLRewriter()
+    .on("main > h1", { text(chunk) { surface.heading += chunk.text; } })
+    .on('section[aria-labelledby="recommendation-heading"]', { text(chunk) { surface.recommendations += chunk.text; } })
+    .on("#checks", { text(chunk) { surface.checks += chunk.text; } })
+    .on("#advanced > p:first-of-type", { text(chunk) { surface.caseIdentity += chunk.text; } })
+    .transform(new Response(html)).text();
+  return surface;
+}
 test("committed research uses one atomic report read and only explicit private report includes it", async () => {
   // Given a real stored case, then an installed artifact awaiting explicit reevaluation.
   const data = await catalog;
@@ -53,7 +66,7 @@ test("committed research uses one atomic report read and only explicit private r
     // Then commercial bytes and model inputs never receive the attachment.
     assert.match(normal, /data-research-result/);
     assert.match(research, /data-research-result/);
-    assert.doesNotMatch(commercial, /data-research-result|data-directory-row|WARM|Wonju|-13867|-27\.51/);
+    assert.doesNotMatch(commercial, /data-research-result|data-directory-row|data-recycling-directory-row|WARM|Wonju|-13867|-27\.51/);
     assert.doesNotMatch(commercial, /<form\b/);
     assert.deepEqual(await exported.json(), initial.input);
     assert.doesNotMatch(JSON.stringify(modelInputs), /research|WARM|Wonju|net_carbon_kgco2e/);
@@ -77,4 +90,95 @@ test("anonymous session cannot opt into research purpose", async () => {
     assert.equal(response.status, 403);
     assert.doesNotMatch(await response.text(), /data-research-result/);
   } finally { app.dispose(); await app.close(); }
+});
+
+test("default authenticated demo binds PET and HDPE decisions to source inputs without models or installation", async () => {
+  const app = createApp({ origin, actorForRequest: async () => "demo-operator",
+    runtime: { identity: "trusted", storage: "ephemeral", runner: "local" },
+    adapter: { submit: async () => { throw new Error("read-only demo must not evaluate"); },
+      answer: async () => { throw new Error("read-only demo must not evaluate"); } } });
+  try {
+    for (const [path, sourceCaseId, cost, carbon, landfillCost, landfillCarbon, recoveryCarbon] of [
+      ["/demo/normal", "OYS-20261110-001", "-13867", "-27.51", "2761", "0.53", "32.80"],
+      ["/demo/normal?purpose=research&material=HDPE", "OYS-20261110-002", "-5493", "-11.98", "2071", "0.40", "25.60"],
+    ] as const) {
+      const response = await app(new Request(origin + path));
+      assert.equal(response.status, 200);
+      assert.equal(response.headers.get("cache-control"), "private, no-store");
+      const html = await response.text();
+      assert.match(html, /href="\/demo\/normal\?purpose=research&amp;material=HDPE"/);
+      assert.match(html, /href="\/demo\/normal\?purpose=research"/);
+      assert.ok(html.includes(sourceCaseId));
+      const source = (await catalog).calculations.data.cases.find(item => item.case_id === sourceCaseId);
+      assert.ok(source);
+      const expectedDecision = await createResourceDomain(source.original).decide();
+      assert.equal(expectedDecision.caseId, source.original.caseId);
+      assert.deepEqual(await decisionSurface(html),
+        await decisionSurface(renderReport(expectedDecision, { mode: "synthetic" })));
+      assert.ok(html.includes(revision(source.original)));
+      assert.ok(html.includes(`질량 ${source.original.massKg} kg`));
+      assert.ok(html.includes(`평가 기준일 ${source.original.assessmentDate}`));
+      const rows = new Map<string, string>();
+      await new HTMLRewriter().on("[data-research-result]", { element(element) {
+        const route = element.getAttribute("data-research-result");
+        if (route) rows.set(route, "");
+      }, text(chunk) {
+        const route = [...rows.keys()].at(-1);
+        if (route) rows.set(route, rows.get(route) + chunk.text);
+      } }).transform(new Response(html)).text();
+      assert.equal(rows.size, 3);
+      assert.ok(rows.get("recycling")?.includes(`${cost} KRW`));
+      assert.ok(rows.get("recycling")?.includes(`${carbon} kgCO2e`));
+      assert.ok(rows.get("landfill")?.includes(`${landfillCost} KRW`));
+      assert.ok(rows.get("landfill")?.includes(`${landfillCarbon} kgCO2e`));
+      assert.ok(rows.get("energy_recovery")?.includes(`${recoveryCarbon} kgCO2e`));
+      assert.ok(rows.get("energy_recovery")?.includes("소각 처리비 미확보"));
+      assert.equal((html.match(/data-directory-row=/g) ?? []).length, 8);
+      assert.equal((html.match(/data-recycling-directory-row=/g) ?? []).length, 4);
+      assert.ok(html.indexOf('id="research-calculations"') < html.indexOf('id="recommendation-heading"'));
+      assert.doesNotMatch(html, /240,000 KRW/);
+      assert.match(html, /공개 자료 기반 계산값\(관측값 아님\)/);
+      assert.match(html, /미국 기본 조건의 WARM/);
+      assert.match(html, /실제 견적이 아닙니다/);
+      assert.doesNotMatch(html, /실행 성공 확인됨|Azure 호출 성공/);
+    }
+    const commercial = await (await app(new Request(origin + "/demo/normal?purpose=commercial&material=HDPE"))).text();
+    assert.match(commercial, /240,000 KRW/);
+    assert.doesNotMatch(commercial, /data-research-result|data-directory-row|data-recycling-directory-row|WARM|Wonju|-5493|-13867|demo-operator/);
+  } finally { app.dispose(); await app.settled(); }
+});
+
+test("anonymous demo remains public but research query cannot grant an audience", async () => {
+  for (const authenticated of [false, true]) {
+    const app = createApp({ origin, ...(authenticated ? { actorForRequest: async () => null } : {}) });
+    try {
+      const normal = await app(new Request(origin + "/demo/normal"));
+      assert.equal(normal.status, 200);
+      const html = await normal.text();
+      assert.match(html, /240,000 KRW/);
+      assert.doesNotMatch(html, /data-research-result|data-directory-row|data-recycling-directory-row|WARM|Wonju|-13867|-5493/);
+      for (const material of ["PET", "HDPE"]) {
+        const response = await app(new Request(origin + `/demo/normal?purpose=research&material=${material}`));
+        assert.equal(response.status, 403);
+        assert.doesNotMatch(await response.text(), /data-research-result|data-directory-row|data-recycling-directory-row|WARM|Wonju/);
+      }
+    } finally { app.dispose(); await app.settled(); }
+  }
+});
+
+test("demo research checks authentication expiry and current identity before returning bytes", async () => {
+  let validUntil = 101;
+  let current = true;
+  const app = createApp({ origin, now: () => 100, actorForRequest: async () => ({
+    actorId: "demo-operator", validUntil, assertCurrent: () => { assert.ok(current); },
+  }) });
+  try {
+    validUntil = 100;
+    assert.equal((await app(new Request(origin + "/demo/normal"))).status, 403);
+    validUntil = 101;
+    current = false;
+    const revoked = await app(new Request(origin + "/demo/normal"));
+    assert.notEqual(revoked.status, 200);
+    assert.doesNotMatch(await revoked.text(), /data-research-result|data-directory-row|data-recycling-directory-row|WARM|Wonju/);
+  } finally { app.dispose(); await app.settled(); }
 });

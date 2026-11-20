@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "purpose": "public-permit-directory-inquiry-candidates",
+  "label": "공개 인허가 명부의 재활용업 문의 후보 · 인수 의사 아님",
+  "source": {
+    "id": "data-go-kr-15056401-20251121",
+    "title": "전남광주통합특별시_폐기물재활용업체현황",
+    "originalFilename": "광주광역시_폐기물재활용업체 현황_20251121.csv",
+    "publisher": "전남광주통합특별시",
+    "geographicScope": "대한민국 광주광역시",
+    "url": "https://www.data.go.kr/data/15056401/fileData.do",
+    "attachmentId": "FILE_000000003551890",
+    "attachmentDetail": "1",
+    "sourceDate": "2025-11-21",
+    "metadataModifiedAt": "2025-12-02",
+    "retrievedAt": "2026-11-20T16:05:12.043Z",
+    "rawSha256": "8f91a05fd2a8a26edb12e48f4b16c3dee9637b25cb90744bf06aad0379096a9c",
+    "rawEncoding": "EUC-KR/CP949",
+    "license": "이용허락범위 제한 없음",
+    "licenseUrl": "https://www.data.go.kr/ugs/selectPortalPolicyView.do",
+    "collectionBasis": "인허가 권한자인 자치구 자료 취합",
+    "legalBasisReportedBySource": "폐기물관리법 제25조",
+    "totalSourceRows": 74,
+    "derivation": "연번9,18,47,48의 업체명·구분·소재지·대상폐기물·데이터기준일자만 선택. 대표자명은 제외."
+  },
+  "limitations": [
+    "인수 의사 아님. 현재 영업 여부·허가 유효성·실제 수탁 조건은 관할 자치구와 업체에 확인해야 합니다.",
+    "명부의 업종·대상폐기물 표기이며 허가증 번호·유효기간·시설 처리능력을 검증한 자료가 아닙니다.",
+    "광주광역시 소재 명부입니다. 현재 사례의 지역·운송 범위·수지 등급·오염 조건과의 적합성은 미확인입니다.",
+    "기계적 재활용 공정, 에너지 회수 능력, 가격, 물량, 계약을 추정하지 않습니다.",
+    "포털의 현재 제공기관명과 원본 파일의 광주광역시 표기를 구분해 보존했습니다."
+  ],
+  "rows": [
+    {"rowNumber":9,"activity":"폐기물 최종재활용업","name":"대영자원㈜","address":"광주광역시 북구 동배들길 61(동림동)","wasteScope":"폐합성수지류(폐플라스틱)","sourceDate":"2025-11-21"},
+    {"rowNumber":18,"activity":"폐기물 중간재활용업","name":"한영기업","address":"광주광역시 광산구 하남산단6번로 24(오선동)","wasteScope":"폐합성수지","sourceDate":"2025-11-21"},
+    {"rowNumber":47,"activity":"폐기물 종합재활용업","name":"㈜씨씨씨폴리머","address":"광주광역시 광산구 평동산단외로 109(지죽동)","wasteScope":"폐합성수지","sourceDate":"2025-11-21"},
+    {"rowNumber":48,"activity":"폐기물 종합재활용업","name":"서일화성","address":"광주광역시 광산구 하남산단3번로 12(장덕동)","wasteScope":"폐합성수지","sourceDate":"2025-11-21"}
+  ]
+}
