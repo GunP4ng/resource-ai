@@ -168,3 +168,46 @@ test("default launcher uses subscription and returns clean 503 when SDK credenti
     await rm(root, { recursive: true, force: true });
   }
 });
+
+test("direct subscription launcher uses the injected transport for a stored browser result", { timeout: 15000 }, async () => {
+  const auth = await fixture();
+  const reservation = createServer();
+  await new Promise<void>(resolve => reservation.listen(0, "127.0.0.1", resolve));
+  const address = reservation.address(); assert.ok(address && typeof address !== "string");
+  await new Promise<void>((resolve, reject) => reservation.close(error => error ? reject(error) : resolve()));
+  const env: NodeJS.ProcessEnv = { ...process.env, PORT: String(address.port),
+    RESOURCE_MODEL_RUNNER: "subscription", RESOURCE_MODEL_ID: "gpt-6-sol",
+    RESOURCE_AUTH_PATH: auth.authPath, RESOURCE_APP_AUTH: "anonymous", RESOURCE_PRIVATE_PHOTOS: "off" };
+  for (const key of ["RESOURCE_OPERATIONAL_CONFIG", "RESOURCE_STATE_DIR", "RESOURCE_RESOURCES_DIR",
+    "RESOURCE_SUBSCRIPTION_ROUTE"]) delete env[key];
+  const child = spawn(process.execPath, [fileURLToPath(new URL("./o-launcher-child.ts", import.meta.url)),
+    "direct", JSON.stringify(input)], { cwd: fileURLToPath(new URL("..", import.meta.url)), env, stdio: ["ignore", "pipe", "pipe"] });
+  const exited = new Promise<number | null>((resolve, reject) => { child.once("exit", resolve); child.once("error", reject); });
+  let output = "";
+  const ready = new Promise<void>(resolve => child.stdout.on("data", (chunk: Buffer) => {
+    output += chunk.toString(); if (output.includes("Re:Source app:")) resolve();
+  }));
+  try {
+    await Promise.race([ready, exited.then(() => { throw new Error("launcher exited before readiness"); })]);
+    const origin = `http://localhost:${address.port}`;
+    const home = await fetch(origin);
+    const cookie = home.headers.get("set-cookie")?.split(";")[0]; assert.ok(cookie);
+    const { caseId: _id, ...fields } = input;
+    const response = await fetch(origin + "/cases", { method: "POST", redirect: "manual",
+      headers: { origin, cookie, "content-type": "application/json" }, body: JSON.stringify(fields) });
+    assert.equal(response.status, 303);
+    const location = response.headers.get("location"); assert.ok(location);
+    const result = await fetch(origin + location, { headers: { cookie } });
+    assert.equal(result.status, 200);
+    const html = await result.text();
+    assert.match(html, /synthetic-http/);
+    // The synthetic provider supplies only the assessment proposal, without
+    // verified route evidence; the host must retain its review state.
+    assert.match(html, /<h1>검토 필요<\/h1>/);
+    assert.doesNotMatch(html, /aria-label="추천 경로 순위"/);
+    assert.match(output, /transport/);
+  } finally {
+    child.kill("SIGTERM"); assert.equal(await exited, 0);
+    await auth.close();
+  }
+});

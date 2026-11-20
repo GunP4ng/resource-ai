@@ -134,8 +134,8 @@ const subscription = mode === "subscription" && route === "siwc" ? checkedSubscr
   modelId: process.env["RESOURCE_MODEL_ID"] ?? "gpt-6-sol", authPath: process.env["RESOURCE_AUTH_PATH"] ?? "",
   accountIdSha256: process.env["RESOURCE_ACCOUNT_ID_SHA256"] ?? "", credentialSlot: process.env["RESOURCE_CREDENTIAL_SLOT"] }) : undefined;
 const runner = mode === "subscription"
-  ? createSubscriptionRunner({ enabled: true, modelId: process.env["RESOURCE_MODEL_ID"], authPath: process.env["RESOURCE_AUTH_PATH"], route, subscription })
-  : mode === "azure" ? createAzureRunner({ enabled: true, modelId: process.env["RESOURCE_MODEL_ID"] }) : undefined;
+  ? createSubscriptionRunner({ enabled: true, modelId: process.env["RESOURCE_MODEL_ID"], authPath: process.env["RESOURCE_AUTH_PATH"], route, subscription, transport: injection.transport })
+  : mode === "azure" ? createAzureRunner({ enabled: true, modelId: process.env["RESOURCE_MODEL_ID"], transport: injection.transport }) : undefined;
 const app = operator?.app ?? createOperationalApp({ origin, runner, resources, localAuth, caseStore, photoStore,
   presentationMode: mode === "local" ? "offline" : "live",
   photoPolicy: photoStore ? { retentionMs } : undefined,
