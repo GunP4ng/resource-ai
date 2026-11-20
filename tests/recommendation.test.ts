@@ -225,7 +225,10 @@ test("report consumes public grades, null reasons, citations and execution check
   const html = renderReport(result, { mode: "offline" });
   assert.match(html, /공개 근거상 가능\(조건부\)/u);
   assert.match(html, /1순위 · 기계적 재활용/u);
-  assert.match(html, /미산정 \(null\)/u);
+  assert.match(html, /미산정 · 사례별 검증된 견적/u);
+  assert.match(html, /미산정 · 동일 계산 경계/u);
+  assert.match(html, /검증된 후보 없음/u);
+  assert.doesNotMatch(html, /음의 순배출/u);
   assert.match(html, /실행 전 확인사항/u);
   assert.match(html, /href="#evidence-2"/u);
 });

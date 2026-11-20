@@ -34,7 +34,7 @@ function recommendationSummary(result: Extract<DecisionResult, { state: "compare
   return `<section aria-labelledby="recommendation-heading"><h2 id="recommendation-heading">추천 경로 순위</h2><ol>${result.recommendations.map(item => {
     const route = result.routes.find(route => route.routeId === item.routeId);
     const amount = (metric: typeof item.cost | typeof item.carbon) => metric.value === null
-      ? `미산정 (null) · ${escapeHtml(metric.reasons.join("; "))}`
+      ? `미산정 · ${escapeHtml(metric.reasons.join("; "))}`
       : `${escapeHtml(metric.value.toLocaleString("ko-KR"))} ${metric.unit} · ${metric.label === "assumption" ? "가정 포함 계산값" : "계산값"}${list(metric.reasons)}`;
     return `<li><h3>${item.rank}순위 · ${escapeHtml(route ? names[route.route] : item.routeId)}</h3>
       <p><strong>${item.grade === "public-conditional" ? "공개 근거상 가능(조건부)" : "사례별 자료 검토됨(실행 승인 아님)"}</strong></p>
@@ -78,9 +78,11 @@ function reasons(result: DecisionResult, references: EvidenceReferences, present
         ${result.scenarios.length ? comparisonSummary(result.scenarios, labels, references) : ""}
         ${comparisonConditions(result.scenarios, labels)}
         ${result.scenarios.length ? prioritySummary(result, labels, references) : ""}
-        <p>우열 불확실 · 동일 조건과 완전한 지표를 확인한 뒤 비교하세요. 음의 순배출은 탄소 제거를 뜻하지 않습니다.</p>
+        <p>${result.scenarios.length
+          ? "우열 불확실 · 동일 조건과 완전한 지표를 확인한 뒤 비교하세요. 음의 순배출은 탄소 제거를 뜻하지 않습니다."
+          : "추천 순위는 공개 근거에 따른 검토 순서입니다. 비용·탄소 자료가 없어 수치상 우열은 비교하지 않았습니다."}</p>
         <h2>경로와 조건</h2>${routeConditions(result, references)}
-        ${result.processors.length ? `<h2>사례별 업체 근거</h2>${processorCandidates(result, references)}` : ""}
+        <h2>사례별 업체 근거</h2>${processorCandidates(result, references)}
         <h2>제약과 다음 확보 항목</h2>${list(result.limitations.map(readableReason))}`;
     }
   }
