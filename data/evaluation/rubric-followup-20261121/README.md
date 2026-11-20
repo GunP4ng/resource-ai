@@ -22,7 +22,7 @@ A의 구체 인용0은 인용 정확도100%가 아니라 N/A다. B/C의 미등�
 
 ## 현재 규칙의 순위 대비
 
-원본 PET의 수지6종×오염6종=36개 고정 로컬 입력을 실제 도메인으로 실행했다.30개는needs-review,6개는compared였다. 비교가 가능한6개 모두1순위는mechanical-recycling이었다. `comparison/contrasts.json`과 `comparison/design.json`에 모든 입력·출력과 범위가 있다.
+원본 PET의 수지6종×오염6종=36개 고정 로컬 입력을 실제 도메인으로 실행했다. 3개는 compared, 20개는 needs-review, 13개는 needs-information이었다. 비교가 가능한 3개 모두 1순위는 mechanical-recycling이었다. `comparison/contrasts.json`과 `comparison/design.json`에 모든 입력·출력과 범위가 있다.
 
 공개 근거만 쓰는 현재 fallback은 기계적 재활용만추천후보로만든다. 조건을 바꾸면 추천과 보류는 달라지지만 이36개에서는 다른 처리경로가1순위가 되지 않았다. 검증된 별도 운영 자료가 있는 모든 가능한 구성까지 불가능하다고 주장하지 않는다. 임의 허가·비용·탄소를 주입해 다른1순위를 만들지 않았다.
 

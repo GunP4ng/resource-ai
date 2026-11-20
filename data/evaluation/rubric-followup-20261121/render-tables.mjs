@@ -6,6 +6,12 @@ import { fileURLToPath } from "node:url";
 const directory = dirname(fileURLToPath(import.meta.url));
 const audit = JSON.parse(await readFile(join(directory, "summary.json"), "utf8"));
 const sensitivity = JSON.parse(await readFile(join(directory, "comparison/sensitivity-complete.json"), "utf8"));
+const contrasts = JSON.parse(await readFile(join(directory, "comparison/contrasts.json"), "utf8"));
+const contrastStates = Object.groupBy(contrasts, row => row.result.state);
+const compared = contrastStates.compared ?? [];
+const firstRoutes = [...new Set(compared.map(row => row.first_recommended_route))];
+assert.equal(contrasts.length, 36);
+assert.deepEqual(firstRoutes, ["mechanical-recycling"]);
 assert.equal(audit.recordCount, 54);
 assert.equal(sensitivity.rows.length, 18);
 const lines = [
@@ -33,7 +39,7 @@ const lines = [
   "",
   "## 현재 규칙의 순위 대비",
   "",
-  "원본 PET의 수지6종×오염6종=36개 고정 로컬 입력을 실제 도메인으로 실행했다.30개는needs-review,6개는compared였다. 비교가 가능한6개 모두1순위는mechanical-recycling이었다. `comparison/contrasts.json`과 `comparison/design.json`에 모든 입력·출력과 범위가 있다.",
+  `원본 PET의 수지6종×오염6종=${contrasts.length}개 고정 로컬 입력을 실제 도메인으로 실행했다. ${compared.length}개는 compared, ${contrastStates["needs-review"]?.length ?? 0}개는 needs-review, ${contrastStates["needs-information"]?.length ?? 0}개는 needs-information이었다. 비교가 가능한 ${compared.length}개 모두 1순위는 ${firstRoutes.join(", ")}이었다. \`comparison/contrasts.json\`과 \`comparison/design.json\`에 모든 입력·출력과 범위가 있다.`,
   "",
   "공개 근거만 쓰는 현재 fallback은 기계적 재활용만추천후보로만든다. 조건을 바꾸면 추천과 보류는 달라지지만 이36개에서는 다른 처리경로가1순위가 되지 않았다. 검증된 별도 운영 자료가 있는 모든 가능한 구성까지 불가능하다고 주장하지 않는다. 임의 허가·비용·탄소를 주입해 다른1순위를 만들지 않았다.",
   "",
