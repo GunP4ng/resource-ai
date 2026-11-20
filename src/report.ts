@@ -24,6 +24,7 @@ export type ReportContext =
   | { readonly audience: "authenticated-research"; readonly research: CaseResearchReport | null; readonly publicScenario?: PublicInputScenario | null };
 /** Trusted server view fragments; never taken from model output or input metadata. */
 export interface ReportView {
+  readonly notice?: string;
   readonly actions?: string;
   readonly editing?: string;
   readonly answerTarget?: "#answer-fields" | "#answers";
@@ -134,7 +135,7 @@ export function renderReport(result: DecisionResult, presentation: ReportPresent
   const audit = result.state === "compared" ? result.scenarios.map((scenario, index) => scenarioAudit(scenario, presentation.scenarioLabels?.[index] ?? `대안 ${index + 1}`, references)).join("") : "";
   const researchSections = research ? researchCalculations(research) + researchDirectory(research) : "";
   const publicScenario = context.audience === "authenticated-research" ? context.publicScenario : null;
-  return page("조건부 보고서", `${conclusion(result)}
+  return page("조건부 보고서", `${conclusion(result)}${view.notice ?? ""}
     <p id="next-action"><strong>다음 행동:</strong> ${escapeHtml(nextAction)}</p>
     <p class="screen-only"><a class="primary-action" href="${answerAction ?? "#checks"}">${answerAction ? result.state === "needs-information" ? "답변 입력하기" : "입력 다시 확인하기" : "실행 전 확인하기"}</a></p>
     ${presentation.historical ? '<p class="notice">과거 평가: 현재 입력과 평가 당시 입력이 다릅니다. 명시적으로 다시 평가해 주세요.</p>' : ""}

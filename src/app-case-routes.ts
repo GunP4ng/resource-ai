@@ -32,7 +32,7 @@ export async function caseRoute(services: RouteServices, context: RouteRequest):
   if (request.method === "GET" && snapshot && caseMatch && suffix !== "answers") {
     const ticket = dependencies.photoExecution?.current() ?? null;
     const stored = snapshot.assessment;
-    const notice = snapshot.permissionChanged ? '<p class="notice">사진 권한이 변경되었습니다. 이전 보고서는 과거 평가입니다. 이미 전송된 사진을 회수하지 않습니다. 사진 없이 다시 평가할 수 있습니다.</p>' : "";
+    const notice = snapshot.permissionChanged ? '<p id="permission-change-warning" class="notice">사진 권한이 변경되었습니다. 이전 보고서는 과거 평가입니다. 이미 전송된 사진을 회수하지 않습니다. 사진 없이 다시 평가할 수 있습니다.</p>' : "";
     const selection = `<input type="hidden" name="photoSelection" value="explicit">${snapshot.photos.map(photo => `<label class="consent"><input type="checkbox" name="photo_${photo.photoRef}" value="yes" ${matchesPhotoConsent(photo.consent, ticket) && photo.expiresAt > now() && !snapshot.denied.includes(photo.photoRef) ? "" : "disabled"}>다음 평가에 이 사진 선택</label>`).join("")}`;
     const privateAudience = actor && (suffix !== "report" || url.searchParams.get("purpose") === "research");
     const publicScenario = privateAudience && !report?.research && snapshot.evaluated.revision === revision(snapshot.input)
@@ -44,7 +44,7 @@ export async function caseRoute(services: RouteServices, context: RouteRequest):
     const editable = snapshot.editUntil > now();
     const optionalMass = stored.decision.state === "compared" && snapshot.input.massKg === null && editable
       ? '<p class="screen-only"><a class="primary-action secondary-action" href="#answer-fields">질량을 입력하면 비용·탄소를 계산해요</a> (선택)</p><p>견적·탄소 계수 등 근거가 있는 항목부터 계산합니다. 자료가 없으면 필요한 내용을 알려드려요.</p>' : "";
-    const actions = suffix === "report" ? notice : `${notice}${optionalMass}<p class="cluster screen-only"><a href="/cases/${id}/report">상업용 보고서</a>${actor ? `<a href="/cases/${id}/report?purpose=research">비공개 연구용 보고서</a>` : ""}<a href="/cases/${id}/input">정확한 입력 내보내기</a><a href="/cases">내 사례</a></p>`;
+    const actions = suffix === "report" ? "" : `${optionalMass}<p class="cluster screen-only"><a href="/cases/${id}/report">상업용 보고서</a>${actor ? `<a href="/cases/${id}/report?purpose=research">비공개 연구용 보고서</a>` : ""}<a href="/cases/${id}/input">정확한 입력 내보내기</a><a href="/cases">내 사례</a></p>`;
     const editing = suffix === "report" ? "" : `<p>버전 ${snapshot.version}</p>${editable
       ? `<p>수정 가능 기한 (UTC): ${new Date(snapshot.editUntil).toISOString()}</p>${form(`/cases/${id}/answers`, true, snapshot.version, selection, snapshot.input)}`
       : '<p class="notice">수정 기한이 지났습니다. 보관 중인 보고서와 입력은 확인할 수 있습니다. 다시 평가하려면 <a href="/">새 사례를 입력하세요</a>.</p>'}${photoUI(snapshot, ticket, services)}`;
@@ -52,7 +52,7 @@ export async function caseRoute(services: RouteServices, context: RouteRequest):
       ...snapshot.presentation, mode: snapshot.presentation?.mode ?? "live", review: snapshot.review,
       historical: snapshot.evaluated.revision !== revision(snapshot.input),
       execution: stored.execution ? { traceId: stored.execution.traceId, usage: stored.execution.usage ?? null } : undefined,
-    }, audience, { actions, editing, ...(suffix === "report" || !editable ? {} : { answerTarget: "#answer-fields" as const }) }));
+    }, audience, { notice, actions, editing, ...(suffix === "report" || !editable ? {} : { answerTarget: "#answer-fields" as const }) }));
     privateGuard();
     return result;
   }

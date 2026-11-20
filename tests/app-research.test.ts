@@ -24,6 +24,43 @@ async function decisionSurface(html: string) {
     .transform(new Response(html)).text();
   return surface;
 }
+test("permissionChanged warning stays outside disclosures near the conclusion", async () => {
+  const source = (await catalog).calculations.data.cases[0];
+  assert.ok(source);
+  const store = createCaseStore();
+  const app = createResourceApp({
+    origin, actorForRequest: async () => "permission-warning",
+    runtime: { identity: "trusted", storage: "ephemeral", runner: "local" }, presentationMode: "offline",
+    caseStore: { ...store, readReport(owner, id) {
+      const report = store.readReport(owner, id);
+      return report ? { ...report, snapshot: { ...report.snapshot, permissionChanged: true } } : report;
+    } },
+    runner: async () => ({}),
+  });
+  try {
+    const { caseId: _originalId, ...raw } = source.original;
+    const created = await app.fetch(post("/cases", raw));
+    assert.equal(created.status, 303);
+    const path = created.headers.get("location");
+    assert.ok(path);
+    for (const suffix of ["", "/report"]) {
+      let visible = "", folded = "";
+      const order: string[] = [];
+      await new HTMLRewriter()
+        .on("#decision-summary", { element() { order.push("conclusion"); } })
+        .on("main > #permission-change-warning", { element() { order.push("notice"); }, text(chunk) { visible += chunk.text; } })
+        .on("details #permission-change-warning", { text(chunk) { folded += chunk.text; } })
+        .on("#next-action", { element() { order.push("next-action"); } })
+        .transform(await app.fetch(new Request(origin + path + suffix))).text();
+      assert.match(visible, /사진 권한이 변경/);
+      assert.match(visible, /과거 평가/);
+      assert.match(visible, /이미 전송된 사진을 회수하지 않습니다/);
+      assert.equal(folded, "");
+      assert.deepEqual(order, ["conclusion", "notice", "next-action"]);
+    }
+  } finally { app.dispose(); }
+});
+
 test("committed research uses one atomic report read and only explicit private report includes it", async () => {
   // Given a real stored case, then an installed artifact awaiting explicit reevaluation.
   const data = await catalog;
