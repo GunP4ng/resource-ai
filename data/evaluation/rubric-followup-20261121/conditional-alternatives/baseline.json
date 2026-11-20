@@ -1,0 +1,222 @@
+{
+  "schemaVersion": 1,
+  "method": "Pre-change local createResourceDomain(input).decide(); original assessment dates and facts; photoRefs cleared only for text-only execution; no photos opened",
+  "baselineRecommended": 8,
+  "total": 18,
+  "cases": [
+    {
+      "caseId": "HYEOB-20261112-001",
+      "inputRef": "../h-candidates/2026-11-12/inputs/HYEOB-20261112-001.json",
+      "originalSha256": "99a243a95f2500e350512a3ffbe53c896b76df41eb2e9be5b97d305cd96f0f40",
+      "assessmentDate": "2026-11-12",
+      "originalPhotoRefs": [],
+      "executionInputSha256": "6a7e8936e469f8950b629aade66dbc99ff1dc4af31c1960ad2154a75e1e98ce4",
+      "state": "compared",
+      "decisionSha256": "b5fa3687374b1f90a65356e06fd5e3723f2887070d51e9bd0313f15c5ecffcc4",
+      "recommendations": [
+        "mechanical-recycling"
+      ]
+    },
+    {
+      "caseId": "HYEOB-20261112-002",
+      "inputRef": "../h-candidates/2026-11-12/inputs/HYEOB-20261112-002.json",
+      "originalSha256": "140d4db53120d25db32c3d70a982d2de8cf2e45ac90c934550ed76fff7e76db5",
+      "assessmentDate": "2026-11-12",
+      "originalPhotoRefs": [],
+      "executionInputSha256": "ce8f3cc486c4005b38d595cc5a8ee75e7a6943353b6523c858aabce11d2310bd",
+      "state": "compared",
+      "decisionSha256": "b759d3331852b2fe26626d57a03b7cec27b13eacd5aab7b64ccaacb329480964",
+      "recommendations": [
+        "mechanical-recycling"
+      ]
+    },
+    {
+      "caseId": "HYEOB-20261112-003",
+      "inputRef": "../h-candidates/2026-11-12/inputs/HYEOB-20261112-003.json",
+      "originalSha256": "e99456505b42ee03d6b8f1e87771791750e1262a43047db72c613e85504a5b07",
+      "assessmentDate": "2026-11-12",
+      "originalPhotoRefs": [],
+      "executionInputSha256": "adaec26bf29d0d869d1fa9434eddeca3b427d16fceb6dfdc58902776081dc8ef",
+      "state": "needs-review",
+      "decisionSha256": "978c6c1f70d5a33ce50f73682c17a7684d1e0c503486a14646072f9efc3a7f90",
+      "recommendations": []
+    },
+    {
+      "caseId": "HYEOB-20261112-004",
+      "inputRef": "../h-candidates/2026-11-12/inputs/HYEOB-20261112-004.json",
+      "originalSha256": "26eb5e7d5d21df9ed16f6c00cab3dba7e5e810bd3b354e5f9851abcd8217e493",
+      "assessmentDate": "2026-11-12",
+      "originalPhotoRefs": [],
+      "executionInputSha256": "1fe247c1e8976ca372e772b2aa933b707ba642592f534a483cd12cf36857ba97",
+      "state": "needs-information",
+      "decisionSha256": "d37b1cb1f2511a91583da7cfaa7b4b3adfd3f9963015d3365f31cff933c2ef05",
+      "recommendations": []
+    },
+    {
+      "caseId": "HYEOB-20261112-005",
+      "inputRef": "../h-candidates/2026-11-12/inputs/HYEOB-20261112-005.json",
+      "originalSha256": "41f6f74e6551b3aae5449a1a0d11d2d1a37b7291974f9a1bc70618023de404fd",
+      "assessmentDate": "2026-11-12",
+      "originalPhotoRefs": [],
+      "executionInputSha256": "203d5302d726bc4e216f17a55ccc92404782c33dc526deb9ca75fa35cecca38c",
+      "state": "needs-review",
+      "decisionSha256": "2dfc9b14e16fbf22fd2ec7610ad60a9ae786215c149f18bd6b84848a5f70f0aa",
+      "recommendations": []
+    },
+    {
+      "caseId": "HYEOB-20261112-006",
+      "inputRef": "../h-candidates/2026-11-12/inputs/HYEOB-20261112-006.json",
+      "originalSha256": "aa6104ac7f7461c952fc95b314002860bb01107d59d3814d1e61282d1ac7a87b",
+      "assessmentDate": "2026-11-12",
+      "originalPhotoRefs": [],
+      "executionInputSha256": "3a5cea27a56e2d79ea774a30bafff8d69fe80f1687f62ab0a7b345b6cd2036a2",
+      "state": "compared",
+      "decisionSha256": "b78be923b0ace2f87d34e211ea26fbef57d8d100899443a7ec8d298b1f65115e",
+      "recommendations": [
+        "mechanical-recycling"
+      ]
+    },
+    {
+      "caseId": "HYEOB-20261112-007",
+      "inputRef": "../h-candidates/2026-11-12/inputs/HYEOB-20261112-007.json",
+      "originalSha256": "dd530034e235f514b61ee5a8d585978ead905acdfc04a3530e462a09e18ff320",
+      "assessmentDate": "2026-11-12",
+      "originalPhotoRefs": [],
+      "executionInputSha256": "d106cadf11c70c993b73486c671ec9c7423f9c44d27a605e8446c3f29998cbba",
+      "state": "compared",
+      "decisionSha256": "5a458707c5f5da23596c39db620d6493c5e73f1e962394bd8de3fcbce44c29ca",
+      "recommendations": [
+        "mechanical-recycling"
+      ]
+    },
+    {
+      "caseId": "HYEOB-20261112-008",
+      "inputRef": "../h-candidates/2026-11-12/inputs/HYEOB-20261112-008.json",
+      "originalSha256": "978a57423199674dee21982375171258ab9908701ea6f69934d95afc8ff31dbb",
+      "assessmentDate": "2026-11-12",
+      "originalPhotoRefs": [],
+      "executionInputSha256": "122467280c42593d1ac2ac5c6382acd1d72ceadd83cb8ef6fee8c79200643150",
+      "state": "needs-information",
+      "decisionSha256": "48b9ab459e767ee95e6a1a6e93141b02b1c6f78c7b3794d48976eada609f6bec",
+      "recommendations": []
+    },
+    {
+      "caseId": "HYEOB-20261112-009",
+      "inputRef": "../h-candidates/2026-11-12/inputs/HYEOB-20261112-009.json",
+      "originalSha256": "65c54b7dcfa5d975474542a5675a7c6bb64850d2a4e320845ad67ccaa5d2498e",
+      "assessmentDate": "2026-11-12",
+      "originalPhotoRefs": [],
+      "executionInputSha256": "1fd4f6edfb8fe525f8eb4ed67bd38d4566c203d432113eb66e6343c7f2c556cd",
+      "state": "needs-information",
+      "decisionSha256": "891528dbb616adc13df20b8d8da3b1118971775564df93e028a00559e3a4078c",
+      "recommendations": []
+    },
+    {
+      "caseId": "HYEOB-20261112-010",
+      "inputRef": "../h-candidates/2026-11-12/inputs/HYEOB-20261112-010.json",
+      "originalSha256": "898699ed96ab28225c9a2bbf9e1c0770fdb571e49af581832a96d92bf46a090f",
+      "assessmentDate": "2026-11-12",
+      "originalPhotoRefs": [],
+      "executionInputSha256": "44df39eb7cb1489ca1f334a4ef69a2da6260a51fd2ae6a684aafde392cf12eeb",
+      "state": "needs-information",
+      "decisionSha256": "97962055b450abe9fdc2b4ff637a2fcc7eaea78de478ab34a0d5d9d142776810",
+      "recommendations": []
+    },
+    {
+      "caseId": "OYS-20261110-001",
+      "inputRef": "../candidates/oyeonseok-2026-11-10/oys-20261110-001-pet-trim.json",
+      "originalSha256": "1f1163e501b1ade17ed9207933242a51120bb15584f8e95b6e6d736fe0cd67ff",
+      "assessmentDate": "2026-11-10",
+      "originalPhotoRefs": [],
+      "executionInputSha256": "d2190d16b4f315e77f70f1644450757a09e88b47754e23ba0cee61f0fd56c124",
+      "state": "compared",
+      "decisionSha256": "b893337b7c5a0274f847b700c8308a8dbc359d5f5bf3abbbfb10c3c07d719193",
+      "recommendations": [
+        "mechanical-recycling"
+      ]
+    },
+    {
+      "caseId": "OYS-20261110-002",
+      "inputRef": "../candidates/oyeonseok-2026-11-10/oys-20261110-002-hdpe-parison.json",
+      "originalSha256": "0b052aeeb9e97a93699267d68662d8c1b1efee32107f2711d7be6fab78764b2c",
+      "assessmentDate": "2026-11-10",
+      "originalPhotoRefs": [],
+      "executionInputSha256": "5700279294e19066fcf43bc6866b451ef81fbb9a4cf0ac93f93e5e5dbef049d2",
+      "state": "compared",
+      "decisionSha256": "d1a232af60ab3544ef878114c3d0df313c0dd50536806f02f1c579a962ab855d",
+      "recommendations": [
+        "mechanical-recycling"
+      ]
+    },
+    {
+      "caseId": "OYS-20261110-003",
+      "inputRef": "../candidates/oyeonseok-2026-11-10/oys-20261110-003-pp-runners.json",
+      "originalSha256": "6c09027b9a767e917d5b3ffc45a437fd8153ff7b8eec3750ddb9f410eb4403b4",
+      "assessmentDate": "2026-11-10",
+      "originalPhotoRefs": [],
+      "executionInputSha256": "d04ede73266af20b8d3fe0c98dde7934933264bfa083457e5dd8cbdbba095a92",
+      "state": "compared",
+      "decisionSha256": "876b1e947c09a82b6cb08bb0b0d911d39f500ba069ac02e40b7235ec507f23a9",
+      "recommendations": [
+        "mechanical-recycling"
+      ]
+    },
+    {
+      "caseId": "OYS-20261110-004",
+      "inputRef": "../candidates/oyeonseok-2026-11-10/oys-20261110-004-ldpe-film.json",
+      "originalSha256": "7ccbf029c826be106e753dc15997bf608b856a9e893b45497eed4ef533c04d7f",
+      "assessmentDate": "2026-11-10",
+      "originalPhotoRefs": [],
+      "executionInputSha256": "b92fef23cebfcfae2c084b3529944f83e81e93a051b0c111c5510cea46a43b6f",
+      "state": "compared",
+      "decisionSha256": "a08ace448d8ff1a311738bba021eb9f2933449eb9b95db617093db6e28c4192a",
+      "recommendations": [
+        "mechanical-recycling"
+      ]
+    },
+    {
+      "caseId": "OYS-20261110-006",
+      "inputRef": "../candidates/oyeonseok-2026-11-10/oys-20261110-006-black-label-conflict.json",
+      "originalSha256": "29c76c30e310148b0ab270ef51e2a4fee92d35aab35106560e4ac36d4947bda0",
+      "assessmentDate": "2026-11-10",
+      "originalPhotoRefs": [],
+      "executionInputSha256": "a65f7bbbc9ed7d6f556020453206139ce98185af8c60651d7e0427eaf2b48e98",
+      "state": "needs-review",
+      "decisionSha256": "ee336b55f286a44681684f8e3e5e623f22fde3e6a90af99a2a55f24eface4941",
+      "recommendations": []
+    },
+    {
+      "caseId": "OYS-20261110-008",
+      "inputRef": "../candidates/oyeonseok-2026-11-10/oys-20261110-008-solvent-hdpe.json",
+      "originalSha256": "f3833e8d39ff4b96f94c784d69889c59db17390bd2993d6f5e0883aecd842fa9",
+      "assessmentDate": "2026-11-10",
+      "originalPhotoRefs": [],
+      "executionInputSha256": "24710cebf5c110e39e43dbee967a34d673e3c9061f19617c3b493c3f4b5fbf6e",
+      "state": "needs-review",
+      "decisionSha256": "80d8311104fccb6511c3ff00888d902c3811f59954a4177a1729100b124cc176",
+      "recommendations": []
+    },
+    {
+      "caseId": "OYS-20261110-009",
+      "inputRef": "../candidates/oyeonseok-2026-11-10/oys-20261110-009-pp-reuse-question.json",
+      "originalSha256": "acadb919168dc522ac98cbbc8ba2b27bd6d2224f0bb4779a689f079768da17b7",
+      "assessmentDate": "2026-11-10",
+      "originalPhotoRefs": [],
+      "executionInputSha256": "2e8c55b62068b6b8cdc0db087b2c436414bac4509d1d49e1479dde1566f3d6f3",
+      "state": "needs-information",
+      "decisionSha256": "a557554204c749e11be2ac4a4e46b81c51a22c7a750cf4f62e865fe43b3f8eb1",
+      "recommendations": []
+    },
+    {
+      "caseId": "OYS-20261110-010",
+      "inputRef": "../candidates/oyeonseok-2026-11-10/oys-20261110-010-pet-missing-basis.json",
+      "originalSha256": "e83d1f30b91e37a38e70a20963a4db2ecb13287aae67a54e10f92b3509d51d2d",
+      "assessmentDate": "2026-11-10",
+      "originalPhotoRefs": [],
+      "executionInputSha256": "a338cdb5fb482bfeb9b3c9ad68b1db1f49d6450904a8a29bb3aa5b162882bbe2",
+      "state": "needs-information",
+      "decisionSha256": "de23d462fa5987889aaa869e0c013b82bde9259591adbe072074e890658fb4ae",
+      "recommendations": []
+    }
+  ]
+}

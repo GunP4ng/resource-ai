@@ -77,6 +77,7 @@ export function createResourceDomain(input: CaseInput, resources: DomainResource
       const fallback = decideCase(facts, undefined, owned.assessmentOptions, owned.routeReviews, photoObservations);
       const hold = (...reasons: readonly string[]): DecisionResult => ({ state: "needs-review", caseId: facts.caseId,
         evidence: fallback.evidence,
+        conditionalAlternatives: fallback.state === "compared" ? [] : fallback.conditionalAlternatives,
         reasons: [...new Set([...reasons, ...assessment.questions])], preExecutionChecks: executionChecksFor(recommendationAssessment) });
       let result: DecisionResult = fallback;
       try {
@@ -135,12 +136,18 @@ export function createResourceDomain(input: CaseInput, resources: DomainResource
         if (questions.length === 0) {
           result = recommend(facts, recommendationAssessment, result.state === "compared" ? result : undefined);
         } else {
-          result = { state: "needs-information", caseId: facts.caseId, questions, evidence: fallback.evidence };
+          result = { state: "needs-information", caseId: facts.caseId, questions, evidence: fallback.evidence,
+            conditionalAlternatives: fallback.state === "compared" ? [] : fallback.conditionalAlternatives };
         }
       } catch (error) { result = hold(error instanceof ValidationError ? error.reason : "host-comparison-invalid"); }
       if (proposal !== undefined) {
         try {
           const candidate = parseDecision(proposal);
+          if (candidate.state !== "compared" && candidate.conditionalAlternatives !== undefined) {
+            requireValid(fallback.state !== "compared"
+              && canonical(candidate.conditionalAlternatives) === canonical(fallback.conditionalAlternatives),
+            "proposal-alternatives-mismatch");
+          }
           requireValid(candidate.caseId === facts.caseId, "proposal-case-mismatch");
           for (const record of candidate.evidence) {
             const trusted = result.evidence.find((item) => item.sourceId === record.sourceId);

@@ -266,6 +266,32 @@ test("host gate asks for missing facts and re-evaluates answers instead of accep
   assert.equal(decideCase({ ...input, massKg: 100 }).state, "needs-review");
 });
 
+test("synchronous host supplies alternatives and rejects model changes to their conditions", () => {
+  const input = fixture({ polymer: null });
+  const expected = decideCase(input);
+  assert.equal(expected.state, "needs-information");
+  assert.deepEqual(expected.conditionalAlternatives?.map(item => item.routeId),
+    ["mechanical-recycling", "other-recovery", "disposal"]);
+  const proposal = { ...expected, conditionalAlternatives: expected.conditionalAlternatives?.map(item => ({
+    ...item, condition: { ...item.condition, description: "execute without verification" },
+  })) };
+  const result = decideCase(input, proposal);
+  assert.equal(result.state, "needs-review");
+  assert.equal(result.caseId, input.caseId);
+  assert.ok(result.reasons.includes("proposal-alternatives-mismatch"));
+  assert.deepEqual(result.conditionalAlternatives, expected.conditionalAlternatives);
+});
+
+test("counterfactual alternative evidence cannot mutate the host registered trust store", () => {
+  const input = fixture({ contamination: null });
+  const expected = structuredClone(decideCase(input));
+  const mutable = decideCase(input);
+  const record = mutable.evidence.find(item => item.sourceId.endsWith("-annex4-code"));
+  assert.ok(record);
+  Object.assign(record, { title: "caller injected source", sha256: "0".repeat(64) });
+  assert.deepEqual(decideCase(input), expected);
+});
+
 test("known risk and evidence failures take precedence without discarding missing questions", () => {
   for (const patch of [{ hazardousContact: "yes" }, { assessmentDate: "2026-09-30" }, { process: "사출 아님" }] as const) {
     const result = decideCase(fixture({ massKg: null, ...patch }));

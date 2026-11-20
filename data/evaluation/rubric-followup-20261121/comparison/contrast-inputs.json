@@ -1,0 +1,542 @@
+[
+  {
+    "id": "contrast-1-1",
+    "input": {
+      "caseId": "OYS-20261110-001",
+      "description": "SYNTHETIC — newly authored text-only fictional scenario: Clean single-resin PET. No field records, photos or external evidence supplied. massKg=24 is a fictional scenario parameter, not a measured value. No legal eligibility, price or emissions factor is asserted.",
+      "photoRefs": [],
+      "process": "Fictional thermoformed PET tray edge trimming; unused trim is segregated before packaging.",
+      "polymer": "PET",
+      "contamination": "No contamination is stipulated in this fictional scenario.",
+      "hazardousContact": "no",
+      "massKg": 24,
+      "region": "경기도",
+      "assessmentDate": "2026-11-10"
+    }
+  },
+  {
+    "id": "contrast-1-2",
+    "input": {
+      "caseId": "OYS-20261110-001",
+      "description": "SYNTHETIC — newly authored text-only fictional scenario: Clean single-resin PET. No field records, photos or external evidence supplied. massKg=24 is a fictional scenario parameter, not a measured value. No legal eligibility, price or emissions factor is asserted.",
+      "photoRefs": [],
+      "process": "Fictional thermoformed PET tray edge trimming; unused trim is segregated before packaging.",
+      "polymer": "PET",
+      "contamination": "Dry dust contamination is stipulated in this fictional scenario.",
+      "hazardousContact": "no",
+      "massKg": 24,
+      "region": "경기도",
+      "assessmentDate": "2026-11-10"
+    }
+  },
+  {
+    "id": "contrast-1-3",
+    "input": {
+      "caseId": "OYS-20261110-001",
+      "description": "SYNTHETIC — newly authored text-only fictional scenario: Clean single-resin PET. No field records, photos or external evidence supplied. massKg=24 is a fictional scenario parameter, not a measured value. No legal eligibility, price or emissions factor is asserted.",
+      "photoRefs": [],
+      "process": "Fictional thermoformed PET tray edge trimming; unused trim is segregated before packaging.",
+      "polymer": "PET",
+      "contamination": "Food residue contamination is stipulated in this fictional scenario.",
+      "hazardousContact": "no",
+      "massKg": 24,
+      "region": "경기도",
+      "assessmentDate": "2026-11-10"
+    }
+  },
+  {
+    "id": "contrast-1-4",
+    "input": {
+      "caseId": "OYS-20261110-001",
+      "description": "SYNTHETIC — newly authored text-only fictional scenario: Clean single-resin PET. No field records, photos or external evidence supplied. massKg=24 is a fictional scenario parameter, not a measured value. No legal eligibility, price or emissions factor is asserted.",
+      "photoRefs": [],
+      "process": "Fictional thermoformed PET tray edge trimming; unused trim is segregated before packaging.",
+      "polymer": "PET",
+      "contamination": "Washed; previous contents unknown.",
+      "hazardousContact": "no",
+      "massKg": 24,
+      "region": "경기도",
+      "assessmentDate": "2026-11-10"
+    }
+  },
+  {
+    "id": "contrast-1-5",
+    "input": {
+      "caseId": "OYS-20261110-001",
+      "description": "SYNTHETIC — newly authored text-only fictional scenario: Clean single-resin PET. No field records, photos or external evidence supplied. massKg=24 is a fictional scenario parameter, not a measured value. No legal eligibility, price or emissions factor is asserted.",
+      "photoRefs": [],
+      "process": "Fictional thermoformed PET tray edge trimming; unused trim is segregated before packaging.",
+      "polymer": "PET",
+      "contamination": "Suspected hazardous contact.",
+      "hazardousContact": "no",
+      "massKg": 24,
+      "region": "경기도",
+      "assessmentDate": "2026-11-10"
+    }
+  },
+  {
+    "id": "contrast-1-6",
+    "input": {
+      "caseId": "OYS-20261110-001",
+      "description": "SYNTHETIC — newly authored text-only fictional scenario: Clean single-resin PET. No field records, photos or external evidence supplied. massKg=24 is a fictional scenario parameter, not a measured value. No legal eligibility, price or emissions factor is asserted.",
+      "photoRefs": [],
+      "process": "Fictional thermoformed PET tray edge trimming; unused trim is segregated before packaging.",
+      "polymer": "PET",
+      "contamination": null,
+      "hazardousContact": "no",
+      "massKg": 24,
+      "region": "경기도",
+      "assessmentDate": "2026-11-10"
+    }
+  },
+  {
+    "id": "contrast-2-1",
+    "input": {
+      "caseId": "OYS-20261110-001",
+      "description": "SYNTHETIC — newly authored text-only fictional scenario: Clean single-resin PET. No field records, photos or external evidence supplied. massKg=24 is a fictional scenario parameter, not a measured value. No legal eligibility, price or emissions factor is asserted.",
+      "photoRefs": [],
+      "process": "Fictional thermoformed PET tray edge trimming; unused trim is segregated before packaging.",
+      "polymer": "HDPE",
+      "contamination": "No contamination is stipulated in this fictional scenario.",
+      "hazardousContact": "no",
+      "massKg": 24,
+      "region": "경기도",
+      "assessmentDate": "2026-11-10"
+    }
+  },
+  {
+    "id": "contrast-2-2",
+    "input": {
+      "caseId": "OYS-20261110-001",
+      "description": "SYNTHETIC — newly authored text-only fictional scenario: Clean single-resin PET. No field records, photos or external evidence supplied. massKg=24 is a fictional scenario parameter, not a measured value. No legal eligibility, price or emissions factor is asserted.",
+      "photoRefs": [],
+      "process": "Fictional thermoformed PET tray edge trimming; unused trim is segregated before packaging.",
+      "polymer": "HDPE",
+      "contamination": "Dry dust contamination is stipulated in this fictional scenario.",
+      "hazardousContact": "no",
+      "massKg": 24,
+      "region": "경기도",
+      "assessmentDate": "2026-11-10"
+    }
+  },
+  {
+    "id": "contrast-2-3",
+    "input": {
+      "caseId": "OYS-20261110-001",
+      "description": "SYNTHETIC — newly authored text-only fictional scenario: Clean single-resin PET. No field records, photos or external evidence supplied. massKg=24 is a fictional scenario parameter, not a measured value. No legal eligibility, price or emissions factor is asserted.",
+      "photoRefs": [],
+      "process": "Fictional thermoformed PET tray edge trimming; unused trim is segregated before packaging.",
+      "polymer": "HDPE",
+      "contamination": "Food residue contamination is stipulated in this fictional scenario.",
+      "hazardousContact": "no",
+      "massKg": 24,
+      "region": "경기도",
+      "assessmentDate": "2026-11-10"
+    }
+  },
+  {
+    "id": "contrast-2-4",
+    "input": {
+      "caseId": "OYS-20261110-001",
+      "description": "SYNTHETIC — newly authored text-only fictional scenario: Clean single-resin PET. No field records, photos or external evidence supplied. massKg=24 is a fictional scenario parameter, not a measured value. No legal eligibility, price or emissions factor is asserted.",
+      "photoRefs": [],
+      "process": "Fictional thermoformed PET tray edge trimming; unused trim is segregated before packaging.",
+      "polymer": "HDPE",
+      "contamination": "Washed; previous contents unknown.",
+      "hazardousContact": "no",
+      "massKg": 24,
+      "region": "경기도",
+      "assessmentDate": "2026-11-10"
+    }
+  },
+  {
+    "id": "contrast-2-5",
+    "input": {
+      "caseId": "OYS-20261110-001",
+      "description": "SYNTHETIC — newly authored text-only fictional scenario: Clean single-resin PET. No field records, photos or external evidence supplied. massKg=24 is a fictional scenario parameter, not a measured value. No legal eligibility, price or emissions factor is asserted.",
+      "photoRefs": [],
+      "process": "Fictional thermoformed PET tray edge trimming; unused trim is segregated before packaging.",
+      "polymer": "HDPE",
+      "contamination": "Suspected hazardous contact.",
+      "hazardousContact": "no",
+      "massKg": 24,
+      "region": "경기도",
+      "assessmentDate": "2026-11-10"
+    }
+  },
+  {
+    "id": "contrast-2-6",
+    "input": {
+      "caseId": "OYS-20261110-001",
+      "description": "SYNTHETIC — newly authored text-only fictional scenario: Clean single-resin PET. No field records, photos or external evidence supplied. massKg=24 is a fictional scenario parameter, not a measured value. No legal eligibility, price or emissions factor is asserted.",
+      "photoRefs": [],
+      "process": "Fictional thermoformed PET tray edge trimming; unused trim is segregated before packaging.",
+      "polymer": "HDPE",
+      "contamination": null,
+      "hazardousContact": "no",
+      "massKg": 24,
+      "region": "경기도",
+      "assessmentDate": "2026-11-10"
+    }
+  },
+  {
+    "id": "contrast-3-1",
+    "input": {
+      "caseId": "OYS-20261110-001",
+      "description": "SYNTHETIC — newly authored text-only fictional scenario: Clean single-resin PET. No field records, photos or external evidence supplied. massKg=24 is a fictional scenario parameter, not a measured value. No legal eligibility, price or emissions factor is asserted.",
+      "photoRefs": [],
+      "process": "Fictional thermoformed PET tray edge trimming; unused trim is segregated before packaging.",
+      "polymer": "PP",
+      "contamination": "No contamination is stipulated in this fictional scenario.",
+      "hazardousContact": "no",
+      "massKg": 24,
+      "region": "경기도",
+      "assessmentDate": "2026-11-10"
+    }
+  },
+  {
+    "id": "contrast-3-2",
+    "input": {
+      "caseId": "OYS-20261110-001",
+      "description": "SYNTHETIC — newly authored text-only fictional scenario: Clean single-resin PET. No field records, photos or external evidence supplied. massKg=24 is a fictional scenario parameter, not a measured value. No legal eligibility, price or emissions factor is asserted.",
+      "photoRefs": [],
+      "process": "Fictional thermoformed PET tray edge trimming; unused trim is segregated before packaging.",
+      "polymer": "PP",
+      "contamination": "Dry dust contamination is stipulated in this fictional scenario.",
+      "hazardousContact": "no",
+      "massKg": 24,
+      "region": "경기도",
+      "assessmentDate": "2026-11-10"
+    }
+  },
+  {
+    "id": "contrast-3-3",
+    "input": {
+      "caseId": "OYS-20261110-001",
+      "description": "SYNTHETIC — newly authored text-only fictional scenario: Clean single-resin PET. No field records, photos or external evidence supplied. massKg=24 is a fictional scenario parameter, not a measured value. No legal eligibility, price or emissions factor is asserted.",
+      "photoRefs": [],
+      "process": "Fictional thermoformed PET tray edge trimming; unused trim is segregated before packaging.",
+      "polymer": "PP",
+      "contamination": "Food residue contamination is stipulated in this fictional scenario.",
+      "hazardousContact": "no",
+      "massKg": 24,
+      "region": "경기도",
+      "assessmentDate": "2026-11-10"
+    }
+  },
+  {
+    "id": "contrast-3-4",
+    "input": {
+      "caseId": "OYS-20261110-001",
+      "description": "SYNTHETIC — newly authored text-only fictional scenario: Clean single-resin PET. No field records, photos or external evidence supplied. massKg=24 is a fictional scenario parameter, not a measured value. No legal eligibility, price or emissions factor is asserted.",
+      "photoRefs": [],
+      "process": "Fictional thermoformed PET tray edge trimming; unused trim is segregated before packaging.",
+      "polymer": "PP",
+      "contamination": "Washed; previous contents unknown.",
+      "hazardousContact": "no",
+      "massKg": 24,
+      "region": "경기도",
+      "assessmentDate": "2026-11-10"
+    }
+  },
+  {
+    "id": "contrast-3-5",
+    "input": {
+      "caseId": "OYS-20261110-001",
+      "description": "SYNTHETIC — newly authored text-only fictional scenario: Clean single-resin PET. No field records, photos or external evidence supplied. massKg=24 is a fictional scenario parameter, not a measured value. No legal eligibility, price or emissions factor is asserted.",
+      "photoRefs": [],
+      "process": "Fictional thermoformed PET tray edge trimming; unused trim is segregated before packaging.",
+      "polymer": "PP",
+      "contamination": "Suspected hazardous contact.",
+      "hazardousContact": "no",
+      "massKg": 24,
+      "region": "경기도",
+      "assessmentDate": "2026-11-10"
+    }
+  },
+  {
+    "id": "contrast-3-6",
+    "input": {
+      "caseId": "OYS-20261110-001",
+      "description": "SYNTHETIC — newly authored text-only fictional scenario: Clean single-resin PET. No field records, photos or external evidence supplied. massKg=24 is a fictional scenario parameter, not a measured value. No legal eligibility, price or emissions factor is asserted.",
+      "photoRefs": [],
+      "process": "Fictional thermoformed PET tray edge trimming; unused trim is segregated before packaging.",
+      "polymer": "PP",
+      "contamination": null,
+      "hazardousContact": "no",
+      "massKg": 24,
+      "region": "경기도",
+      "assessmentDate": "2026-11-10"
+    }
+  },
+  {
+    "id": "contrast-4-1",
+    "input": {
+      "caseId": "OYS-20261110-001",
+      "description": "SYNTHETIC — newly authored text-only fictional scenario: Clean single-resin PET. No field records, photos or external evidence supplied. massKg=24 is a fictional scenario parameter, not a measured value. No legal eligibility, price or emissions factor is asserted.",
+      "photoRefs": [],
+      "process": "Fictional thermoformed PET tray edge trimming; unused trim is segregated before packaging.",
+      "polymer": "PVC",
+      "contamination": "No contamination is stipulated in this fictional scenario.",
+      "hazardousContact": "no",
+      "massKg": 24,
+      "region": "경기도",
+      "assessmentDate": "2026-11-10"
+    }
+  },
+  {
+    "id": "contrast-4-2",
+    "input": {
+      "caseId": "OYS-20261110-001",
+      "description": "SYNTHETIC — newly authored text-only fictional scenario: Clean single-resin PET. No field records, photos or external evidence supplied. massKg=24 is a fictional scenario parameter, not a measured value. No legal eligibility, price or emissions factor is asserted.",
+      "photoRefs": [],
+      "process": "Fictional thermoformed PET tray edge trimming; unused trim is segregated before packaging.",
+      "polymer": "PVC",
+      "contamination": "Dry dust contamination is stipulated in this fictional scenario.",
+      "hazardousContact": "no",
+      "massKg": 24,
+      "region": "경기도",
+      "assessmentDate": "2026-11-10"
+    }
+  },
+  {
+    "id": "contrast-4-3",
+    "input": {
+      "caseId": "OYS-20261110-001",
+      "description": "SYNTHETIC — newly authored text-only fictional scenario: Clean single-resin PET. No field records, photos or external evidence supplied. massKg=24 is a fictional scenario parameter, not a measured value. No legal eligibility, price or emissions factor is asserted.",
+      "photoRefs": [],
+      "process": "Fictional thermoformed PET tray edge trimming; unused trim is segregated before packaging.",
+      "polymer": "PVC",
+      "contamination": "Food residue contamination is stipulated in this fictional scenario.",
+      "hazardousContact": "no",
+      "massKg": 24,
+      "region": "경기도",
+      "assessmentDate": "2026-11-10"
+    }
+  },
+  {
+    "id": "contrast-4-4",
+    "input": {
+      "caseId": "OYS-20261110-001",
+      "description": "SYNTHETIC — newly authored text-only fictional scenario: Clean single-resin PET. No field records, photos or external evidence supplied. massKg=24 is a fictional scenario parameter, not a measured value. No legal eligibility, price or emissions factor is asserted.",
+      "photoRefs": [],
+      "process": "Fictional thermoformed PET tray edge trimming; unused trim is segregated before packaging.",
+      "polymer": "PVC",
+      "contamination": "Washed; previous contents unknown.",
+      "hazardousContact": "no",
+      "massKg": 24,
+      "region": "경기도",
+      "assessmentDate": "2026-11-10"
+    }
+  },
+  {
+    "id": "contrast-4-5",
+    "input": {
+      "caseId": "OYS-20261110-001",
+      "description": "SYNTHETIC — newly authored text-only fictional scenario: Clean single-resin PET. No field records, photos or external evidence supplied. massKg=24 is a fictional scenario parameter, not a measured value. No legal eligibility, price or emissions factor is asserted.",
+      "photoRefs": [],
+      "process": "Fictional thermoformed PET tray edge trimming; unused trim is segregated before packaging.",
+      "polymer": "PVC",
+      "contamination": "Suspected hazardous contact.",
+      "hazardousContact": "no",
+      "massKg": 24,
+      "region": "경기도",
+      "assessmentDate": "2026-11-10"
+    }
+  },
+  {
+    "id": "contrast-4-6",
+    "input": {
+      "caseId": "OYS-20261110-001",
+      "description": "SYNTHETIC — newly authored text-only fictional scenario: Clean single-resin PET. No field records, photos or external evidence supplied. massKg=24 is a fictional scenario parameter, not a measured value. No legal eligibility, price or emissions factor is asserted.",
+      "photoRefs": [],
+      "process": "Fictional thermoformed PET tray edge trimming; unused trim is segregated before packaging.",
+      "polymer": "PVC",
+      "contamination": null,
+      "hazardousContact": "no",
+      "massKg": 24,
+      "region": "경기도",
+      "assessmentDate": "2026-11-10"
+    }
+  },
+  {
+    "id": "contrast-5-1",
+    "input": {
+      "caseId": "OYS-20261110-001",
+      "description": "SYNTHETIC — newly authored text-only fictional scenario: Clean single-resin PET. No field records, photos or external evidence supplied. massKg=24 is a fictional scenario parameter, not a measured value. No legal eligibility, price or emissions factor is asserted.",
+      "photoRefs": [],
+      "process": "Fictional thermoformed PET tray edge trimming; unused trim is segregated before packaging.",
+      "polymer": "PET/HDPE",
+      "contamination": "No contamination is stipulated in this fictional scenario.",
+      "hazardousContact": "no",
+      "massKg": 24,
+      "region": "경기도",
+      "assessmentDate": "2026-11-10"
+    }
+  },
+  {
+    "id": "contrast-5-2",
+    "input": {
+      "caseId": "OYS-20261110-001",
+      "description": "SYNTHETIC — newly authored text-only fictional scenario: Clean single-resin PET. No field records, photos or external evidence supplied. massKg=24 is a fictional scenario parameter, not a measured value. No legal eligibility, price or emissions factor is asserted.",
+      "photoRefs": [],
+      "process": "Fictional thermoformed PET tray edge trimming; unused trim is segregated before packaging.",
+      "polymer": "PET/HDPE",
+      "contamination": "Dry dust contamination is stipulated in this fictional scenario.",
+      "hazardousContact": "no",
+      "massKg": 24,
+      "region": "경기도",
+      "assessmentDate": "2026-11-10"
+    }
+  },
+  {
+    "id": "contrast-5-3",
+    "input": {
+      "caseId": "OYS-20261110-001",
+      "description": "SYNTHETIC — newly authored text-only fictional scenario: Clean single-resin PET. No field records, photos or external evidence supplied. massKg=24 is a fictional scenario parameter, not a measured value. No legal eligibility, price or emissions factor is asserted.",
+      "photoRefs": [],
+      "process": "Fictional thermoformed PET tray edge trimming; unused trim is segregated before packaging.",
+      "polymer": "PET/HDPE",
+      "contamination": "Food residue contamination is stipulated in this fictional scenario.",
+      "hazardousContact": "no",
+      "massKg": 24,
+      "region": "경기도",
+      "assessmentDate": "2026-11-10"
+    }
+  },
+  {
+    "id": "contrast-5-4",
+    "input": {
+      "caseId": "OYS-20261110-001",
+      "description": "SYNTHETIC — newly authored text-only fictional scenario: Clean single-resin PET. No field records, photos or external evidence supplied. massKg=24 is a fictional scenario parameter, not a measured value. No legal eligibility, price or emissions factor is asserted.",
+      "photoRefs": [],
+      "process": "Fictional thermoformed PET tray edge trimming; unused trim is segregated before packaging.",
+      "polymer": "PET/HDPE",
+      "contamination": "Washed; previous contents unknown.",
+      "hazardousContact": "no",
+      "massKg": 24,
+      "region": "경기도",
+      "assessmentDate": "2026-11-10"
+    }
+  },
+  {
+    "id": "contrast-5-5",
+    "input": {
+      "caseId": "OYS-20261110-001",
+      "description": "SYNTHETIC — newly authored text-only fictional scenario: Clean single-resin PET. No field records, photos or external evidence supplied. massKg=24 is a fictional scenario parameter, not a measured value. No legal eligibility, price or emissions factor is asserted.",
+      "photoRefs": [],
+      "process": "Fictional thermoformed PET tray edge trimming; unused trim is segregated before packaging.",
+      "polymer": "PET/HDPE",
+      "contamination": "Suspected hazardous contact.",
+      "hazardousContact": "no",
+      "massKg": 24,
+      "region": "경기도",
+      "assessmentDate": "2026-11-10"
+    }
+  },
+  {
+    "id": "contrast-5-6",
+    "input": {
+      "caseId": "OYS-20261110-001",
+      "description": "SYNTHETIC — newly authored text-only fictional scenario: Clean single-resin PET. No field records, photos or external evidence supplied. massKg=24 is a fictional scenario parameter, not a measured value. No legal eligibility, price or emissions factor is asserted.",
+      "photoRefs": [],
+      "process": "Fictional thermoformed PET tray edge trimming; unused trim is segregated before packaging.",
+      "polymer": "PET/HDPE",
+      "contamination": null,
+      "hazardousContact": "no",
+      "massKg": 24,
+      "region": "경기도",
+      "assessmentDate": "2026-11-10"
+    }
+  },
+  {
+    "id": "contrast-6-1",
+    "input": {
+      "caseId": "OYS-20261110-001",
+      "description": "SYNTHETIC — newly authored text-only fictional scenario: Clean single-resin PET. No field records, photos or external evidence supplied. massKg=24 is a fictional scenario parameter, not a measured value. No legal eligibility, price or emissions factor is asserted.",
+      "photoRefs": [],
+      "process": "Fictional thermoformed PET tray edge trimming; unused trim is segregated before packaging.",
+      "polymer": null,
+      "contamination": "No contamination is stipulated in this fictional scenario.",
+      "hazardousContact": "no",
+      "massKg": 24,
+      "region": "경기도",
+      "assessmentDate": "2026-11-10"
+    }
+  },
+  {
+    "id": "contrast-6-2",
+    "input": {
+      "caseId": "OYS-20261110-001",
+      "description": "SYNTHETIC — newly authored text-only fictional scenario: Clean single-resin PET. No field records, photos or external evidence supplied. massKg=24 is a fictional scenario parameter, not a measured value. No legal eligibility, price or emissions factor is asserted.",
+      "photoRefs": [],
+      "process": "Fictional thermoformed PET tray edge trimming; unused trim is segregated before packaging.",
+      "polymer": null,
+      "contamination": "Dry dust contamination is stipulated in this fictional scenario.",
+      "hazardousContact": "no",
+      "massKg": 24,
+      "region": "경기도",
+      "assessmentDate": "2026-11-10"
+    }
+  },
+  {
+    "id": "contrast-6-3",
+    "input": {
+      "caseId": "OYS-20261110-001",
+      "description": "SYNTHETIC — newly authored text-only fictional scenario: Clean single-resin PET. No field records, photos or external evidence supplied. massKg=24 is a fictional scenario parameter, not a measured value. No legal eligibility, price or emissions factor is asserted.",
+      "photoRefs": [],
+      "process": "Fictional thermoformed PET tray edge trimming; unused trim is segregated before packaging.",
+      "polymer": null,
+      "contamination": "Food residue contamination is stipulated in this fictional scenario.",
+      "hazardousContact": "no",
+      "massKg": 24,
+      "region": "경기도",
+      "assessmentDate": "2026-11-10"
+    }
+  },
+  {
+    "id": "contrast-6-4",
+    "input": {
+      "caseId": "OYS-20261110-001",
+      "description": "SYNTHETIC — newly authored text-only fictional scenario: Clean single-resin PET. No field records, photos or external evidence supplied. massKg=24 is a fictional scenario parameter, not a measured value. No legal eligibility, price or emissions factor is asserted.",
+      "photoRefs": [],
+      "process": "Fictional thermoformed PET tray edge trimming; unused trim is segregated before packaging.",
+      "polymer": null,
+      "contamination": "Washed; previous contents unknown.",
+      "hazardousContact": "no",
+      "massKg": 24,
+      "region": "경기도",
+      "assessmentDate": "2026-11-10"
+    }
+  },
+  {
+    "id": "contrast-6-5",
+    "input": {
+      "caseId": "OYS-20261110-001",
+      "description": "SYNTHETIC — newly authored text-only fictional scenario: Clean single-resin PET. No field records, photos or external evidence supplied. massKg=24 is a fictional scenario parameter, not a measured value. No legal eligibility, price or emissions factor is asserted.",
+      "photoRefs": [],
+      "process": "Fictional thermoformed PET tray edge trimming; unused trim is segregated before packaging.",
+      "polymer": null,
+      "contamination": "Suspected hazardous contact.",
+      "hazardousContact": "no",
+      "massKg": 24,
+      "region": "경기도",
+      "assessmentDate": "2026-11-10"
+    }
+  },
+  {
+    "id": "contrast-6-6",
+    "input": {
+      "caseId": "OYS-20261110-001",
+      "description": "SYNTHETIC — newly authored text-only fictional scenario: Clean single-resin PET. No field records, photos or external evidence supplied. massKg=24 is a fictional scenario parameter, not a measured value. No legal eligibility, price or emissions factor is asserted.",
+      "photoRefs": [],
+      "process": "Fictional thermoformed PET tray edge trimming; unused trim is segregated before packaging.",
+      "polymer": null,
+      "contamination": null,
+      "hazardousContact": "no",
+      "massKg": 24,
+      "region": "경기도",
+      "assessmentDate": "2026-11-10"
+    }
+  }
+]

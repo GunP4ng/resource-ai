@@ -6,6 +6,7 @@ import { revision } from "../src/o-validation.ts";
 import { lookupLegalEvidence } from "../src/evidence.ts";
 import { loadEvidenceRegistry } from "../src/evidence-registry.ts";
 import registryJson from "../data/sources/evidence-candidates.json" with { type: "json" };
+import recyclingDirectory from "../data/reference/public-recycling-candidates-20261121.json" with { type: "json" };
 
 const catalog = readCaseResearchCatalog();
 for (const sourceCaseId of ["OYS-20261110-001", "OYS-20261110-002", "OYS-20261110-003"] as const) {
@@ -26,6 +27,23 @@ for (const sourceCaseId of ["OYS-20261110-001", "OYS-20261110-002", "OYS-2026111
     }
     assert.equal((html.match(/data-research-result=/g) ?? []).length, 3);
     assert.equal((html.match(/data-directory-row=/g) ?? []).length, 8);
+    assert.equal((html.match(/data-recycling-directory-row=/g) ?? []).length, 4);
+    assert.ok(html.includes(recyclingDirectory.source.url));
+    assert.ok(html.includes(recyclingDirectory.source.sourceDate));
+    assert.ok(html.includes(recyclingDirectory.source.retrievedAt));
+    assert.ok(html.includes(recyclingDirectory.source.rawSha256));
+    for (const row of recyclingDirectory.rows) {
+      let rowText = "";
+      await new HTMLRewriter().on(`[data-recycling-directory-row="${row.rowNumber}"]`, {
+        text(chunk) { rowText += chunk.text; },
+      }).transform(new Response(html)).text();
+      assert.ok(rowText.includes(row.name));
+      assert.ok(rowText.includes(row.activity));
+      assert.ok(rowText.includes(row.wasteScope));
+      assert.ok(rowText.includes(row.address));
+      assert.ok(rowText.includes("인수 의사 미확인"));
+      assert.ok(rowText.includes("적합성 미확인"));
+    }
     assert.match(html, /공개 자료 기반 계산값\(관측값 아님\)/);
     assert.match(html, /권리 미확인/);
     assert.match(html, /소각 등재는 에너지 회수 확인/);
@@ -45,7 +63,7 @@ for (const sourceCaseId of ["OYS-20261110-001", "OYS-20261110-002", "OYS-2026111
     if (sourceCaseId.endsWith("003")) assert.match(html, /질량 미확보/);
     if (sourceCaseId.endsWith("002")) assert.match(html, /generic PE/);
     const commercial = renderReport(decision, { mode: "offline" });
-    assert.doesNotMatch(commercial, /data-research-result|data-directory-row|WARM|Wonju|private-actor/);
+    assert.doesNotMatch(commercial, /data-research-result|data-directory-row|data-recycling-directory-row|WARM|Wonju|private-actor/);
     assert.ok(!commercial.includes(research.artifactSha256));
   });
 }

@@ -1,6 +1,7 @@
 import { Type } from "typebox";
 import { Value } from "typebox/value";
 import type { DecisionResult } from "./contracts.ts";
+import { assertAlternativeCitations } from "./conditional-alternatives.ts";
 import { CategorySchema, RouteKindSchema, StageSchema, EvidenceSchema, date, nullableText, requireValid, strings, text, timestamp, unique } from "./o-validation.ts";
 export const CaseSchema = Type.Object({ caseId: text, description: text, photoRefs: strings, process: nullableText, polymer: nullableText,
   contamination: nullableText, hazardousContact: Type.Union([Type.Literal("yes"), Type.Literal("no"), Type.Literal("unknown")]), massKg: Type.Union([Type.Number({ exclusiveMinimum: 0 }), Type.Null()]), region: nullableText, assessmentDate: text });
@@ -22,9 +23,26 @@ const RecommendationSchema = Type.Object({ routeId: text, rank: Type.Integer({ m
   grade: Type.Union([Type.Literal("public-conditional"), Type.Literal("reviewed")]),
   legalCitations: Type.Array(Type.Object({ sourceId: text, locator: text, claim: text }), { minItems: 1 }),
   cost: RecommendationMetricSchema("KRW"), carbon: RecommendationMetricSchema("kgCO2e") });
+const ConditionalAlternativeSchema = Type.Object({
+  routeId: RouteKindSchema, title: text, state: Type.Literal("informational"), executable: Type.Literal(false),
+  condition: Type.Object({
+    code: Type.Union((["clean-separated", "contaminated-or-inseparable", "hazard-classification", "reuse-purpose"] as const).map(value => Type.Literal(value))),
+    description: text,
+  }, { additionalProperties: false }),
+  rationale: text, nextChecks: Type.Array(text, { minItems: 1 }),
+  support: Type.Object({
+    state: Type.Union([Type.Literal("route-supported"), Type.Literal("unavailable")]), missingEvidence: strings,
+  }, { additionalProperties: false }),
+  citations: Type.Array(Type.Object({
+    sourceId: text, locator: text, claim: text, quote: text,
+    scope: Type.Union([Type.Literal("general-requirement"), Type.Literal("route-specific")]),
+  }, { additionalProperties: false }), { minItems: 1 }),
+}, { additionalProperties: false });
 export const DecisionSchema = Type.Union([
-  Type.Object({ state: Type.Literal("needs-information"), caseId: text, questions: Type.Array(text, { minItems: 1 }), evidence: Type.Array(EvidenceSchema) }),
+  Type.Object({ state: Type.Literal("needs-information"), caseId: text, questions: Type.Array(text, { minItems: 1 }), evidence: Type.Array(EvidenceSchema),
+    conditionalAlternatives: Type.Optional(Type.Array(ConditionalAlternativeSchema)) }),
   Type.Object({ state: Type.Literal("needs-review"), caseId: text, reasons: Type.Array(text, { minItems: 1 }), evidence: Type.Array(EvidenceSchema),
+    conditionalAlternatives: Type.Optional(Type.Array(ConditionalAlternativeSchema)),
     preExecutionChecks: Type.Optional(Type.Array(text, { minItems: 1 })) }),
   Type.Object({ state: Type.Literal("compared"), caseId: text, routes: Type.Array(RouteSchema), processors: Type.Array(ProcessorSchema), scenarios: Type.Array(ScenarioSchema), evidence: Type.Array(EvidenceSchema), limitations: strings, humanApproval: Type.Union([Type.Literal("pending"), Type.Literal("approved")]),
     recommendations: Type.Optional(Type.Array(RecommendationSchema, { minItems: 1 })),
@@ -38,7 +56,13 @@ export function parseDecision(raw: unknown): DecisionResult {
     timestamp(e.retrievedAt); if (e.effectiveFrom !== null) date(e.effectiveFrom); if (e.effectiveTo !== null) date(e.effectiveTo);
     requireValid(e.effectiveFrom === null || e.effectiveTo === null || e.effectiveFrom <= e.effectiveTo, "reversed-period");
   }
+  if (raw.state !== "compared" && raw.conditionalAlternatives !== undefined) {
+    unique(raw.conditionalAlternatives.map(alternative => `${alternative.routeId}:${alternative.condition.code}`));
+    for (const alternative of raw.conditionalAlternatives) unique(alternative.citations.map(citation => citation.sourceId));
+    assertAlternativeCitations(raw.conditionalAlternatives, raw.evidence);
+  }
   if (raw.state === "compared") {
+    requireValid(!Object.hasOwn(raw, "conditionalAlternatives"), "compared-alternatives-forbidden");
     unique(raw.routes.map((r) => r.routeId)); unique(raw.processors.map((p) => p.processorId));
     if (raw.recommendations !== undefined) {
       requireValid(raw.confidence !== undefined && raw.preExecutionChecks !== undefined, "recommendation-checks-missing");

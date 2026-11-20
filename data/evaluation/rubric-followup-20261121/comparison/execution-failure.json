@@ -1,0 +1,38 @@
+{
+  "status": "incomplete_evidence_do_not_treat_as_verified_sensitivity",
+  "observed": {
+    "command": "BUN_RUNTIME_TRANSPILER_CACHE_PATH=0 bun data/evaluation/rubric-followup-20261121/comparison/run.ts --run",
+    "exit_code": 1,
+    "runtime": "Bun 1.4.4 Linux x64",
+    "failure": "AssertionError at oracle.ts compareNumbers: actual display '7942' !== independent display '7943'",
+    "field": "recycling.cost_saving_krw display",
+    "scenario": "HDPE-y1-p0.8",
+    "independent_exact_cost_saving_krw": "7942.5"
+  },
+  "cause": {
+    "arithmetic": "The existing engine rounds the decimal string of its binary floating result; it does not round the exact decimal-input rational expression.",
+    "source_expression_recomputation_not_captured_engine_raw": {
+      "baseline_cost": 2070.8999999999996,
+      "recycling_cost": -5871.599999999999,
+      "cost_saving": 7942.499999999999
+    },
+    "evidence_loss": "The runner persisted the sensitivity array only after all scenarios passed. On this exception its process memory was lost. No first-16 raw engine rows were saved. This is an experiment-runner defect; no production or original-data change caused it."
+  },
+  "budget_accounting": {
+    "domain_calls_saved": 36,
+    "initial_engine_calls_inferred": 16,
+    "inference": "The declared serial loop and the unique independent result rounding to 7943 identify ordinal 16. Ordinals 1-15 reached all assertions; ordinal 16 reached its first recycling display assertion. There is no per-call raw log, so these are control-flow inferences, not retained outputs.",
+    "initial_total": 52,
+    "remaining_allowed_engine_calls": 2,
+    "recovery_may_call_only": ["HDPE-y1-p1", "HDPE-y1-p1.2"],
+    "extra_calls_needed_to_recapture_lost_outputs": 16,
+    "extra_calls_authorized": false
+  },
+  "interpretation": {
+    "numeric_tolerance": 1e-9,
+    "display_agreement": false,
+    "display_failure_is_not_a_route_ranking_change": true,
+    "do_not_claim_full_numeric_verification": true,
+    "do_not_replace_missing_actual_rows_with_oracle_rows": true
+  }
+}

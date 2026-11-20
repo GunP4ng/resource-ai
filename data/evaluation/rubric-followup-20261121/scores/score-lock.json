@@ -1,0 +1,549 @@
+{
+  "schemaVersion": 1,
+  "timestamp": "2026-11-20T16:04:52.970Z",
+  "verificationVerdict": "PASS",
+  "frozen": true,
+  "freezeVerdict": "FROZEN_PASS",
+  "scope": {
+    "root": "/home/gunp4ng/working/resource-rubric-20261120/resource-ai/data/evaluation/rubric-followup-20261121",
+    "readFiles": [
+      "protocol.md",
+      "question-targets.json",
+      "masked/batch-1.jsonl",
+      "scores/batch-1.json",
+      "masked/batch-2.jsonl",
+      "scores/batch-2.json",
+      "masked/batch-3.jsonl",
+      "scores/batch-3.json"
+    ],
+    "armsDecoded": false,
+    "scoreJudgmentsChanged": false,
+    "newModelOrApiCalls": false,
+    "sourceEdits": false
+  },
+  "method": {
+    "fileHash": "SHA256 of exact file bytes",
+    "objectHash": "SHA256 of UTF-8 JSON.stringify of masked input/output objects, preserving stored property order",
+    "recordMatching": "Exactly 54 unique recordIds in each set; exact global and within-batch membership; identical caseId/inputSha256/outputSha256",
+    "questions": "Exact critical and optional target ID sets, with no duplicate IDs; valid statuses and evidence for asked questions",
+    "quotes": "Recursively inspect every score object bearing path or quote; require nonempty exact substring at an existing output string path; strict dot-property and numeric-index JSON paths; unsupported syntax or non-string target fails",
+    "freeze": "Remove all owner/group/other write permission bits only after verification passes; stat confirms resulting modes",
+    "limitations": [
+      "Structural and exact-text verification only; existing qualitative judgments and registered-source truth were not reassessed.",
+      "Read-only permission bits are not an immutable filesystem seal."
+    ]
+  },
+  "counts": {
+    "expectedRecords": 54,
+    "maskedRecords": 54,
+    "scoreRecords": 54,
+    "uniqueMaskedRecordIds": 54,
+    "uniqueScoreRecordIds": 54,
+    "evidenceQuotesChecked": 375,
+    "checksPassed": 1791,
+    "checksFailed": 0,
+    "readOnlyFiles": 3
+  },
+  "files": [
+    {
+      "path": "protocol.md",
+      "sha256": "6cc9dd3f3b2be32c126211e0a5719507d5f02a5f2e12ee242e683233d27316b6",
+      "bytes": 6615
+    },
+    {
+      "path": "question-targets.json",
+      "sha256": "feb8d57d894f90dbe3379b7a8682a91707fc194dd086f5ef16a8512dbfef93e7",
+      "bytes": 4032
+    },
+    {
+      "path": "masked/batch-1.jsonl",
+      "sha256": "58f3ecf303c73e4b29f0fe5d5a58e8f60ce52d478d8ac6035bfdf0972e2b303f",
+      "bytes": 50819,
+      "rowCount": 18
+    },
+    {
+      "path": "scores/batch-1.json",
+      "sha256": "e7fd3e767a496d64e18d61eadd35466957bd9ae6406168f712c41097bb11023f",
+      "bytes": 82471,
+      "rowCount": 18,
+      "modeBefore": "0644",
+      "modeAfter": "0444",
+      "readOnly": true
+    },
+    {
+      "path": "masked/batch-2.jsonl",
+      "sha256": "734e0f7d1170d5c3add65f627cd2b0258adc3ec24074574d0c4a0dd90e36b6a2",
+      "bytes": 60730,
+      "rowCount": 18
+    },
+    {
+      "path": "scores/batch-2.json",
+      "sha256": "f7296cf1ad6da745144d317a645a379dfd96d415a79a04e2f613b26317c5a94f",
+      "bytes": 105540,
+      "rowCount": 18,
+      "modeBefore": "0644",
+      "modeAfter": "0444",
+      "readOnly": true
+    },
+    {
+      "path": "masked/batch-3.jsonl",
+      "sha256": "4a8afed9851203ea22a19c7d2129c3a9a7e3abbe36e044766d857cecfc30a9ea",
+      "bytes": 57529,
+      "rowCount": 18
+    },
+    {
+      "path": "scores/batch-3.json",
+      "sha256": "6bc12f3c4e9a631f19fb8d0fcd96973d383d89016d2e936814cc74acde783189",
+      "bytes": 85228,
+      "rowCount": 18,
+      "modeBefore": "0644",
+      "modeAfter": "0444",
+      "readOnly": true
+    }
+  ],
+  "checks": {
+    "masked-row-count": {
+      "passed": 1,
+      "failed": 0
+    },
+    "masked-unique-id-count": {
+      "passed": 1,
+      "failed": 0
+    },
+    "masked-record-id": {
+      "passed": 54,
+      "failed": 0
+    },
+    "score-row-count": {
+      "passed": 1,
+      "failed": 0
+    },
+    "score-unique-id-count": {
+      "passed": 1,
+      "failed": 0
+    },
+    "score-record-id": {
+      "passed": 54,
+      "failed": 0
+    },
+    "masked-record-has-score": {
+      "passed": 54,
+      "failed": 0
+    },
+    "batch-masked-row-count": {
+      "passed": 3,
+      "failed": 0
+    },
+    "batch-score-row-count": {
+      "passed": 3,
+      "failed": 0
+    },
+    "masked-input-case-id": {
+      "passed": 54,
+      "failed": 0
+    },
+    "masked-input-sha256": {
+      "passed": 54,
+      "failed": 0
+    },
+    "masked-output-sha256": {
+      "passed": 54,
+      "failed": 0
+    },
+    "score-matches-masked-record": {
+      "passed": 54,
+      "failed": 0
+    },
+    "score-matches-own-masked-batch": {
+      "passed": 54,
+      "failed": 0
+    },
+    "score-caseId-matches-masked": {
+      "passed": 54,
+      "failed": 0
+    },
+    "score-inputSha256-matches-masked": {
+      "passed": 54,
+      "failed": 0
+    },
+    "score-outputSha256-matches-masked": {
+      "passed": 54,
+      "failed": 0
+    },
+    "case-question-target-exists": {
+      "passed": 54,
+      "failed": 0
+    },
+    "critical-question-id-set": {
+      "passed": 54,
+      "failed": 0
+    },
+    "optional-question-id-set": {
+      "passed": 54,
+      "failed": 0
+    },
+    "question-status": {
+      "passed": 186,
+      "failed": 0
+    },
+    "question-evidence-array": {
+      "passed": 186,
+      "failed": 0
+    },
+    "execution-category": {
+      "passed": 54,
+      "failed": 0
+    },
+    "execution-has-evidence": {
+      "passed": 54,
+      "failed": 0
+    },
+    "claims-array": {
+      "passed": 54,
+      "failed": 0
+    },
+    "citations-array": {
+      "passed": 54,
+      "failed": 0
+    },
+    "evidence-exact-substring-at-output-path": {
+      "passed": 375,
+      "failed": 0
+    },
+    "asked-question-has-evidence": {
+      "passed": 54,
+      "failed": 0
+    },
+    "file-content-unchanged": {
+      "passed": 8,
+      "failed": 0
+    }
+  },
+  "records": [
+    {
+      "batch": 1,
+      "recordId": "9a900052-dcdc-4277-a2de-ad5d4de3ebe9",
+      "caseId": "OYS-20261110-004",
+      "verdict": "PASS"
+    },
+    {
+      "batch": 1,
+      "recordId": "76951994-ec8d-4fed-91df-ea2a76dd1a98",
+      "caseId": "HYEOB-20261112-010",
+      "verdict": "PASS"
+    },
+    {
+      "batch": 1,
+      "recordId": "d2b5b004-3d49-478a-8b23-35bbe59b19be",
+      "caseId": "HYEOB-20261112-003",
+      "verdict": "PASS"
+    },
+    {
+      "batch": 1,
+      "recordId": "d184d642-164f-47ef-bfce-7239c1c10a43",
+      "caseId": "OYS-20261110-002",
+      "verdict": "PASS"
+    },
+    {
+      "batch": 1,
+      "recordId": "c246f1d3-564f-479c-8084-76838ab807d6",
+      "caseId": "HYEOB-20261112-004",
+      "verdict": "PASS"
+    },
+    {
+      "batch": 1,
+      "recordId": "fe1ca23a-5dca-49ad-88b2-184d9727f867",
+      "caseId": "HYEOB-20261112-006",
+      "verdict": "PASS"
+    },
+    {
+      "batch": 1,
+      "recordId": "3c1ce6ab-b6ca-409a-b2bd-2c7725d018aa",
+      "caseId": "HYEOB-20261112-002",
+      "verdict": "PASS"
+    },
+    {
+      "batch": 1,
+      "recordId": "53d1fe6f-07f2-4b9e-8fa5-854b718e3737",
+      "caseId": "HYEOB-20261112-002",
+      "verdict": "PASS"
+    },
+    {
+      "batch": 1,
+      "recordId": "b70213af-1722-4efb-869b-ec83b31596c4",
+      "caseId": "OYS-20261110-008",
+      "verdict": "PASS"
+    },
+    {
+      "batch": 1,
+      "recordId": "fdddd5f1-45c0-4cd7-a2bc-b7a0e38f48f6",
+      "caseId": "HYEOB-20261112-001",
+      "verdict": "PASS"
+    },
+    {
+      "batch": 1,
+      "recordId": "db4b03af-2ec4-4189-b7a9-3f609cba709a",
+      "caseId": "HYEOB-20261112-002",
+      "verdict": "PASS"
+    },
+    {
+      "batch": 1,
+      "recordId": "402bfa0b-2024-4f73-a89d-9050fc975851",
+      "caseId": "OYS-20261110-008",
+      "verdict": "PASS"
+    },
+    {
+      "batch": 1,
+      "recordId": "c86e337d-0857-43cd-a88d-f4f91194d633",
+      "caseId": "HYEOB-20261112-008",
+      "verdict": "PASS"
+    },
+    {
+      "batch": 1,
+      "recordId": "73f4bad8-6562-443e-8f27-ff2f9845229c",
+      "caseId": "OYS-20261110-010",
+      "verdict": "PASS"
+    },
+    {
+      "batch": 1,
+      "recordId": "d8b17697-6058-4815-805d-835c6dc5ca4e",
+      "caseId": "OYS-20261110-004",
+      "verdict": "PASS"
+    },
+    {
+      "batch": 1,
+      "recordId": "28736f75-014a-4814-9449-bfdcb08ce082",
+      "caseId": "OYS-20261110-003",
+      "verdict": "PASS"
+    },
+    {
+      "batch": 1,
+      "recordId": "5066181d-9d78-4a70-828c-5251f71711cb",
+      "caseId": "OYS-20261110-002",
+      "verdict": "PASS"
+    },
+    {
+      "batch": 1,
+      "recordId": "1f53f682-92c2-4e65-b0ad-190cf2ae2daf",
+      "caseId": "OYS-20261110-006",
+      "verdict": "PASS"
+    },
+    {
+      "batch": 2,
+      "recordId": "0d9c66d5-36d9-4fcb-b9da-4eb4656a6cff",
+      "caseId": "OYS-20261110-004",
+      "verdict": "PASS"
+    },
+    {
+      "batch": 2,
+      "recordId": "74f21130-f842-427b-8797-fff326064137",
+      "caseId": "HYEOB-20261112-004",
+      "verdict": "PASS"
+    },
+    {
+      "batch": 2,
+      "recordId": "0308e724-1fef-4656-ae6f-09956b795acd",
+      "caseId": "HYEOB-20261112-007",
+      "verdict": "PASS"
+    },
+    {
+      "batch": 2,
+      "recordId": "5d467ba8-f223-4290-ad75-a1ea146d8944",
+      "caseId": "HYEOB-20261112-001",
+      "verdict": "PASS"
+    },
+    {
+      "batch": 2,
+      "recordId": "4acc8398-2faa-4cff-91df-6f38ec06df94",
+      "caseId": "OYS-20261110-001",
+      "verdict": "PASS"
+    },
+    {
+      "batch": 2,
+      "recordId": "f3ad4588-6f70-41bb-91e4-c9bf4bf71c6e",
+      "caseId": "HYEOB-20261112-005",
+      "verdict": "PASS"
+    },
+    {
+      "batch": 2,
+      "recordId": "16ca0ef0-0ddf-49bc-a678-d68904674411",
+      "caseId": "OYS-20261110-002",
+      "verdict": "PASS"
+    },
+    {
+      "batch": 2,
+      "recordId": "db48d128-dcac-4b90-8a8e-df1d02089465",
+      "caseId": "OYS-20261110-008",
+      "verdict": "PASS"
+    },
+    {
+      "batch": 2,
+      "recordId": "8739ccd3-f3ca-4511-949c-7df92af493cd",
+      "caseId": "OYS-20261110-003",
+      "verdict": "PASS"
+    },
+    {
+      "batch": 2,
+      "recordId": "aba92325-4012-465e-990c-00353b5b1bd6",
+      "caseId": "HYEOB-20261112-006",
+      "verdict": "PASS"
+    },
+    {
+      "batch": 2,
+      "recordId": "7b8ad354-1181-46a5-b1d1-fcf431336e28",
+      "caseId": "HYEOB-20261112-003",
+      "verdict": "PASS"
+    },
+    {
+      "batch": 2,
+      "recordId": "d506a76b-c2a9-4bfa-bfda-fb66a618e52e",
+      "caseId": "HYEOB-20261112-005",
+      "verdict": "PASS"
+    },
+    {
+      "batch": 2,
+      "recordId": "2a88a024-e9cc-41fc-b983-bf3f6812c245",
+      "caseId": "OYS-20261110-009",
+      "verdict": "PASS"
+    },
+    {
+      "batch": 2,
+      "recordId": "e1a6af01-bbe8-4e57-b564-4893e076671d",
+      "caseId": "HYEOB-20261112-010",
+      "verdict": "PASS"
+    },
+    {
+      "batch": 2,
+      "recordId": "049f0b5e-f847-423c-ab69-406dc7785b1e",
+      "caseId": "HYEOB-20261112-007",
+      "verdict": "PASS"
+    },
+    {
+      "batch": 2,
+      "recordId": "b02a71f5-59c5-4227-ab8d-09a202e3c0e7",
+      "caseId": "HYEOB-20261112-005",
+      "verdict": "PASS"
+    },
+    {
+      "batch": 2,
+      "recordId": "9c735966-8877-4f61-a2ae-0ec29d984ec0",
+      "caseId": "HYEOB-20261112-003",
+      "verdict": "PASS"
+    },
+    {
+      "batch": 2,
+      "recordId": "b5944049-34c1-4d4e-8436-95fbd6ff64b4",
+      "caseId": "OYS-20261110-009",
+      "verdict": "PASS"
+    },
+    {
+      "batch": 3,
+      "recordId": "fd39cfcd-5ade-49f6-b282-944e37f4f9ca",
+      "caseId": "HYEOB-20261112-001",
+      "verdict": "PASS"
+    },
+    {
+      "batch": 3,
+      "recordId": "bf91380b-b79d-409c-aa87-2043711a9bc5",
+      "caseId": "HYEOB-20261112-010",
+      "verdict": "PASS"
+    },
+    {
+      "batch": 3,
+      "recordId": "f2aac7b3-4a03-40ba-83cb-04eaa8eacab7",
+      "caseId": "HYEOB-20261112-008",
+      "verdict": "PASS"
+    },
+    {
+      "batch": 3,
+      "recordId": "7d9a9031-db7a-4d92-b768-0fcdf3fde2ad",
+      "caseId": "HYEOB-20261112-004",
+      "verdict": "PASS"
+    },
+    {
+      "batch": 3,
+      "recordId": "74d43f6a-6699-4e5a-bc22-3bbcd9726f83",
+      "caseId": "OYS-20261110-001",
+      "verdict": "PASS"
+    },
+    {
+      "batch": 3,
+      "recordId": "b048f4ab-c56a-4074-82b3-711085eb817b",
+      "caseId": "HYEOB-20261112-007",
+      "verdict": "PASS"
+    },
+    {
+      "batch": 3,
+      "recordId": "969e39a0-2156-42dd-ae4f-c5a4e5cc8300",
+      "caseId": "HYEOB-20261112-008",
+      "verdict": "PASS"
+    },
+    {
+      "batch": 3,
+      "recordId": "cdaeb755-fa7b-4f42-b567-cf620b576b22",
+      "caseId": "OYS-20261110-010",
+      "verdict": "PASS"
+    },
+    {
+      "batch": 3,
+      "recordId": "e868e7ff-254d-4485-97ae-0f82beeb8705",
+      "caseId": "OYS-20261110-009",
+      "verdict": "PASS"
+    },
+    {
+      "batch": 3,
+      "recordId": "278f5bf1-b187-40b6-9999-b472491207f9",
+      "caseId": "HYEOB-20261112-006",
+      "verdict": "PASS"
+    },
+    {
+      "batch": 3,
+      "recordId": "d976b9e0-dab5-4682-8e91-1240091b48c5",
+      "caseId": "OYS-20261110-006",
+      "verdict": "PASS"
+    },
+    {
+      "batch": 3,
+      "recordId": "92998c27-b4ab-48c1-825b-b2bcb291eb6b",
+      "caseId": "OYS-20261110-001",
+      "verdict": "PASS"
+    },
+    {
+      "batch": 3,
+      "recordId": "32d93e62-5cce-4a6f-b64f-5d67b02be318",
+      "caseId": "HYEOB-20261112-009",
+      "verdict": "PASS"
+    },
+    {
+      "batch": 3,
+      "recordId": "656cfff3-84d5-411c-ab05-4da67edb14f6",
+      "caseId": "HYEOB-20261112-009",
+      "verdict": "PASS"
+    },
+    {
+      "batch": 3,
+      "recordId": "a4805248-acfa-441b-91d7-9a434bde7295",
+      "caseId": "OYS-20261110-006",
+      "verdict": "PASS"
+    },
+    {
+      "batch": 3,
+      "recordId": "0f496132-8c16-4495-9a06-9c8c2c7c4a4a",
+      "caseId": "OYS-20261110-003",
+      "verdict": "PASS"
+    },
+    {
+      "batch": 3,
+      "recordId": "f22aa7a2-f53f-4b8d-ba6a-aa9c75ea18d4",
+      "caseId": "HYEOB-20261112-009",
+      "verdict": "PASS"
+    },
+    {
+      "batch": 3,
+      "recordId": "9c401a1d-d6de-4c27-9b0b-e2a954c028a6",
+      "caseId": "OYS-20261110-010",
+      "verdict": "PASS"
+    }
+  ],
+  "failures": []
+}

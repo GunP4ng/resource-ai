@@ -1,0 +1,55 @@
+{
+  "executionDate": "2026-11-20",
+  "runtime": "Bun 1.4.4 (38afee6c8)",
+  "packageManagerDeclaration": "bun@1.4.2",
+  "runtimeInstallationPerformed": false,
+  "temporaryDirectory": "/tmp/resource-conditional-UqSott",
+  "cacheDirectory": "/tmp/resource-conditional-UqSott/cache",
+  "checks": [
+    {
+      "command": "bun test --timeout 30000 ./tests/assessment.test.ts ./tests/recommendation.test.ts ./tests/evidence.test.ts ./tests/legal-registry.test.ts",
+      "exitCode": 0,
+      "passed": 174,
+      "failed": 0,
+      "files": 4
+    },
+    {
+      "command": "bun run typecheck",
+      "expandedCommand": "tsc --noEmit && tsc --noEmit -p tsconfig.tests.json && tsc --noEmit -p tsconfig.bun-tests.json",
+      "exitCode": 0
+    },
+    {
+      "command": "bun data/evaluation/rubric-followup-20261121/conditional-alternatives/coverage.ts",
+      "exitCode": 0,
+      "originalCases": 18,
+      "originalInputHashesPreserved": 18,
+      "unchangedComparedCanonicalHashes": 8,
+      "decisionStateChanges": 0,
+      "distinctRegisteredCitationsAudited": 10,
+      "informationalUnion": 18,
+      "routeSupportedUnion": 13
+    }
+  ],
+  "regressionProof": [
+    {
+      "command": "bun test --timeout 30000 ./tests/recommendation.test.ts -t 'conditional alternatives|alternative parser|model alternative|unsupported assessment period'",
+      "implementation": "Before host generation and parser implementation",
+      "exitCode": 1,
+      "passed": 0,
+      "failed": 6
+    },
+    {
+      "command": "bun test --timeout 30000 ./tests/assessment.test.ts -t 'counterfactual alternative evidence'",
+      "implementation": "Before cloning counterfactual evidence returned from the registered trust store",
+      "exitCode": 1,
+      "passed": 0,
+      "failed": 1
+    }
+  ],
+  "limitations": [
+    "Bun 1.4.2 was not installed or run; existing available Bun 1.4.4 was used.",
+    "No parent-owned UI edits or browser QA were performed in this task.",
+    "This is exposed development-set deterministic host coverage, not independent human accuracy or legal eligibility.",
+    "Five original cases lack a route-supported conditional alternative and retain explicit unavailable evidence reasons."
+  ]
+}

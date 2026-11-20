@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "status": "declared_before_execution",
+  "scope": "local synthetic contrasts and hypothetical arithmetic sensitivity, not human evaluation",
+  "contrast": {
+    "baseline_path": "data/candidates/oyeonseok-2026-11-10/oys-20261110-001-pet-trim.json",
+    "baseline_sha256": "1f1163e501b1ade17ed9207933242a51120bb15584f8e95b6e6d736fe0cd67ff",
+    "varied_fields": ["polymer", "contamination"],
+    "polymer_levels": ["PET", "HDPE", "PP", "PVC", "PET/HDPE", null],
+    "contamination_levels": [
+      "No contamination is stipulated in this fictional scenario.",
+      "Dry dust contamination is stipulated in this fictional scenario.",
+      "Food residue contamination is stipulated in this fictional scenario.",
+      "Washed; previous contents unknown.",
+      "Suspected hazardous contact.",
+      null
+    ],
+    "count": 36,
+    "resources": {},
+    "entrypoint": "createResourceDomain(input).decide()",
+    "selection": "full Cartesian product, no adaptive search or early stopping",
+    "fixed_text_caveat": "All other fields, including description and process naming PET and clean trim, remain byte-equivalent values. Non-PET and dirty variants intentionally contain stale narrative context; they are structured-field contrasts, not newly coherent field cases.",
+    "hypothesis": "Without route reviews all strict route eligibility remains unknown. Public fallback can introduce only mechanical-recycling. Priority is fixed mechanical-recycling, reuse, other-recovery, disposal. State changes or recommendation withdrawal do not constitute a switch to another first route."
+  },
+  "sensitivity": {
+    "case_ids": ["OYS-20261110-001", "OYS-20261110-002"],
+    "materials": ["PET", "HDPE"],
+    "allocation_y": [0.6, 0.8, 1.0],
+    "reference_price_multipliers": [0.8, 1.0, 1.2],
+    "count": 18,
+    "rows_per_scenario": 3,
+    "engine": "buildPublicCalculations",
+    "changed_inputs_only": ["selected_material.y", "selected_material.price"],
+    "price_rule": "selected_material.price = original selected_material.price * multiplier; published price.PET / price.PE references remain unchanged",
+    "allocation_meaning": "Fraction allocated to WARM recycling after sorting; not an independently measured physical substitution ratio and not an extra embedded process yield.",
+    "derived_data_contract": "Validate original fixture once with existing loader. Pass a one-case derived data object to the real arithmetic engine with separate derived fixture/provenance hashes. Derived scenarios are explicitly not validator-approved fixtures and not the fixed verified catalog.",
+    "incineration_cost": "f_inc stays null in every scenario",
+    "independent_oracle": "BigInt rational arithmetic from decimal input strings, independently expanded formulas; compare every cost component, revenue, cost, carbon, baseline deltas, per-tonne value and display rounding.",
+    "ranking": "Separate ascending cost and carbon orders; exclude null from numeric ordering. Pareto only among routes with both metrics. Unknown incineration cost prevents a complete three-route cost/Pareto conclusion.",
+    "unchanged_assumptions": [
+      "Fictional masses PET 0.024 t and HDPE 0.018 t; not measured.",
+      "US WARM default net lifecycle coefficients hypothetically map to Korean synthetic manufacturing scrap; residue same polymer.",
+      "HDPE price is a generic PE proxy, not a verified HDPE or batch quote.",
+      "Compressed mixed-colour reference sale form and sorting preparation assumed; tax and logistics unverified.",
+      "Wonju fee transfer, transport distances/rate, collection/sorting costs and zero recycling fee remain hypothetical.",
+      "WARM includes embedded transport; do not add a separate carbon transport term or physical substitution parameter.",
+      "Arithmetic rankings are distinct from fixed domain recommendation review priority and establish no legal or facility eligibility."
+    ]
+  },
+  "budget": {
+    "domain_decisions": 36,
+    "one_case_engine_calls": 18,
+    "total_scenario_runs": 54,
+    "engine_result_rows": 54,
+    "verification_extra_scenario_runs": 0
+  },
+  "restrictions": {
+    "network_or_model_calls": 0,
+    "forbidden_reads": ["masked scores", "arm-key", "human evaluation12 labels"],
+    "writes": "this comparison directory only",
+    "original_data": "read-only; hash source, public inputs, registry and upstream files before/after",
+    "temporary_root": "comparison/.work created exclusively by this script and removed in finally",
+    "tests": "Only existing relevant tests if an unresolved correctness question requires them; independent numeric oracle is the primary check."
+  }
+}
