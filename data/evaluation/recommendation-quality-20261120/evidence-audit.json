@@ -1,0 +1,317 @@
+[
+  {
+    "caseId": "HYEOB-20261112-001",
+    "date": "2026-11-12",
+    "citations": [
+      {
+        "sourceId": "legal-291947-annex4-code",
+        "registered": true,
+        "locatorMatches": true,
+        "claimMatches": true,
+        "effectiveFrom": "2026-11-12",
+        "effectiveTo": null,
+        "inEffectivePeriod": true
+      },
+      {
+        "sourceId": "legal-291947-annex4-2-r3-3",
+        "registered": true,
+        "locatorMatches": true,
+        "claimMatches": true,
+        "effectiveFrom": "2026-11-12",
+        "effectiveTo": null,
+        "inEffectivePeriod": true
+      },
+      {
+        "sourceId": "legal-291947-annex4-3-types",
+        "registered": true,
+        "locatorMatches": true,
+        "claimMatches": true,
+        "effectiveFrom": "2026-11-12",
+        "effectiveTo": null,
+        "inEffectivePeriod": true
+      },
+      {
+        "sourceId": "legal-291947-annex5-3-common",
+        "registered": true,
+        "locatorMatches": true,
+        "claimMatches": true,
+        "effectiveFrom": "2026-11-12",
+        "effectiveTo": null,
+        "inEffectivePeriod": true
+      }
+    ],
+    "unknownMetrics": true,
+    "unverifiedProcessors": true,
+    "confidence": "low"
+  },
+  {
+    "caseId": "HYEOB-20261112-002",
+    "date": "2026-11-12",
+    "citations": [
+      {
+        "sourceId": "legal-291947-annex4-code",
+        "registered": true,
+        "locatorMatches": true,
+        "claimMatches": true,
+        "effectiveFrom": "2026-11-12",
+        "effectiveTo": null,
+        "inEffectivePeriod": true
+      },
+      {
+        "sourceId": "legal-291947-annex4-2-r3-3",
+        "registered": true,
+        "locatorMatches": true,
+        "claimMatches": true,
+        "effectiveFrom": "2026-11-12",
+        "effectiveTo": null,
+        "inEffectivePeriod": true
+      },
+      {
+        "sourceId": "legal-291947-annex4-3-types",
+        "registered": true,
+        "locatorMatches": true,
+        "claimMatches": true,
+        "effectiveFrom": "2026-11-12",
+        "effectiveTo": null,
+        "inEffectivePeriod": true
+      },
+      {
+        "sourceId": "legal-291947-annex5-3-common",
+        "registered": true,
+        "locatorMatches": true,
+        "claimMatches": true,
+        "effectiveFrom": "2026-11-12",
+        "effectiveTo": null,
+        "inEffectivePeriod": true
+      }
+    ],
+    "unknownMetrics": true,
+    "unverifiedProcessors": true,
+    "confidence": "low"
+  },
+  {
+    "caseId": "HYEOB-20261112-006",
+    "date": "2026-11-12",
+    "citations": [
+      {
+        "sourceId": "legal-291947-annex4-code",
+        "registered": true,
+        "locatorMatches": true,
+        "claimMatches": true,
+        "effectiveFrom": "2026-11-12",
+        "effectiveTo": null,
+        "inEffectivePeriod": true
+      },
+      {
+        "sourceId": "legal-291947-annex4-2-r3-3",
+        "registered": true,
+        "locatorMatches": true,
+        "claimMatches": true,
+        "effectiveFrom": "2026-11-12",
+        "effectiveTo": null,
+        "inEffectivePeriod": true
+      },
+      {
+        "sourceId": "legal-291947-annex4-3-types",
+        "registered": true,
+        "locatorMatches": true,
+        "claimMatches": true,
+        "effectiveFrom": "2026-11-12",
+        "effectiveTo": null,
+        "inEffectivePeriod": true
+      },
+      {
+        "sourceId": "legal-291947-annex5-3-common",
+        "registered": true,
+        "locatorMatches": true,
+        "claimMatches": true,
+        "effectiveFrom": "2026-11-12",
+        "effectiveTo": null,
+        "inEffectivePeriod": true
+      }
+    ],
+    "unknownMetrics": true,
+    "unverifiedProcessors": true,
+    "confidence": "low"
+  },
+  {
+    "caseId": "HYEOB-20261112-007",
+    "date": "2026-11-12",
+    "citations": [
+      {
+        "sourceId": "legal-291947-annex4-code",
+        "registered": true,
+        "locatorMatches": true,
+        "claimMatches": true,
+        "effectiveFrom": "2026-11-12",
+        "effectiveTo": null,
+        "inEffectivePeriod": true
+      },
+      {
+        "sourceId": "legal-291947-annex4-2-r3-3",
+        "registered": true,
+        "locatorMatches": true,
+        "claimMatches": true,
+        "effectiveFrom": "2026-11-12",
+        "effectiveTo": null,
+        "inEffectivePeriod": true
+      },
+      {
+        "sourceId": "legal-291947-annex4-3-types",
+        "registered": true,
+        "locatorMatches": true,
+        "claimMatches": true,
+        "effectiveFrom": "2026-11-12",
+        "effectiveTo": null,
+        "inEffectivePeriod": true
+      },
+      {
+        "sourceId": "legal-291947-annex5-3-common",
+        "registered": true,
+        "locatorMatches": true,
+        "claimMatches": true,
+        "effectiveFrom": "2026-11-12",
+        "effectiveTo": null,
+        "inEffectivePeriod": true
+      }
+    ],
+    "unknownMetrics": true,
+    "unverifiedProcessors": true,
+    "confidence": "low"
+  },
+  {
+    "caseId": "OYS-20261110-001",
+    "date": "2026-11-10",
+    "citations": [
+      {
+        "sourceId": "legal-290881-annex4-code",
+        "registered": true,
+        "locatorMatches": true,
+        "claimMatches": true,
+        "effectiveFrom": "2026-10-02",
+        "effectiveTo": "2026-11-11",
+        "inEffectivePeriod": true
+      },
+      {
+        "sourceId": "legal-290881-annex4-2-r3-3",
+        "registered": true,
+        "locatorMatches": true,
+        "claimMatches": true,
+        "effectiveFrom": "2026-10-02",
+        "effectiveTo": "2026-11-11",
+        "inEffectivePeriod": true
+      },
+      {
+        "sourceId": "legal-290881-annex4-3-types",
+        "registered": true,
+        "locatorMatches": true,
+        "claimMatches": true,
+        "effectiveFrom": "2026-10-02",
+        "effectiveTo": "2026-11-11",
+        "inEffectivePeriod": true
+      },
+      {
+        "sourceId": "legal-290881-annex5-3-common",
+        "registered": true,
+        "locatorMatches": true,
+        "claimMatches": true,
+        "effectiveFrom": "2026-10-02",
+        "effectiveTo": "2026-11-11",
+        "inEffectivePeriod": true
+      }
+    ],
+    "unknownMetrics": true,
+    "unverifiedProcessors": true,
+    "confidence": "low"
+  },
+  {
+    "caseId": "OYS-20261110-002",
+    "date": "2026-11-10",
+    "citations": [
+      {
+        "sourceId": "legal-290881-annex4-code",
+        "registered": true,
+        "locatorMatches": true,
+        "claimMatches": true,
+        "effectiveFrom": "2026-10-02",
+        "effectiveTo": "2026-11-11",
+        "inEffectivePeriod": true
+      },
+      {
+        "sourceId": "legal-290881-annex4-2-r3-3",
+        "registered": true,
+        "locatorMatches": true,
+        "claimMatches": true,
+        "effectiveFrom": "2026-10-02",
+        "effectiveTo": "2026-11-11",
+        "inEffectivePeriod": true
+      },
+      {
+        "sourceId": "legal-290881-annex4-3-types",
+        "registered": true,
+        "locatorMatches": true,
+        "claimMatches": true,
+        "effectiveFrom": "2026-10-02",
+        "effectiveTo": "2026-11-11",
+        "inEffectivePeriod": true
+      },
+      {
+        "sourceId": "legal-290881-annex5-3-common",
+        "registered": true,
+        "locatorMatches": true,
+        "claimMatches": true,
+        "effectiveFrom": "2026-10-02",
+        "effectiveTo": "2026-11-11",
+        "inEffectivePeriod": true
+      }
+    ],
+    "unknownMetrics": true,
+    "unverifiedProcessors": true,
+    "confidence": "low"
+  },
+  {
+    "caseId": "OYS-20261110-004",
+    "date": "2026-11-10",
+    "citations": [
+      {
+        "sourceId": "legal-290881-annex4-code",
+        "registered": true,
+        "locatorMatches": true,
+        "claimMatches": true,
+        "effectiveFrom": "2026-10-02",
+        "effectiveTo": "2026-11-11",
+        "inEffectivePeriod": true
+      },
+      {
+        "sourceId": "legal-290881-annex4-2-r3-3",
+        "registered": true,
+        "locatorMatches": true,
+        "claimMatches": true,
+        "effectiveFrom": "2026-10-02",
+        "effectiveTo": "2026-11-11",
+        "inEffectivePeriod": true
+      },
+      {
+        "sourceId": "legal-290881-annex4-3-types",
+        "registered": true,
+        "locatorMatches": true,
+        "claimMatches": true,
+        "effectiveFrom": "2026-10-02",
+        "effectiveTo": "2026-11-11",
+        "inEffectivePeriod": true
+      },
+      {
+        "sourceId": "legal-290881-annex5-3-common",
+        "registered": true,
+        "locatorMatches": true,
+        "claimMatches": true,
+        "effectiveFrom": "2026-10-02",
+        "effectiveTo": "2026-11-11",
+        "inEffectivePeriod": true
+      }
+    ],
+    "unknownMetrics": true,
+    "unverifiedProcessors": true,
+    "confidence": "low"
+  }
+]
