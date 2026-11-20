@@ -148,8 +148,11 @@ export function errorResponse(error: unknown, recovery: string, dependencies: Ap
   if (error instanceof PhotoStorageError) return response(page("사진 요청 실패", `<p>사진 권한·형식 또는 저장 상태를 확인해 주세요.</p>${recovery}`), error.code === "denied" ? 403 : error.code === "unavailable" ? 503 : 400);
   if (error instanceof HttpFailure) return response(page("요청 상태", `<h1>요청을 완료하지 못했습니다</h1><p role="alert">${escapeHtml(error.publicMessage)}</p>${recovery}${dependencies.localAuth ? '<p><a href="/login">로그인</a></p>' : ""}`), error.status);
   if (error instanceof AssessmentInputError) {
-    const issues = error.issues.map((issue) => `<li>${escapeHtml(issue.field)}: ${issue.code === "required" ? "필수 필드가 필요합니다." : "필드 형식과 허용 값을 확인해 주세요."}</li>`).join("");
-    return response(page("입력 확인", `<h1>입력을 확인해 주세요</h1><p role="alert">사례 필드와 값 형식을 확인해 주세요. 답변·수정은 JSON 객체로 입력하고 숫자에는 따옴표를 붙이지 않습니다. 질량은 0보다 큰 숫자, 날짜는 YYYY-MM-DD 형식의 실제 날짜여야 합니다. caseId와 판정·승인은 수정할 수 없습니다.</p><ul>${issues}</ul><p>예: <code>{"massKg":100}</code> · 생략한 필드는 유지되며 허용되는 필드의 null은 미상입니다. 사례 화면으로 돌아가 수정해 주세요.</p>${recovery}`), 400);
+    const labels = { $: "사례 입력", caseId: "사례 식별자", description: "폐자원 설명", photoRefs: "사진",
+      process: "발생 공정", polymer: "수지", contamination: "오염 상태", hazardousContact: "유해물질 접촉",
+      massKg: "질량", region: "발생 지역", assessmentDate: "평가 기준일" };
+    const issues = error.issues.map((issue) => `<li>${labels[issue.field]}: ${issue.code === "required" ? "필수 입력을 확인해 주세요." : "입력 형식과 허용 값을 확인해 주세요."}</li>`).join("");
+    return response(page("입력 확인", `<h1>입력을 확인해 주세요</h1><p role="alert">아래 항목을 확인하고 사례 화면의 입력란에서 수정해 주세요. 질량은 kg 단위로 0보다 큰 숫자를 입력하고, 모르면 공란으로 두세요. 평가 기준일은 실제 달력 날짜여야 합니다. 이번 입력은 저장되지 않았으며 이전 저장 결과는 유지됩니다.</p><ul>${issues}</ul><details><summary>고급 JSON 입력 안내</summary><p>답변·수정은 JSON 객체로 입력하고 숫자에는 따옴표를 붙이지 않습니다. 날짜는 YYYY-MM-DD 형식입니다. caseId와 판정·승인은 수정할 수 없습니다.</p><p>예: <code>{"massKg":100}</code> · 생략한 필드는 유지되며 허용되는 필드의 null은 미상입니다.</p></details>${recovery}`), 400);
   }
   const code = sessionFailureCode(error);
   if (code !== undefined) {
