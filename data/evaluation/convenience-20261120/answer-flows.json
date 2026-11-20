@@ -1,0 +1,252 @@
+[
+  {
+    "id": "HYEOB-20261112-004",
+    "syntheticAnswerOnly": true,
+    "patch": {
+      "contamination": "세척 완료, 잔류물 없음"
+    },
+    "before": {
+      "forms": 1,
+      "fields": [
+        "field_process",
+        "field_polymer",
+        "field_contamination",
+        "field_hazardousContact",
+        "field_region",
+        "field_description",
+        "field_assessmentDate",
+        "field_massKg"
+      ],
+      "heading": "추가 정보 필요"
+    },
+    "after": {
+      "url": "http://localhost:3303/cases/9b0bdb3e-6bc7-4ab3-8b28-64c8c58d6ece",
+      "heading": "기계적 재활용 추천",
+      "version": "2"
+    },
+    "expected": "기계적 재활용 추천",
+    "pass": true,
+    "initialAttempt": {
+      "id": "HYEOB-20261112-004",
+      "syntheticAnswerOnly": true,
+      "patch": {
+        "contamination": "세척 완료, 잔류물 없음"
+      },
+      "before": {
+        "forms": 1,
+        "fields": [
+          "field_process",
+          "field_polymer",
+          "field_contamination",
+          "field_hazardousContact",
+          "field_region",
+          "field_description",
+          "field_assessmentDate",
+          "field_massKg"
+        ],
+        "heading": "추가 정보 필요"
+      },
+      "after": {
+        "url": "http://localhost:3303/cases/6e65714f-d273-4632-a23b-9ae41501ef5e",
+        "heading": "검토 필요",
+        "version": "2",
+        "mass": "20"
+      },
+      "expected": "기계적 재활용 추천",
+      "pass": false,
+      "screenshot": "/home/gunp4ng/working/resource-ulw-20261120/evidence/round3-followup-HYEOB-20261112-004.png"
+    },
+    "screenshot": "/home/gunp4ng/working/resource-ulw-20261120/evidence/round3-H004-clean-fixed.png"
+  },
+  {
+    "id": "HYEOB-20261112-008",
+    "syntheticAnswerOnly": true,
+    "patch": {
+      "contamination": "폐유 부착, 접촉 물질과 잔류 정도 확인"
+    },
+    "before": {
+      "forms": 1,
+      "fields": [
+        "field_process",
+        "field_polymer",
+        "field_contamination",
+        "field_hazardousContact",
+        "field_region",
+        "field_description",
+        "field_assessmentDate",
+        "field_massKg"
+      ],
+      "heading": "추가 정보 필요"
+    },
+    "after": {
+      "url": "http://localhost:3303/cases/9f591de9-61f6-41a4-a625-18c8d4e7ae17",
+      "heading": "검토 필요",
+      "version": "2",
+      "mass": "15"
+    },
+    "expected": "검토 필요",
+    "pass": true,
+    "screenshot": "/home/gunp4ng/working/resource-ulw-20261120/evidence/round3-followup-HYEOB-20261112-008.png"
+  },
+  {
+    "id": "HYEOB-20261112-009",
+    "syntheticAnswerOnly": true,
+    "patch": {
+      "process": "사출",
+      "polymer": "PP",
+      "contamination": "없음",
+      "hazardousContact": "no",
+      "region": "울산"
+    },
+    "before": {
+      "forms": 1,
+      "fields": [
+        "field_process",
+        "field_polymer",
+        "field_contamination",
+        "field_hazardousContact",
+        "field_region",
+        "field_description",
+        "field_assessmentDate",
+        "field_massKg"
+      ],
+      "heading": "추가 정보 필요"
+    },
+    "after": {
+      "url": "http://localhost:3303/cases/12b37d4e-3a0f-487a-a75b-1072068de04b",
+      "heading": "기계적 재활용 추천",
+      "version": "2",
+      "mass": ""
+    },
+    "expected": "기계적 재활용 추천",
+    "pass": true,
+    "screenshot": "/home/gunp4ng/working/resource-ulw-20261120/evidence/round3-followup-HYEOB-20261112-009.png"
+  },
+  {
+    "id": "HYEOB-20261112-010",
+    "syntheticAnswerOnly": true,
+    "patch": {
+      "process": "사출",
+      "polymer": "PP",
+      "contamination": "없음",
+      "hazardousContact": "no",
+      "region": "울산"
+    },
+    "before": {
+      "forms": 1,
+      "fields": [
+        "field_process",
+        "field_polymer",
+        "field_contamination",
+        "field_hazardousContact",
+        "field_region",
+        "field_description",
+        "field_assessmentDate",
+        "field_massKg"
+      ],
+      "heading": "추가 정보 필요"
+    },
+    "after": {
+      "url": "http://localhost:3303/cases/a8c3cd17-af45-4632-b8c9-119960f0ffd3",
+      "heading": "기계적 재활용 추천",
+      "version": "2",
+      "mass": ""
+    },
+    "expected": "기계적 재활용 추천",
+    "pass": true,
+    "screenshot": "/home/gunp4ng/working/resource-ulw-20261120/evidence/round3-followup-HYEOB-20261112-010.png"
+  },
+  {
+    "id": "OYS-20261110-003",
+    "syntheticAnswerOnly": true,
+    "patch": {
+      "massKg": 100
+    },
+    "before": {
+      "forms": 1,
+      "fields": [
+        "field_massKg",
+        "field_process",
+        "field_polymer",
+        "field_contamination",
+        "field_hazardousContact",
+        "field_region",
+        "field_description",
+        "field_assessmentDate"
+      ],
+      "heading": "기계적 재활용 추천"
+    },
+    "after": {
+      "url": "http://localhost:3303/cases/cdc12231-7fe8-4f4e-ac97-d7b66c72af2e",
+      "heading": "기계적 재활용 추천",
+      "version": "2",
+      "mass": "100"
+    },
+    "expected": "기계적 재활용 추천",
+    "pass": true,
+    "screenshot": "/home/gunp4ng/working/resource-ulw-20261120/evidence/round3-followup-OYS-20261110-003.png"
+  },
+  {
+    "id": "OYS-20261110-009",
+    "syntheticAnswerOnly": true,
+    "patch": {
+      "contamination": "없음",
+      "hazardousContact": "no"
+    },
+    "before": {
+      "forms": 1,
+      "fields": [
+        "field_process",
+        "field_polymer",
+        "field_contamination",
+        "field_hazardousContact",
+        "field_region",
+        "field_description",
+        "field_assessmentDate",
+        "field_massKg"
+      ],
+      "heading": "추가 정보 필요"
+    },
+    "after": {
+      "url": "http://localhost:3303/cases/1da28da0-28b1-41c8-9afc-28f23bcf7685",
+      "heading": "기계적 재활용 추천",
+      "version": "2",
+      "mass": "30"
+    },
+    "expected": "기계적 재활용 추천",
+    "pass": true,
+    "screenshot": "/home/gunp4ng/working/resource-ulw-20261120/evidence/round3-followup-OYS-20261110-009.png"
+  },
+  {
+    "id": "OYS-20261110-010",
+    "syntheticAnswerOnly": true,
+    "patch": {
+      "contamination": "없음",
+      "hazardousContact": "no",
+      "region": "울산"
+    },
+    "before": {
+      "forms": 1,
+      "fields": [
+        "field_process",
+        "field_polymer",
+        "field_contamination",
+        "field_hazardousContact",
+        "field_region",
+        "field_description",
+        "field_assessmentDate",
+        "field_massKg"
+      ],
+      "heading": "추가 정보 필요"
+    },
+    "after": {
+      "url": "http://localhost:3303/cases/5877aac2-65d8-45a9-9226-d12358dca65d",
+      "heading": "기계적 재활용 추천",
+      "version": "2",
+      "mass": ""
+    },
+    "expected": "기계적 재활용 추천",
+    "pass": true,
+    "screenshot": "/home/gunp4ng/working/resource-ulw-20261120/evidence/round3-followup-OYS-20261110-010.png"
+  }
+]

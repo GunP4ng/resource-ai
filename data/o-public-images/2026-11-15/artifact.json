@@ -7,8 +7,8 @@
       "kind": "synthetic",
       "reference": "data/o-public-images/2026-11-15/lineage.json#sha256=df245928cb4c50f68adbe80da126534e62b8d6e49802397848eb1dc796e29c6f"
     },
-    "codeRevision": "1714bbebae713e37da4f1c9ccab852d71482d3ec",
-    "recordedAt": "2026-11-15T11:04:41.252Z",
+    "codeRevision": "387dd4781e3ea721cc8fbd266a0c34e7cf38784c",
+    "recordedAt": "2026-11-20T13:00:07.884Z",
     "caseRevision": "98d70132305b45ce10218fdb76b3ac8e4e5edf8d5460092abfb933acf1861138",
     "input": {
       "caseId": "PUBLIC-IMG-DEV-001",
@@ -264,7 +264,6 @@
         "확인된 수지 종류와 이를 확인한 자료(라벨·재질 명세 등)가 있나요?",
         "오염이나 이물질이 있나요? 확인된 상태를 알려 주세요.",
         "유해물질과 접촉했는지 확인할 수 있나요?",
-        "확인된 질량은 몇 kg인가요?",
         "폐플라스틱이 발생한 지역은 어디인가요?"
       ],
       "evidence": [
@@ -328,5 +327,5 @@
     "resourcesSha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
     "sourceIssues": []
   },
-  "sha256": "b0078e71a773a291e9a0ec0cb2d1f82f00fab5804ce1c7abb145034baaa4f5ca"
+  "sha256": "c45f67927ca71a1072a020939af5da6c45914f5e7e82c6f2013f1436823f37dc"
 }

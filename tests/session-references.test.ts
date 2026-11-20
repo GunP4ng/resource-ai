@@ -59,12 +59,12 @@ test("another session cannot borrow a closed session receipt even for identical 
 });
 
 test("reference resolution retains missing facts and existing host gates", async () => {
-  const { caseId: _case, ...fields } = { ...input, massKg: null };
+  const { caseId: _case, ...fields } = { ...input, polymer: null, massKg: null };
   const adapter = createAssessmentAdapter({ runner: mockedRunner() });
   try {
     const result = await adapter.submit(fields, signal());
     assert.ok("decision" in result); assert.equal(result.decision.state, "needs-information");
-    if (result.decision.state === "needs-information") assert.ok(result.decision.questions.some(question => question.includes("질량")));
+    if (result.decision.state === "needs-information") assert.ok(result.decision.questions.some(question => question.includes("수지")));
   } finally { adapter.dispose(); }
 });
 

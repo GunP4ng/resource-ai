@@ -38,7 +38,7 @@ test("adapter generates case IDs, preserves inputs and refreshes only explicitly
   try {
     const before = structuredClone(fields);
     const first = envelope(await adapter.submit(fields, live()));
-    assert.equal(first.decision.state, "needs-information");
+    assert.equal(first.decision.state, "compared");
     assert.match(first.decision.caseId, /^[0-9a-f-]{36}$/);
     assert.deepEqual(fields, before);
     const second = envelope(await adapter.answer(first.decision.caseId, { answers: '{"massKg":100}' }, live()));
@@ -84,8 +84,8 @@ test("invalid/free-text answers never overwrite stored facts and cannot approve 
       await assert.rejects(adapter.answer(first.decision.caseId, raw, live()), AssessmentInputError);
     }
     const answer = envelope(await adapter.answer(first.decision.caseId, { region: "울산" }, live()));
-    assert.equal(answer.decision.state, "needs-information");
-    if (answer.decision.state === "needs-information") assert.ok(answer.decision.questions.some((q) => q.includes("질량")));
+    assert.ok(answer.decision.state === "compared");
+    assert.ok(answer.decision.recommendations?.every(route => route.cost.value === null && route.carbon.value === null));
   } finally { adapter.dispose(); }
 });
 
@@ -174,7 +174,7 @@ test("failed answers preserve prior state, busy answers are rejected and disposa
   await assert.rejects(adapter.answer(initial.decision.caseId, { massKg: 200 }, live()), failure("case-busy"));
   controller.abort(); await assert.rejects(running, failure("cancelled")); block = false;
   const retry = envelope(await adapter.answer(initial.decision.caseId, { region: "울산" }, live()));
-  assert.equal(retry.decision.state, "needs-information");
+  assert.equal(retry.decision.state, "compared");
   adapter.dispose();
   await assert.rejects(adapter.submit(fields, live()), failure("cancelled"));
 });
@@ -209,7 +209,7 @@ test("real O4 HTTP handler accepts H adapter, updates questions and enforces own
     const submitted = await post("/cases", a, { ...fields, photoRefs: "", massKg: "" }); assert.equal(submitted.status, 303);
     const path = submitted.headers.get("location"); assert.ok(path);
     const get = (owner: string) => app(new Request(origin + path, { headers: { cookie: owner } }));
-    const questions = await (await get(a)).text(); assert.ok(questions.includes("확인된 질량"));
+    const questions = await (await get(a)).text(); assert.ok(questions.includes("공개 근거상 가능(조건부)"));
     assert.equal((await get(b)).status, 404);
     assert.equal((await post(path + "/answers", b, { answers: '{"massKg":100}' })).status, 404);
     assert.equal((await post(path + "/answers", a, { answers: '{"massKg":100}' })).status, 303);

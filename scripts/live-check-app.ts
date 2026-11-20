@@ -95,7 +95,7 @@ export async function checkApp(options: { readonly authPath?: string; readonly t
       active = result;
       const started = performance.now();
       try {
-        const { caseId: _id, ...fields } = { ...syntheticCase, massKg };
+        const { caseId: _id, ...fields } = { ...syntheticCase, massKg, polymer: massKg === null ? null : syntheticCase.polymer };
         const submitted = await request("/cases", fields);
         active.httpStatus = submitted.status;
         if (submitted.status !== 303) {

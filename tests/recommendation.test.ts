@@ -188,18 +188,34 @@ test("forged model citations remain blocked instead of downgraded to execution c
   if (held.state === "needs-review") assert.ok(held.reasons.includes("proposal-evidence-conflict"));
 });
 
-test("missing essential mass remains a targeted question rather than an invented comparison", async () => {
+test("missing mass permits a qualitative route without invented numerical metrics", async () => {
   const result = await createResourceDomain({ ...syntheticCase, massKg: null }).decide();
-  assert.equal(result.state, "needs-information");
-  if (result.state === "needs-information") assert.deepEqual(result.questions, ["확인된 질량은 몇 kg인가요?"]);
+  assert.ok(result.state === "compared");
+  assert.ok(result.recommendations?.length);
+  assert.ok(result.recommendations?.every(route => route.cost.value === null && route.carbon.value === null));
+  assert.deepEqual(result.scenarios, []);
 });
 
 test("empty structured facts stay answerable even though the resin question mentions labels", async () => {
   const result = await createResourceDomain({ ...syntheticCase, process: null, polymer: null,
     contamination: null, hazardousContact: "unknown", massKg: null, region: null }).decide();
   assert.equal(result.state, "needs-information");
-  if (result.state === "needs-information") assert.equal(result.questions.length, 6);
+  if (result.state === "needs-information") assert.equal(result.questions.length, 5);
 });
+
+for (const [name, patch, expected] of [
+  ["unknown contact", { hazardousContact: "unknown" }, "needs-information"],
+  ["unknown residue history", { contamination: "세척 완료, 이전 내용물·잔류물은 미확인" }, "needs-information"],
+  ["mixed resin", { polymer: "PP/PE 다층" }, "needs-review"],
+  ["conflicting label", { polymer: "PP (라벨 ABS와 불일치)" }, "needs-review"],
+  ["hazardous contact", { hazardousContact: "yes" }, "needs-review"],
+  ["unsupported material", { polymer: "POM" }, "needs-review"],
+] as const) {
+  test(`optional mass does not bypass ${name}`, async () => {
+    const result = await createResourceDomain({ ...syntheticCase, massKg: null, ...patch }).decide();
+    assert.equal(result.state, expected);
+  });
+}
 
 test("a recommendation cannot claim an unknown or forbidden route or omit its checklist", async () => {
   const result = await createResourceDomain(syntheticCase).decide();

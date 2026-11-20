@@ -123,23 +123,43 @@ test("cancelled disk execution returns promptly while settled waits for late pro
 test("disk app remains unsettled after the original deadline until the terminal audit callback drains", async t => {
   if (await runWithProcessTime(t, import.meta.url)) return;
   const f = await fixture(t), auditing = Promise.withResolvers<void>(), release = Promise.withResolvers<void>();
+  let now = 0, transportCalls = 0;
+  const requestTimeoutMs = 30_000;
+  const timers = new Map<() => void, number>();
+  const clock = { now: () => now, schedule(callback: () => void, delay: number) {
+    timers.set(callback, now + delay); return () => { timers.delete(callback); };
+  } };
   const runtime = await createOperatorRuntime({ ...f, origin, configuration: f.config, privatePhotos: false, transport: async () => response(f.snapshot.input) });
   let app: ReturnType<typeof createOperationalApp> | undefined;
   try {
     const cookie = await login(runtime.app), resources = await createFileResourceProvider({ root: f.resourcesRoot, caseStore: runtime.caseStore });
-    app = createOperationalApp({ origin, caseStore: runtime.caseStore, localAuth: runtime.localAuth, resources, timeoutMs: 300,
+    // Wall-clock HTTP timeout is only a circuit breaker. Advance the original
+    // request's virtual deadline after transport reaches its terminal audit.
+    app = createOperationalApp({ origin, caseStore: runtime.caseStore, localAuth: runtime.localAuth, resources, timeoutMs: requestTimeoutMs, clock,
       presentationMode: "synthetic", operations: { enabled: true, provider: "subscription", timeoutMs: 200, maxTurns: 1, maxOutputTokens: 128,
         configuration: async () => f.config.target, authorizeDispatch: runtime.journal.authorizeDispatch,
         record: async (event, signal) => { await runtime.journal.record(event, signal); if (event.phase === "finish") { auditing.resolve(); await release.promise; } },
-        transport: runtime.journal.wrapTransport(async () => response(f.snapshot.input)) } });
+        transport: runtime.journal.wrapTransport(async () => {
+          transportCalls++;
+          assert.ok([...timers.values()].includes(200), "the transport retains its 200ms work budget");
+          return response(f.snapshot.input);
+        }) } });
     const pending = app.fetch(post(f.path + "/answers", cookie, { baseVersion: 1, patch: { massKg: f.snapshot.input.massKg } }));
-    await auditing.promise; assert.ok([502, 504].includes((await pending).status));
+    await auditing.promise;
+    assert.equal(transportCalls, 1, "the terminal audit follows an actual transport, not an early deadline");
+    assert.ok([...timers.values()].includes(requestTimeoutMs), "the original request deadline is still armed");
+    // The work timer is closed at audit entry; terminal cleanup shares the
+    // parent's original end instead of acquiring a new post-timeout budget.
+    now = requestTimeoutMs;
+    for (const [callback, at] of timers) if (at <= now) { timers.delete(callback); callback(); }
+    assert.ok([502, 504].includes((await pending).status));
     let settled = false; const drained = app.settled().then(() => { settled = true; });
     await new Promise<void>(done => setImmediate(done)); assert.equal(settled, false); runtime.runtime.assertReady();
     release.resolve(); await drained; assert.equal(settled, true);
     assert.deepEqual(runtime.caseStore.read(`actor:${f.actor.actorId}`, f.snapshot.input.caseId), f.snapshot);
   } finally { release.resolve(); try { if (app) { app.dispose(); await app.close(); } } finally { await runtime.close(); } }
   assert.equal(inspectOperationJournal(f.stateRoot)[0]?.state, "consumed");
+  assert.equal(timers.size, 0);
 });
 
 test("cancelled in-flight transport still occupies the concurrent-run allowance until drained", async t => {

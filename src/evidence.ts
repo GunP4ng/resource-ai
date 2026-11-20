@@ -137,6 +137,12 @@ function contextMatch(value: string | null, terms: readonly string[], context: "
     if (context === "process") {
       if (input === `${expected} 성형`) return "match";
     }
+    if (context === "contamination") {
+      // Whole phrases only: do not turn "없음" inside an uncertain or oily
+      // description into a clean declaration.
+      const clean = /^(?:세척(?:완료|후),?)?(?:오염|잔류물)?없(?:음|습니다|다)$/u;
+      if (clean.test(input.replace(/ /g, "")) && clean.test(expected.replace(/ /g, ""))) return "match";
+    }
     if (input.includes(expected) || expected.includes(input)) ambiguous = true;
   }
   return ambiguous ? "ambiguous" : "unrelated";

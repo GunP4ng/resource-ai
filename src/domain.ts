@@ -2,7 +2,7 @@ import type { CaseInput, ComparisonInput, DecisionResult, EvidenceRecord, Proces
 import { assessCase, AssessmentInputError, decideCase } from "./assessment.ts";
 import type { AssessmentOptions, RouteReviewContext } from "./assessment.ts";
 import type { PhotoObservations } from "./photo-observations.ts";
-import { parseCaseInput } from "./input.ts";
+import { massQuestion, parseCaseInput } from "./input.ts";
 import { createProcessorFinder } from "./processors.ts";
 import type { ProcessorContext } from "./processors.ts";
 import { createComparisonCalculator } from "./cost.ts";
@@ -83,10 +83,10 @@ export function createResourceDomain(input: CaseInput, resources: DomainResource
         if (assessment.reviewIssues.length > 0) return hold(...assessment.reviewIssues, "route-review-conflict");
         const blockers = recommendationBlockers(facts, recommendationAssessment, owned.routeReviews);
         if (blockers.length > 0) return hold(...blockers);
-        if (owned.comparison !== undefined && owned.calculations !== undefined) {
+        if (facts.massKg !== null && owned.comparison !== undefined && owned.calculations !== undefined) {
           assertComparisonEvidence(owned.comparison);
         }
-        if (owned.comparison !== undefined && calculate !== undefined && find !== undefined
+        if (facts.massKg !== null && owned.comparison !== undefined && calculate !== undefined && find !== undefined
           && owned.comparison.routes.every(selected => assessment.routes.some(route =>
             route.routeId === selected.routeId && route.eligibility.state === "eligible"))) {
           const scenarios = await domain.compare(owned.comparison, assessment.routes);
@@ -131,10 +131,11 @@ export function createResourceDomain(input: CaseInput, resources: DomainResource
               ...[...processors.values()].filter((p) => p.acceptance !== "confirmed").map((p) => `인수 의사 미확인: ${p.processorId}`),
             ] });
         }
-        if (assessment.questions.length === 0) {
+        const questions = assessment.questions.filter(question => question !== massQuestion);
+        if (questions.length === 0) {
           result = recommend(facts, recommendationAssessment, result.state === "compared" ? result : undefined);
         } else {
-          result = { state: "needs-information", caseId: facts.caseId, questions: assessment.questions, evidence: fallback.evidence };
+          result = { state: "needs-information", caseId: facts.caseId, questions, evidence: fallback.evidence };
         }
       } catch (error) { result = hold(error instanceof ValidationError ? error.reason : "host-comparison-invalid"); }
       if (proposal !== undefined) {

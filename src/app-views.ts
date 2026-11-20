@@ -41,8 +41,10 @@ function fields(input?: CaseInput, editing = false): string {
   const hazardous = `<label for="${prefix}hazardousContact">유해물질 접촉</label><select id="${prefix}hazardousContact" name="${prefix}hazardousContact">
      ${([["unknown", "미상"], ["yes", "있음"], ["no", "없음"]] as const).map(([value, label]) => `<option value="${value}" ${(input?.hazardousContact ?? "unknown") === value ? "selected" : ""}>${label}</option>`).join("")}</select>`;
   if (!editing) return text.slice(0, 4).join("") + hazardous + massField + text.slice(4).join("");
-  const remaining = text.join("") + hazardous;
-  return input?.massKg === null ? massField + remaining : remaining + massField;
+  const remaining = text.slice(1, 4).join("") + hazardous + text.slice(4, 5).join("") + text[0] + text[5];
+  const massOnly = input?.massKg === null && input.hazardousContact === "no"
+    && [input.process, input.polymer, input.contamination, input.region].every(value => value !== null && value.trim() !== "");
+  return massOnly ? massField + remaining : remaining + massField;
 }
 export function form(action: string, answers = false, version?: number, selection = "", input?: CaseInput): string {
   const versionField = version === undefined ? "" : `<input type="hidden" name="baseVersion" value="${version}">`;
