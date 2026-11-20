@@ -161,9 +161,11 @@ copied. This is a Bun bundle with external packages, not a standalone executable
    says `installed; reassessment pending` with actor/case/revision/artifact hash;
    exit 0 means checked/installed, exit 1 has a sanitized error code. Installation
    establishes neither reevaluation, approval, live execution nor billing.
-5. Explicitly reassess by submitting an unchanged existing field in the native
-   correction box, e.g. `{"massKg":100}` only when the exported input has that
-   exact mass. The form includes `baseVersion` and explicit photo selection.
+5. Explicitly reassess using the native correction fields and the
+   `자료 반영해 다시 평가하기` button. Keep the existing values when only the
+   installed evidence changed. The advanced JSON control also accepts
+   `{"massKg":100}` only when the exported input has that exact mass.
+   The form includes `baseVersion` and explicit photo selection.
    JSON clients use `POST /cases/:id/answers` with
    `{"baseVersion":1,"patch":{"massKg":100}}`. An empty patch is rejected.
    Re-export if input changes; artifacts are bound to exact revisions.
@@ -173,6 +175,9 @@ copied. This is a Bun bundle with external packages, not a standalone executable
    result. Current input that differs from `evaluated.revision` gets a historical
    evaluation warning. Retention is one hour after evaluation and editing is
    allowed for 30 minutes; restarting does not renew either deadline.
+   The case page displays the editing deadline in UTC. At expiry it removes
+   correction forms and answer links, retaining report/input access and
+   new-case guidance for the remainder of the retention period.
 7. Restart the same local mode with the same state root, log in again, then use
    `/cases` to recover cases. `POST /logout` durably revokes the current session.
    Reset/disable invalidate that account's sessions. Other actors receive 404
