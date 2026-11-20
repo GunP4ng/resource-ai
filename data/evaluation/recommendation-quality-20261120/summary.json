@@ -1,0 +1,31 @@
+{
+  "gitSha": "f3231d401a654c639effa5064b1618f51593533a",
+  "at": "2026-11-20T11:06:45.931Z",
+  "runner": "local-real-http",
+  "modelCalls": 0,
+  "photosSent": false,
+  "corpusVersion": "development-v1",
+  "manifestSha256": "5298cabedfcfc3fd88a1d3a13ad544c509d08f291de1a6d93176a36f695dd9ee",
+  "originalCases": 18,
+  "counts": {
+    "compared": 7,
+    "needs-information": 7,
+    "needs-review": 4,
+    "blocked": 0,
+    "error": 0
+  },
+  "followups": {
+    "separateSyntheticVariants": true,
+    "excludedFromOriginalDenominator": true,
+    "counts": {
+      "compared": 1,
+      "needs-information": 0,
+      "needs-review": 2,
+      "blocked": 0,
+      "error": 0
+    }
+  },
+  "recommendationGain": 0,
+  "independentAccuracy": "unmeasured",
+  "freshLegalVerification": false
+}
