@@ -1,0 +1,24 @@
+{
+  "preparedAt": "2026-11-20T15:55:30.194Z",
+  "records": 54,
+  "batches": [
+    {
+      "name": "batch-1.jsonl",
+      "records": 18,
+      "sha256": "58f3ecf303c73e4b29f0fe5d5a58e8f60ce52d478d8ac6035bfdf0972e2b303f"
+    },
+    {
+      "name": "batch-2.jsonl",
+      "records": 18,
+      "sha256": "734e0f7d1170d5c3add65f627cd2b0258adc3ec24074574d0c4a0dd90e36b6a2"
+    },
+    {
+      "name": "batch-3.jsonl",
+      "records": 18,
+      "sha256": "4a8afed9851203ea22a19c7d2129c3a9a7e3abbe36e044766d857cecfc30a9ea"
+    }
+  ],
+  "protocolSha256": "6cc9dd3f3b2be32c126211e0a5719507d5f02a5f2e12ee242e683233d27316b6",
+  "questionTargetsSha256": "feb8d57d894f90dbe3379b7a8682a91707fc194dd086f5ef16a8512dbfef93e7",
+  "masking": "Outer arm/filename/order/usage/calls/request IDs removed; original input/output content unchanged. Schema/style can still reveal arm."
+}

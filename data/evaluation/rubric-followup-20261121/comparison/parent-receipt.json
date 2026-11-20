@@ -1,0 +1,68 @@
+{
+  "fixture_sha256": "4ebc0a90b8150a033bd3daeb07191bbc2ad2f0bdf5be6310065f53c620ecd69c",
+  "manifest_sha256": "10b1fa467b509261f0f73af78bcd04e1060efe9a44bfca1cd6487475718ed683",
+  "calculator_sha256": "433c21749662b86d6eaed772cbeb963b5e231c95ab9bdfada5113f26d17e620f",
+  "implementation": {
+    "files": [
+      {
+        "path": "scripts/o-public-calculations.ts",
+        "sha256": "54b9afaa31e34ea6d63d1a3c852479f3f0403cf669c315620602e7c079d69e57"
+      },
+      {
+        "path": "src/o-public-calculation-schema.ts",
+        "sha256": "0728e459d839b99aa27d8d9063ee33b6eb286fbbf04fe01f70618830e2bbb23e"
+      },
+      {
+        "path": "src/o-public-calculation-data.ts",
+        "sha256": "b1515e7c7542f01f8fede161308e901775026f736b5b2b4c36fe0427bbb8db86"
+      },
+      {
+        "path": "src/o-public-calculation-validation.ts",
+        "sha256": "91bed7ca25e2745f4971dab7c144f81ad878d44915506ed68c29f233a885d6d0"
+      },
+      {
+        "path": "src/o-public-calculation-engine.ts",
+        "sha256": "45acf27e40353cedbe5be822482a25e507e76f6c40dfa86780ca522503c2a04e"
+      },
+      {
+        "path": "src/o-public-processors.ts",
+        "sha256": "a90f6f88c1ffefeb1a1f7aaac9606efd9ba15ac064b0d5c7df98e66eb6386768"
+      },
+      {
+        "path": "src/o-case-research-schema.ts",
+        "sha256": "e99eb09e6787202ce4308a634c3150aa05cc8bda2cecec99c72b382f0b97918c"
+      },
+      {
+        "path": "src/o-case-research-validation.ts",
+        "sha256": "9b0df85844d65435d35a2b20896dd03e5ffaeb34fe0ae655454acef96c42c4b0"
+      },
+      {
+        "path": "src/o-case-research.ts",
+        "sha256": "cc669f4c14c7613819156f14aae0fb39e3a66036d63fe44378d9913d8acb4239"
+      },
+      {
+        "path": "src/o-case-artifact.ts",
+        "sha256": "c13aec8c3269abdc2f8a3e624612c43efb450c89685cc2baea49d202c468e6bd"
+      },
+      {
+        "path": "src/o-validation.ts",
+        "sha256": "ec85b706a9cb8e3529bd53886333731f19577f21da595b76298a4a151f0cc373"
+      },
+      {
+        "path": "src/input.ts",
+        "sha256": "696459171e17345af08a829c2cfd321045c5d7cb47cf7ed884f3b10af9fddca5"
+      },
+      {
+        "path": "src/sources.ts",
+        "sha256": "57921c94165cd76d2d646f00bd1927c78cefa39998c6df011736aab1b38f8f80"
+      },
+      {
+        "path": "src/case-record.ts",
+        "sha256": "3e36ec625a9129f0ace2e63055cb02919910341c58157bfabcc91b848c6f05ac"
+      }
+    ],
+    "sha256": "433c21749662b86d6eaed772cbeb963b5e231c95ab9bdfada5113f26d17e620f"
+  },
+  "private_evidence_checked": false,
+  "validation": "existing loader, public upstream hashes and semantic checks only"
+}

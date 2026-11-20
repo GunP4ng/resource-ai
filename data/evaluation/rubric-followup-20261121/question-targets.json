@@ -1,0 +1,46 @@
+{
+  "basis": "Original runtime CaseInput only; authored before this round's row scoring. No human-evaluation12 labels or C-output questions define these targets.",
+  "criticalDefinitions": {
+    "origin": "Identify the actual generating process or source.",
+    "polymer": "Verify resin identity with material/label evidence.",
+    "contamination": "Identify contamination or residue condition.",
+    "contact": "Determine hazardous substance or prior-content contact history.",
+    "composition": "Identify the constituent resins/layers and composition.",
+    "label-conflict": "Resolve the reported resin-label discrepancy rather than choosing one label.",
+    "separability": "Determine whether mixed/layered materials can be separated or what compatible process is available.",
+    "prior-contents": "Identify previous contents or contacted substances; washing alone is not evidence of safety.",
+    "residue": "Determine residue amount/condition or a test/cleaning confirmation.",
+    "adhesive": "Identify attached adhesive/tape composition and relevant contamination.",
+    "oil-identity": "Identify the oil/contact substance, e.g. SDS or material information.",
+    "solvent-identity": "Identify the hazardous solvent, e.g. SDS or material information.",
+    "reuse-function": "Clarify remaining useful life and fitness for the proposed reuse function.",
+    "comparison-boundary": "Define equivalent function/system boundary for the requested reuse versus recycling comparison.",
+    "price-basis": "Request a documented quote/reference price and its unit/boundary for the requested cost comparison.",
+    "factor-basis": "Request applicable carbon factor/source and compatible activity/system boundary for the requested carbon comparison."
+  },
+  "optionalDefinitions": {
+    "mass": "Mass in kg or a measurement basis; required for totals but not a qualitative recommendation.",
+    "region": "Generation/service region for facility and transport matching.",
+    "facility-check": "Permit/scope/acceptance confirmation before physical execution."
+  },
+  "cases": [
+    {"caseId":"HYEOB-20261112-001","critical":[],"optional":["facility-check"]},
+    {"caseId":"HYEOB-20261112-002","critical":[],"optional":["facility-check"]},
+    {"caseId":"HYEOB-20261112-003","critical":["composition","label-conflict","separability"],"optional":["facility-check"]},
+    {"caseId":"HYEOB-20261112-004","critical":["prior-contents","residue"],"optional":["facility-check"]},
+    {"caseId":"HYEOB-20261112-005","critical":["composition","separability","adhesive","contact"],"optional":["mass","region","facility-check"]},
+    {"caseId":"HYEOB-20261112-006","critical":[],"optional":["facility-check"]},
+    {"caseId":"HYEOB-20261112-007","critical":[],"optional":["facility-check"]},
+    {"caseId":"HYEOB-20261112-008","critical":["oil-identity","residue"],"optional":["facility-check"]},
+    {"caseId":"HYEOB-20261112-009","critical":["origin","polymer","contamination","contact"],"optional":["mass","region","facility-check"]},
+    {"caseId":"HYEOB-20261112-010","critical":["origin","polymer","contamination","contact"],"optional":["mass","region","facility-check"]},
+    {"caseId":"OYS-20261110-001","critical":[],"optional":["facility-check"]},
+    {"caseId":"OYS-20261110-002","critical":[],"optional":["facility-check"]},
+    {"caseId":"OYS-20261110-003","critical":[],"optional":["mass","facility-check"]},
+    {"caseId":"OYS-20261110-004","critical":[],"optional":["facility-check"]},
+    {"caseId":"OYS-20261110-006","critical":["label-conflict","polymer","contamination","contact"],"optional":["mass","facility-check"]},
+    {"caseId":"OYS-20261110-008","critical":["solvent-identity","residue"],"optional":["mass","facility-check"]},
+    {"caseId":"OYS-20261110-009","critical":["contact","residue","reuse-function","comparison-boundary"],"optional":["facility-check"]},
+    {"caseId":"OYS-20261110-010","critical":["contamination","contact","price-basis","factor-basis"],"optional":["mass","region","facility-check"]}
+  ]
+}

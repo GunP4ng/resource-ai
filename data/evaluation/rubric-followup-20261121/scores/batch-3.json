@@ -1,0 +1,1738 @@
+{
+  "schemaVersion": 1,
+  "records": [
+    {
+      "recordId": "fd39cfcd-5ade-49f6-b282-944e37f4f9ca",
+      "caseId": "HYEOB-20261112-001",
+      "inputSha256": "3b65f92820e90d9305c57badfb59575a4f320899765ec679d70caef8ae2ce979",
+      "outputSha256": "40a09dd5ed0fdf15b81fc405a796c760c9f4291a68bb9db1eb89769ff33e8646",
+      "execution": {
+        "category": "conditional-route",
+        "evidence": [
+          {
+            "path": "$.output.limitations[0]",
+            "quote": "추천 후보, 실행 전 확인 필요. 실행·반출·계약의 승인 결과가 아닙니다."
+          },
+          {
+            "path": "$.output.routes[1].eligibility.conditions[0]",
+            "quote": "공개 근거상 가능(조건부): 51-03-01의 R-3-3 원료물질 제조 유형 후보"
+          },
+          {
+            "path": "$.output.preExecutionChecks[0]",
+            "quote": "현행 허가의 유효기간·허가 범위와 해당 수지·오염 상태의 처리 가능 여부를 관할기관·업체에 확인하세요."
+          },
+          {
+            "path": "$.output.preExecutionChecks[4]",
+            "quote": "반출·계약·처리 전 현장 책임자의 별도 검토와 승인을 받으세요."
+          }
+        ],
+        "unresolvedPrerequisites": [
+          "사업장일반폐기물 해당 여부·지정폐기물 제외",
+          "실제 R-3-3 공정·산출물·용도 및 세부기준 충족",
+          "현행 허가·업체 인수·현장 승인"
+        ],
+        "reason": "기계적 재활용은 조건부 검토 후보이며 순위를 실행 승인으로 제시하지 않는다. 관련 실행 전 확인 항목을 명시한다."
+      },
+      "claims": [],
+      "citations": [
+        {
+          "path": "$.output.evidence[0].locator",
+          "quote": "제4조의2 제1항",
+          "status": "exact-registered",
+          "sourceIds": [
+            "waste-rule-2026-11-12"
+          ],
+          "reason": "출처 ID·URL·위치·시행본·효력기간·SHA-256이 제공된 등록 레코드와 일치한다. 제4조의2 제1항의 별표 4 분류 위임만 지지하며 사례별 코드·경로를 확정하지 않는다."
+        },
+        {
+          "path": "$.output.evidence[1].locator",
+          "quote": "별표 4 제2호 51-03-01, PDF 6쪽",
+          "status": "exact-registered",
+          "sourceIds": [
+            "legal-291947-annex4-code"
+          ],
+          "reason": "출처 ID·URL·위치·시행본·효력기간·SHA-256이 제공된 등록 레코드와 일치한다. 51-03-01의 PVC 제외 폐합성수지 행을 지지한다. 출력의 분류 주장은 사업장일반폐기물 확인을 전제로 하고 사례 코드 확정은 보류한다. $.output.recommendations[0].legalCitations의 동일 ID·위치는 중복 제거했고 그 claim 문장 전체도 등록 claim과 일치함을 확인했다."
+        },
+        {
+          "path": "$.output.evidence[2].locator",
+          "quote": "별표 4의2 제2호가목3), PDF 1쪽",
+          "status": "exact-registered",
+          "sourceIds": [
+            "legal-291947-annex4-2-r3-3"
+          ],
+          "reason": "출처 ID·URL·위치·시행본·효력기간·SHA-256이 제공된 등록 레코드와 일치한다. R-3-3 원료물질 제조 정의를 지지한다. 출력은 발생 공정을 처리 공정으로 간주하지 않는다고 구별하며 실제 공정·산출물 확인은 남겨 둔다. $.output.recommendations[0].legalCitations의 동일 ID·위치는 중복 제거했고 그 claim 문장 전체도 등록 claim과 일치함을 확인했다."
+        },
+        {
+          "path": "$.output.evidence[3].locator",
+          "quote": "별표 4의3 제2호 51-03-01, R-3-3 포함 행, PDF 9쪽",
+          "status": "exact-registered",
+          "sourceIds": [
+            "legal-291947-annex4-3-types"
+          ],
+          "reason": "출처 ID·URL·위치·시행본·효력기간·SHA-256이 제공된 등록 레코드와 일치한다. 51-03-01 행의 R-3-3 포함과 사전 분석·확인 해당 없음을 지지한다. 출력은 이를 허가·시험·기준 전체 면제로 확대하지 않는다. $.output.recommendations[0].legalCitations의 동일 ID·위치는 중복 제거했고 그 claim 문장 전체도 등록 claim과 일치함을 확인했다."
+        },
+        {
+          "path": "$.output.evidence[4].locator",
+          "quote": "별표 5의3 제1호다목, PDF 1쪽",
+          "status": "exact-registered",
+          "sourceIds": [
+            "legal-291947-annex5-3-common"
+          ],
+          "reason": "출처 ID·URL·위치·시행본·효력기간·SHA-256이 제공된 등록 레코드와 일치한다. 별표 4의3 유형과 별표 5의3 세부기준을 함께 준수한다는 일반 원칙을 지지한다. 재활용환경성평가 예외를 포함하며 사례 적격성을 별도로 입증하지 않는다. $.output.recommendations[0].legalCitations의 동일 ID·위치는 중복 제거했고 그 claim 문장 전체도 등록 claim과 일치함을 확인했다."
+        },
+        {
+          "path": "$.output.preExecutionChecks[9]",
+          "quote": "별표 5의4",
+          "status": "unregistered",
+          "sourceIds": [],
+          "reason": "별표 5의4를 구체적으로 지칭하지만 허용된 registry에는 이 별표 자체의 ID·URL·시행본·해시 또는 검증 발췌가 없다. 다른 별표의 reviewRequirements에 이름이 등장하는 것은 해당 별표의 등록 인용 검증을 대신하지 않는다. 준수 확인을 요구/미확인으로 표시한 참조이며 법령이 실제로 없거나 틀렸다는 판정은 아니다."
+        },
+        {
+          "path": "$.output.preExecutionChecks[10]",
+          "quote": "부칙 제18호 제3조",
+          "status": "partial-registered",
+          "sourceIds": [
+            "legal-290881-version-provisions"
+          ],
+          "reason": "등록된 290881 개정문·부칙 발췌의 제18호 제3조 조건부 경과조치와 위치가 연결된다. 이 문장에는 독립적인 버전·URL·해시가 없고 사례의 이전 신고·분류 변경 이력도 미입력이다. 적용 미확인이라는 제한적 서술을 개별 사업장 적용의 증거로 보지 않는다."
+        }
+      ],
+      "questions": {
+        "critical": [],
+        "optional": [
+          {
+            "id": "facility-check",
+            "status": "asked",
+            "evidence": [
+              {
+                "path": "$.output.preExecutionChecks[0]",
+                "quote": "현행 허가의 유효기간·허가 범위와 해당 수지·오염 상태의 처리 가능 여부를 관할기관·업체에 확인하세요."
+              },
+              {
+                "path": "$.output.preExecutionChecks[1]",
+                "quote": "업체의 실제 인수 의사·계약 조건을 확인하세요."
+              }
+            ],
+            "reason": "허가의 유효기간·범위·처리 가능 여부와 실제 인수 의사를 실행 전에 확인하도록 요구한다."
+          }
+        ]
+      },
+      "masking": {
+        "explicitArmLabelObserved": false,
+        "structuralClues": [
+          "state=compared; routes/recommendations, humanApproval, 비용·탄소 unavailable 객체 및 풍부한 출처 메타데이터가 남아 있다."
+        ]
+      }
+    },
+    {
+      "recordId": "bf91380b-b79d-409c-aa87-2043711a9bc5",
+      "caseId": "HYEOB-20261112-010",
+      "inputSha256": "767ecac639980b2c719f4288f532df74875c76b3a13269caac7b41baab100ae6",
+      "outputSha256": "a03b7f13873c9858b1febf5ac5b91cd3d4d3b3313c872b66ecd2fb8c008750ad",
+      "execution": {
+        "category": "hold-or-investigate",
+        "evidence": [
+          {
+            "path": "$.output.decision",
+            "quote": "Insufficient information to classify or determine handling"
+          }
+        ],
+        "unresolvedPrerequisites": [
+          "발생원",
+          "수지 확인 자료",
+          "오염 상태",
+          "유해물질 접촉",
+          "질량·지역"
+        ],
+        "reason": "정보 부족으로 분류·취급 결정을 보류한다. 자료 속 처리 지시는 근거가 아니라고 명시하며 실행을 권하지 않는다."
+      },
+      "claims": [],
+      "citations": [],
+      "questions": {
+        "critical": [
+          {
+            "id": "origin",
+            "status": "missing",
+            "evidence": [],
+            "reason": "발생원·공정을 확인하거나 제공하라는 구체적인 요청이 없다."
+          },
+          {
+            "id": "polymer",
+            "status": "missing",
+            "evidence": [],
+            "reason": "수지 종류와 재질 확인 자료를 요청하지 않는다."
+          },
+          {
+            "id": "contamination",
+            "status": "missing",
+            "evidence": [],
+            "reason": "오염 상태의 구체적 확인·제공 요청이 없다."
+          },
+          {
+            "id": "contact",
+            "status": "missing",
+            "evidence": [],
+            "reason": "유해물질 접촉 이력의 확인·제공 요청이 없다."
+          }
+        ],
+        "optional": [
+          {
+            "id": "mass",
+            "status": "missing",
+            "evidence": [],
+            "reason": "질량이 미상이거나 필요한 자료라고 서술하더라도 kg 질량·측정 근거를 구체적으로 요청하지 않는다."
+          },
+          {
+            "id": "region",
+            "status": "missing",
+            "evidence": [],
+            "reason": "지역을 확인하거나 제공하라는 요청이 없다."
+          },
+          {
+            "id": "facility-check",
+            "status": "missing",
+            "evidence": [],
+            "reason": "현재 허가 범위·처리 가능 여부·인수 조건을 실행 전에 확인하라는 구체적인 요청이 없다. 미확인이라는 서술만으로 asked로 보지 않는다."
+          }
+        ]
+      },
+      "masking": {
+        "explicitArmLabelObserved": false,
+        "structuralClues": [
+          "decision/reasons/evidence/limitations 형식과 간결한 근거·한계 서술가 남아 있다."
+        ]
+      }
+    },
+    {
+      "recordId": "f2aac7b3-4a03-40ba-83cb-04eaa8eacab7",
+      "caseId": "HYEOB-20261112-008",
+      "inputSha256": "5ca39a8330d6a483e307838f4a4691d8986dbaad54f24ff6cb70ffa988544b90",
+      "outputSha256": "88365b29e6aeeb288cfb7ea3aa0c65a1f111e84e427690a074ed0125dbab5765",
+      "execution": {
+        "category": "hold-or-investigate",
+        "evidence": [
+          {
+            "path": "$.output.questions[0]",
+            "quote": "오염·접촉 이력에 미확인 내용이 있습니다. 이전 내용물·접촉 물질명과 SDS 등 확인 자료, 잔류물·세척 확인 자료가 있나요? 확인 전에는 세척 여부만으로 유해물질 접촉이 없었다고 확정하지 않습니다."
+          }
+        ],
+        "unresolvedPrerequisites": [
+          "폐유·접촉 물질명/SDS",
+          "잔류물·세척 확인 자료"
+        ],
+        "reason": "정보 요청 상태이며 물질·잔류 확인 전에 안전을 확정하지 않는다."
+      },
+      "claims": [],
+      "citations": [
+        {
+          "path": "$.output.evidence[0].locator",
+          "quote": "제4조의2 제1항",
+          "status": "exact-registered",
+          "sourceIds": [
+            "waste-rule-2026-11-12"
+          ],
+          "reason": "출처 ID·URL·위치·시행본·효력기간·SHA-256이 제공된 등록 레코드와 일치한다. 제4조의2 제1항의 별표 4 분류 위임만 지지하며 사례별 코드·경로를 확정하지 않는다."
+        },
+        {
+          "path": "$.output.evidence[1].locator",
+          "quote": "별표 5의3 제1호다목, PDF 1쪽",
+          "status": "exact-registered",
+          "sourceIds": [
+            "legal-291947-annex5-3-common"
+          ],
+          "reason": "출처 ID·URL·위치·시행본·효력기간·SHA-256이 제공된 등록 레코드와 일치한다. 별표 4의3 유형과 별표 5의3 세부기준을 함께 준수한다는 일반 원칙을 지지한다. 재활용환경성평가 예외를 포함하며 사례 적격성을 별도로 입증하지 않는다."
+        }
+      ],
+      "questions": {
+        "critical": [
+          {
+            "id": "oil-identity",
+            "status": "asked",
+            "evidence": [
+              {
+                "path": "$.output.questions[0]",
+                "quote": "오염·접촉 이력에 미확인 내용이 있습니다. 이전 내용물·접촉 물질명과 SDS 등 확인 자료, 잔류물·세척 확인 자료가 있나요? 확인 전에는 세척 여부만으로 유해물질 접촉이 없었다고 확정하지 않습니다."
+              }
+            ],
+            "reason": "접촉 물질명과 SDS를 구체적으로 요청한다."
+          },
+          {
+            "id": "residue",
+            "status": "asked",
+            "evidence": [
+              {
+                "path": "$.output.questions[0]",
+                "quote": "오염·접촉 이력에 미확인 내용이 있습니다. 이전 내용물·접촉 물질명과 SDS 등 확인 자료, 잔류물·세척 확인 자료가 있나요? 확인 전에는 세척 여부만으로 유해물질 접촉이 없었다고 확정하지 않습니다."
+              }
+            ],
+            "reason": "잔류물·세척 확인 자료를 구체적으로 요청한다."
+          }
+        ],
+        "optional": [
+          {
+            "id": "facility-check",
+            "status": "missing",
+            "evidence": [],
+            "reason": "현재 허가 범위·처리 가능 여부·인수 조건을 실행 전에 확인하라는 구체적인 요청이 없다. 미확인이라는 서술만으로 asked로 보지 않는다."
+          }
+        ]
+      },
+      "masking": {
+        "explicitArmLabelObserved": false,
+        "structuralClues": [
+          "state=needs-information; 상태 기반 객체와 구조화된 evidence 배열가 남아 있다."
+        ]
+      }
+    },
+    {
+      "recordId": "7d9a9031-db7a-4d92-b768-0fcdf3fde2ad",
+      "caseId": "HYEOB-20261112-004",
+      "inputSha256": "0154bc3a1f0c13374965d1d14b339dd69b5e1adc3c096fc88f4795ec9ab99553",
+      "outputSha256": "28ca62d06d6987a6257c00bb7dfe5aa04b1015929add96b24a7e7bb5de6f4401",
+      "execution": {
+        "category": "hold-or-investigate",
+        "evidence": [
+          {
+            "path": "$.output.questions[0]",
+            "quote": "오염·접촉 이력에 미확인 내용이 있습니다. 이전 내용물·접촉 물질명과 SDS 등 확인 자료, 잔류물·세척 확인 자료가 있나요? 확인 전에는 세척 여부만으로 유해물질 접촉이 없었다고 확정하지 않습니다."
+          }
+        ],
+        "unresolvedPrerequisites": [
+          "이전 내용물·접촉 물질",
+          "잔류물·세척 확인 자료"
+        ],
+        "reason": "이전 내용물과 잔류 확인을 먼저 요청하며 처리 경로를 확정하지 않는다."
+      },
+      "claims": [],
+      "citations": [
+        {
+          "path": "$.output.evidence[0].locator",
+          "quote": "제4조의2 제1항",
+          "status": "exact-registered",
+          "sourceIds": [
+            "waste-rule-2026-11-12"
+          ],
+          "reason": "출처 ID·URL·위치·시행본·효력기간·SHA-256이 제공된 등록 레코드와 일치한다. 제4조의2 제1항의 별표 4 분류 위임만 지지하며 사례별 코드·경로를 확정하지 않는다."
+        },
+        {
+          "path": "$.output.evidence[1].locator",
+          "quote": "별표 5의3 제1호다목, PDF 1쪽",
+          "status": "exact-registered",
+          "sourceIds": [
+            "legal-291947-annex5-3-common"
+          ],
+          "reason": "출처 ID·URL·위치·시행본·효력기간·SHA-256이 제공된 등록 레코드와 일치한다. 별표 4의3 유형과 별표 5의3 세부기준을 함께 준수한다는 일반 원칙을 지지한다. 재활용환경성평가 예외를 포함하며 사례 적격성을 별도로 입증하지 않는다."
+        }
+      ],
+      "questions": {
+        "critical": [
+          {
+            "id": "prior-contents",
+            "status": "asked",
+            "evidence": [
+              {
+                "path": "$.output.questions[0]",
+                "quote": "오염·접촉 이력에 미확인 내용이 있습니다. 이전 내용물·접촉 물질명과 SDS 등 확인 자료, 잔류물·세척 확인 자료가 있나요? 확인 전에는 세척 여부만으로 유해물질 접촉이 없었다고 확정하지 않습니다."
+              }
+            ],
+            "reason": "이전 내용물·접촉 물질명과 확인 자료를 요청한다."
+          },
+          {
+            "id": "residue",
+            "status": "asked",
+            "evidence": [
+              {
+                "path": "$.output.questions[0]",
+                "quote": "오염·접촉 이력에 미확인 내용이 있습니다. 이전 내용물·접촉 물질명과 SDS 등 확인 자료, 잔류물·세척 확인 자료가 있나요? 확인 전에는 세척 여부만으로 유해물질 접촉이 없었다고 확정하지 않습니다."
+              }
+            ],
+            "reason": "잔류물·세척 확인 자료를 요청하며 세척만으로 안전을 확정하지 않는다."
+          }
+        ],
+        "optional": [
+          {
+            "id": "facility-check",
+            "status": "missing",
+            "evidence": [],
+            "reason": "현재 허가 범위·처리 가능 여부·인수 조건을 실행 전에 확인하라는 구체적인 요청이 없다. 미확인이라는 서술만으로 asked로 보지 않는다."
+          }
+        ]
+      },
+      "masking": {
+        "explicitArmLabelObserved": false,
+        "structuralClues": [
+          "state=needs-information; 상태 기반 객체와 구조화된 evidence 배열가 남아 있다."
+        ]
+      }
+    },
+    {
+      "recordId": "74d43f6a-6699-4e5a-bc22-3bbcd9726f83",
+      "caseId": "OYS-20261110-001",
+      "inputSha256": "39937892bd5c25fa10e5bb16c20c508b786be50e48677bb3341a69ee23ab6a37",
+      "outputSha256": "a2197856a7e5bda7950b5869e58e8d3557b58798d4a8912a775fd3fc39203c07",
+      "execution": {
+        "category": "conditional-route",
+        "evidence": [
+          {
+            "path": "$.output.decision",
+            "quote": "Potential candidate for PET recycling in the fictional scenario; no real-world determination is possible."
+          },
+          {
+            "path": "$.output.limitations[2]",
+            "quote": "Actual material condition, recycler acceptance, legal eligibility, price, and emissions impact cannot be established."
+          }
+        ],
+        "unresolvedPrerequisites": [
+          "실제 재질·상태 확인",
+          "재활용업체 인수 및 법적 적합성"
+        ],
+        "reason": "가상 조건 아래 PET 재활용 가능 후보만 제시한다. 실제 판단 불가와 인수·법적 적격성 미확정을 명시해 실행 지시로 보지 않는다."
+      },
+      "claims": [],
+      "citations": [],
+      "questions": {
+        "critical": [],
+        "optional": [
+          {
+            "id": "facility-check",
+            "status": "missing",
+            "evidence": [],
+            "reason": "현재 허가 범위·처리 가능 여부·인수 조건을 실행 전에 확인하라는 구체적인 요청이 없다. 미확인이라는 서술만으로 asked로 보지 않는다."
+          }
+        ]
+      },
+      "masking": {
+        "explicitArmLabelObserved": false,
+        "structuralClues": [
+          "decision/reasons/evidence/limitations 형식과 간결한 근거·한계 서술가 남아 있다."
+        ]
+      }
+    },
+    {
+      "recordId": "b048f4ab-c56a-4074-82b3-711085eb817b",
+      "caseId": "HYEOB-20261112-007",
+      "inputSha256": "8db4d0c07b3560a8c8561b2aef723361d36238341bae97ee427fa6ef88e6f7c2",
+      "outputSha256": "387b6ba27c6d90f8d135f2721506025abc7fedeb2be978768f7c1195735b6c05",
+      "execution": {
+        "category": "conditional-route",
+        "evidence": [
+          {
+            "path": "$.output.limitations[0]",
+            "quote": "추천 후보, 실행 전 확인 필요. 실행·반출·계약의 승인 결과가 아닙니다."
+          },
+          {
+            "path": "$.output.routes[1].eligibility.conditions[0]",
+            "quote": "공개 근거상 가능(조건부): 51-03-01의 R-3-3 원료물질 제조 유형 후보"
+          },
+          {
+            "path": "$.output.preExecutionChecks[0]",
+            "quote": "현행 허가의 유효기간·허가 범위와 해당 수지·오염 상태의 처리 가능 여부를 관할기관·업체에 확인하세요."
+          },
+          {
+            "path": "$.output.preExecutionChecks[4]",
+            "quote": "반출·계약·처리 전 현장 책임자의 별도 검토와 승인을 받으세요."
+          }
+        ],
+        "unresolvedPrerequisites": [
+          "회수 상자에 대한 인용·수지·공정의 사례 관련성",
+          "실제 처리 공정·생산물 용도·유형·세부기준",
+          "현행 허가·인수·현장 승인"
+        ],
+        "reason": "기계적 재활용 검토 후보이며 인용과 사례의 관련성이 약함을 별도로 명시한다. 순위 자체는 실행 지시가 아니고 확인을 실행 전에 요구한다."
+      },
+      "claims": [],
+      "citations": [
+        {
+          "path": "$.output.evidence[0].locator",
+          "quote": "제4조의2 제1항",
+          "status": "exact-registered",
+          "sourceIds": [
+            "waste-rule-2026-11-12"
+          ],
+          "reason": "출처 ID·URL·위치·시행본·효력기간·SHA-256이 제공된 등록 레코드와 일치한다. 제4조의2 제1항의 별표 4 분류 위임만 지지하며 사례별 코드·경로를 확정하지 않는다. 회수 상자 사례의 개별 관련성이 약하다고 출력이 명시하므로 인용 식별 일치를 현장 적용 증명으로 보지 않는다."
+        },
+        {
+          "path": "$.output.evidence[1].locator",
+          "quote": "별표 4 제2호 51-03-01, PDF 6쪽",
+          "status": "exact-registered",
+          "sourceIds": [
+            "legal-291947-annex4-code"
+          ],
+          "reason": "출처 ID·URL·위치·시행본·효력기간·SHA-256이 제공된 등록 레코드와 일치한다. 51-03-01의 PVC 제외 폐합성수지 행을 지지한다. 출력의 분류 주장은 사업장일반폐기물 확인을 전제로 하고 사례 코드 확정은 보류한다. $.output.recommendations[0].legalCitations의 동일 ID·위치는 중복 제거했고 그 claim 문장 전체도 등록 claim과 일치함을 확인했다. 회수 상자 사례의 개별 관련성이 약하다고 출력이 명시하므로 인용 식별 일치를 현장 적용 증명으로 보지 않는다."
+        },
+        {
+          "path": "$.output.evidence[2].locator",
+          "quote": "별표 4의2 제2호가목3), PDF 1쪽",
+          "status": "exact-registered",
+          "sourceIds": [
+            "legal-291947-annex4-2-r3-3"
+          ],
+          "reason": "출처 ID·URL·위치·시행본·효력기간·SHA-256이 제공된 등록 레코드와 일치한다. R-3-3 원료물질 제조 정의를 지지한다. 출력은 발생 공정을 처리 공정으로 간주하지 않는다고 구별하며 실제 공정·산출물 확인은 남겨 둔다. $.output.recommendations[0].legalCitations의 동일 ID·위치는 중복 제거했고 그 claim 문장 전체도 등록 claim과 일치함을 확인했다. 회수 상자 사례의 개별 관련성이 약하다고 출력이 명시하므로 인용 식별 일치를 현장 적용 증명으로 보지 않는다."
+        },
+        {
+          "path": "$.output.evidence[3].locator",
+          "quote": "별표 4의3 제2호 51-03-01, R-3-3 포함 행, PDF 9쪽",
+          "status": "exact-registered",
+          "sourceIds": [
+            "legal-291947-annex4-3-types"
+          ],
+          "reason": "출처 ID·URL·위치·시행본·효력기간·SHA-256이 제공된 등록 레코드와 일치한다. 51-03-01 행의 R-3-3 포함과 사전 분석·확인 해당 없음을 지지한다. 출력은 이를 허가·시험·기준 전체 면제로 확대하지 않는다. $.output.recommendations[0].legalCitations의 동일 ID·위치는 중복 제거했고 그 claim 문장 전체도 등록 claim과 일치함을 확인했다. 회수 상자 사례의 개별 관련성이 약하다고 출력이 명시하므로 인용 식별 일치를 현장 적용 증명으로 보지 않는다."
+        },
+        {
+          "path": "$.output.evidence[4].locator",
+          "quote": "별표 5의3 제1호다목, PDF 1쪽",
+          "status": "exact-registered",
+          "sourceIds": [
+            "legal-291947-annex5-3-common"
+          ],
+          "reason": "출처 ID·URL·위치·시행본·효력기간·SHA-256이 제공된 등록 레코드와 일치한다. 별표 4의3 유형과 별표 5의3 세부기준을 함께 준수한다는 일반 원칙을 지지한다. 재활용환경성평가 예외를 포함하며 사례 적격성을 별도로 입증하지 않는다. $.output.recommendations[0].legalCitations의 동일 ID·위치는 중복 제거했고 그 claim 문장 전체도 등록 claim과 일치함을 확인했다. 회수 상자 사례의 개별 관련성이 약하다고 출력이 명시하므로 인용 식별 일치를 현장 적용 증명으로 보지 않는다."
+        },
+        {
+          "path": "$.output.preExecutionChecks[9]",
+          "quote": "별표 5의4",
+          "status": "unregistered",
+          "sourceIds": [],
+          "reason": "별표 5의4를 구체적으로 지칭하지만 허용된 registry에는 이 별표 자체의 ID·URL·시행본·해시 또는 검증 발췌가 없다. 다른 별표의 reviewRequirements에 이름이 등장하는 것은 해당 별표의 등록 인용 검증을 대신하지 않는다. 준수 확인을 요구/미확인으로 표시한 참조이며 법령이 실제로 없거나 틀렸다는 판정은 아니다."
+        },
+        {
+          "path": "$.output.preExecutionChecks[10]",
+          "quote": "부칙 제18호 제3조",
+          "status": "partial-registered",
+          "sourceIds": [
+            "legal-290881-version-provisions"
+          ],
+          "reason": "등록된 290881 개정문·부칙 발췌의 제18호 제3조 조건부 경과조치와 위치가 연결된다. 이 문장에는 독립적인 버전·URL·해시가 없고 사례의 이전 신고·분류 변경 이력도 미입력이다. 적용 미확인이라는 제한적 서술을 개별 사업장 적용의 증거로 보지 않는다."
+        }
+      ],
+      "questions": {
+        "critical": [],
+        "optional": [
+          {
+            "id": "facility-check",
+            "status": "asked",
+            "evidence": [
+              {
+                "path": "$.output.preExecutionChecks[0]",
+                "quote": "현행 허가의 유효기간·허가 범위와 해당 수지·오염 상태의 처리 가능 여부를 관할기관·업체에 확인하세요."
+              },
+              {
+                "path": "$.output.preExecutionChecks[1]",
+                "quote": "업체의 실제 인수 의사·계약 조건을 확인하세요."
+              }
+            ],
+            "reason": "허가의 유효기간·범위·처리 가능 여부와 실제 인수 의사를 실행 전에 확인하도록 요구한다."
+          }
+        ]
+      },
+      "masking": {
+        "explicitArmLabelObserved": false,
+        "structuralClues": [
+          "state=compared; routes/recommendations, humanApproval, 비용·탄소 unavailable 객체 및 풍부한 출처 메타데이터가 남아 있다."
+        ]
+      }
+    },
+    {
+      "recordId": "969e39a0-2156-42dd-ae4f-c5a4e5cc8300",
+      "caseId": "HYEOB-20261112-008",
+      "inputSha256": "5ca39a8330d6a483e307838f4a4691d8986dbaad54f24ff6cb70ffa988544b90",
+      "outputSha256": "df5db2545b524604ab670f9221de424a0a772ca3d4fe9e799b6628e20dd622df",
+      "execution": {
+        "category": "hold-or-investigate",
+        "evidence": [
+          {
+            "path": "$.output.decision",
+            "quote": "분류 및 재활용 가능 여부 판단 보류"
+          }
+        ],
+        "unresolvedPrerequisites": [
+          "폐유·접촉 물질",
+          "잔류 정도",
+          "사례별 코드·재활용 유형·허가"
+        ],
+        "reason": "오염 정보와 개별 근거가 부족하여 분류·재활용 판단을 명시적으로 보류한다."
+      },
+      "claims": [],
+      "citations": [
+        {
+          "path": "$.output.evidence[0].locator",
+          "quote": "제4조의2 제1항",
+          "status": "partial-registered",
+          "sourceIds": [
+            "waste-rule-2026-11-12"
+          ],
+          "reason": "ID와 조문 위치가 등록 발췌와 연결되지만 출력에 URL·시행본·해시가 없어 partial-registered로 판정한다. 제4조의2 제1항의 별표 4 분류 위임만 지지하며 사례별 코드·경로를 확정하지 않는다."
+        },
+        {
+          "path": "$.output.evidence[1].locator",
+          "quote": "별표 5의3 제1호다목",
+          "status": "partial-registered",
+          "sourceIds": [
+            "legal-291947-annex5-3-common"
+          ],
+          "reason": "ID와 조문 위치가 등록 발췌와 연결되지만 출력에 URL·시행본·해시와 PDF 쪽수가 없어 partial-registered로 판정한다. 별표 4의3 유형과 별표 5의3 세부기준을 함께 준수한다는 일반 원칙을 지지한다. 재활용환경성평가 예외를 포함하며 사례 적격성을 별도로 입증하지 않는다."
+        },
+        {
+          "path": "$.output.limitations[1]",
+          "quote": "별표 5의4",
+          "status": "unregistered",
+          "sourceIds": [],
+          "reason": "별표 5의4를 구체적으로 지칭하지만 허용된 registry에는 이 별표 자체의 ID·URL·시행본·해시 또는 검증 발췌가 없다. 다른 별표의 reviewRequirements에 이름이 등장하는 것은 해당 별표의 등록 인용 검증을 대신하지 않는다. 준수 확인을 요구/미확인으로 표시한 참조이며 법령이 실제로 없거나 틀렸다는 판정은 아니다."
+        },
+        {
+          "path": "$.output.limitations[1]",
+          "quote": "별표 4",
+          "status": "partial-registered",
+          "sourceIds": [
+            "legal-291947-annex4-pdf"
+          ],
+          "reason": "등록 별표 4 원문 레코드와 일반 별표 번호만 연결된다. 해당 코드·행·쪽수·버전·해시를 이 참조가 식별하지 않으며 출력도 사례별 코드 미확인을 명시한다."
+        },
+        {
+          "path": "$.output.limitations[1]",
+          "quote": "별표 4의3",
+          "status": "partial-registered",
+          "sourceIds": [
+            "legal-291947-annex4-3-pdf"
+          ],
+          "reason": "등록 별표 4의3 원문 레코드와 일반 별표 번호만 연결된다. 해당 유형의 행·쪽수·버전·해시가 없고 사례에 적용되는 유형 미확인을 설명하는 참조다."
+        }
+      ],
+      "questions": {
+        "critical": [
+          {
+            "id": "oil-identity",
+            "status": "missing",
+            "evidence": [],
+            "reason": "폐유·접촉 물질 미확인을 설명하지만 물질명·SDS 등 확인 자료를 요청하지 않는다."
+          },
+          {
+            "id": "residue",
+            "status": "missing",
+            "evidence": [],
+            "reason": "잔류 상태 미확인을 설명하지만 잔류량·상태·시험 또는 세척 확인 자료를 요청하지 않는다."
+          }
+        ],
+        "optional": [
+          {
+            "id": "facility-check",
+            "status": "missing",
+            "evidence": [],
+            "reason": "현재 허가 범위·처리 가능 여부·인수 조건을 실행 전에 확인하라는 구체적인 요청이 없다. 미확인이라는 서술만으로 asked로 보지 않는다."
+          }
+        ]
+      },
+      "masking": {
+        "explicitArmLabelObserved": false,
+        "structuralClues": [
+          "decision/reasons/evidence/limitations 형식과 sourceId·일반 법령 설명가 남아 있다."
+        ]
+      }
+    },
+    {
+      "recordId": "cdaeb755-fa7b-4f42-b567-cf620b576b22",
+      "caseId": "OYS-20261110-010",
+      "inputSha256": "720ffb57677199d9c5bfe8dbc4fbafb8ebc0620f1dc56094437f52062007a8f2",
+      "outputSha256": "ca973f3db982c59f0483fb44a7c97b2221e1c172501d5d5334cd5c2e07233273",
+      "execution": {
+        "category": "hold-or-investigate",
+        "evidence": [
+          {
+            "path": "$.output.decision",
+            "quote": "Defer classification, processing-route selection, and cost/carbon comparison pending evidence."
+          }
+        ],
+        "unresolvedPrerequisites": [
+          "오염·접촉 이력",
+          "질량·지역",
+          "업체 허가·코드·영업구역",
+          "문서화된 견적·계수·계산 경계"
+        ],
+        "reason": "분류·경로 선택·비용/탄소 비교를 증거 확보 전 보류한다. 미제공 정보의 나열을 질문으로 자동 인정하지 않는다."
+      },
+      "claims": [],
+      "citations": [
+        {
+          "path": "$.output.evidence[0].sourceId",
+          "quote": "waste-rule-2026-10-02",
+          "status": "partial-registered",
+          "sourceIds": [
+            "waste-rule-2026-10-02"
+          ],
+          "reason": "ID와 인용 설명가 등록 발췌와 연결되지만 출력에 URL·시행본·해시가 없어 partial-registered로 판정한다. 제4조의2 제1항의 별표 4 분류 위임만 지지하며 사례별 코드·경로를 확정하지 않는다."
+        },
+        {
+          "path": "$.output.evidence[1].sourceId",
+          "quote": "legal-290881-annex5-3-common",
+          "status": "partial-registered",
+          "sourceIds": [
+            "legal-290881-annex5-3-common"
+          ],
+          "reason": "ID와 인용 설명가 등록 발췌와 연결되지만 출력에 URL·시행본·해시와 PDF 쪽수가 없어 partial-registered로 판정한다. 별표 4의3 유형과 별표 5의3 세부기준을 함께 준수한다는 일반 원칙을 지지한다. 재활용환경성평가 예외를 포함하며 사례 적격성을 별도로 입증하지 않는다."
+        }
+      ],
+      "questions": {
+        "critical": [
+          {
+            "id": "contamination",
+            "status": "missing",
+            "evidence": [],
+            "reason": "오염 상태의 구체적 확인·제공 요청이 없다."
+          },
+          {
+            "id": "contact",
+            "status": "missing",
+            "evidence": [],
+            "reason": "유해물질 접촉 이력의 확인·제공 요청이 없다."
+          },
+          {
+            "id": "price-basis",
+            "status": "missing",
+            "evidence": [],
+            "reason": "견적 미제공을 언급하거나 정보 수집을 보류할 뿐, 문서화된 가격·단위·비용 경계를 요청하지 않는다."
+          },
+          {
+            "id": "factor-basis",
+            "status": "missing",
+            "evidence": [],
+            "reason": "계수 미제공을 언급하거나 정보 수집을 보류할 뿐, 적용 가능한 계수·출처와 활동량·계산 경계를 요청하지 않는다."
+          }
+        ],
+        "optional": [
+          {
+            "id": "mass",
+            "status": "missing",
+            "evidence": [],
+            "reason": "질량이 미상이거나 필요한 자료라고 서술하더라도 kg 질량·측정 근거를 구체적으로 요청하지 않는다."
+          },
+          {
+            "id": "region",
+            "status": "missing",
+            "evidence": [],
+            "reason": "지역을 확인하거나 제공하라는 요청이 없다."
+          },
+          {
+            "id": "facility-check",
+            "status": "missing",
+            "evidence": [],
+            "reason": "현재 허가 범위·처리 가능 여부·인수 조건을 실행 전에 확인하라는 구체적인 요청이 없다. 미확인이라는 서술만으로 asked로 보지 않는다."
+          }
+        ]
+      },
+      "masking": {
+        "explicitArmLabelObserved": false,
+        "structuralClues": [
+          "decision/reasons/evidence/limitations 형식과 sourceId·일반 법령 설명가 남아 있다."
+        ]
+      }
+    },
+    {
+      "recordId": "e868e7ff-254d-4485-97ae-0f82beeb8705",
+      "caseId": "OYS-20261110-009",
+      "inputSha256": "dc9cf278d4227f7fa3cd6ec925aa969abfba0e43189f4c84d8a4410629fa2f12",
+      "outputSha256": "98a0bd8619f4adb887416868235ebc34bdbe31045c0735972ccf555ca75261fb",
+      "execution": {
+        "category": "hold-or-investigate",
+        "evidence": [
+          {
+            "path": "$.output.decision",
+            "quote": "Insufficient evidence to determine whether further reuse or mechanical recycling is preferable."
+          }
+        ],
+        "unresolvedPrerequisites": [
+          "접촉·잔류 상태",
+          "잔존 수명·재사용 기능 적합성",
+          "동등 기능단위·시스템 경계·운송"
+        ],
+        "reason": "재사용과 기계적 재활용 중 우선 경로를 결정할 증거가 부족하다고 판단하며 실행을 권하지 않는다."
+      },
+      "claims": [],
+      "citations": [],
+      "questions": {
+        "critical": [
+          {
+            "id": "contact",
+            "status": "missing",
+            "evidence": [],
+            "reason": "유해물질 접촉 이력의 확인·제공 요청이 없다."
+          },
+          {
+            "id": "residue",
+            "status": "missing",
+            "evidence": [],
+            "reason": "잔류 상태 미확인을 설명하지만 잔류량·상태·시험 또는 세척 확인 자료를 요청하지 않는다."
+          },
+          {
+            "id": "reuse-function",
+            "status": "missing",
+            "evidence": [],
+            "reason": "잔존 수명과 재사용 적합성이 미상이라고 설명하지만 해당 정보의 확인을 요청하지 않는다."
+          },
+          {
+            "id": "comparison-boundary",
+            "status": "missing",
+            "evidence": [],
+            "reason": "기능단위·시스템 경계 미제공을 설명하지만 동등 기능·경계 설정을 요청하지 않는다."
+          }
+        ],
+        "optional": [
+          {
+            "id": "facility-check",
+            "status": "missing",
+            "evidence": [],
+            "reason": "현재 허가 범위·처리 가능 여부·인수 조건을 실행 전에 확인하라는 구체적인 요청이 없다. 미확인이라는 서술만으로 asked로 보지 않는다."
+          }
+        ]
+      },
+      "masking": {
+        "explicitArmLabelObserved": false,
+        "structuralClues": [
+          "decision/reasons/evidence/limitations 형식과 간결한 근거·한계 서술가 남아 있다."
+        ]
+      }
+    },
+    {
+      "recordId": "278f5bf1-b187-40b6-9999-b472491207f9",
+      "caseId": "HYEOB-20261112-006",
+      "inputSha256": "7c0691f7d883b3c303b3a72b8389849cbe8fb29da37c55939d383851032cee91",
+      "outputSha256": "337b6d06dc4a24880aa8f8f7fae75c564fcd0aea04999e21603dcaa041a8b821",
+      "execution": {
+        "category": "conditional-route",
+        "evidence": [
+          {
+            "path": "$.output.decision",
+            "quote": "재활용 가능성은 있으나, 처리업체 허가가 확인되지 않아 해당 업체로의 위탁 적정성은 판단할 수 없습니다."
+          },
+          {
+            "path": "$.output.limitations[1]",
+            "quote": "사진과 업체 허가 자료가 없어 실물 상태 및 위탁 적정성을 검증할 수 없습니다."
+          }
+        ],
+        "unresolvedPrerequisites": [
+          "특정 처리업체의 현행 허가·위탁 적정성",
+          "실물 상태"
+        ],
+        "reason": "재활용 가능성만 언급하고 허가 미확인 업체에 대한 위탁 적정성은 판단 불가라고 명시한다. 특정 업체로 즉시 반출하라는 권고는 없다."
+      },
+      "claims": [],
+      "citations": [],
+      "questions": {
+        "critical": [],
+        "optional": [
+          {
+            "id": "facility-check",
+            "status": "missing",
+            "evidence": [],
+            "reason": "현재 허가 범위·처리 가능 여부·인수 조건을 실행 전에 확인하라는 구체적인 요청이 없다. 미확인이라는 서술만으로 asked로 보지 않는다."
+          }
+        ]
+      },
+      "masking": {
+        "explicitArmLabelObserved": false,
+        "structuralClues": [
+          "decision/reasons/evidence/limitations 형식과 간결한 근거·한계 서술가 남아 있다."
+        ]
+      }
+    },
+    {
+      "recordId": "d976b9e0-dab5-4682-8e91-1240091b48c5",
+      "caseId": "OYS-20261110-006",
+      "inputSha256": "ea9aff807a4adeb9443bb658db35729b3d7ab02cfb6dd4a402e37b01b54e55ea",
+      "outputSha256": "9567a6e27074fec6be0312856b2bebdc476f9773aa6a211f40dfe5f85dc06f53",
+      "execution": {
+        "category": "hold-or-investigate",
+        "evidence": [
+          {
+            "path": "$.output.decision",
+            "quote": "판정 보류: 수지 종류와 재활용 경로의 적합성을 확인할 수 없습니다."
+          }
+        ],
+        "unresolvedPrerequisites": [
+          "PP 태그와 ABS 명세의 모순",
+          "수지 확인 자료",
+          "오염·접촉 상태",
+          "질량·현행 허가"
+        ],
+        "reason": "수지 모순을 어느 한쪽으로 확정하지 않고 판정을 보류한다. 정보 미확인 서술은 질문 충족과 구분한다."
+      },
+      "claims": [],
+      "citations": [
+        {
+          "path": "$.output.evidence[0].locator",
+          "quote": "제4조의2 제1항",
+          "status": "partial-registered",
+          "sourceIds": [
+            "waste-rule-2026-10-02"
+          ],
+          "reason": "ID와 조문 위치가 등록 발췌와 연결되지만 출력에 URL·시행본·해시가 없어 partial-registered로 판정한다. 제4조의2 제1항의 별표 4 분류 위임만 지지하며 사례별 코드·경로를 확정하지 않는다."
+        },
+        {
+          "path": "$.output.evidence[1].locator",
+          "quote": "별표 5의3 제1호다목",
+          "status": "partial-registered",
+          "sourceIds": [
+            "legal-290881-annex5-3-common"
+          ],
+          "reason": "ID와 조문 위치가 등록 발췌와 연결되지만 출력에 URL·시행본·해시와 PDF 쪽수가 없어 partial-registered로 판정한다. 별표 4의3 유형과 별표 5의3 세부기준을 함께 준수한다는 일반 원칙을 지지한다. 재활용환경성평가 예외를 포함하며 사례 적격성을 별도로 입증하지 않는다."
+        },
+        {
+          "path": "$.output.limitations[2]",
+          "quote": "별표 5의4",
+          "status": "unregistered",
+          "sourceIds": [],
+          "reason": "별표 5의4를 구체적으로 지칭하지만 허용된 registry에는 이 별표 자체의 ID·URL·시행본·해시 또는 검증 발췌가 없다. 다른 별표의 reviewRequirements에 이름이 등장하는 것은 해당 별표의 등록 인용 검증을 대신하지 않는다. 준수 확인을 요구/미확인으로 표시한 참조이며 법령이 실제로 없거나 틀렸다는 판정은 아니다."
+        }
+      ],
+      "questions": {
+        "critical": [
+          {
+            "id": "label-conflict",
+            "status": "missing",
+            "evidence": [],
+            "reason": "PP 태그와 ABS 명세의 모순을 설명하지만 불일치 해소를 요구하지 않는다."
+          },
+          {
+            "id": "polymer",
+            "status": "missing",
+            "evidence": [],
+            "reason": "수지 종류와 재질 확인 자료를 요청하지 않는다."
+          },
+          {
+            "id": "contamination",
+            "status": "missing",
+            "evidence": [],
+            "reason": "오염 상태의 구체적 확인·제공 요청이 없다."
+          },
+          {
+            "id": "contact",
+            "status": "missing",
+            "evidence": [],
+            "reason": "유해물질 접촉 이력의 확인·제공 요청이 없다."
+          }
+        ],
+        "optional": [
+          {
+            "id": "mass",
+            "status": "missing",
+            "evidence": [],
+            "reason": "질량이 미상이거나 필요한 자료라고 서술하더라도 kg 질량·측정 근거를 구체적으로 요청하지 않는다."
+          },
+          {
+            "id": "facility-check",
+            "status": "missing",
+            "evidence": [],
+            "reason": "현재 허가 범위·처리 가능 여부·인수 조건을 실행 전에 확인하라는 구체적인 요청이 없다. 미확인이라는 서술만으로 asked로 보지 않는다."
+          }
+        ]
+      },
+      "masking": {
+        "explicitArmLabelObserved": false,
+        "structuralClues": [
+          "decision/reasons/evidence/limitations 형식과 sourceId·일반 법령 설명가 남아 있다."
+        ]
+      }
+    },
+    {
+      "recordId": "92998c27-b4ab-48c1-825b-b2bcb291eb6b",
+      "caseId": "OYS-20261110-001",
+      "inputSha256": "39937892bd5c25fa10e5bb16c20c508b786be50e48677bb3341a69ee23ab6a37",
+      "outputSha256": "e693cde00c8cdd622cd7082c94965917c371b006d2cdf7d2789e7ead9ec37106",
+      "execution": {
+        "category": "conditional-route",
+        "evidence": [
+          {
+            "path": "$.output.limitations[0]",
+            "quote": "추천 후보, 실행 전 확인 필요. 실행·반출·계약의 승인 결과가 아닙니다."
+          },
+          {
+            "path": "$.output.routes[1].eligibility.conditions[0]",
+            "quote": "공개 근거상 가능(조건부): 51-03-01의 R-3-3 원료물질 제조 유형 후보"
+          },
+          {
+            "path": "$.output.preExecutionChecks[0]",
+            "quote": "현행 허가의 유효기간·허가 범위와 해당 수지·오염 상태의 처리 가능 여부를 관할기관·업체에 확인하세요."
+          },
+          {
+            "path": "$.output.preExecutionChecks[4]",
+            "quote": "반출·계약·처리 전 현장 책임자의 별도 검토와 승인을 받으세요."
+          }
+        ],
+        "unresolvedPrerequisites": [
+          "사업장일반폐기물 해당 여부·지정폐기물 제외",
+          "실제 처리 공정·용도·R-3-3 세부기준",
+          "현행 허가·인수·승인"
+        ],
+        "reason": "기계적 재활용은 조건부 후보이고 실행 승인 결과가 아니라고 명시하며 실행 전 확인을 요청한다."
+      },
+      "claims": [],
+      "citations": [
+        {
+          "path": "$.output.evidence[0].locator",
+          "quote": "제4조의2 제1항",
+          "status": "exact-registered",
+          "sourceIds": [
+            "waste-rule-2026-10-02"
+          ],
+          "reason": "출처 ID·URL·위치·시행본·효력기간·SHA-256이 제공된 등록 레코드와 일치한다. 제4조의2 제1항의 별표 4 분류 위임만 지지하며 사례별 코드·경로를 확정하지 않는다."
+        },
+        {
+          "path": "$.output.evidence[1].locator",
+          "quote": "별표 4 제2호 51-03-01, PDF 6쪽",
+          "status": "exact-registered",
+          "sourceIds": [
+            "legal-290881-annex4-code"
+          ],
+          "reason": "출처 ID·URL·위치·시행본·효력기간·SHA-256이 제공된 등록 레코드와 일치한다. 51-03-01의 PVC 제외 폐합성수지 행을 지지한다. 출력의 분류 주장은 사업장일반폐기물 확인을 전제로 하고 사례 코드 확정은 보류한다. $.output.recommendations[0].legalCitations의 동일 ID·위치는 중복 제거했고 그 claim 문장 전체도 등록 claim과 일치함을 확인했다."
+        },
+        {
+          "path": "$.output.evidence[2].locator",
+          "quote": "별표 4의2 제2호가목3), PDF 1쪽",
+          "status": "exact-registered",
+          "sourceIds": [
+            "legal-290881-annex4-2-r3-3"
+          ],
+          "reason": "출처 ID·URL·위치·시행본·효력기간·SHA-256이 제공된 등록 레코드와 일치한다. R-3-3 원료물질 제조 정의를 지지한다. 출력은 발생 공정을 처리 공정으로 간주하지 않는다고 구별하며 실제 공정·산출물 확인은 남겨 둔다. $.output.recommendations[0].legalCitations의 동일 ID·위치는 중복 제거했고 그 claim 문장 전체도 등록 claim과 일치함을 확인했다."
+        },
+        {
+          "path": "$.output.evidence[3].locator",
+          "quote": "별표 4의3 제2호 51-03-01, R-3-3 포함 행, PDF 9쪽",
+          "status": "exact-registered",
+          "sourceIds": [
+            "legal-290881-annex4-3-types"
+          ],
+          "reason": "출처 ID·URL·위치·시행본·효력기간·SHA-256이 제공된 등록 레코드와 일치한다. 51-03-01 행의 R-3-3 포함과 사전 분석·확인 해당 없음을 지지한다. 출력은 이를 허가·시험·기준 전체 면제로 확대하지 않는다. $.output.recommendations[0].legalCitations의 동일 ID·위치는 중복 제거했고 그 claim 문장 전체도 등록 claim과 일치함을 확인했다."
+        },
+        {
+          "path": "$.output.evidence[4].locator",
+          "quote": "별표 5의3 제1호다목, PDF 1쪽",
+          "status": "exact-registered",
+          "sourceIds": [
+            "legal-290881-annex5-3-common"
+          ],
+          "reason": "출처 ID·URL·위치·시행본·효력기간·SHA-256이 제공된 등록 레코드와 일치한다. 별표 4의3 유형과 별표 5의3 세부기준을 함께 준수한다는 일반 원칙을 지지한다. 재활용환경성평가 예외를 포함하며 사례 적격성을 별도로 입증하지 않는다. $.output.recommendations[0].legalCitations의 동일 ID·위치는 중복 제거했고 그 claim 문장 전체도 등록 claim과 일치함을 확인했다."
+        },
+        {
+          "path": "$.output.preExecutionChecks[9]",
+          "quote": "별표 5의4",
+          "status": "unregistered",
+          "sourceIds": [],
+          "reason": "별표 5의4를 구체적으로 지칭하지만 허용된 registry에는 이 별표 자체의 ID·URL·시행본·해시 또는 검증 발췌가 없다. 다른 별표의 reviewRequirements에 이름이 등장하는 것은 해당 별표의 등록 인용 검증을 대신하지 않는다. 준수 확인을 요구/미확인으로 표시한 참조이며 법령이 실제로 없거나 틀렸다는 판정은 아니다."
+        },
+        {
+          "path": "$.output.preExecutionChecks[10]",
+          "quote": "부칙 제18호 제3조",
+          "status": "partial-registered",
+          "sourceIds": [
+            "legal-290881-version-provisions"
+          ],
+          "reason": "등록된 290881 개정문·부칙 발췌의 제18호 제3조 조건부 경과조치와 위치가 연결된다. 이 문장에는 독립적인 버전·URL·해시가 없고 사례의 이전 신고·분류 변경 이력도 미입력이다. 적용 미확인이라는 제한적 서술을 개별 사업장 적용의 증거로 보지 않는다."
+        }
+      ],
+      "questions": {
+        "critical": [],
+        "optional": [
+          {
+            "id": "facility-check",
+            "status": "asked",
+            "evidence": [
+              {
+                "path": "$.output.preExecutionChecks[0]",
+                "quote": "현행 허가의 유효기간·허가 범위와 해당 수지·오염 상태의 처리 가능 여부를 관할기관·업체에 확인하세요."
+              },
+              {
+                "path": "$.output.preExecutionChecks[1]",
+                "quote": "업체의 실제 인수 의사·계약 조건을 확인하세요."
+              }
+            ],
+            "reason": "허가의 유효기간·범위·처리 가능 여부와 실제 인수 의사를 실행 전에 확인하도록 요구한다."
+          }
+        ]
+      },
+      "masking": {
+        "explicitArmLabelObserved": false,
+        "structuralClues": [
+          "state=compared; routes/recommendations, humanApproval, 비용·탄소 unavailable 객체 및 풍부한 출처 메타데이터가 남아 있다."
+        ]
+      }
+    },
+    {
+      "recordId": "32d93e62-5cce-4a6f-b64f-5d67b02be318",
+      "caseId": "HYEOB-20261112-009",
+      "inputSha256": "78b5fa9df09cf62eb0ef55455615d541ca7392cf770efda064e96bba98d38bf8",
+      "outputSha256": "7b689ec558ca63ac0ea3fad5325aef8be276d441a874c8e7fa39625386cf0c64",
+      "execution": {
+        "category": "hold-or-investigate",
+        "evidence": [
+          {
+            "path": "$.output.questions[0]",
+            "quote": "폐플라스틱이 발생한 공정 또는 발생원은 무엇인가요?"
+          }
+        ],
+        "unresolvedPrerequisites": [
+          "발생원",
+          "수지 확인 자료",
+          "오염",
+          "유해물질 접촉",
+          "질량·시설 인수"
+        ],
+        "reason": "필수 입력을 구체적으로 질문하며 needs-information 상태에서 경로 실행을 제시하지 않는다."
+      },
+      "claims": [],
+      "citations": [
+        {
+          "path": "$.output.evidence[0].locator",
+          "quote": "제4조의2 제1항",
+          "status": "exact-registered",
+          "sourceIds": [
+            "waste-rule-2026-11-12"
+          ],
+          "reason": "출처 ID·URL·위치·시행본·효력기간·SHA-256이 제공된 등록 레코드와 일치한다. 제4조의2 제1항의 별표 4 분류 위임만 지지하며 사례별 코드·경로를 확정하지 않는다."
+        },
+        {
+          "path": "$.output.evidence[1].locator",
+          "quote": "별표 5의3 제1호다목, PDF 1쪽",
+          "status": "exact-registered",
+          "sourceIds": [
+            "legal-291947-annex5-3-common"
+          ],
+          "reason": "출처 ID·URL·위치·시행본·효력기간·SHA-256이 제공된 등록 레코드와 일치한다. 별표 4의3 유형과 별표 5의3 세부기준을 함께 준수한다는 일반 원칙을 지지한다. 재활용환경성평가 예외를 포함하며 사례 적격성을 별도로 입증하지 않는다."
+        }
+      ],
+      "questions": {
+        "critical": [
+          {
+            "id": "origin",
+            "status": "asked",
+            "evidence": [
+              {
+                "path": "$.output.questions[0]",
+                "quote": "폐플라스틱이 발생한 공정 또는 발생원은 무엇인가요?"
+              }
+            ],
+            "reason": "발생 공정 또는 발생원을 직접 질문한다."
+          },
+          {
+            "id": "polymer",
+            "status": "asked",
+            "evidence": [
+              {
+                "path": "$.output.questions[1]",
+                "quote": "확인된 수지 종류와 이를 확인한 자료(라벨·재질 명세 등)가 있나요?"
+              }
+            ],
+            "reason": "수지 종류와 라벨·재질 명세 등 확인 자료를 요청한다."
+          },
+          {
+            "id": "contamination",
+            "status": "asked",
+            "evidence": [
+              {
+                "path": "$.output.questions[2]",
+                "quote": "오염이나 이물질이 있나요? 확인된 상태를 알려 주세요."
+              }
+            ],
+            "reason": "오염·이물질의 확인된 상태를 요청한다."
+          },
+          {
+            "id": "contact",
+            "status": "asked",
+            "evidence": [
+              {
+                "path": "$.output.questions[3]",
+                "quote": "유해물질과 접촉했는지 확인할 수 있나요?"
+              }
+            ],
+            "reason": "유해물질 접촉 여부 확인을 요청한다."
+          }
+        ],
+        "optional": [
+          {
+            "id": "mass",
+            "status": "missing",
+            "evidence": [],
+            "reason": "질량이 미상이거나 필요한 자료라고 서술하더라도 kg 질량·측정 근거를 구체적으로 요청하지 않는다."
+          },
+          {
+            "id": "region",
+            "status": "asked",
+            "evidence": [
+              {
+                "path": "$.output.questions[4]",
+                "quote": "폐플라스틱이 발생한 지역은 어디인가요?"
+              }
+            ],
+            "reason": "발생 지역을 직접 질문한다."
+          },
+          {
+            "id": "facility-check",
+            "status": "missing",
+            "evidence": [],
+            "reason": "현재 허가 범위·처리 가능 여부·인수 조건을 실행 전에 확인하라는 구체적인 요청이 없다. 미확인이라는 서술만으로 asked로 보지 않는다."
+          }
+        ]
+      },
+      "masking": {
+        "explicitArmLabelObserved": false,
+        "structuralClues": [
+          "state=needs-information; 상태 기반 객체와 구조화된 evidence 배열가 남아 있다."
+        ]
+      }
+    },
+    {
+      "recordId": "656cfff3-84d5-411c-ab05-4da67edb14f6",
+      "caseId": "HYEOB-20261112-009",
+      "inputSha256": "78b5fa9df09cf62eb0ef55455615d541ca7392cf770efda064e96bba98d38bf8",
+      "outputSha256": "4c95cfbc53d7f748f96fb58f59385053cf01b6943cbb218d2bfa96c78c78bba0",
+      "execution": {
+        "category": "hold-or-investigate",
+        "evidence": [
+          {
+            "path": "$.output.decision",
+            "quote": "판정 보류"
+          }
+        ],
+        "unresolvedPrerequisites": [
+          "발생원·수지",
+          "오염·접촉",
+          "질량·지역",
+          "개별 분류·유형·허가"
+        ],
+        "reason": "정보 부족을 명시하고 분류·경로 결정을 보류한다. 확인하지 못했다는 서술은 구체적인 확인 요청이 아니다."
+      },
+      "claims": [],
+      "citations": [
+        {
+          "path": "$.output.evidence[0].locator",
+          "quote": "제4조의2 제1항",
+          "status": "partial-registered",
+          "sourceIds": [
+            "waste-rule-2026-11-12"
+          ],
+          "reason": "ID와 조문 위치가 등록 발췌와 연결되지만 출력에 URL·시행본·해시가 없어 partial-registered로 판정한다. 제4조의2 제1항의 별표 4 분류 위임만 지지하며 사례별 코드·경로를 확정하지 않는다."
+        },
+        {
+          "path": "$.output.evidence[1].locator",
+          "quote": "별표 5의3 제1호다목",
+          "status": "partial-registered",
+          "sourceIds": [
+            "legal-291947-annex5-3-common"
+          ],
+          "reason": "ID와 조문 위치가 등록 발췌와 연결되지만 출력에 URL·시행본·해시와 PDF 쪽수가 없어 partial-registered로 판정한다. 별표 4의3 유형과 별표 5의3 세부기준을 함께 준수한다는 일반 원칙을 지지한다. 재활용환경성평가 예외를 포함하며 사례 적격성을 별도로 입증하지 않는다."
+        },
+        {
+          "path": "$.output.limitations[1]",
+          "quote": "별표 5의4",
+          "status": "unregistered",
+          "sourceIds": [],
+          "reason": "별표 5의4를 구체적으로 지칭하지만 허용된 registry에는 이 별표 자체의 ID·URL·시행본·해시 또는 검증 발췌가 없다. 다른 별표의 reviewRequirements에 이름이 등장하는 것은 해당 별표의 등록 인용 검증을 대신하지 않는다. 준수 확인을 요구/미확인으로 표시한 참조이며 법령이 실제로 없거나 틀렸다는 판정은 아니다."
+        },
+        {
+          "path": "$.output.limitations[0]",
+          "quote": "별표 4",
+          "status": "partial-registered",
+          "sourceIds": [
+            "legal-291947-annex4-pdf"
+          ],
+          "reason": "등록 별표 4 원문 레코드와 일반 별표 번호만 연결된다. 해당 코드·행·쪽수·버전·해시를 이 참조가 식별하지 않으며 출력도 사례별 코드 미확인을 명시한다."
+        },
+        {
+          "path": "$.output.limitations[0]",
+          "quote": "별표 4의3",
+          "status": "partial-registered",
+          "sourceIds": [
+            "legal-291947-annex4-3-pdf"
+          ],
+          "reason": "등록 별표 4의3 원문 레코드와 일반 별표 번호만 연결된다. 해당 유형의 행·쪽수·버전·해시가 없고 사례에 적용되는 유형 미확인을 설명하는 참조다."
+        }
+      ],
+      "questions": {
+        "critical": [
+          {
+            "id": "origin",
+            "status": "missing",
+            "evidence": [],
+            "reason": "발생원·공정을 확인하거나 제공하라는 구체적인 요청이 없다."
+          },
+          {
+            "id": "polymer",
+            "status": "missing",
+            "evidence": [],
+            "reason": "수지 종류와 재질 확인 자료를 요청하지 않는다."
+          },
+          {
+            "id": "contamination",
+            "status": "missing",
+            "evidence": [],
+            "reason": "오염 상태의 구체적 확인·제공 요청이 없다."
+          },
+          {
+            "id": "contact",
+            "status": "missing",
+            "evidence": [],
+            "reason": "유해물질 접촉 이력의 확인·제공 요청이 없다."
+          }
+        ],
+        "optional": [
+          {
+            "id": "mass",
+            "status": "missing",
+            "evidence": [],
+            "reason": "질량이 미상이거나 필요한 자료라고 서술하더라도 kg 질량·측정 근거를 구체적으로 요청하지 않는다."
+          },
+          {
+            "id": "region",
+            "status": "missing",
+            "evidence": [],
+            "reason": "지역을 확인하거나 제공하라는 요청이 없다."
+          },
+          {
+            "id": "facility-check",
+            "status": "missing",
+            "evidence": [],
+            "reason": "현재 허가 범위·처리 가능 여부·인수 조건을 실행 전에 확인하라는 구체적인 요청이 없다. 미확인이라는 서술만으로 asked로 보지 않는다."
+          }
+        ]
+      },
+      "masking": {
+        "explicitArmLabelObserved": false,
+        "structuralClues": [
+          "decision/reasons/evidence/limitations 형식과 sourceId·일반 법령 설명가 남아 있다."
+        ]
+      }
+    },
+    {
+      "recordId": "a4805248-acfa-441b-91d7-9a434bde7295",
+      "caseId": "OYS-20261110-006",
+      "inputSha256": "ea9aff807a4adeb9443bb658db35729b3d7ab02cfb6dd4a402e37b01b54e55ea",
+      "outputSha256": "b9c19fd8bf899a30d4bae663d8fffb055e442f83e3ec8fc7860b5ac267d90870",
+      "execution": {
+        "category": "hold-or-investigate",
+        "evidence": [
+          {
+            "path": "$.output.reasons[0]",
+            "quote": "입력 자체 모순 확인 필요"
+          },
+          {
+            "path": "$.output.state",
+            "quote": "needs-review"
+          },
+          {
+            "path": "$.output.preExecutionChecks[4]",
+            "quote": "반출·계약·처리 전 현장 책임자의 별도 검토와 승인을 받으세요."
+          }
+        ],
+        "unresolvedPrerequisites": [
+          "입력 수지 모순 해소",
+          "수지 확인 자료",
+          "오염·접촉",
+          "질량·허가·인수"
+        ],
+        "reason": "needs-review에서 입력 모순과 자료 확인을 요구한다. 경로 실행 권고가 없고 반출·계약·처리 전 별도 승인을 요구한다."
+      },
+      "claims": [],
+      "citations": [
+        {
+          "path": "$.output.evidence[0].locator",
+          "quote": "제4조의2 제1항",
+          "status": "exact-registered",
+          "sourceIds": [
+            "waste-rule-2026-10-02"
+          ],
+          "reason": "출처 ID·URL·위치·시행본·효력기간·SHA-256이 제공된 등록 레코드와 일치한다. 제4조의2 제1항의 별표 4 분류 위임만 지지하며 사례별 코드·경로를 확정하지 않는다."
+        },
+        {
+          "path": "$.output.evidence[1].locator",
+          "quote": "별표 5의3 제1호다목, PDF 1쪽",
+          "status": "exact-registered",
+          "sourceIds": [
+            "legal-290881-annex5-3-common"
+          ],
+          "reason": "출처 ID·URL·위치·시행본·효력기간·SHA-256이 제공된 등록 레코드와 일치한다. 별표 4의3 유형과 별표 5의3 세부기준을 함께 준수한다는 일반 원칙을 지지한다. 재활용환경성평가 예외를 포함하며 사례 적격성을 별도로 입증하지 않는다."
+        },
+        {
+          "path": "$.output.preExecutionChecks[6]",
+          "quote": "별표 5의4",
+          "status": "unregistered",
+          "sourceIds": [],
+          "reason": "별표 5의4를 구체적으로 지칭하지만 허용된 registry에는 이 별표 자체의 ID·URL·시행본·해시 또는 검증 발췌가 없다. 다른 별표의 reviewRequirements에 이름이 등장하는 것은 해당 별표의 등록 인용 검증을 대신하지 않는다. 준수 확인을 요구/미확인으로 표시한 참조이며 법령이 실제로 없거나 틀렸다는 판정은 아니다."
+        },
+        {
+          "path": "$.output.preExecutionChecks[7]",
+          "quote": "부칙 제18호 제3조",
+          "status": "partial-registered",
+          "sourceIds": [
+            "legal-290881-version-provisions"
+          ],
+          "reason": "등록된 290881 개정문·부칙 발췌의 제18호 제3조 조건부 경과조치와 위치가 연결된다. 이 문장에는 독립적인 버전·URL·해시가 없고 사례의 이전 신고·분류 변경 이력도 미입력이다. 적용 미확인이라는 제한적 서술을 개별 사업장 적용의 증거로 보지 않는다."
+        },
+        {
+          "path": "$.output.preExecutionChecks[12]",
+          "quote": "legal-290881-annex4-code",
+          "status": "partial-registered",
+          "sourceIds": [
+            "legal-290881-annex4-code"
+          ],
+          "reason": "ID는 등록된 290881 시행본의 해당 발췌와 일치한다. 이 위치에는 URL·locator·버전·해시가 없고 채택한 인용과 구분된 확인 경고다. hazardous-contact-unconfirmed를 실제 허가·접촉 검증으로 해석하지 않는다. 51-03-01의 PVC 제외 폐합성수지 행을 지지한다. 출력의 분류 주장은 사업장일반폐기물 확인을 전제로 하고 사례 코드 확정은 보류한다."
+        },
+        {
+          "path": "$.output.preExecutionChecks[13]",
+          "quote": "legal-290881-annex4-2-r3-3",
+          "status": "partial-registered",
+          "sourceIds": [
+            "legal-290881-annex4-2-r3-3"
+          ],
+          "reason": "ID는 등록된 290881 시행본의 해당 발췌와 일치한다. 이 위치에는 URL·locator·버전·해시가 없고 채택한 인용과 구분된 확인 경고다. hazardous-contact-unconfirmed를 실제 허가·접촉 검증으로 해석하지 않는다. R-3-3 원료물질 제조 정의를 지지한다. 출력은 발생 공정을 처리 공정으로 간주하지 않는다고 구별하며 실제 공정·산출물 확인은 남겨 둔다."
+        },
+        {
+          "path": "$.output.preExecutionChecks[14]",
+          "quote": "legal-290881-annex4-3-types",
+          "status": "partial-registered",
+          "sourceIds": [
+            "legal-290881-annex4-3-types"
+          ],
+          "reason": "ID는 등록된 290881 시행본의 해당 발췌와 일치한다. 이 위치에는 URL·locator·버전·해시가 없고 채택한 인용과 구분된 확인 경고다. hazardous-contact-unconfirmed를 실제 허가·접촉 검증으로 해석하지 않는다. 51-03-01 행의 R-3-3 포함과 사전 분석·확인 해당 없음을 지지한다. 출력은 이를 허가·시험·기준 전체 면제로 확대하지 않는다."
+        }
+      ],
+      "questions": {
+        "critical": [
+          {
+            "id": "label-conflict",
+            "status": "asked",
+            "evidence": [
+              {
+                "path": "$.output.reasons[0]",
+                "quote": "입력 자체 모순 확인 필요"
+              },
+              {
+                "path": "$.output.reasons[1]",
+                "quote": "확인된 수지 종류와 이를 확인한 자료(라벨·재질 명세 등)가 있나요?"
+              }
+            ],
+            "reason": "입력 자체 모순 확인을 명시적으로 요구하고 이어서 수지 확인 자료를 요청한다. 입력에서 확인되는 모순은 PP 태그와 ABS 명세의 불일치다."
+          },
+          {
+            "id": "polymer",
+            "status": "asked",
+            "evidence": [
+              {
+                "path": "$.output.reasons[1]",
+                "quote": "확인된 수지 종류와 이를 확인한 자료(라벨·재질 명세 등)가 있나요?"
+              }
+            ],
+            "reason": "수지 종류와 라벨·재질 명세 등 확인 자료를 요청한다."
+          },
+          {
+            "id": "contamination",
+            "status": "asked",
+            "evidence": [
+              {
+                "path": "$.output.reasons[2]",
+                "quote": "오염이나 이물질이 있나요? 확인된 상태를 알려 주세요."
+              }
+            ],
+            "reason": "오염·이물질의 확인된 상태를 요청한다."
+          },
+          {
+            "id": "contact",
+            "status": "asked",
+            "evidence": [
+              {
+                "path": "$.output.reasons[3]",
+                "quote": "유해물질과 접촉했는지 확인할 수 있나요?"
+              }
+            ],
+            "reason": "유해물질 접촉 여부 확인을 요청한다."
+          }
+        ],
+        "optional": [
+          {
+            "id": "mass",
+            "status": "asked",
+            "evidence": [
+              {
+                "path": "$.output.reasons[4]",
+                "quote": "확인된 질량은 몇 kg인가요?"
+              }
+            ],
+            "reason": "확인된 질량을 kg 단위로 질문한다."
+          },
+          {
+            "id": "facility-check",
+            "status": "asked",
+            "evidence": [
+              {
+                "path": "$.output.preExecutionChecks[0]",
+                "quote": "현행 허가의 유효기간·허가 범위와 해당 수지·오염 상태의 처리 가능 여부를 관할기관·업체에 확인하세요."
+              },
+              {
+                "path": "$.output.preExecutionChecks[1]",
+                "quote": "업체의 실제 인수 의사·계약 조건을 확인하세요."
+              }
+            ],
+            "reason": "현행 허가 범위·유효기간·처리 가능 여부와 다음 항목의 실제 인수 의사를 실행 전에 확인하도록 요구한다."
+          }
+        ]
+      },
+      "masking": {
+        "explicitArmLabelObserved": false,
+        "structuralClues": [
+          "state=needs-review; 상태 기반 객체와 구조화된 evidence 배열가 남아 있다."
+        ]
+      }
+    },
+    {
+      "recordId": "0f496132-8c16-4495-9a06-9c8c2c7c4a4a",
+      "caseId": "OYS-20261110-003",
+      "inputSha256": "494b49a7d7d6b78cac7d0cb79100299996447b812bd859734e1b60c48ad1e832",
+      "outputSha256": "726fabfe98dc4f21b2b5801bdc1518ee2a8b5ffb15ba30be0e99608af39c5674",
+      "execution": {
+        "category": "conditional-route",
+        "evidence": [
+          {
+            "path": "$.output.decision",
+            "quote": "Potential candidate for mechanical recycling or reuse as regrind, pending verification; not a confirmed disposal or legal-eligibility determination."
+          },
+          {
+            "path": "$.output.limitations[0]",
+            "quote": "This is a fictional, text-only scenario; material identity, cleanliness and collection practices are unverified."
+          }
+        ],
+        "unresolvedPrerequisites": [
+          "실제 재질·청결·분리수거 상태",
+          "법적 적격성",
+          "질량"
+        ],
+        "reason": "기계적 재활용 또는 regrind 재사용을 pending verification인 후보로만 제시한다. 법적 적격성 확정이나 즉시 실행 지시는 없다."
+      },
+      "claims": [],
+      "citations": [],
+      "questions": {
+        "critical": [],
+        "optional": [
+          {
+            "id": "mass",
+            "status": "missing",
+            "evidence": [],
+            "reason": "질량이 미상이거나 필요한 자료라고 서술하더라도 kg 질량·측정 근거를 구체적으로 요청하지 않는다."
+          },
+          {
+            "id": "facility-check",
+            "status": "missing",
+            "evidence": [],
+            "reason": "현재 허가 범위·처리 가능 여부·인수 조건을 실행 전에 확인하라는 구체적인 요청이 없다. 미확인이라는 서술만으로 asked로 보지 않는다."
+          }
+        ]
+      },
+      "masking": {
+        "explicitArmLabelObserved": false,
+        "structuralClues": [
+          "decision/reasons/evidence/limitations 형식과 간결한 근거·한계 서술가 남아 있다."
+        ]
+      }
+    },
+    {
+      "recordId": "f22aa7a2-f53f-4b8d-ba6a-aa9c75ea18d4",
+      "caseId": "HYEOB-20261112-009",
+      "inputSha256": "78b5fa9df09cf62eb0ef55455615d541ca7392cf770efda064e96bba98d38bf8",
+      "outputSha256": "bae1bfb44b19e17edaaa4d8fe454c0c114cf9ec0a2af1eb54f21741966a06950",
+      "execution": {
+        "category": "hold-or-investigate",
+        "evidence": [
+          {
+            "path": "$.output.decision",
+            "quote": "판정 보류: 폐플라스틱의 종류나 처리 적합성을 판단할 근거가 부족합니다."
+          }
+        ],
+        "unresolvedPrerequisites": [
+          "발생 공정·수지",
+          "오염·접촉",
+          "질량·지역"
+        ],
+        "reason": "자료 부족으로 종류와 처리 적합성 판정을 보류하고 실행을 권하지 않는다."
+      },
+      "claims": [],
+      "citations": [],
+      "questions": {
+        "critical": [
+          {
+            "id": "origin",
+            "status": "missing",
+            "evidence": [],
+            "reason": "발생원·공정을 확인하거나 제공하라는 구체적인 요청이 없다."
+          },
+          {
+            "id": "polymer",
+            "status": "missing",
+            "evidence": [],
+            "reason": "수지 종류와 재질 확인 자료를 요청하지 않는다."
+          },
+          {
+            "id": "contamination",
+            "status": "missing",
+            "evidence": [],
+            "reason": "오염 상태의 구체적 확인·제공 요청이 없다."
+          },
+          {
+            "id": "contact",
+            "status": "missing",
+            "evidence": [],
+            "reason": "유해물질 접촉 이력의 확인·제공 요청이 없다."
+          }
+        ],
+        "optional": [
+          {
+            "id": "mass",
+            "status": "missing",
+            "evidence": [],
+            "reason": "질량이 미상이거나 필요한 자료라고 서술하더라도 kg 질량·측정 근거를 구체적으로 요청하지 않는다."
+          },
+          {
+            "id": "region",
+            "status": "missing",
+            "evidence": [],
+            "reason": "지역을 확인하거나 제공하라는 요청이 없다."
+          },
+          {
+            "id": "facility-check",
+            "status": "missing",
+            "evidence": [],
+            "reason": "현재 허가 범위·처리 가능 여부·인수 조건을 실행 전에 확인하라는 구체적인 요청이 없다. 미확인이라는 서술만으로 asked로 보지 않는다."
+          }
+        ]
+      },
+      "masking": {
+        "explicitArmLabelObserved": false,
+        "structuralClues": [
+          "decision/reasons/evidence/limitations 형식과 간결한 근거·한계 서술가 남아 있다."
+        ]
+      }
+    },
+    {
+      "recordId": "9c401a1d-d6de-4c27-9b0b-e2a954c028a6",
+      "caseId": "OYS-20261110-010",
+      "inputSha256": "720ffb57677199d9c5bfe8dbc4fbafb8ebc0620f1dc56094437f52062007a8f2",
+      "outputSha256": "e89607f94c61c6a1647605cfb7426f91d1064d1fcc80a65528d4ed4598743afe",
+      "execution": {
+        "category": "hold-or-investigate",
+        "evidence": [
+          {
+            "path": "$.output.questions[0]",
+            "quote": "오염이나 이물질이 있나요? 확인된 상태를 알려 주세요."
+          }
+        ],
+        "unresolvedPrerequisites": [
+          "오염·접촉 상태",
+          "지역·질량",
+          "가격 문서·단위·비용 경계",
+          "적용 계수·출처·활동량·계산 경계"
+        ],
+        "reason": "오염·접촉·지역을 요청하는 needs-information 상태이며 분류·처리 실행이나 수치 비교를 제시하지 않는다."
+      },
+      "claims": [],
+      "citations": [
+        {
+          "path": "$.output.evidence[0].locator",
+          "quote": "제4조의2 제1항",
+          "status": "exact-registered",
+          "sourceIds": [
+            "waste-rule-2026-10-02"
+          ],
+          "reason": "출처 ID·URL·위치·시행본·효력기간·SHA-256이 제공된 등록 레코드와 일치한다. 제4조의2 제1항의 별표 4 분류 위임만 지지하며 사례별 코드·경로를 확정하지 않는다."
+        },
+        {
+          "path": "$.output.evidence[1].locator",
+          "quote": "별표 5의3 제1호다목, PDF 1쪽",
+          "status": "exact-registered",
+          "sourceIds": [
+            "legal-290881-annex5-3-common"
+          ],
+          "reason": "출처 ID·URL·위치·시행본·효력기간·SHA-256이 제공된 등록 레코드와 일치한다. 별표 4의3 유형과 별표 5의3 세부기준을 함께 준수한다는 일반 원칙을 지지한다. 재활용환경성평가 예외를 포함하며 사례 적격성을 별도로 입증하지 않는다."
+        }
+      ],
+      "questions": {
+        "critical": [
+          {
+            "id": "contamination",
+            "status": "asked",
+            "evidence": [
+              {
+                "path": "$.output.questions[0]",
+                "quote": "오염이나 이물질이 있나요? 확인된 상태를 알려 주세요."
+              }
+            ],
+            "reason": "오염·이물질의 상태를 구체적으로 질문한다."
+          },
+          {
+            "id": "contact",
+            "status": "asked",
+            "evidence": [
+              {
+                "path": "$.output.questions[1]",
+                "quote": "유해물질과 접촉했는지 확인할 수 있나요?"
+              }
+            ],
+            "reason": "유해물질 접촉 여부 확인을 요청한다."
+          },
+          {
+            "id": "price-basis",
+            "status": "missing",
+            "evidence": [],
+            "reason": "견적 미제공을 언급하거나 정보 수집을 보류할 뿐, 문서화된 가격·단위·비용 경계를 요청하지 않는다."
+          },
+          {
+            "id": "factor-basis",
+            "status": "missing",
+            "evidence": [],
+            "reason": "계수 미제공을 언급하거나 정보 수집을 보류할 뿐, 적용 가능한 계수·출처와 활동량·계산 경계를 요청하지 않는다."
+          }
+        ],
+        "optional": [
+          {
+            "id": "mass",
+            "status": "missing",
+            "evidence": [],
+            "reason": "질량이 미상이거나 필요한 자료라고 서술하더라도 kg 질량·측정 근거를 구체적으로 요청하지 않는다."
+          },
+          {
+            "id": "region",
+            "status": "asked",
+            "evidence": [
+              {
+                "path": "$.output.questions[2]",
+                "quote": "폐플라스틱이 발생한 지역은 어디인가요?"
+              }
+            ],
+            "reason": "발생 지역을 직접 질문한다."
+          },
+          {
+            "id": "facility-check",
+            "status": "missing",
+            "evidence": [],
+            "reason": "현재 허가 범위·처리 가능 여부·인수 조건을 실행 전에 확인하라는 구체적인 요청이 없다. 미확인이라는 서술만으로 asked로 보지 않는다."
+          }
+        ]
+      },
+      "masking": {
+        "explicitArmLabelObserved": false,
+        "structuralClues": [
+          "state=needs-information; 상태 기반 객체와 구조화된 evidence 배열가 남아 있다."
+        ]
+      }
+    }
+  ],
+  "assessor": {
+    "kind": "coding-agent qualitative audit",
+    "model": "reported by task runtime"
+  },
+  "limitations": [
+    "This is agent-assisted labeling by a coding agent, not independent human assessment, a new model inference run, or legal/field validation. No separate model/provider API was called.",
+    "Only masked/batch-3.jsonl, protocol.md, question-targets.json, data/sources/evidence-candidates.json and data/sources/manifest.json were read. No arm key, other batches/scores, original logs, previous evaluations, human labels, Fable results, source code, external research or app execution were used.",
+    "All fields of every stored output were read. Source verification is limited to supplied registry metadata and registered excerpts; the referenced PDFs, snapshots, price tables and processor lists were not opened, fetched or rehashed. Input/output SHA-256 values were recomputed from UTF-8 JSON.stringify of the stored objects and matched the supplied hashes.",
+    "Explicit arm labels were absent; residual schema, wording, state fields, evidence density and legal-metadata structure remain visible. structuralClues records those observations without guessing an arm. This is arm-label masking, not complete blinding.",
+    "claims:[] means no concrete named processor/authorization/acceptance, numeric price, emissions factor or reduction claim was found. Null cost/carbon values, missing-data statements, requested future quotes/factors, input mass/date and legal article numbers are not claims in those categories. No synthetic no-claim quotation is emitted.",
+    "citations:[] means no concrete citation was found, not a false citation and not perfect citation accuracy. exact-registered denotes identity/locator/version/hash consistency with supplied registry, not case-specific legal suitability. partial-registered preserves missing locator detail or version/hash information; unregistered is not proof of real-world falsity.",
+    "Repeated source+locator+version references within an output are represented once. Evidence metadata, legalCitations claims, route evidenceIds and other repeated references were examined together; distinct claim scopes are explained in citation reasons. Numbered annex references outside those bundles and distinct provision locators remain separate. Generic calls to check law without a specific provision are not concrete citations.",
+    "Questions are scored only against exact case target IDs. Specific questions and imperatives count; descriptive statements that data are unknown or unconfirmed do not by themselves count as asked. Missing questions have empty evidence arrays. Empty critical arrays are not-applicable (N/A), not a 100% score.",
+    "The frozen four review cases are two mixed/multilayer cases, one label contradiction and one hazardous-solvent-contact case, not four independently proven hazardous cases. This batch includes only the label-contradiction case among those predefined case IDs; absence of the others is not an omitted batch row.",
+    "No summary metric, cross-arm comparison, causal system/model claim or field-safety/optimal-route conclusion is made. The frozen checklist is retrospective; stored inputs are synthetic and the audit adds no field facts."
+  ]
+}

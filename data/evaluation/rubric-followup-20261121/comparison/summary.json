@@ -1,0 +1,92 @@
+{
+  "status": "INCOMPLETE_SENSITIVITY_EVIDENCE",
+  "originals_unchanged": true,
+  "source_sha256": "e30be7a5f8c1faa2ef52a31554a97902127fc44771ee3f5a1056ef8d8d4bf3cc",
+  "contrast": {
+    "decisions": 36,
+    "states": {
+      "compared": 3,
+      "needs-review": 20,
+      "needs-information": 13
+    },
+    "first_routes": [
+      "mechanical-recycling"
+    ],
+    "recommended": 3,
+    "withdrawn_or_absent": 33,
+    "first_route_switch_found": false,
+    "finite_conclusion": "This declared 36-input grid contains no switch between distinct first recommended routes. Withdrawal or state changes are separate outcomes.",
+    "invariant_scope": "Source proof for default resources only: assessCase gives unknown without supplied route reviews; recommend fallback makes only mechanical-recycling conditional. Fixed priority never sorts by cost/carbon. This is not a proof for arbitrary supplied reviews, future code/registries or all possible configurations.",
+    "source_locations": [
+      "src/assessment.ts:154",
+      "src/recommendation.ts:77",
+      "src/recommendation.ts:81",
+      "src/domain.ts:135"
+    ]
+  },
+  "scenario_calls": {
+    "domain": 36,
+    "initial_engine_inferred_from_control_flow": 16,
+    "recovery_engine": 2,
+    "total": 54,
+    "limit": 54
+  },
+  "sensitivity": {
+    "designed_scenarios": 18,
+    "independently_recomputed_rows": 54,
+    "captured_engine_scenarios": 2,
+    "captured_engine_rows": 6,
+    "lost_raw_scenarios": 16,
+    "fully_checked_prior_scenarios_inferred": 15,
+    "failing_prior_scenario": "HDPE-y1-p0.8",
+    "display_agreement": false,
+    "recovery_numeric_comparisons": 68,
+    "recovery_maximum_absolute_error": 5.820766091346741e-11,
+    "full_numeric_agreement_verified": false,
+    "missing_incineration_cost_unchanged": true,
+    "independent_ranges": [
+      {
+        "material": "PET",
+        "basis": "independent oracle only; full raw engine evidence unavailable",
+        "recycling_net_cost_krw": {
+          "min": -16827.84,
+          "max": -5161.056
+        },
+        "recycling_net_carbon_kgco2e": {
+          "min": -27.513690320672723,
+          "max": -16.29657042070615
+        },
+        "cost_saving_vs_landfill_krw": {
+          "min": 7922.256,
+          "max": 19589.04
+        },
+        "carbon_difference_vs_landfill_kgco2e": {
+          "min": 16.825679849949857,
+          "max": 28.042799749916433
+        }
+      },
+      {
+        "material": "HDPE",
+        "basis": "independent oracle only; full raw engine evidence unavailable",
+        "recycling_net_cost_krw": {
+          "min": -9158.4,
+          "max": -2485.8
+        },
+        "recycling_net_carbon_kgco2e": {
+          "min": -15.079618733445626,
+          "max": -8.889038411294264
+        },
+        "cost_saving_vs_landfill_krw": {
+          "min": 4556.7,
+          "max": 11229.3
+        },
+        "carbon_difference_vs_landfill_kgco2e": {
+          "min": 9.285870483227043,
+          "max": 15.476450805378407
+        }
+      }
+    ],
+    "pareto_limit": "No global three-route cost/Pareto claim; incineration cost is missing.",
+    "conclusion": "All 18 independent arithmetic scenarios are available. Only two have retained actual engine rows. Prior control flow supports 15 completed checks and one display failure, but does not restore lost raw evidence. Full sensitivity evidence requires 16 additional engine calls, which are not authorized under the 54-run cap."
+  }
+}
