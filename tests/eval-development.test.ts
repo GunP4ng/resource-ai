@@ -184,6 +184,26 @@ test("global call budget retains unexecuted arms instead of dispatching extra re
   } finally { await f.close(); }
 });
 
+test("an opted-in repeated-failure limit stops dispatch after preserving both failed arms", async () => {
+  const f = await fixture();
+  let calls = 0;
+  try {
+    await authorize(f.authPath);
+    const result = await runDevelopment({ ...f, maxConsecutiveFailures: 2, transport: async () => {
+      calls++;
+      return Response.json({ error: { message: "rate limited" } },
+        { status: 429, headers: { "x-oai-request-id": `req_stop_${calls}` } });
+    } });
+    assert.equal(calls, 2);
+    assert.equal(result.failures, 2);
+    assert.equal(result.stoppedAfterRepeatedFailure, "rate-limit");
+    assert.equal((await rows(result.directory, "A"))[0]?.["errorCategory"], "rate-limit");
+    assert.equal((await rows(result.directory, "B"))[0]?.["errorCategory"], "rate-limit");
+    assert.equal(readFileSync(join(result.directory, "C.jsonl"), "utf8"), "");
+    assert.equal(statSync(join(result.directory, "B.jsonl")).mode & 0o222, 0);
+  } finally { await f.close(); }
+});
+
 test("timed out provider calls are retained for all arms without retries", async () => {
   const f = await fixture();
   let calls = 0;
