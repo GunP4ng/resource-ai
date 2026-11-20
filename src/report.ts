@@ -2,9 +2,11 @@ import type { DecisionResult } from "./contracts.ts";
 import { parseDecision } from "./o-decision.ts";
 import type { CaseResearchReport } from "./o-case-research-schema.ts";
 import type { PublicInputScenario } from "./o-input-public-scenario.ts";
+import type { CaseGuidance } from "./o-case-guidance.ts";
+import { guidanceConclusion, guidanceProgress, guidanceStability, guidanceOneFact } from "./report-guidance.ts";
 import { escapeHtml, list, page } from "./report-html.ts";
 import { evidenceSection, readableReason } from "./report-evidence.ts";
-import { researchCalculations, researchDirectory, publicInputCalculations } from "./report-research.ts";
+import { researchCalculations, researchDirectory, publicInputCalculations, publicRecyclingDirectory, publicScenarioNames } from "./report-research.ts";
 import { comparisonSummary, comparisonConditions, prioritySummary, routeConditions, scenarioAudit } from "./report-comparison.ts";
 import type { EvidenceReferences } from "./report-comparison.ts";
 export interface ReportPresentation {
@@ -21,13 +23,14 @@ export { escapeHtml, safeLink, list, page } from "./report-html.ts";
 
 export type ReportContext =
   | { readonly audience: "commercial" }
-  | { readonly audience: "authenticated-research"; readonly research: CaseResearchReport | null; readonly publicScenario?: PublicInputScenario | null };
+  | { readonly audience: "authenticated-research"; readonly research: CaseResearchReport | null; readonly publicScenario?: PublicInputScenario | null; readonly guidance?: CaseGuidance | null };
 /** Trusted server view fragments; never taken from model output or input metadata. */
 export interface ReportView {
   readonly notice?: string;
   readonly actions?: string;
   readonly editing?: string;
   readonly answerTarget?: "#answer-fields" | "#answers";
+  readonly inquiryTarget?: string;
   readonly researchFirst?: boolean;
 }
 export const routeNames = { reuse: "재사용", "mechanical-recycling": "기계적 재활용", "other-recovery": "기타 회수", disposal: "처분" } as const;
@@ -54,7 +57,7 @@ function processorCandidates(result: Extract<DecisionResult, { state: "compared"
     <p>허가 근거 ${references(processor.permitEvidenceIds)} · 확인 ${escapeHtml(processor.verifiedAt ?? "미확인")} · 코드 ${escapeHtml(processor.acceptedWasteCodes.join(", "))}</p>`).join("");
 }
 
-function conclusion(result: DecisionResult): string {
+function conclusion(result: DecisionResult, explanation?: string): string {
   switch (result.state) {
     case "needs-information":
       return '<p class="state question">추가 정보 필요 · 실행 보류</p><h1>추가 정보 필요</h1><p id="decision-summary">입력 정보가 부족해 처리 경로를 확정하지 않았습니다.</p>';
@@ -64,7 +67,7 @@ function conclusion(result: DecisionResult): string {
       const recommendation = result.recommendations?.[0];
       const route = result.routes.find(item => item.routeId === recommendation?.routeId);
       return `<p class="state recommended">${recommendation ? "추천 · 공개 근거상 가능한 경로" : "조건부 비교 · 실행 전 확인 필요"}</p><h1>${route ? `${routeNames[route.route]} 추천` : "조건부 비교"}</h1>
-        <p id="decision-summary">${route ? `현재 자료에서는 ${routeNames[route.route]}을 우선 검토할 수 있습니다.` : "확인된 조건으로 처리 경로를 비교했습니다."}</p>
+        <p id="decision-summary">${escapeHtml(explanation ?? (route ? `현재 자료에서는 ${routeNames[route.route]}을 우선 검토할 수 있습니다.` : "확인된 조건으로 처리 경로를 비교했습니다."))}</p>
         <p>판단 지원 추천 · 실행·반출·계약 승인 아님. ${result.humanApproval === "pending" ? "현장 담당자 승인 대기" : "인간 승인 기록 있음"}</p>`;
     }
   }
@@ -133,20 +136,27 @@ export function renderReport(result: DecisionResult, presentation: ReportPresent
         : "재질·오염·접촉 이력의 확인 자료를 확보하세요."
       : "추천 경로의 실제 인수 가능 여부를 업체에 확인하세요.";
   const audit = result.state === "compared" ? result.scenarios.map((scenario, index) => scenarioAudit(scenario, presentation.scenarioLabels?.[index] ?? `대안 ${index + 1}`, references)).join("") : "";
-  const researchSections = research ? researchCalculations(research) + researchDirectory(research) : "";
+  const researchSections = research ? researchCalculations(research) : "";
   const publicScenario = context.audience === "authenticated-research" ? context.publicScenario : null;
-  return page("조건부 보고서", `${conclusion(result)}${view.notice ?? ""}
+  const guidance = context.audience === "authenticated-research" ? context.guidance : null;
+  const names = { ...routeNames, ...publicScenarioNames };
+  const directories = context.audience === "authenticated-research"
+    ? research ? researchDirectory(research, view.inquiryTarget) : publicRecyclingDirectory(view.inquiryTarget) : "";
+  return page("조건부 보고서", `${conclusion(result, guidance ? guidanceConclusion(guidance, names) : undefined)}${view.notice ?? ""}
     <p id="next-action"><strong>다음 행동:</strong> ${escapeHtml(nextAction)}</p>
     <p class="screen-only"><a class="primary-action" href="${answerAction ?? "#checks"}">${answerAction ? result.state === "needs-information" ? "답변 입력하기" : "입력 다시 확인하기" : "실행 전 확인하기"}</a></p>
     ${presentation.historical ? '<p class="notice">과거 평가: 현재 입력과 평가 당시 입력이 다릅니다. 명시적으로 다시 평가해 주세요.</p>' : ""}
     <details id="result-context"><summary>판단 이유·자료 범위 확인하기</summary><p>${mode}</p>${data}
     ${result.state === "compared" && result.confidence ? `<p><strong>확신도: ${result.confidence.level === "medium" ? "중간" : "낮음"}</strong></p>${list(result.confidence.reasons.map(readableReason))}` : ""}
     <p><a class="primary-action secondary-action" href="#evidence">근거 확인하기</a> <a class="primary-action secondary-action" href="#checks">실행 전 확인하기</a></p>${view.actions ?? ""}</details>
+    ${guidance ? guidanceProgress(guidance) + guidanceOneFact(guidance, names) : ""}
     ${publicScenario ? publicInputCalculations(publicScenario) : ""}${view.researchFirst ? researchSections : ""}
+    ${guidance ? guidanceStability(guidance, names) : ""}
     <details id="decision-detail"><summary>판정 상세·확인할 조건 펼치기</summary>${reasons(result, references, presentation)}</details>
     ${result.state !== "compared" && result.conditionalAlternatives?.length ? `<section id="alternatives" aria-label="조건별 대안 비교"><h2>조건별 대안 비교</h2><p>현재 실행 보류는 유지됩니다. 아래는 확인할 조건에 따른 검토 경로이며 처리·반출·계약 승인이 아닙니다.</p>${result.conditionalAlternatives.map(alternative => `<article data-conditional-alternative="${escapeHtml(alternative.routeId)}"><h3>${escapeHtml(alternative.title)}</h3><p><strong>이 조건이라면:</strong> ${escapeHtml(alternative.condition.description)}</p><p>${escapeHtml(alternative.rationale)}</p><p><strong>${alternative.support.state === "route-supported" ? "조건을 확인한 뒤 검토할 공개 근거가 있습니다." : "이 처리 경로의 적합성은 아직 확인하지 못했습니다."}</strong></p>${alternative.support.missingEvidence.length ? list(alternative.support.missingEvidence) : ""}<p><strong>먼저 확인할 것</strong></p>${list(alternative.nextChecks)}<details><summary>이 대안의 근거와 적용 범위</summary>${alternative.citations.map(citation => `<p>${references([citation.sourceId])} ${escapeHtml(citation.locator)} · ${citation.scope === "route-specific" ? "해당 경로의 조건부 근거" : "분류·검토를 위한 일반 기준"}</p><blockquote>${escapeHtml(citation.quote)}</blockquote><p>${escapeHtml(citation.claim)}</p>`).join("")}</details></article>`).join("")}</section>` : ""}
-    ${view.researchFirst ? "" : researchSections}
+    ${view.researchFirst ? "" : researchSections}${directories}
     ${evidenceSection(result)}
+    ${view.inquiryTarget ? `<p class="screen-only"><a class="primary-action secondary-action" href="${escapeHtml(view.inquiryTarget)}">업체 문의서 1장 준비</a></p>` : ""}
     <section id="checks"><h2>실행 전 확인사항</h2>${checks.length ? list(checks.map(readableReason)) : "<p>질문에 답하고 실제 질량·물질·접촉 이력을 확인하세요. 반출·계약·처리는 현장 담당자의 별도 검토와 승인이 필요합니다.</p>"}</section>
     ${view.editing ?? ""}
     ${audit ? `<h2>비용·탄소 상세 감사</h2><details class="screen-only"><summary>계산 조건·비용 항목·탄소 활동과 계수 펼치기</summary>${audit}</details><div class="print-only">${audit}</div>` : ""}

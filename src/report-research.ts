@@ -5,6 +5,7 @@ import recyclingDirectory from "../data/reference/public-recycling-candidates-20
 import domestic from "../data/reference/domestic-scenario-context-20261121.json" with { type: "json" };
 
 const routeNames = { recycling: "재활용 시나리오", landfill: "매립 시나리오", energy_recovery: "에너지 회수 시나리오" } as const;
+export { routeNames as publicScenarioNames };
 const missingNames: Readonly<Record<string, string>> = {
   missing_mass: "질량 미확보", "missing:f_inc": "소각 처리비 미확보",
   "missing:PP.price": "PP 가격 미확보", "missing:PP.y": "PP 수율 미확보",
@@ -22,6 +23,7 @@ function originalLink(url: string, title: string): string {
 function domesticContext(material: string, inputs: PublicInputScenario["calculations"]["inputs"]): string {
   const warm = inputs.find(input => input.input_id === `warm.${material}.energy_recovery`);
   const electricity = domestic.electricity, waste = domestic.incinerationParameters, fee = domestic.municipalFee;
+  const epd = domestic.epdTreatmentReference;
   return `<section aria-label="국내와 미국 계수의 범위"><h3>탄소 계수의 국내·미국 범위</h3>
     <div class="table-wrap" role="region" aria-label="계수와 단위 비교" tabindex="0"><table><thead><tr><th>공개 근거</th><th>값·단위</th><th>계산 경계</th></tr></thead><tbody>
     <tr><td>미국 WARM ${escapeHtml(material)} 에너지 회수</td><td>${warm?.value == null ? "미확보" : escapeHtml(String(warm.value))} MTCO2e/short ton</td><td>운송·에너지 대체 크레딧을 포함한 순 전과정 시나리오</td></tr>
@@ -29,6 +31,16 @@ function domesticContext(material: string, inputs: PublicInputScenario["calculat
     <tr><td>국내 폐합성수지 소각 · 2024 승인</td><td>DM ${waste.dryMatterFraction}<br>CF ${waste.carbonFraction}<br>${waste.unit}</td><td>건조물질·탄소 함량 매개변수</td></tr>
     </tbody></table></div>
     <p>국내 전과정 탄소량: 미산정. 단위·활동·경계가 달라 위 값을 직접 빼거나 WARM을 대체하지 않습니다.</p>
+    <details><summary>국내 공개 EPD 참고계수 3행 · 혼합폐플라스틱 · 계산 미사용</summary>
+      <p>${escapeHtml(epd.boundary)} ${escapeHtml(epd.missing)}</p>
+      <div class="table-wrap" role="region" aria-label="EPD 원문 참고계수" tabindex="0"><table><thead><tr><th>원문 범주</th><th>기준 단위</th><th>탄소발자국 (${escapeHtml(epd.carbonUnit)})</th></tr></thead><tbody>
+      ${epd.rows.map(row => `<tr data-epd-reference="${row.excelRow}"><td>${escapeHtml(row.label)}</td><td>${epd.sourceUnit}</td><td><data value="${row.carbonFootprint}">약 ${row.carbonFootprint.toLocaleString("ko-KR", { maximumFractionDigits: 6 })}</data></td></tr>`).join("")}
+      </tbody></table></div>
+      ${originalLink(epd.url, epd.title)} ${originalLink(epd.documentUrl, "원본 계수 파일")}
+      <p>제정 ${epd.establishedAt} · ${escapeHtml(epd.sheet)} · ${escapeHtml(epd.locator)} · 화면은 소수6자리 반올림</p>
+      <p>${escapeHtml(epd.license)} · 원본 SHA-256 ${epd.sha256}</p>
+    </details>
+    <p>재사용은 용도·기준 충족 자료와 동일 경계의 비용·탄소 자료가 없어 이 수치표에서 제외했습니다. 0으로 간주하지 않으며, 기존 재사용 경로의 확인 필요 상태를 유지합니다.</p>
     <details><summary>국내 계수 출처와 미산정 사유</summary>
       ${originalLink(electricity.url, electricity.title)}<p>${escapeHtml(electricity.locator)} · ${escapeHtml(electricity.boundary)} ${escapeHtml(electricity.missing)}</p>
       ${originalLink(waste.url, waste.title)}<p>${escapeHtml(waste.locator)} · ${escapeHtml(waste.boundary)} ${escapeHtml(waste.missing)}</p>
@@ -98,7 +110,7 @@ export function researchCalculations(research: CaseResearchReport): string {
     <p>연구 표시 자료 SHA-256 ${escapeHtml(research.artifactSha256)} · 평가 입력 결합 ${escapeHtml(attachment.binding.inputRevision)}</p>
     </details></section>`;
 }
-export function researchDirectory(research: CaseResearchReport): string {
+export function researchDirectory(research: CaseResearchReport, inquiryTarget?: string): string {
   const directory = research.attachment.processors;
   return `<section id="directory"><h2>처분 문의 후보</h2>
     <p>기계적 재활용 시설 근거 없음. 다음은 처분 상담을 위한 명부 행이며 허가·인수를 검증한 시설 목록이 아닙니다. 복수 등재 행은 독립 시설 수가 아닙니다. 같은 회사의 행을 합치지 않았습니다.</p>
@@ -112,7 +124,10 @@ export function researchDirectory(research: CaseResearchReport): string {
     ${list(directory.missing)}<details><summary>명부 선택·제외 내역 확인하기</summary>
     ${list(directory.excludedRows.map(row => `${row.rowNumber}행: ${row.reason === "municipal-collection-only" ? "생활폐기물 수집운반 전용" : "명시된 영업권역과 사례 지역 불일치"}`))}
     <p>정제 명부 SHA-256 ${escapeHtml(directory.datasetSha256)} · 원본 SHA-256 ${escapeHtml(directory.source.derivedFrom)} · manifest ${escapeHtml(directory.sourceManifestSha256)}</p></details></section>
-    <section id="recycling-directory"><h2>${escapeHtml(recyclingDirectory.label)}</h2>
+    ${publicRecyclingDirectory(inquiryTarget)}`;
+}
+export function publicRecyclingDirectory(inquiryTarget?: string): string {
+  return `<section id="recycling-directory"><h2>${escapeHtml(recyclingDirectory.label)}</h2>
     ${originalLink(recyclingDirectory.source.url, recyclingDirectory.source.title)}
     <p>명부 기준일 ${escapeHtml(recyclingDirectory.source.sourceDate)} · 조회 ${escapeHtml(recyclingDirectory.source.retrievedAt)}
       · 수집 근거 ${escapeHtml(recyclingDirectory.source.collectionBasis)} · 사용권 ${escapeHtml(recyclingDirectory.source.license)}</p>
@@ -120,7 +135,10 @@ export function researchDirectory(research: CaseResearchReport): string {
     ${recyclingDirectory.rows.map(row => `<section data-recycling-directory-row="${row.rowNumber}"><h3>${escapeHtml(row.name)} · 원본 명부 ${row.rowNumber}행</h3>
       <p>업종 ${escapeHtml(row.activity)} · 대상폐기물 ${escapeHtml(row.wasteScope)}</p>
       <p>명부상 소재지 ${escapeHtml(row.address)} · 행 기준일 ${escapeHtml(row.sourceDate)}</p>
-      <p>현재 허가·영업·인수 의사 미확인 · 사례 지역·운송·수지·오염 조건 적합성 미확인</p></section>`).join("")}
+      <p data-permit-listed>허가 공개자료 확인 · ${escapeHtml(row.sourceDate)} 기준 명부 등재</p>
+      <p data-acceptance-unverified><strong>인수 의사 미확인</strong></p>
+      <p>현재 허가 유효성·영업 미확인 · 사례 지역·운송·수지·오염 조건 적합성 미확인</p>
+      ${inquiryTarget ? `<p class="screen-only"><a href="${escapeHtml(inquiryTarget)}?recipient=${encodeURIComponent(row.name)}">이 업체에 문의서 준비</a></p>` : ""}</section>`).join("")}
     <details><summary>재활용업 명부 출처 확인하기</summary>
       <p>원본 ${escapeHtml(recyclingDirectory.source.originalFilename)} · 제공기관 ${escapeHtml(recyclingDirectory.source.publisher)}
       · 원본 지역 ${escapeHtml(recyclingDirectory.source.geographicScope)}</p>

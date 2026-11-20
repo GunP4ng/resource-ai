@@ -16,6 +16,8 @@ import type { OCaseStore } from "./o-case-store.ts";
 import { LocalAuthError } from "./o-auth.ts";
 import { RuntimeStorageError } from "./o-runtime-db.ts";
 import { feedbackPath, feedbackScript } from "./app-feedback.ts";
+import { buildCaseGuidance } from "./o-case-guidance.ts";
+import recyclingDirectory from "../data/reference/public-recycling-candidates-20261121.json" with { type: "json" };
 export function createApp(dependencies: AppDependencies) {
   const origin = new URL(dependencies.origin).origin;
   requireValid(["http:", "https:"].includes(new URL(origin).protocol), "invalid-app-origin");
@@ -179,7 +181,10 @@ export function createApp(dependencies: AppDependencies) {
               decision = await createResourceDomain(source.original).decide();
               presentation = { mode: "synthetic", calculationVersion: attachment.calculations.model_version,
                 sourceVersion: attachment.calculations.fixtureSha256, ...(dependencies.runtime ? { runtime: dependencies.runtime } : {}) };
-              context = { audience: "authenticated-research", research: { attachment, artifactSha256: revision(attachment) } };
+              context = { audience: "authenticated-research", research: { attachment, artifactSha256: revision(attachment) },
+                guidance: await buildCaseGuidance(source.original, decision, {
+                  research: attachment, publicDirectoryCount: recyclingDirectory.rows.length,
+                }) };
             } else if (url.searchParams.get("purpose") !== "commercial") {
               actions += `<p>공개 시나리오의 비용·탄소는 인증된 비공개 연구 화면에서 제공합니다.${dependencies.localAuth ? ' <a href="/login">운영자 로그인</a>' : ""}</p>`;
             }
@@ -191,7 +196,7 @@ export function createApp(dependencies: AppDependencies) {
           privateGuard();
           return result;
         }
-        const caseMatch = /^\/cases\/([A-Za-z0-9_-]{1,100})(?:\/(answers|report|input))?$/.exec(url.pathname);
+        const caseMatch = /^\/cases\/([A-Za-z0-9_-]{1,100})(?:\/(answers|report|input|inquiry))?$/.exec(url.pathname);
         const caseId = caseMatch?.[1];
         const suffix = caseMatch?.[2];
         if (caseId) recovery = `<p>실패한 시도는 이전 저장 결과와 다릅니다. <a href="/cases/${caseId}">이 사례의 마지막 저장 결과 확인</a> · <a href="/cases">내 사례</a></p>`;

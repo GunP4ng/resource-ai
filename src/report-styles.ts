@@ -8,6 +8,11 @@ body{margin:0;background:var(--bg);color:var(--ink);font:var(--body)/1.7 system-
 main{max-width:68ch;margin:auto;padding:0 var(--s20) var(--s48)}
 .primary-nav{max-width:68ch;margin:auto;padding:var(--s32) var(--s20) 0}
 nav,.cluster{display:flex;align-items:center;gap:var(--s12) var(--s20);flex-wrap:wrap}
+.guidance-stages{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--s12) var(--s16);list-style:none;padding:0}
+.guidance-stages li{border-bottom:var(--border) solid var(--line);padding-block:var(--s8);margin:0}
+.guidance-stages strong,.guidance-stages span{display:block}
+.guidance-stages span{font-size:var(--secondary);color:var(--muted)}
+@media(max-width:600px){.guidance-stages{grid-template-columns:repeat(2,minmax(0,1fr))}}
 :where(a){display:inline-flex;align-items:center;vertical-align:middle;min-height:var(--target);min-width:var(--target)}
 :where(nav a,.cluster a,.source-link){padding:var(--s8) 0}
 h1{font-size:var(--h1);line-height:1.3;margin:var(--s24) 0 var(--s16);text-wrap:balance;word-break:keep-all}

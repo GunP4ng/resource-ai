@@ -3,6 +3,30 @@
   "retrievedAt": "2026-11-20",
   "domesticLifecycleCarbon": null,
   "businessPlasticIncinerationFee": null,
+  "epdTreatmentReference": {
+    "title": "환경성적표지 평가계수",
+    "publisher": "한국환경산업기술원",
+    "establishedAt": "2021-08-02",
+    "portalModifiedAt": "2025-08-05",
+    "url": "https://www.data.go.kr/data/15120968/fileData.do",
+    "documentUrl": "https://api.ecosq.or.kr/open-api/rest/downloadEvlCffcntFile.do",
+    "sha256": "a328f097f1f0c4fc7c5ca278835350fe325f5f7cce74af24f62111ff19b64aef",
+    "license": "공공데이터포털 표기: 이용허락범위 제한 없음",
+    "licenseUrl": "https://www.data.go.kr/ugs/selectPortalPolicyView.do",
+    "rightsLink": "포털 데이터15120968의 원본 확인 URL이 documentUrl을 직접 지정함. 해당 원본과 보존 파일 SHA-256 일치.",
+    "sheet": "환경성적표지 평가계수 전문",
+    "locator": "2행 제정일, 4행 단위·탄소발자국 헤더; Excel 224·233·242행",
+    "sourceUnit": "kg",
+    "carbonUnit": "kg CO2 eq.",
+    "rows": [
+      {"excelRow":224,"label":"혼합폐플라스틱 매립","carbonFootprint":0.0132035389823726},
+      {"excelRow":233,"label":"혼합폐플라스틱 소각","carbonFootprint":3.41255403906606},
+      {"excelRow":242,"label":"혼합폐플라스틱 재활용","carbonFootprint":0.0186}
+    ],
+    "appliedToCalculations": false,
+    "boundary": "전과정평가용 폐기물 처리 참고계수의 혼합폐플라스틱 범주. PET·HDPE 개별 계수나 현장 측정값이 아님. 한국 공공기관의 공개자료이나 행별 지역 대표성·운송·대체 크레딧 경계를 확인하지 못함.",
+    "missing": "현재 사례의 수지·오염·공정과 원문 범주 및 WARM 순 전과정 경계의 동등성이 미확인. 사례 질량에 곱하거나 WARM과 가감·치환하지 않음. 이 사례의 국내 전과정 탄소량과 실제 비용·탄소는 이 참고값으로 채우지 않음."
+  },
   "electricity": {
     "title": "2025년 승인 국가 온실가스 배출·흡수계수",
     "publisher": "온실가스종합정보센터",

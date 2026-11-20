@@ -46,7 +46,7 @@ test("permissionChanged warning stays outside disclosures near the conclusion", 
     for (const suffix of ["", "/report"]) {
       let visible = "", folded = "";
       const order: string[] = [];
-      await new HTMLRewriter()
+      const html = await new HTMLRewriter()
         .on("#decision-summary", { element() { order.push("conclusion"); } })
         .on("main > #permission-change-warning", { element() { order.push("notice"); }, text(chunk) { visible += chunk.text; } })
         .on("details #permission-change-warning", { text(chunk) { folded += chunk.text; } })
@@ -57,7 +57,16 @@ test("permissionChanged warning stays outside disclosures near the conclusion", 
       assert.match(visible, /이미 전송된 사진을 회수하지 않습니다/);
       assert.equal(folded, "");
       assert.deepEqual(order, ["conclusion", "notice", "next-action"]);
+      assert.doesNotMatch(html, /data-guidance-stage|id="rank-stability"/);
     }
+    const inquiry = await app.fetch(new Request(origin + path + "/inquiry"));
+    assert.equal(inquiry.status, 200);
+    let inquiryStatus = "";
+    const inquiryHtml = await new HTMLRewriter().on("[data-inquiry-status]", {
+      text(chunk) { inquiryStatus += chunk.text; },
+    }).transform(inquiry).text();
+    assert.match(inquiryStatus, /과거 평가.*재평가 필요.*실행 보류/);
+    assert.match(inquiryHtml, /data-inquiry-permission/);
   } finally { app.dispose(); }
 });
 
