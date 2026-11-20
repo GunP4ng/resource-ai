@@ -83,12 +83,13 @@ describe("legal evidence lookup", () => {
     expect(result.issues.map((issue) => issue.kind)).toContain("site-specific");
   });
 
-  test("recommendation lookup retains weak relevance with metadata issues", () => {
-    const input = { ...caseInput, process: "결속밴드 절단" };
+  test.each(["결속밴드 절단", "사출 퍼지 배출"])("recommendation lookup retains weak relevance with metadata issues: %s", (process) => {
+    const input = { ...caseInput, process };
     const weak = { ...candidate, processTerms: ["사출"] };
     const result = lookupLegalEvidence(input, [weak], { includeWeakContext: true });
     expect(result.evidence).toEqual([record]);
-    expect(result.issues).toEqual([{ kind: "unrelated", sourceId: record.sourceId }]);
+    const kind = process === "사출 퍼지 배출" ? "context-ambiguous" : "unrelated";
+    expect(result.issues).toEqual([{ kind, sourceId: record.sourceId }]);
     for (const unverified of [
       { ...weak, originalVerified: false },
       { ...weak, claimVerified: false },
@@ -98,7 +99,7 @@ describe("legal evidence lookup", () => {
     ] satisfies readonly EvidenceCandidate[]) {
       const accepted = lookupLegalEvidence(input, [unverified], { includeWeakContext: true });
       expect(accepted.evidence).toEqual([unverified.record]);
-      expect(accepted.issues).toContainEqual({ kind: "unrelated", sourceId: record.sourceId });
+      expect(accepted.issues).toContainEqual({ kind, sourceId: record.sourceId });
       expect(accepted.issues).toHaveLength(2);
     }
     expect(lookupLegalEvidence(input, [weak]).evidence).toEqual([]);
@@ -107,17 +108,35 @@ describe("legal evidence lookup", () => {
   for (const [field, value] of [
     ["polymer", "PVC"],
     ["polymer", "steel"],
+    ["polymer", null],
+    ["polymer", "PP/PE 다층"],
+    ["polymer", "PP (미확인)"],
     ["contamination", "폐유 혼합"],
+    ["contamination", null],
+    ["contamination", "없음 (미확인)"],
     ["process", "사출 아님"],
+    ["process", "사출 공정이 아님"],
+    ["process", "사출하지 않음"],
+    ["process", "not 사출"],
   ] as const) {
     test(`weak lookup cannot cite a contradicted ${field}: ${value}`, () => {
-      const input = { ...caseInput, [field]: value, hazardousContact: "no" as const };
+      const input = { ...caseInput, process: "사출 퍼지 배출", [field]: value, hazardousContact: "no" as const };
       const result = lookupLegalEvidence(input, [candidate], { includeWeakContext: true });
       expect(result.evidence).toEqual([]);
       expect(result.citations).toEqual([]);
-      expect(result.issues[0]?.kind).toBe(field === "process" ? "context-ambiguous" : "unrelated");
+      expect(result.issues[0]?.kind).toBe(["PVC", "steel", "폐유 혼합"].includes(value ?? "") ? "unrelated" : "context-ambiguous");
     });
   }
+
+  test.each([
+    [{ ...candidate, siteSpecific: true }, "site-specific"],
+    [{ ...candidate, requireSafeContext: true }, "hazardous-contact-unconfirmed"],
+  ] satisfies readonly (readonly [EvidenceCandidate, SearchIssueKind])[])("process ambiguity cannot bypass applicability: %s", (restricted, kind) => {
+    const result = lookupLegalEvidence({ ...caseInput, process: "사출 퍼지 배출" },
+      [restricted], { includeWeakContext: true });
+    expect(result.evidence).toEqual([]);
+    expect(result.issues).toEqual([{ kind, sourceId: record.sourceId }]);
+  });
 
   test.each([
     [{ ...candidate, originalVerified: false }, "original-unverified"],
@@ -144,7 +163,7 @@ describe("legal evidence lookup", () => {
       reviewedBy: "reviewer", reviewedAt: record.retrievedAt, effectiveFrom: record.effectiveFrom,
       effectiveTo: null, verifiedThrough: null } },
   ])("requires a locator and supporting text even with weak context: %j", (invalid) => {
-    const result = lookupLegalEvidence(caseInput, [invalid], { includeWeakContext: true });
+    const result = lookupLegalEvidence({ ...caseInput, process: "사출 퍼지 배출" }, [invalid], { includeWeakContext: true });
     expect(result.evidence).toEqual([]);
     expect(result.citations).toEqual([]);
     expect(result.issues).toEqual([{ kind: "invalid-candidate", sourceId: record.sourceId }]);
@@ -157,10 +176,13 @@ describe("legal evidence lookup", () => {
     { effectiveFrom: "2026-01-01", effectiveTo: "2026-10-01" },
     { effectiveFrom: "2026-01-01", effectiveTo: "2026-02-30" },
   ])("excludes evidence outside a valid effective period: %j", (period) => {
-    const result = lookupLegalEvidence(caseInput, [{ ...candidate, record: { ...record, ...period } }]);
-    expect(result.evidence).toEqual([]);
-    expect(result.citations).toEqual([]);
-    expect(result.issues[0]?.kind).toBe(period.effectiveTo === null ? "out-of-period" : "stale");
+    for (const options of [undefined, { includeWeakContext: true }]) {
+      const result = lookupLegalEvidence({ ...caseInput, process: options ? "사출 퍼지 배출" : caseInput.process },
+        [{ ...candidate, record: { ...record, ...period } }], options);
+      expect(result.evidence).toEqual([]);
+      expect(result.citations).toEqual([]);
+      expect(result.issues[0]?.kind).toBe(period.effectiveTo === null ? "out-of-period" : "stale");
+    }
   });
 
   test("returns a verified generic article citation from the bundled registry", () => {

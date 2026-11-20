@@ -2,6 +2,19 @@
 export const feedbackPath = "/app-feedback.js";
 export const feedbackScript = `"use strict";
 (() => {
+  const openedForPrint = new Set();
+  window.addEventListener("beforeprint", () => {
+    for (const detail of document.querySelectorAll("details")) {
+      if (!detail.open) {
+        openedForPrint.add(detail);
+        detail.open = true;
+      }
+    }
+  });
+  window.addEventListener("afterprint", () => {
+    for (const detail of openedForPrint) detail.open = false;
+    openedForPrint.clear();
+  });
   const pending = new WeakSet();
   const forms = [...document.querySelectorAll('form[method="post"]')];
   const reset = form => {

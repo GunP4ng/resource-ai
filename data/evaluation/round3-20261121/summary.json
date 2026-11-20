@@ -1,0 +1,63 @@
+{
+  "scope": "Same 18 exposed text-only development inputs; deterministic host and public arithmetic, zero provider calls",
+  "cases": 18,
+  "originalInputHashesVerified": 18,
+  "states": {
+    "compared": 8,
+    "needs-review": 4,
+    "needs-information": 6
+  },
+  "stateChanges": 0,
+  "comparedOutputsUnchanged": 8,
+  "routeSupportedBefore": 13,
+  "routeSupportedAfter": 14,
+  "newlySupported": [
+    "HYEOB-20261112-008"
+  ],
+  "remainingUnsupported": [
+    "HYEOB-20261112-009",
+    "HYEOB-20261112-010",
+    "OYS-20261110-006",
+    "OYS-20261110-008"
+  ],
+  "automaticPublicScenarioCount": 7,
+  "interpretation": "Conditional source-chain support is not factual eligibility or measured accuracy. Automatic scenarios use user mass with template assumptions; holds and null incineration cost remain.",
+  "implementation": [
+    {
+      "path": "src/evidence.ts",
+      "sha256": "9f49b3976c110cc3fe16c11c81794b714bdbc90d6feb91e266aca3f6f270e168"
+    },
+    {
+      "path": "src/conditional-alternatives.ts",
+      "sha256": "ecbe02adc975d6bc829db437362b3e1c87357df4081a00028fe2ed370900a22e"
+    },
+    {
+      "path": "src/o-input-public-scenario.ts",
+      "sha256": "7fadbe2378192cecd831dbc34c0f0250088c4b9d786bdc49a1f5176a7d96afaf"
+    },
+    {
+      "path": "src/app-case-routes.ts",
+      "sha256": "e3588e9c249d1ee958193314eb0ec6554fab343b02eb95ac8808d9526315995f"
+    },
+    {
+      "path": "src/report.ts",
+      "sha256": "12e5193de394c18fa728e8fe6aa4646f1d2ddac763fdc5b0620ad45176abc5eb"
+    },
+    {
+      "path": "src/report-research.ts",
+      "sha256": "dc0466cf6d6b6d7e6b40804d59ca17c0635dd33db3792d48404d7203270d7f50"
+    },
+    {
+      "path": "data/sources/evidence-candidates.json",
+      "sha256": "898bddaeae7559fbffe8ce998c4f32764023328147492519f904c7d81a43d9a4"
+    },
+    {
+      "path": "data/sources/manifest.json",
+      "sha256": "fe8c9b88a97f8059ffd16220785c5c0eda61ce86c267809caf78985d842f1fc7"
+    },
+    {
+      "path": "data/reference/domestic-scenario-context-20261121.json",
+      "sha256": "5b42cdc65ff20785f7bfd2f0350c3e126359758fb07af3f6463551cefecc4229"
+    }
+  ]
+}

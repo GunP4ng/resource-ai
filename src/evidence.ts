@@ -192,8 +192,11 @@ export function lookupLegalEvidence(input: CaseInput, candidates?: readonly Evid
     const issue = options?.includeWeakContext ? validityIssue ?? contextIssue : contextIssue ?? validityIssue;
     if (issue !== null) {
       issues.push({ kind: issue, sourceId: candidate.record.sourceId });
-      // Only an unrelated generating process can be advisory; the material and condition must match.
-      if (!options?.includeWeakContext || issue !== "unrelated" || process !== "unrelated"
+      // A weak generating process is advisory only; negation, material and condition remain gates.
+      const advisoryProcess = (issue === "unrelated" && process === "unrelated")
+        || (issue === "context-ambiguous" && process === "ambiguous"
+          && !/아님|아니|않|\b(?:not|no)\b/iu.test(input.process ?? ""));
+      if (!options?.includeWeakContext || !advisoryProcess
         || polymer !== "match" || contamination !== "match") continue;
     }
     const record = candidate.record;

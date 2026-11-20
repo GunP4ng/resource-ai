@@ -1,0 +1,49 @@
+{
+  "purpose": "reference-context-only",
+  "retrievedAt": "2026-11-20",
+  "domesticLifecycleCarbon": null,
+  "businessPlasticIncinerationFee": null,
+  "electricity": {
+    "title": "2025년 승인 국가 온실가스 배출·흡수계수",
+    "publisher": "온실가스종합정보센터",
+    "publishedAt": "2025-12-18",
+    "url": "https://www.gir.go.kr/home/board/read.do?boardId=86&boardMasterId=2&menuId=36",
+    "documentUrl": "https://www.gir.go.kr/home/file/readDownloadFile.do?encFileId=8471b088df43a5dbe3cdcdabef21e3ff4bd1181a9fc201b7&fileSeq=2",
+    "sha256": "9d10cbda28e072a1e6efd13a368f1b6f7d34d1fa4a2093dc93235a2ac04ebc9d",
+    "locator": "PDF 1쪽, 2023년 소비단 CO2-eq; 2쪽 주석",
+    "value": 0.4173,
+    "unit": "tCO2e/MWh",
+    "boundary": "국내 전력 소비단, 2023년 활동자료, 2006 IPCC 지침·AR5 GWP. 폐플라스틱 전과정 계수가 아님.",
+    "missing": "공정별 전력 사용량(kWh)과 다른 처리 활동량이 없어 이 사례의 국내 탄소량으로 환산하지 않음."
+  },
+  "incinerationParameters": {
+    "title": "2024년 승인 국가 온실가스 배출·흡수계수",
+    "publisher": "온실가스종합정보센터",
+    "publishedAt": "2025-01-07",
+    "url": "https://www.gir.go.kr/home/board/read.do?boardId=80&boardMasterId=2&menuId=36",
+    "documentUrl": "https://www.gir.go.kr/home/file/readDownloadFile.do?encFileId=54eac99a8e2becafbeba9a8e57aed8b337b0ab10f8df4a34&fileSeq=1",
+    "sha256": "f76cd532fd190f370d473e7dcaa0aeb2c6db63b5727d7526c6afbc54ac3451aa",
+    "locator": "PDF 5쪽, 소각 부문 사업장폐기물 CO2 매개변수 / 폐합성수지류",
+    "dryMatterFraction": 0.7884,
+    "carbonFraction": 0.4923,
+    "unit": "무차원 비율",
+    "boundary": "국내 폐합성수지류 범주의 소각 CO2 매개변수. PET·HDPE 개별 계수나 kgCO2e/kg 전과정 계수가 아님.",
+    "missing": "화석탄소 비율·산화 조건·비CO2 배출 및 전과정 활동량을 별도로 확인해야 함. 2025 승인 목록에는 새 소각 행이 없으며 2024 값을 최신 현장값으로 간주하지 않음."
+  },
+  "municipalFee": {
+    "title": "인천시 광역폐기물처리시설 폐기물 반입수수료 단계적 인상",
+    "publisher": "인천광역시 자원순환과",
+    "publishedAt": "2025-10-01",
+    "announcedEffectiveFrom": "2026-01-01",
+    "url": "https://www.incheon.go.kr/IC010205/view?repSeq=DOM_0000000013230712",
+    "sha256": "54a754118bed9ba46e2511235ce403cd7e9909c438192e3194a0e0d35ea74e62",
+    "locator": "본문 1~3문단 및 반입가산금 문단",
+    "value": 127298,
+    "unit": "KRW/t",
+    "boundary": "송도·청라 시설의 생활폐기물 반입수수료 공표값. 사업장 폐플라스틱 견적이 아님.",
+    "missing": "사업장 폐기물 반입 자격·성상·시설 인수·운송비·VAT·가산금 적용이 확인되지 않아 f_inc에 대입하지 않음.",
+    "eligibilityUrl": "https://www.law.go.kr/LSW/ordinInfoP.do?ordinSeq=2124783",
+    "eligibilityLocator": "인천광역시 조례 제7716호(2026-07-01 시행), 제2조·제8~10조·제14조",
+    "license": "공공누리 출처표시"
+  }
+}

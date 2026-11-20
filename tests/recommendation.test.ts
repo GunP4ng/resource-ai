@@ -7,6 +7,7 @@ import { renderReport } from "../src/report.ts";
 import { lookupLegalEvidence } from "../src/evidence.ts";
 import { assessCase } from "../src/assessment.ts";
 import { recommend, recommendationBlockers } from "../src/recommendation.ts";
+import h008 from "../data/h-candidates/2026-11-12/inputs/HYEOB-20261112-008.json" with { type: "json" };
 
 test("complete safe facts produce a public-law conditional recommendation without field resources", async () => {
   const domain = createResourceDomain(syntheticCase);
@@ -211,18 +212,24 @@ for (const [name, patch, state, routes] of [
   ["hazardous contact", { hazardousContact: "yes" }, "needs-review", ["disposal"]],
   ["mixed material", { polymer: "PP/PE 다층" }, "needs-review",
     ["mechanical-recycling", "other-recovery", "disposal"]],
+  ["H008 oil residue unknown", { ...h008, hazardousContact: "no" }, "needs-information",
+    ["mechanical-recycling", "other-recovery", "disposal"]],
 ] as const) {
   test(`conditional alternatives preserve ${name} hold and expose source-bounded route questions`, async () => {
     const input = { ...syntheticCase, ...patch };
+    const original = structuredClone(input);
     const domain = createResourceDomain(input);
     const result = await domain.decide();
     assert.equal(result.state, state);
     assert.equal(result.caseId, input.caseId);
+    assert.deepEqual(input, original);
+    assert.equal("recommendations" in result, false);
     assert.deepEqual(result.conditionalAlternatives?.map(item => item.routeId), routes);
     for (const alternative of result.conditionalAlternatives ?? []) {
       assert.equal(alternative.state, "informational");
       assert.equal(alternative.executable, false);
-      const supported = (name === "mixed material" || name === "missing contamination") && alternative.routeId === "mechanical-recycling";
+      const supported = (name === "mixed material" || name === "missing contamination" || name === "H008 oil residue unknown")
+        && alternative.routeId === "mechanical-recycling";
       assert.equal(alternative.support.state, supported ? "route-supported" : "unavailable");
       assert.equal(alternative.support.missingEvidence.length === 0, supported);
       assert.notDeepEqual(alternative.nextChecks, []);
@@ -230,6 +237,13 @@ for (const [name, patch, state, routes] of [
       assert.ok(alternative.citations.every(citation =>
         result.evidence.some(record => record.sourceId === citation.sourceId && record.locator === citation.locator)));
       if (!supported) assert.ok(alternative.citations.every(citation => citation.scope === "general-requirement"));
+      if (name === "H008 oil residue unknown" && supported) {
+        assert.equal(alternative.condition.code, "clean-separated");
+        assert.deepEqual(alternative.citations.map(citation => citation.sourceId).sort(), [
+          "legal-291947-annex4-2-r3-3", "legal-291947-annex4-3-types",
+          "legal-291947-annex4-code", "legal-291947-annex5-3-common",
+        ]);
+      }
     }
     assert.deepEqual(parseDecision(result), result);
     assert.ok((await domain.assessRoutes(input)).every(route => route.eligibility.state === "unknown"));

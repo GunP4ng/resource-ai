@@ -5,8 +5,48 @@ import { createApp } from "../src/app.ts";
 import { createResourceApp } from "../src/session.ts";
 import { createCaseStore } from "../src/o-case-store.ts";
 import { feedbackPath, feedbackScript } from "../src/app-feedback.ts";
+import { demo } from "../src/o-demo.ts";
+import { renderReport } from "../src/report.ts";
 
 const origin = "http://localhost:3000";
+test("beforeprint reveals actual decision sections and afterprint restores disclosure state", async () => {
+  const fixture = await demo("normal");
+  assert.ok(fixture);
+  const details: { open: boolean }[] = [], ancestors: { open: boolean }[] = [];
+  const segments: { text: string; ancestors: { open: boolean }[] }[] = [];
+  await new HTMLRewriter()
+    .on("details", { element(element) {
+      const node = { open: element.hasAttribute("open") };
+      details.push(node); ancestors.push(node);
+      element.onEndTag(() => { ancestors.pop(); });
+    } })
+    .on("main", { text(chunk) { segments.push({ text: chunk.text, ancestors: [...ancestors] }); } })
+    .transform(new Response(renderReport(fixture.result, fixture.presentation))).text();
+  assert.ok(details.length >= 2);
+  details[0]!.open = true; // Keep the disclosure the reader had already opened.
+  const original = details.map(detail => detail.open);
+  const visible = () => segments.filter(segment => segment.ancestors.every(detail => detail.open)).map(segment => segment.text).join("");
+  const sections = ["대안 비교 요약", "서버 후보 우선순위", "경로와 조건", "사례별 업체 근거", "제약과 다음 확보 항목"];
+  for (const section of sections) assert.equal(visible().includes(section), false);
+  const events = new Map<string, () => void>();
+  runInNewContext(feedbackScript, {
+    document: {
+      querySelectorAll(selector: string) {
+        if (selector === 'form[method="post"]') return [];
+        assert.equal(selector, "details"); return details;
+      },
+      addEventListener() {},
+    },
+    window: { addEventListener(name: string, listener: () => void) { events.set(name, listener); } },
+  });
+  const before = events.get("beforeprint"), after = events.get("afterprint");
+  assert.ok(before); assert.ok(after);
+  before(); before(); // Some print pipelines notify more than once.
+  for (const section of sections) assert.ok(visible().includes(section), `${section} must be available to printing`);
+  after(); after();
+  assert.deepEqual(details.map(detail => detail.open), original);
+});
+
 test("primary answer links resolve on fixed demos and legacy adapter cases", async () => {
   const result = { state: "needs-information", caseId: "legacy-answer", questions: ["합성 질량 확인"], evidence: [] } as const;
   const app = createApp({ origin, adapter: { submit: async () => result, answer: async () => result } });

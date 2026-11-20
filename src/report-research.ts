@@ -1,6 +1,8 @@
 import type { CaseResearchReport } from "./o-case-research-schema.ts";
+import type { PublicInputScenario } from "./o-input-public-scenario.ts";
 import { escapeHtml, list, safeLink } from "./report-html.ts";
 import recyclingDirectory from "../data/reference/public-recycling-candidates-20261121.json" with { type: "json" };
+import domestic from "../data/reference/domestic-scenario-context-20261121.json" with { type: "json" };
 
 const routeNames = { recycling: "재활용 시나리오", landfill: "매립 시나리오", energy_recovery: "에너지 회수 시나리오" } as const;
 const missingNames: Readonly<Record<string, string>> = {
@@ -17,6 +19,44 @@ function originalLink(url: string, title: string): string {
   const href = safeLink(url);
   return href === null ? escapeHtml(title) : `<a class="source-link" href="${href}" rel="noreferrer">${escapeHtml(title)}</a>`;
 }
+function domesticContext(material: string, inputs: PublicInputScenario["calculations"]["inputs"]): string {
+  const warm = inputs.find(input => input.input_id === `warm.${material}.energy_recovery`);
+  const electricity = domestic.electricity, waste = domestic.incinerationParameters, fee = domestic.municipalFee;
+  return `<section aria-label="국내와 미국 계수의 범위"><h3>탄소 계수의 국내·미국 범위</h3>
+    <div class="table-wrap" role="region" aria-label="계수와 단위 비교" tabindex="0"><table><thead><tr><th>공개 근거</th><th>값·단위</th><th>계산 경계</th></tr></thead><tbody>
+    <tr><td>미국 WARM ${escapeHtml(material)} 에너지 회수</td><td>${warm?.value == null ? "미확보" : escapeHtml(String(warm.value))} MTCO2e/short ton</td><td>운송·에너지 대체 크레딧을 포함한 순 전과정 시나리오</td></tr>
+    <tr><td>국내 전력 소비단 · 2025 승인</td><td>${electricity.value} ${electricity.unit}</td><td>2023년 전력 사용의 간접 배출</td></tr>
+    <tr><td>국내 폐합성수지 소각 · 2024 승인</td><td>DM ${waste.dryMatterFraction}<br>CF ${waste.carbonFraction}<br>${waste.unit}</td><td>건조물질·탄소 함량 매개변수</td></tr>
+    </tbody></table></div>
+    <p>국내 전과정 탄소량: 미산정. 단위·활동·경계가 달라 위 값을 직접 빼거나 WARM을 대체하지 않습니다.</p>
+    <details><summary>국내 계수 출처와 미산정 사유</summary>
+      ${originalLink(electricity.url, electricity.title)}<p>${escapeHtml(electricity.locator)} · ${escapeHtml(electricity.boundary)} ${escapeHtml(electricity.missing)}</p>
+      ${originalLink(waste.url, waste.title)}<p>${escapeHtml(waste.locator)} · ${escapeHtml(waste.boundary)} ${escapeHtml(waste.missing)}</p>
+      <p>조회 ${domestic.retrievedAt} · 전력 원본 SHA-256 ${electricity.sha256} · 소각 매개변수 원본 SHA-256 ${waste.sha256}</p></details>
+    <details><summary>소각 처리비가 미산정인 이유와 공개 반입요금</summary>
+      <p>사업장 폐플라스틱에 적용할 소각비는 여전히 미확보입니다. ${escapeHtml(fee.missing)}</p>
+      <p>별도 참고: 인천 생활폐기물 ${fee.value.toLocaleString("ko-KR")} ${fee.unit} (${fee.announcedEffectiveFrom} 공표 적용일). ${escapeHtml(fee.boundary)}</p>
+      ${originalLink(fee.url, fee.title)}<p>발표 ${fee.publishedAt} · ${escapeHtml(fee.locator)} · ${escapeHtml(fee.license)}</p>
+      ${originalLink(fee.eligibilityUrl, "반입 자격·제한 조례")}<p>${escapeHtml(fee.eligibilityLocator)}. 시설 소재지 외 자치구 가산금 등은 별도이며 이 사례의 수수료로 대입하지 않았습니다.</p>
+    </details></section>`;
+}
+export function publicInputCalculations(scenario: PublicInputScenario): string {
+  const c = scenario.calculations;
+  return `<section id="public-input-scenario" aria-labelledby="public-input-heading"><h2 id="public-input-heading">${escapeHtml(scenario.material)} ${scenario.userMassKg} kg 공개 시나리오</h2>
+    <p>${escapeHtml(scenario.label)} · 깨끗한 단일 수지 가정에 사용자 질량만 적용했습니다. 실제 오염·허가·인수 적합성을 뜻하지 않습니다.</p>
+    <p>미국 WARM 순 전과정 탄소 · 현장 미검증. 보류·추천 상태와 실행 승인 여부는 바뀌지 않습니다.</p>
+    <div class="table-wrap" role="region" aria-label="일반 입력 공개 비용·탄소" tabindex="0"><table><thead><tr><th>대안</th><th>순비용</th><th>순탄소</th></tr></thead><tbody>${c.results.map(result => `<tr data-public-scenario-result="${result.route_id}"><td data-label="대안">${routeNames[result.route_id]}</td><td data-label="순비용">${value(result.display.net_cost_krw, "KRW", result.missing_inputs.cost)}</td><td data-label="순탄소">${value(result.display.net_carbon_kgco2e, "kgCO2e", result.missing_inputs.carbon)}</td></tr>`).join("")}</tbody></table></div>
+    <details><summary>사용자 질량·원본 가정·계산 출처 확인하기</summary>
+      ${list(scenario.assumptions)}<p>현재 입력 질량 ${scenario.userMassKg} kg · 평가일 ${escapeHtml(scenario.binding.assessmentDate)}. 아래 원본 템플릿의 공정·오염·지역·질량은 현재 사례의 사실이 아닙니다.</p>
+      ${scenario.material === "HDPE" ? "<p>HDPE 가격은 일반 PE 참고가격을 대용했습니다.</p>" : ""}
+      ${c.cases.map(item => `<p>부모 템플릿: ${escapeHtml(item.original.description)} · 원본 질량 ${item.original.massKg} kg.</p>`).join("")}
+      ${c.inputs.map(input => `<p>${escapeHtml(input.input_id)}: ${input.value === null ? `미확보 (${escapeHtml(input.missing_reason ?? "지원값 없음")})` : `${input.value} ${escapeHtml(input.unit)}`} · ${escapeHtml(input.assumption_reason ?? input.transform)}</p>`).join("")}
+      ${c.sources.map(source => `<p>${originalLink(source.url, source.title)} · ${escapeHtml(source.published_or_period)} · ${escapeHtml(source.locator)} · ${escapeHtml(source.boundary)}</p>`).join("")}
+      <p>입력 결합 ${escapeHtml(scenario.binding.inputRevision)} · 파생 데이터 ${scenario.provenance.derivedDatasetSha256} · 파생 전제 ${scenario.provenance.derivedProvenanceSha256}</p>
+      <p>부모 고정 입력 ${scenario.provenance.parentFixtureSha256} · 부모 원본 ${scenario.provenance.parentOriginalSha256}. 파생 데이터는 고정 연구 아티팩트가 아닙니다.</p>
+      <p>WARM·Wonju 자료의 상업 이용·재배포 권리 미확인. 인증된 비공개 연구 표시이며 상업용 보고서와 모델 전송에서 제외합니다.</p>
+    </details>${domesticContext(scenario.material, c.inputs)}</section>`;
+}
 export function researchCalculations(research: CaseResearchReport): string {
   const { attachment } = research;
   const c = attachment.calculations;
@@ -31,7 +71,7 @@ export function researchCalculations(research: CaseResearchReport): string {
     <p>미국 기본 조건의 WARM 순 전과정 시나리오입니다. 국내 시설의 실측 배출이나 감축 실적이 아닙니다. 기간·GWP·운송 포함 경계 차이로 직접 비교에 한계가 있습니다. 음의 순비용은 계약 이익이 아니며 음의 배출은 탄소 제거가 아닙니다.</p>
     <p>합성 제조 자투리를 단일 수지로 보고 미국의 소비 후 폐플라스틱 폐쇄형 재활용 모형에 가정으로 대응했습니다. 잔재물도 같은 수지로 가정합니다.</p>
     ${c.cases[0].material === "HDPE" ? '<p>HDPE 가격에는 일반 PE(generic PE) 참고가격을 대용했습니다. HDPE 개별 계약가격이 아닙니다.</p>' : ""}
-    </details>${c.results.map(result => `<section data-research-result="${result.route_id}"><h3>${routeNames[result.route_id]}</h3>
+    </details>${domesticContext(c.cases[0].material, c.inputs)}<details><summary>경로별 세부 수치·한계 확인하기</summary>${c.results.map(result => `<section data-research-result="${result.route_id}"><h3>${routeNames[result.route_id]}</h3>
       <p><strong>${escapeHtml(result.label)}</strong> · 시나리오 추정, 현장 미검증</p>
       <dl><dt>순비용</dt><dd>${value(result.display.net_cost_krw, "KRW", result.missing_inputs.cost)}</dd>
       <dt>순탄소</dt><dd>${value(result.display.net_carbon_kgco2e, "kgCO2e", result.missing_inputs.carbon)}</dd>
@@ -41,7 +81,7 @@ export function researchCalculations(research: CaseResearchReport): string {
     <ul><li>이 계산은 반출·허가·인수·법적 승인이나 실제 계약·실측 절감 실적을 확인한 결과가 아닙니다.</li>
       <li>국내 GIR 전력 계수는 활동량 모형 없이 플라스틱의 전 처리 경로 계수로 대체할 수 없어 사용하지 않았습니다. 사용권도 미확인입니다.</li>
       <li>상업용 사용이 금지된 KEITI 국가 LCI는 제외했습니다. 영국 보고용 계수도 사용하지 않았습니다.</li>
-      <li>탄소 비교는 같은 고정 WARM 버전·표·지역·단위·계산 경계 안에서만 해석하세요. 다른 GWP 기준으로 보정하지 않았습니다.</li></ul>
+      <li>탄소 비교는 같은 고정 WARM 버전·표·지역·단위·계산 경계 안에서만 해석하세요. 다른 GWP 기준으로 보정하지 않았습니다.</li></ul></details>
     <details><summary>연구 출처·입력·원본 연결 확인하기</summary>
     <h3>자료에 기록된 가정·한계 원문</h3>
     ${list(c.cases.map(item => item.material_mapping_assumption))}${list(c.limitations)}
