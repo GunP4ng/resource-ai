@@ -1,0 +1,185 @@
+{
+  "scope": "Same 18 exposed original inputs; text-only as prior baseline; deterministic existing rules and engine; zero model/provider calls",
+  "cases": 18,
+  "originalHashesVerified": 18,
+  "completeDecisionsUnchanged": 18,
+  "states": {
+    "compared": 8,
+    "needs-information": 6,
+    "needs-review": 4
+  },
+  "stateChanges": 0,
+  "automaticPublicScenarios": 7,
+  "conditionalOptima": 6,
+  "actualSeconds": 0,
+  "recommendedWithoutPublicScenarioWithReasons": 2,
+  "computedPriceCrossovers": 18,
+  "verificationCandidateInventory": {
+    "cases": 18,
+    "candidates": 213,
+    "offered": 161,
+    "omitted": 52,
+    "interpretation": "Host-issued verification options only; no model selection or priority-quality measurement occurred in this replay."
+  },
+  "heldCasesWithOneFactPriority": 3,
+  "hypotheticalOneFactProbes": 17,
+  "heldWithoutPriorityWithRequiredFacts": 7,
+  "sensitivity": {
+    "cases": 6,
+    "samples": 54,
+    "retained": 54,
+    "priceMultipliers": [
+      0.8,
+      1,
+      1.2
+    ],
+    "allocationValues": [
+      0.6,
+      0.8,
+      1
+    ],
+    "interpretation": "Finite model samples; y is a model allocation, not measured substitution. No interval/extrapolation guarantee."
+  },
+  "inputDecisionContextCatalogPreserved": true,
+  "actualIncinerationFeeAndCostRemainNull": true,
+  "baseline": {
+    "path": "data/evaluation/round3-20261121/results.json",
+    "sha256": "0421dc4de047e9db2d505b928df5452d023c835f663abc3062e247796ed14e56"
+  },
+  "limitations": [
+    "Development inputs were exposed, not an unseen evaluation or human accuracy study.",
+    "Hypothetical route openings are not strict eligibility, facility acceptance or execution approval.",
+    "No actual rank2 is invented from the fully quantified scenario comparator.",
+    "Conditional optimum holds only for the modeled three routes, fixed other assumptions and stated fee bound."
+  ],
+  "implementation": [
+    {
+      "path": "src/o-case-guidance.ts",
+      "sha256": "4a72ee0460225d90dd297c780148408fd38066886276ae1cd4f1e3c9538f4c3f"
+    },
+    {
+      "path": "src/o-scenario-guidance.ts",
+      "sha256": "1b984c847accf4f660e8e4bd3337e9a13a718e940a1f750525ed7dbf1720bf96"
+    },
+    {
+      "path": "src/o-supported-scope.ts",
+      "sha256": "7eef83902606d9f8486143277d7558accc071f0174c2f23d3ef5459a88c46b31"
+    },
+    {
+      "path": "src/o-input-public-scenario.ts",
+      "sha256": "ca05902f7364ed008c468820934122ba4dbe748724d5296bebaea6b85c96144f"
+    },
+    {
+      "path": "src/o-calculation-variant.ts",
+      "sha256": "a15136b15a13bd53297e59ead2f51c81044ae47bf9bbb2c02bb1c3c3b33a9d64"
+    },
+    {
+      "path": "src/o-scenario-sensitivity.ts",
+      "sha256": "0a25c20d49bcd91ccc64ca3c1f32e86eeaf44bfa1452a900a013ebaa228a1ddc"
+    },
+    {
+      "path": "src/o-inquiry-reply.ts",
+      "sha256": "f7b114767f1828333844d580d47da04cfb77df35fb561e1988fd1410f33fb84b"
+    },
+    {
+      "path": "src/report-inquiry-reply.ts",
+      "sha256": "54b8be201266a693174ced2991514e450d3a98fa31637d9d5fcb9dcb47aa387f"
+    },
+    {
+      "path": "src/app-case-routes.ts",
+      "sha256": "157895e3f2f55010ac1afe59853bf2453f8114c93cd675890e37876cc9c396d0"
+    },
+    {
+      "path": "src/app.ts",
+      "sha256": "1df63458e1604e445c1d08881ee511923cd65f4bdda070d19720a6062ac8a2d4"
+    },
+    {
+      "path": "src/app-views.ts",
+      "sha256": "292b5e1e983a4f8289145463260227838fcd849029c4ef4043e06af8b5922767"
+    },
+    {
+      "path": "src/app-feedback.ts",
+      "sha256": "806108410bc3c7f9d9ce8851c9210bf913e9f1c6f81fe15f144677ad253d0bbf"
+    },
+    {
+      "path": "src/report.ts",
+      "sha256": "de96ac71de1a54e7f6ef1a2de9acf7424f86c08a02778be547e96a3bffa9e419"
+    },
+    {
+      "path": "src/report-guidance.ts",
+      "sha256": "250456b28497ab791cd6e201f85368466e0680b61f3b44ccb60c19f034be09cb"
+    },
+    {
+      "path": "src/report-inquiry.ts",
+      "sha256": "82c0d7d48ff30687dba6fbfedb3091e15d511d133879465cefdf7e9b4972da35"
+    },
+    {
+      "path": "src/report-model-audit.ts",
+      "sha256": "10e30b4fbe717df2c3e708114f5d594e72c3bfac3927d177c056a32684dce025"
+    },
+    {
+      "path": "src/o-model-audit.ts",
+      "sha256": "0ac36ba384be9bc70492e3c3dd4ae14cb865dba9e8c3dc351ff4a94cf9bab463"
+    },
+    {
+      "path": "src/o-model-audit-schema.ts",
+      "sha256": "962e5e4560f7826270d8c0171e656db96497a7d732a640825b2307fd9b65a8dc"
+    },
+    {
+      "path": "src/domain.ts",
+      "sha256": "845de4d547bbc86306d785a4b10eebcc2e4358ac5430a7c285f49bb9cc7840b7"
+    },
+    {
+      "path": "src/session.ts",
+      "sha256": "87cecf30b265182a868799d529b04ebff22e1180c57fe78b535184ef9ad71cfc"
+    },
+    {
+      "path": "src/app-types.ts",
+      "sha256": "0c07bbd0b4825a218cc2275077d4d92f643e88a2104fadc978e3ecef610bd79f"
+    },
+    {
+      "path": "src/o-case-record-validation.ts",
+      "sha256": "3b11fc10dd7dcc19dfd8e342129f2868e7c0be78e651f4ed05aa819af3437615"
+    },
+    {
+      "path": "src/o-verification-plan.ts",
+      "sha256": "df1b9827b7475ecbd79f1d5c6ca1110643ce379e75ccdb30c459541647460055"
+    },
+    {
+      "path": "src/o-verification-plan-schema.ts",
+      "sha256": "89d46ac2e978e7ea1cb2c1343afeef14cd7ba180c7fef3e51c7c3e3f8de249cb"
+    },
+    {
+      "path": "src/o-verification-plan-candidates.ts",
+      "sha256": "74bec1f0a3dfaf522a9d09e15ef75e9fd51ecdcca96f563c8ecc715b254b746c"
+    },
+    {
+      "path": "src/extension.ts",
+      "sha256": "7d31299a91094f50795b656eabdd4dbdcb72c767105c11e9495a65e0486baf10"
+    },
+    {
+      "path": "src/report-verification-plan.ts",
+      "sha256": "99ac88ea2bf4955fe664a503482c60772afa5b5691fab3981db5fb62e2c4e270"
+    },
+    {
+      "path": "src/report-evidence.ts",
+      "sha256": "937ffade519a7df618cab42d2d7e9b5f70a19adbf116e5d0a8db7a02260f65f4"
+    },
+    {
+      "path": "src/report-research.ts",
+      "sha256": "d8f4643f4d2aca3f7a3a964d8398b04ac91e7a495cc89ebee11190ebc043644f"
+    },
+    {
+      "path": "src/report-styles.ts",
+      "sha256": "c8ba5a011291fec3b51265be7cfa23e0773028dee64c82daf8cae06ae1729ccb"
+    },
+    {
+      "path": "scripts/measure-guidance.ts",
+      "sha256": "55125587ecfad7a82625d11c182f9b1f87700e9059ca913814a12e3806387be4"
+    },
+    {
+      "path": "data/reference/domestic-scenario-context-20261121.json",
+      "sha256": "8beb81a06248aafe9f117807111d82f8bbd7e7da8e70f2526e9c747f48ed66c3"
+    }
+  ]
+}

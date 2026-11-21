@@ -46,7 +46,7 @@ test("held case retains its own required evidence and cannot display numerical s
   assert.ok(publicScenario);
   const guidance = await buildCaseGuidance(input, decision, { publicScenario });
   let reasons = "", sensitivityCells = 0;
-  await new HTMLRewriter().on("[data-priority-unavailable] li", {
+  await new HTMLRewriter().on("#case-reasons li", {
     text(chunk) { reasons += chunk.text; },
   }).on("[data-sensitivity-cell]", { element() { sensitivityCells++; } })
     .transform(new Response(renderReport(decision, { mode: "offline" }, {

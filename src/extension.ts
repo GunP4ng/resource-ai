@@ -4,6 +4,8 @@ import type { CaseInput, DecisionResult } from "./contracts.ts";
 import { createResourceDomain } from "./domain.ts";
 import type { DomainResources } from "./domain.ts";
 import type { DecisionReference } from "./decision-references.ts";
+import { createVerificationCandidates, presentAssessmentDecision } from "./o-verification-plan-candidates.ts";
+import { revision } from "./o-validation.ts";
 
 /**
  * Registration diagnostics. Eligibility and live Azure verification remain incomplete.
@@ -41,7 +43,9 @@ export function createCaseTools(input: CaseInput, resources: DomainResources = {
       async execute(_id, _params, signal) {
         signal?.throwIfAborted();
         const decision = await domain.decide();
-        return respond({ assessment: domain.assess(), decision, ...(reference ? { decisionReference: reference(decision) } : {}) });
+        return respond({ assessment: domain.assess(), decision,
+          verificationCandidates: createVerificationCandidates(revision(input), presentAssessmentDecision(decision)),
+          ...(reference ? { decisionReference: reference(decision) } : {}) });
       },
     }),
     defineTool({

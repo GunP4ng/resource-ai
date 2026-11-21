@@ -1,6 +1,7 @@
 import type { ModelHostAudit } from "./o-model-audit.ts";
 import type { ModelAuditField } from "./o-model-audit-schema.ts";
 import { escapeHtml, list } from "./report-html.ts";
+import { readableReasons } from "./report-evidence.ts";
 
 const statuses = {
   absent: "제안 필드 없음",
@@ -31,10 +32,11 @@ const reasons = {
 
 function fieldText(item: ModelAuditField): string {
   const id = (value: { readonly hostId: string | null; readonly sha256: string }) =>
-    value.hostId ?? `호스트 미확인 식별자 SHA-256 ${value.sha256}`;
+    Object.entries(routes).find(([key]) => key === value.hostId)?.[1]
+      ?? value.hostId ?? `호스트 미확인 식별자 SHA-256 ${value.sha256}`;
   switch (item.kind) {
-    case "route": return `${routes[item.route]} · ${id(item.routeId)} · ${eligibility[item.eligibility]}`;
-    case "alternative": return `${routes[item.routeId]} · ${item.condition} · ${item.support === "route-supported" ? "조건별 경로 근거 있음" : "경로 근거 미확보"}`;
+    case "route": return `${routes[item.route]} · ${eligibility[item.eligibility]}`;
+    case "alternative": return `${routes[item.routeId]} · ${{ "clean-separated": "깨끗한 단일 수지 분리 확인", "contaminated-or-inseparable": "오염·분리 가능성 확인", "hazard-classification": "유해성 분류 확인", "reuse-purpose": "재사용 용도 확인" }[item.condition]} · ${item.support === "route-supported" ? "조건별 경로 근거 있음" : "경로 근거 미확보"}`;
     case "evidence": return `출처 ${id(item.sourceId)} · 기록 SHA-256 ${item.recordSha256}`;
     case "processor": return `업체 ${id(item.processorId)} · 인수 ${item.acceptance === "confirmed" ? "확인" : "미확인"}`;
     case "scenario": return `${id(item.routeId)} · 비용 ${availability[item.cost]} · 탄소 ${availability[item.carbon]}`;
@@ -47,14 +49,16 @@ function fieldText(item: ModelAuditField): string {
   }
 }
 
-export function renderModelHostAudit(audit: ModelHostAudit): string {
+export function renderModelHostAudit(audit: ModelHostAudit, sharedReasons: readonly string[] = []): string {
+  const validationReasons = readableReasons(audit.validation.reasons);
   return `<section id="model-host-audit" data-model-audit-origin="${audit.origin}">
     <h3>이 평가에 저장된 모델 제안과 호스트 검사</h3>
     <p><strong>${origins[audit.origin]} · ${statuses[audit.validation.status]}</strong></p>
     <p>호스트가 최종 판정을 계산합니다. 검증 통과는 제안의 독립적 기여·자동 채택·현장 적합성·실행 승인의 증명이 아닙니다.
       ${audit.origin === "host-decision-reference" ? "이 실행은 호스트가 이미 만든 결과를 모델이 선택한 기록이며, 모델이 새 판단을 만들었다고 해석하지 않습니다." : ""}
       제안과 최종 출력의 구조화된 항목만 보존하며 모델의 내부 사고 과정은 기록하지 않습니다.</p>
-    ${audit.validation.reasons.length ? list(audit.validation.reasons) : ""}
+    ${list(validationReasons.filter(reason => !sharedReasons.includes(reason)))}
+    ${validationReasons.some(reason => sharedReasons.includes(reason)) ? '<p><a href="#case-reasons">호스트가 먼저 확인한 보류 사유 보기</a></p>' : ""}
     ${audit.validation.reasonsTruncated ? "<p>검사 사유는 저장 한도에서 일부만 표시합니다.</p>" : ""}
     ${audit.stages.map(stage => `<details data-model-audit-stage="${stage.stage}" data-validation-status="${stage.status}">
       <summary>${stage.stage}. ${stageNames[stage.stage - 1]} · ${statuses[stage.status]}</summary>

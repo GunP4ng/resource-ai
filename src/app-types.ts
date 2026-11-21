@@ -5,10 +5,13 @@ import type { OCaseStore } from "./o-case-store.ts";
 import type { createPhotoStore } from "./photos.ts";
 import type { PhotoExecutionAuthority } from "./photo-execution.ts";
 import type { ModelHostAudit } from "./o-model-audit.ts";
+import type { VerificationPlan } from "./o-verification-plan.ts";
 export interface AssessmentEnvelope {
   readonly decision: DecisionResult;
   readonly execution?: { readonly traceId: string; readonly usage?: string | null };
   readonly modelAudit?: ModelHostAudit;
+  /** Optional advisory selection, separate from actual safety/eligibility and required checks. */
+  readonly verificationPlan?: VerificationPlan;
 }
 export type StoredAssessment = AssessmentEnvelope;
 /** Proposed H1/H4 handoff; not a senpi API. No provider is invoked by this module. */
