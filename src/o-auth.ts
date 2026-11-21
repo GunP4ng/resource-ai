@@ -138,18 +138,19 @@ export function createLocalAuth(runtime: RuntimeDatabase, options: { origin: str
     return { actorId: a.actor_id, validUntil: s.expires_at,
       assertCurrent() { protectedCall(() => { if (!current(tokenHash)) fail("denied"); }); } };
   };
-  function takeAttempt(username: string) {
+  function takeAttempt(username: string, failed = false) {
     immediate(() => {
       const time = now(), start = time - LOCAL_AUTH_LIMITS.windowMs;
       db.query("DELETE FROM login_limits WHERE window_start<=?").run(start);
-      const keys = ["global", `user:${hash(username)}`];
+      const keys = failed ? [`user:${hash(username)}`] : ["global", `user:${hash(username)}`];
       for (const key of keys) {
         const row = db.query<{ window_start: number; attempts: number }, [string]>("SELECT window_start,attempts FROM login_limits WHERE key=?").get(key);
         if (row && (!Number.isSafeInteger(row.window_start) || row.window_start < 0 || row.window_start > time
           || !Number.isSafeInteger(row.attempts) || row.attempts < 0)) fail("unavailable");
         if (row && row.attempts >= (key === "global" ? LOCAL_AUTH_LIMITS.globalAttempts : LOCAL_AUTH_LIMITS.attempts)) fail("throttled");
         if (!row && (db.query<{ n: number }, []>("SELECT count(*) AS n FROM login_limits").get()?.n ?? Infinity) >= LOCAL_AUTH_LIMITS.limitKeys) fail("unavailable");
-        db.query("INSERT INTO login_limits(key,window_start,attempts) VALUES(?,?,1) ON CONFLICT(key) DO UPDATE SET attempts=attempts+1").run(key, time);
+        if (failed || key === "global")
+          db.query("INSERT INTO login_limits(key,window_start,attempts) VALUES(?,?,1) ON CONFLICT(key) DO UPDATE SET attempts=attempts+1").run(key, time);
       }
     });
   }
@@ -166,11 +167,11 @@ export function createLocalAuth(runtime: RuntimeDatabase, options: { origin: str
           return bunPassword.verify(password, before?.password_hash ?? dummyHash);
         });
         check(signal, guard);
-        return immediate(() => {
+        const logged = immediate(() => {
           check(signal, guard);
           const a = account(username);
           if (!valid || !before || !a || a.disabled || a.actor_id !== before.actor_id
-            || a.credential_generation !== before.credential_generation || a.password_hash !== before.password_hash) fail("denied");
+            || a.credential_generation !== before.credential_generation || a.password_hash !== before.password_hash) return null;
           const time = now();
           db.query("DELETE FROM sessions WHERE expires_at<=?").run(time);
           db.query("DELETE FROM sessions WHERE actor_id=?").run(a.actor_id);
@@ -181,8 +182,11 @@ export function createLocalAuth(runtime: RuntimeDatabase, options: { origin: str
           check(signal, guard);
           const identity = current(tokenHash);
           if (!identity) fail("denied");
+          db.query("DELETE FROM login_limits WHERE key=?").run(`user:${hash(username)}`);
           return { identity, setCookie: cookie(token) };
         });
+        if (!logged) { takeAttempt(username, true); fail("denied"); }
+        return logged;
       }).catch(error => { if (error instanceof LocalAuthError) throw error; fail("unavailable"); });
     },
     resolve(request: Request, signal: AbortSignal): LocalIdentity | null {
