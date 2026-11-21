@@ -1,5 +1,6 @@
 /** Exact host-produced messages. These are not inferred from model wording. */
 export const safetyReasons = {
+  materialTreatment: "도료·방부제·접착제·오일 등 처리·접촉 가능성이 보고되었습니다. 성분·SDS·잔류량·유해성 분류를 검토하기 전에는 재활용 추천을 보류합니다.",
   contactUnknown: "유해물질과 접촉했는지 확인할 수 있나요?",
   contaminationUnknown: "오염·접촉 이력에 미확인 내용이 있습니다. 이전 내용물·접촉 물질명과 SDS 등 확인 자료, 잔류물·세척 확인 자료가 있나요? 확인 전에는 세척 여부만으로 유해물질 접촉이 없었다고 확정하지 않습니다.",
   contactReported: "유해물질 접촉이 보고되었습니다. 접촉 물질·시험 자료와 지정폐기물 해당 여부를 별도 검토해야 합니다.",

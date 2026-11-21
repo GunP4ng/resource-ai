@@ -2,6 +2,9 @@ import registryJson from "../data/sources/evidence-candidates.json" with { type:
 import type { CaseInput, EvidenceRecord } from "./contracts.ts";
 import { sourceManifest } from "./sources.ts";
 import { loadEvidenceRegistry } from "./evidence-registry.ts";
+import { canonicalMaterial, materialFamily, materialStream } from "./material-context.ts";
+import type { MaterialFamily, MaterialStream } from "./material-context.ts";
+import { isUnknownCaseText } from "./o-validation.ts";
 export { loadEvidenceRegistry } from "./evidence-registry.ts";
 
 export interface EvidenceProvenance {
@@ -19,6 +22,8 @@ export interface EvidenceProvenance {
 }
 
 export interface EvidenceCandidate {
+  readonly materialFamily?: MaterialFamily;
+  readonly materialStream?: MaterialStream;
   readonly record: EvidenceRecord;
   readonly kind: "waste-code" | "recycling-type" | "annex" | "other";
   readonly claim: string;
@@ -99,36 +104,21 @@ function validDate(value: string): boolean {
   return !Number.isNaN(time) && new Date(time).toISOString().slice(0, 10) === value;
 }
 
-const polymerAliases = {
-  pp: ["pp", "폴리프로필렌"], pe: ["pe", "폴리에틸렌"],
-  pet: ["pet", "폴리에틸렌테레프탈레이트"], ps: ["ps", "폴리스티렌"],
-  abs: ["abs", "아크릴로니트릴부타디엔스티렌"], pvc: ["pvc", "폴리염화비닐"],
-  eps: ["eps", "발포폴리스티렌"],
-} as const;
-
 function normalized(value: string): string {
   return value.trim().replace(/\s+/g, " ").toLocaleLowerCase("ko");
 }
 
-function polymerKey(value: string): string | null {
-  const key = normalized(value).replace(/ /g, "");
-  for (const [polymer, aliases] of Object.entries(polymerAliases)) {
-    if (aliases.some((alias) => alias === key)) return polymer;
-  }
-  return null;
-}
-
 function contextMatch(value: string | null, terms: readonly string[], context: "process" | "polymer" | "contamination"): "match" | "missing" | "ambiguous" | "unrelated" {
   if (terms.length === 0) return "match";
-  if (value === null || value.trim() === "") return "missing";
-  const input = normalized(value);
+  const input = normalized(value ?? "");
+  if (context === "contamination" ? input === "" : isUnknownCaseText(input)) return "missing";
   let ambiguous = false;
   for (const term of terms) {
     const expected = normalized(term);
     if (input === expected || input.replace(/ /g, "") === expected.replace(/ /g, "")) return "match";
     if (context === "polymer") {
-      const inputPolymer = polymerKey(input);
-      const expectedPolymer = polymerKey(expected);
+      const inputPolymer = canonicalMaterial(input);
+      const expectedPolymer = canonicalMaterial(expected);
       if (inputPolymer !== null && expectedPolymer !== null) {
         if (inputPolymer === expectedPolymer) return "match";
         continue;
@@ -163,7 +153,13 @@ const registry = loadEvidenceRegistry(registryJson);
 
 export function lookupLegalEvidence(input: CaseInput, candidates?: readonly EvidenceCandidate[], options?: { readonly intendedUse?: "general-resin" | "food-container"; readonly includeWeakContext?: boolean }): EvidenceLookup {
   if (!validDate(input.assessmentDate)) return { evidence: [], citations: [], reviewRequirements: [], issues: [{ kind: "invalid-date", sourceId: null }] };
-  const selected = (candidates ?? registry.candidates).filter((candidate) => candidate.intendedUse === undefined || candidate.intendedUse === options?.intendedUse);
+  const family = materialFamily(input);
+  const selected = (candidates ?? registry.candidates).filter(candidate =>
+    ((candidates !== undefined && candidate.materialFamily === undefined) || (family === null ? candidate.materialFamily === undefined
+      : candidate.materialFamily === family || (candidate.materialFamily === undefined && candidate.versionFamily === "waste-rule-article4-2"))
+    )
+    && (candidate.materialStream === undefined || candidate.materialStream === materialStream(input))
+    && (candidate.intendedUse === undefined || candidate.intendedUse === options?.intendedUse));
   const loadIssues = candidates === undefined ? registry.issues : [];
   if (selected.length === 0) return { evidence: [], citations: [], reviewRequirements: [], issues: [...loadIssues, { kind: "no-results", sourceId: null }] };
   const activeFamilies = new Set(selected.flatMap((candidate) => {

@@ -9,7 +9,7 @@ const knownInput: CaseInput = {
   description: "합성 입력 검증용 설명",
   photoRefs: ["synthetic-photo-ref"],
   process: " 사출 공정 ",
-  polymer: "사용자가 제공한 임의 수지명",
+  polymer: "PP",
   contamination: "없음",
   hazardousContact: "no",
   massKg: 12.5,
@@ -20,7 +20,7 @@ const knownInput: CaseInput = {
 describe("structured CaseInput parsing", () => {
   test("preserves supplied facts without mutating or aliasing the input", () => {
     const photos = ["synthetic-photo-ref"];
-    const raw = Object.freeze({ ...knownInput, photoRefs: Object.freeze(photos) });
+    const raw = Object.freeze({ ...knownInput, polymer: "사용자가 제공한 임의 수지명", photoRefs: Object.freeze(photos) });
     const before = structuredClone(raw);
     const result = parseCaseInput(raw);
 
@@ -202,18 +202,22 @@ describe("missing information questions", () => {
 
   for (const [field, known, question] of [
     ["process", "사출", "폐플라스틱이 발생한 공정 또는 발생원은 무엇인가요?"],
+    ["polymer", "PP", "확인된 수지 종류와 이를 확인한 자료(라벨·재질 명세 등)가 있나요?"],
     ["region", "울산", "폐플라스틱이 발생한 지역은 어디인가요?"],
   ] as const) {
     for (const [value, expected] of [
       [null, [question]], ["", [question]], [" \t", [question]],
       ["미상", [question]], [" 미상 ", [question]],
-      [known, []], ["미상 공정", []], ["미상동", []], ["unknown", []],
+      ["모름", [question]], ["알 수 없음", [question]], ["unknown", [question]],
+      ["미확인", [question]], ["불명", [question]], ["모른다", [question]],
+      ["알 수 없습니다", [question]], [" UNKNOWN ", [question]],
+      [known, []], ["미상 공정", []], ["미상동", []],
     ] as const) {
-      test(`collects questions for ${field} = ${JSON.stringify(value)} without rewriting input`, () => {
+      test(`#107 collects questions for ${field} = ${JSON.stringify(value)} without rewriting input`, () => {
         const raw = Object.freeze({ ...knownInput, [field]: value, photoRefs: [] });
         const parsed = parseCaseInput(raw);
         if (!parsed.ok) throw new Error("synthetic input should parse");
-        expect(collectMissingQuestions(parsed.value)).toEqual(expected);
+        expect(collectMissingQuestions(parsed.value)).toEqual(field === "polymer" && ["미상 공정", "미상동"].includes(value ?? "") ? [question] : expected);
         expect(parsed.value).toEqual(raw);
       });
     }

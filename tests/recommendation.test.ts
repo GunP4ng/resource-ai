@@ -133,11 +133,11 @@ test("verified but unrelated public citations remain advisory without granting s
   assert.equal((await domain.assessRoutes(input)).find(route => route.route === "mechanical-recycling")?.eligibility.state, "unknown");
 });
 
-for (const [name, patch] of [
-  ["PVC exclusion", { polymer: "PVC" }],
-  ["nonplastic material", { polymer: "steel" }],
-  ["oil-contaminated material", { contamination: "폐유 혼합" }],
-  ["negated process", { process: "사출 아님" }],
+for (const [name, patch, state] of [
+  ["PVC exclusion", { polymer: "PVC" }, "needs-review"],
+  ["metal with an unconfirmed origin", { polymer: "steel" }, "needs-information"],
+  ["oil-contaminated material", { contamination: "폐유 혼합" }, "needs-review"],
+  ["negated process", { process: "사출 아님" }, "needs-review"],
 ] as const) {
   for (const date of ["2026-11-10", "2026-11-13", "2026-11-25"] as const) {
     test(`${name} cannot borrow a plastics citation on ${date}`, async () => {
@@ -145,7 +145,10 @@ for (const [name, patch] of [
       const evidence = lookupLegalEvidence(input, undefined, { includeWeakContext: true });
       assert.equal(evidence.citations.some(citation => citation.kind === "waste-code"), false);
       const result = await createResourceDomain(input).decide();
-      assert.equal(result.state, "needs-review");
+      assert.equal(result.state, state);
+      if (result.state === "needs-information") {
+        assert.ok(result.questions.some(question => question.includes("사업장일반폐기물")));
+      }
       assert.equal("recommendations" in result, false);
     });
   }
@@ -357,7 +360,7 @@ for (const [name, patch, expected] of [
   ["mixed resin", { polymer: "PP/PE 다층" }, "needs-review"],
   ["conflicting label", { polymer: "PP (라벨 ABS와 불일치)" }, "needs-review"],
   ["hazardous contact", { hazardousContact: "yes" }, "needs-review"],
-  ["unsupported material", { polymer: "POM" }, "needs-review"],
+  ["unrecognized material needs confirmation", { polymer: "POM" }, "needs-information"],
 ] as const) {
   test(`optional mass does not bypass ${name}`, async () => {
     const result = await createResourceDomain({ ...syntheticCase, massKg: null, ...patch }).decide();

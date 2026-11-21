@@ -10,6 +10,7 @@ import { guidanceConclusion, guidanceScenarioConclusion, guidanceProgress, guida
 import { buildScenarioSensitivity } from "./o-scenario-sensitivity.ts";
 import { escapeHtml, list, page } from "./report-html.ts";
 import { evidenceSection, readableReasons } from "./report-evidence.ts";
+import { massQuestion } from "./input.ts";
 import { researchCalculations, researchDirectory, publicInputCalculations, publicRecyclingDirectory, publicScenarioNames } from "./report-research.ts";
 import { comparisonSummary, comparisonConditions, prioritySummary, routeConditions, scenarioAudit } from "./report-comparison.ts";
 import type { EvidenceReferences } from "./report-comparison.ts";
@@ -47,6 +48,14 @@ export const routeNames = { reuse: "재사용", "mechanical-recycling": "기계�
 function recommendationSummary(result: Extract<DecisionResult, { state: "compared" }>, references: EvidenceReferences): string {
   if (result.recommendations === undefined) return "";
   const names = { reuse: "재사용", "mechanical-recycling": "기계적 재활용", "other-recovery": "기타 회수", disposal: "처분" } as const;
+  const feeGuidance = result.recommendations.some(item => item.cost.value === null)
+    ? `<section id="fee-delegation"><h2>처리비를 확인할 근거</h2>
+      <p>공공시설 반입수수료는 조례가 금액 결정을 고시에 위임할 수 있습니다. 예를 들어 대전광역시 폐기물 관리 조례 제4조제2항은 다음과 같이 정합니다.</p>
+      <blockquote cite="https://www.law.go.kr/LSW/ordinInfoP.do?ordinSeq=2165959">제1항에 따라 시장이 광역시설을 설치ㆍ운영하는 경우 폐기물을 반입하는 자로부터 다음 각 호의 비용을 고려하여 시장이 결정ㆍ고시하는 반입수수료를 징수할 수 있다.</blockquote>
+      <p><a href="https://www.law.go.kr/LSW/ordinInfoP.do?ordinSeq=2165959" rel="noreferrer">대전광역시 폐기물 관리 조례 제4조제2항 원문</a> ·
+      <a href="https://www.daejeon.go.kr/drh/drhGosiView.do?conifmenddt=2025-12-31&amp;conifmstdt=2025-01-01&amp;gosigbn=N&amp;menuSeq=1907&amp;pageIndex=1&amp;sno=53083&amp;title=" rel="noreferrer">폐기물 반입수수료 변경 고시 제2025-258호</a></p>
+      <p>반입할 시설과 배출 지역의 조례·현재 고시·별표에서 대상 폐기물, 처리 방식, 적용 기간과 단위를 확인하세요. 대전 조례의 위임 사례를 다른 지역이나 사업장 소각 단가로 대입하지 않았습니다. 실제 반입 가능 여부, 소각 견적과 운송비는 별도로 확인해야 합니다.</p></section>`
+    : "";
   return `<section aria-labelledby="recommendation-heading"><h2 id="recommendation-heading">추천 경로 순위</h2><ol>${result.recommendations.map(item => {
     const route = result.routes.find(route => route.routeId === item.routeId);
     const amount = (metric: typeof item.cost | typeof item.carbon) => metric.value === null
@@ -56,7 +65,7 @@ function recommendationSummary(result: Extract<DecisionResult, { state: "compare
       <p><strong>${item.grade === "public-conditional" ? "공개 근거상 가능(조건부)" : "사례별 자료 검토됨(실행 승인 아님)"}</strong></p>
       <p>${escapeHtml(item.basis)}</p><p>비용: ${amount(item.cost)}</p><p>탄소: ${amount(item.carbon)}</p>
       ${item.legalCitations.map(citation => `<p>${references([citation.sourceId])} ${escapeHtml(citation.locator)} · ${escapeHtml(citation.claim)}</p>`).join("")}</li>`;
-  }).join("")}</ol></section>`;
+  }).join("")}</ol></section>${feeGuidance}`;
 }
 function processorCandidates(result: Extract<DecisionResult, { state: "compared" }>, references: EvidenceReferences): string {
   if (result.processors.length === 0) {
@@ -142,8 +151,8 @@ export function renderReport(result: DecisionResult, presentation: ReportPresent
     ? `<p>${presentation.review.origin.kind === "synthetic" ? "합성 자료 · 현장 근거 아님" : "현장 자료로 선언된 검토 아티팩트 · 인간·법적 승인 아님"}</p>`
     : presentation.mode === "synthetic" ? "<p>합성 입력·계산 예시 · 현장 근거 아님</p>" : "<p>미검토 사용자 입력 · 입력에 결합된 검토 자료 없음 · 운영 자료 미제공</p>";
   const checks = "preExecutionChecks" in result ? result.preExecutionChecks ?? [] : [];
-  const heldReasons = result.state === "needs-review" ? readableReasons(result.reasons)
-    : result.state === "needs-information" ? readableReasons(result.questions) : [];
+  const heldReasons = result.state === "needs-review" ? readableReasons(result.reasons.filter(reason => reason !== massQuestion))
+    : result.state === "needs-information" ? readableReasons(result.questions.filter(question => question !== massQuestion)) : [];
   const answerAction = result.state !== "compared" ? view.answerTarget : undefined;
   const nextAction = result.state === "needs-information"
     ? answerAction
@@ -169,8 +178,9 @@ export function renderReport(result: DecisionResult, presentation: ReportPresent
     ${hypotheticalSummary ? `<p id="hypothetical-summary"><strong>가정 계산:</strong> ${escapeHtml(hypotheticalSummary)}</p>` : ""}
     <p id="next-action"><strong>다음 행동:</strong> ${escapeHtml(nextAction)}</p>
     <p class="screen-only"><a class="primary-action" href="${answerAction ?? "#checks"}">${answerAction ? result.state === "needs-information" ? "답변 입력하기" : "입력 다시 확인하기" : "실행 전 확인하기"}</a></p>
-    ${view.answerPrompt ?? ""}
+    ${result.state === "compared" ? view.answerPrompt ?? "" : ""}
     ${heldReasons.length ? `<section id="case-reasons"><h2>보류 사유와 필요한 확인</h2><ul>${heldReasons.map((reason, index) => `<li id="case-reason-${index + 1}"><strong>사유 ${index + 1}.</strong> ${escapeHtml(reason)}</li>`).join("")}</ul></section>` : ""}
+    ${result.state !== "compared" ? view.answerPrompt ?? "" : ""}
     ${guidance ? renderVerificationPlan(presentation.verificationPlan, result) : ""}
     ${presentation.historical ? '<p class="notice">과거 평가: 현재 입력과 평가 당시 입력이 다릅니다. 명시적으로 다시 평가해 주세요.</p>' : ""}
     <details id="result-context"><summary>판단 이유·자료 범위 확인하기</summary><p>${mode}</p>${data}

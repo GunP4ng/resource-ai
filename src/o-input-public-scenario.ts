@@ -6,6 +6,8 @@ import type { PublicCalculationBundle } from "./o-public-calculation-engine.ts";
 import { requireData, required } from "./o-public-calculation-validation.ts";
 import { date, revision } from "./o-validation.ts";
 import type { CaseInput } from "./contracts.ts";
+import { MAX_CASE_MASS_KG } from "./contracts.ts";
+import { canonicalMaterial } from "./material-context.ts";
 
 export interface PublicInputScenario {
   readonly version: 1;
@@ -35,16 +37,17 @@ export interface PublicInputScenario {
 export function publicScenarioEligibility(input: CaseInput):
   | { readonly status: "available"; readonly material: "PET" | "HDPE"; readonly massKg: number }
   | { readonly status: "unavailable"; readonly reasons: readonly string[] } {
-  const material = input.polymer?.trim().toUpperCase();
+  const material = canonicalMaterial(input.polymer);
   const mass = input.massKg;
   const reasons = [
     ...(material !== "PET" && material !== "HDPE"
       ? [material ? `신고 수지 ${input.polymer}에 대응하는 공개 가격·탄소 계산 묶음이 없습니다. 현재 계산은 단일 PET·HDPE만 지원하며 다른 수지의 계수를 대신 넣지 않습니다.`
         : "수지가 미확인이라 공개 가격·탄소 계산 묶음을 연결하지 않았습니다. 재질을 추정하지 않습니다."] : []),
     ...(mass === null ? ["입력 질량이 없어 비용·탄소의 기능단위를 정할 수 없습니다. 정성 추천과 수치 비교는 별개입니다."]
-      : !Number.isFinite(mass) || mass <= 0 ? ["공개 비교에는 0보다 큰 유한 질량(kg)이 필요합니다."] : []),
+      : !Number.isFinite(mass) || mass <= 0 || mass > MAX_CASE_MASS_KG
+        ? [`공개 비교에는 0 초과 ${MAX_CASE_MASS_KG.toLocaleString("ko-KR")} 이하의 질량(kg)이 필요합니다. kg 단위를 확인하고 더 큰 물량은 배치별로 나누어 주세요.`] : []),
   ];
-  if ((material !== "PET" && material !== "HDPE") || mass === null || !Number.isFinite(mass) || mass <= 0) {
+  if ((material !== "PET" && material !== "HDPE") || mass === null || !Number.isFinite(mass) || mass <= 0 || mass > MAX_CASE_MASS_KG) {
     return { status: "unavailable", reasons };
   }
   return { status: "available", material, massKg: mass };

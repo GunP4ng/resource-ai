@@ -1,4 +1,7 @@
 import type { RouteRequest, RouteServices } from "./app-types.ts";
+import type { CaseInput } from "./contracts.ts";
+import { AssessmentInputError } from "./assessment.ts";
+import { escapeHtml, page } from "./report-html.ts";
 import { CaseConflict, parseAssessment } from "./o-case-store.ts";
 import { matchesPhotoConsent } from "./photo-execution.ts";
 import { revision } from "./o-validation.ts";
@@ -17,6 +20,7 @@ import { InquiryReplyInputError, parseInquiryReplies, replyAmountOptions } from 
 import type { InquiryReply } from "./o-inquiry-reply.ts";
 import { renderInquiryReply } from "./report-inquiry-reply.ts";
 import { Invalid } from "./o-public-calculation-validation.ts";
+import { canonicalMaterial } from "./material-context.ts";
 import recyclingDirectory from "../data/reference/public-recycling-candidates-20261121.json" with { type: "json" };
 
 export async function caseRoute(services: RouteServices, context: RouteRequest): Promise<Response> {
@@ -55,7 +59,7 @@ export async function caseRoute(services: RouteServices, context: RouteRequest):
     }
     const catalog = await readCaseResearchCatalog();
     assertUnchanged();
-    const material = snapshot.input.polymer?.trim().toUpperCase() ?? null;
+    const material = canonicalMaterial(snapshot.input.polymer);
     const options = replyAmountOptions({ calculations: catalog.calculations.data }, material);
     const eligible = !snapshot.permissionChanged && snapshot.evaluated.revision === inputRevision
       && snapshot.assessment.decision.state === "compared" && snapshot.input.hazardousContact === "no"
@@ -136,8 +140,10 @@ export async function caseRoute(services: RouteServices, context: RouteRequest):
     const at = now();
     const editable = at < snapshot.editUntil && (sessionDeadline === undefined || at <= sessionDeadline);
     const editDeadline = Math.min(snapshot.editUntil, sessionDeadline ?? Infinity);
-    const optionalMass = stored.decision.state === "compared" && snapshot.input.massKg === null && editable
-      ? '<p class="screen-only"><a class="primary-action secondary-action" href="#answer-fields">질량을 입력하면 비용·탄소를 계산해요</a> (선택)</p><p>견적·탄소 계수 등 근거가 있는 항목부터 계산합니다. 자료가 없으면 필요한 내용을 알려드려요.</p>' : "";
+    const optionalMass = snapshot.input.massKg === null && editable
+      ? stored.decision.state === "compared"
+        ? '<p class="screen-only"><a class="primary-action secondary-action" href="#answer-fields">질량을 입력하면 비용·탄소를 계산해요</a> (선택)</p><p>견적·탄소 계수 등 근거가 있는 항목부터 계산합니다. 자료가 없으면 필요한 내용을 알려드려요.</p>'
+        : '<p class="screen-only"><a class="primary-action secondary-action" href="#answer-fields">선택 정보: 질량을 입력할 수 있습니다</a></p><p>질량 입력은 선택 사항이며 보류 사유를 해제하거나 비용·탄소 계산을 보장하지 않습니다.</p>' : "";
     const actions = suffix === "report" ? "" : `<p class="cluster screen-only"><a href="/cases/${id}/report">상업용 보고서</a>${actor ? `<a href="/cases/${id}/report?purpose=research">비공개 연구용 보고서</a>` : ""}<a href="/cases/${id}/input">정확한 입력 내보내기</a><a href="/cases">내 사례</a></p>`;
     const editing = suffix === "report" ? "" : `<p>버전 ${snapshot.version}</p>${editable
       ? `<p>수정 가능 기한 (UTC): ${new Date(editDeadline).toISOString()}</p>${form(`/cases/${id}/answers`, true, snapshot.version, selection, snapshot.input)}`
@@ -198,7 +204,21 @@ export async function caseRoute(services: RouteServices, context: RouteRequest):
         payload = { ...patch, photoRefs: selected };
       } else payload = rest["answerMode"] === "fields" ? nativeAnswer(rest) : rest;
     }
-    const input = snapshot ? preparer.prepareAnswer(snapshot.input, payload) : preparer.prepareSubmit(raw, format);
+    let input: CaseInput;
+    try {
+      input = snapshot ? preparer.prepareAnswer(snapshot.input, payload) : preparer.prepareSubmit(raw, format);
+    } catch (error) {
+      if (error instanceof AssessmentInputError && error.issues.some(issue => issue.field === "massKg")
+        && format === "form" && typeof raw === "object" && raw !== null && !Array.isArray(raw)) {
+        const draft = Object.fromEntries(Object.entries(raw));
+        const selection = Object.entries(draft).filter(([key, value]) =>
+          (key === "photoSelection" || key.startsWith("photo_")) && typeof value === "string")
+          .map(([key, value]) => `<input type="hidden" name="${escapeHtml(key)}" value="${escapeHtml(String(value))}">`).join("");
+        privateGuard();
+        return response(page("입력 확인", `<h1>입력을 확인해 주세요</h1><p role="alert">${error.issues.map(issue => escapeHtml(issue.message)).join(" ")} 입력 초안을 유지했습니다. 저장된 사례는 변경되지 않았습니다.</p>${form(url.pathname, !!snapshot, snapshot?.version, selection, snapshot?.input, draft)}`), 400);
+      }
+      throw error;
+    }
     const outside = unsupportedScope(input);
     if (outside) { privateGuard(); return response(unsupportedScopePage(outside, snapshot?.input.caseId), 422); }
     const authority = dependencies.photoExecution;

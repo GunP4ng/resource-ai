@@ -1,5 +1,8 @@
 import type { CaseInput } from "./contracts.ts";
+import { MAX_CASE_MASS_KG } from "./contracts.ts";
 import { safetyReasons } from "./o-safety-reasons.ts";
+import { canonicalMaterial, materialFamily } from "./material-context.ts";
+import { isUnknownCaseText } from "./o-validation.ts";
 
 export const massQuestion = "확인된 질량은 몇 kg인가요?";
 
@@ -35,7 +38,7 @@ function isHazardousContact(value: unknown): value is CaseInput["hazardousContac
 }
 
 function isMassKg(value: unknown): value is number | null {
-  return value === null || (typeof value === "number" && Number.isFinite(value) && value > 0);
+  return value === null || (typeof value === "number" && Number.isFinite(value) && value > 0 && value <= MAX_CASE_MASS_KG);
 }
 
 function isAssessmentDate(value: unknown): value is string {
@@ -81,7 +84,7 @@ export function parseCaseInput(raw: unknown): CaseInputParseResult {
   const polymer = readField("polymer", isNullableString, "문자열 또는 null이어야 합니다.");
   const contamination = readField("contamination", isNullableString, "문자열 또는 null이어야 합니다.");
   const hazardousContact = readField("hazardousContact", isHazardousContact, "yes, no, unknown 중 하나여야 합니다.");
-  const massKg = readField("massKg", isMassKg, "null 또는 0보다 큰 유한한 숫자여야 합니다.");
+  const massKg = readField("massKg", isMassKg, `null 또는 0 < kg <= ${MAX_CASE_MASS_KG} 범위의 유한한 숫자여야 합니다.`);
   const region = readField("region", isNullableString, "문자열 또는 null이어야 합니다.");
   const assessmentDate = readField("assessmentDate", isAssessmentDate, "YYYY-MM-DD 형식의 실제 달력 날짜여야 합니다.");
 
@@ -96,11 +99,6 @@ export function parseCaseInput(raw: unknown): CaseInputParseResult {
   } };
 }
 
-export function isMissingProcessOrRegion(value: string | null): boolean {
-  const text = value?.trim();
-  return text === undefined || text === "" || text === "미상";
-}
-
 /**
  * Call after parsing. Questions depend only on explicit structured facts.
  * Blank free text remains unchanged but needs clarification; no material is inferred.
@@ -108,11 +106,12 @@ export function isMissingProcessOrRegion(value: string | null): boolean {
 export function collectMissingQuestions(input: CaseInput): readonly string[] {
   const questions: string[] = [];
   const missingText = (value: string | null): boolean => value === null || value.trim() === "";
-  if (isMissingProcessOrRegion(input.process)) questions.push("폐플라스틱이 발생한 공정 또는 발생원은 무엇인가요?");
-  if (missingText(input.polymer)) questions.push("확인된 수지 종류와 이를 확인한 자료(라벨·재질 명세 등)가 있나요?");
+  const material = materialFamily(input);
+  if (isUnknownCaseText(input.process)) questions.push(material ? "폐자원이 발생한 공정 또는 발생원은 무엇인가요?" : "폐플라스틱이 발생한 공정 또는 발생원은 무엇인가요?");
+  if (isUnknownCaseText(input.polymer) || canonicalMaterial(input.polymer) === null) questions.push(material ? "확인된 재질·품목과 이를 확인한 자료(재질 명세·발생 이력 등)가 있나요?" : "확인된 수지 종류와 이를 확인한 자료(라벨·재질 명세 등)가 있나요?");
   if (missingText(input.contamination)) questions.push("오염이나 이물질이 있나요? 확인된 상태를 알려 주세요.");
   if (input.hazardousContact === "unknown") questions.push(safetyReasons.contactUnknown);
   if (input.massKg === null) questions.push(massQuestion);
-  if (isMissingProcessOrRegion(input.region)) questions.push("폐플라스틱이 발생한 지역은 어디인가요?");
+  if (isUnknownCaseText(input.region)) questions.push(material ? "폐자원이 발생한 지역은 어디인가요?" : "폐플라스틱이 발생한 지역은 어디인가요?");
   return questions;
 }

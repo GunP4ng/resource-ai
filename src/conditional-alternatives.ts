@@ -4,6 +4,7 @@ import { loadEvidenceRegistry, lookupLegalEvidence } from "./evidence.ts";
 import type { EvidenceLookup } from "./evidence.ts";
 import { maskExplicitHazardDenial } from "./o-safety-reasons.ts";
 import { canonical, requireValid } from "./o-validation.ts";
+import { canonicalMaterial } from "./material-context.ts";
 
 const registry = loadEvidenceRegistry(registryJson);
 const recyclingFamilies = ["waste-rule-annex4-code", "waste-rule-annex4-2-r3-3",
@@ -34,7 +35,10 @@ export function conditionalAlternatives(facts: CaseInput, legal: EvidenceLookup)
       [facts.description, facts.contamination].map(maskExplicitHazardDenial).join(" "));
   if (!hazard && recycling.length > 0) {
     // Only explicitly reported components are hypotheses; missing resin is never guessed.
-    const materials = [...new Set((facts.polymer ?? "").toUpperCase().match(/\b(?:HDPE|LDPE|PET|PP|PE)\b/gu) ?? [])];
+    const reported = canonicalMaterial(facts.polymer);
+    const materials = reported === null
+      ? [...new Set((facts.polymer ?? "").normalize("NFKC").toUpperCase().match(/\b(?:HDPE|LDPE|PET|PP|PE)\b/gu) ?? [])]
+      : [reported];
     const supported = materials.flatMap(polymer => {
       const hypothesis = lookupLegalEvidence({ ...facts, polymer, contamination: "없음", hazardousContact: "no" },
         undefined, { includeWeakContext: true });

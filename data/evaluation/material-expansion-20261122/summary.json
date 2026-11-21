@@ -1,0 +1,219 @@
+{
+  "baseCommit": "9fa6e7b31aa0012dad4bdecb069d1cad6bd56d09",
+  "scope": "Same 18 exposed original development inputs; text-only; zero provider calls",
+  "inputManifest": "data/evaluation/development.json",
+  "inputHashesVerified": 18,
+  "inputValuesChanged": 0,
+  "stateChanges": 0,
+  "beforeStates": {
+    "compared": 8,
+    "needs-information": 6,
+    "needs-review": 4
+  },
+  "afterStates": {
+    "compared": 8,
+    "needs-information": 6,
+    "needs-review": 4
+  },
+  "fullDecisionChanges": 4,
+  "changes": [
+    {
+      "caseId": "HYEOB-20261112-003",
+      "fields": [
+        "reasons"
+      ],
+      "before": [
+        "혼합·다층 또는 라벨 불일치가 보고되었습니다. 층별·구성 수지의 재질 명세, 라벨 확인 자료와 수지별 분리 가능 여부를 확인할 수 있나요?"
+      ],
+      "after": [
+        "혼합·다층 또는 라벨 불일치가 보고되었습니다. 층별·구성 수지의 재질 명세, 라벨 확인 자료와 수지별 분리 가능 여부를 확인할 수 있나요?",
+        "확인된 수지 종류와 이를 확인한 자료(라벨·재질 명세 등)가 있나요?"
+      ]
+    },
+    {
+      "caseId": "HYEOB-20261112-005",
+      "fields": [
+        "reasons"
+      ],
+      "before": [
+        "혼합·다층 또는 라벨 불일치가 보고되었습니다. 층별·구성 수지의 재질 명세, 라벨 확인 자료와 수지별 분리 가능 여부를 확인할 수 있나요?",
+        "유해물질과 접촉했는지 확인할 수 있나요?",
+        "확인된 질량은 몇 kg인가요?",
+        "폐플라스틱이 발생한 지역은 어디인가요?"
+      ],
+      "after": [
+        "혼합·다층 또는 라벨 불일치가 보고되었습니다. 층별·구성 수지의 재질 명세, 라벨 확인 자료와 수지별 분리 가능 여부를 확인할 수 있나요?",
+        "확인된 수지 종류와 이를 확인한 자료(라벨·재질 명세 등)가 있나요?",
+        "유해물질과 접촉했는지 확인할 수 있나요?",
+        "폐플라스틱이 발생한 지역은 어디인가요?"
+      ]
+    },
+    {
+      "caseId": "OYS-20261110-006",
+      "fields": [
+        "reasons"
+      ],
+      "before": [
+        "입력 자체 모순 확인 필요",
+        "확인된 수지 종류와 이를 확인한 자료(라벨·재질 명세 등)가 있나요?",
+        "오염이나 이물질이 있나요? 확인된 상태를 알려 주세요.",
+        "유해물질과 접촉했는지 확인할 수 있나요?",
+        "확인된 질량은 몇 kg인가요?"
+      ],
+      "after": [
+        "입력 자체 모순 확인 필요",
+        "확인된 수지 종류와 이를 확인한 자료(라벨·재질 명세 등)가 있나요?",
+        "오염이나 이물질이 있나요? 확인된 상태를 알려 주세요.",
+        "유해물질과 접촉했는지 확인할 수 있나요?"
+      ]
+    },
+    {
+      "caseId": "OYS-20261110-008",
+      "fields": [
+        "reasons"
+      ],
+      "before": [
+        "유해물질 접촉·지정폐기물 해당 여부 검토 필요",
+        "확인된 질량은 몇 kg인가요?",
+        "오염·접촉 이력에 미확인 내용이 있습니다. 이전 내용물·접촉 물질명과 SDS 등 확인 자료, 잔류물·세척 확인 자료가 있나요? 확인 전에는 세척 여부만으로 유해물질 접촉이 없었다고 확정하지 않습니다."
+      ],
+      "after": [
+        "유해물질 접촉·지정폐기물 해당 여부 검토 필요",
+        "오염·접촉 이력에 미확인 내용이 있습니다. 이전 내용물·접촉 물질명과 SDS 등 확인 자료, 잔류물·세척 확인 자료가 있나요? 확인 전에는 세척 여부만으로 유해물질 접촉이 없었다고 확정하지 않습니다."
+      ]
+    }
+  ],
+  "rows": [
+    {
+      "caseId": "HYEOB-20261112-001",
+      "inputSha256": "99a243a95f2500e350512a3ffbe53c896b76df41eb2e9be5b97d305cd96f0f40",
+      "beforeDecisionSha256": "b5fa3687374b1f90a65356e06fd5e3723f2887070d51e9bd0313f15c5ecffcc4",
+      "afterDecisionSha256": "b5fa3687374b1f90a65356e06fd5e3723f2887070d51e9bd0313f15c5ecffcc4",
+      "state": "compared"
+    },
+    {
+      "caseId": "HYEOB-20261112-002",
+      "inputSha256": "140d4db53120d25db32c3d70a982d2de8cf2e45ac90c934550ed76fff7e76db5",
+      "beforeDecisionSha256": "b759d3331852b2fe26626d57a03b7cec27b13eacd5aab7b64ccaacb329480964",
+      "afterDecisionSha256": "b759d3331852b2fe26626d57a03b7cec27b13eacd5aab7b64ccaacb329480964",
+      "state": "compared"
+    },
+    {
+      "caseId": "HYEOB-20261112-003",
+      "inputSha256": "e99456505b42ee03d6b8f1e87771791750e1262a43047db72c613e85504a5b07",
+      "beforeDecisionSha256": "e173d4962ac03b06dfc5023283b8b5938a6b1fc7eb201620caf8166a34cefc84",
+      "afterDecisionSha256": "86868b8265efdafff13a38412d9825dea0bdc3da2b7653dc3126461e0aaafbe6",
+      "state": "needs-review"
+    },
+    {
+      "caseId": "HYEOB-20261112-004",
+      "inputSha256": "26eb5e7d5d21df9ed16f6c00cab3dba7e5e810bd3b354e5f9851abcd8217e493",
+      "beforeDecisionSha256": "be303d26dde7322339cd39d16c38a40e83dae438f7f097e14a3a2940942c5822",
+      "afterDecisionSha256": "be303d26dde7322339cd39d16c38a40e83dae438f7f097e14a3a2940942c5822",
+      "state": "needs-information"
+    },
+    {
+      "caseId": "HYEOB-20261112-005",
+      "inputSha256": "41f6f74e6551b3aae5449a1a0d11d2d1a37b7291974f9a1bc70618023de404fd",
+      "beforeDecisionSha256": "aaeb7919a5c9dc8aebb88449238efa1cd90db6b58648cd38bac877e27c00ad8c",
+      "afterDecisionSha256": "015d3c5df17dbef355cc9b228042f9dd9ff719b15d4c962d238d84872560a710",
+      "state": "needs-review"
+    },
+    {
+      "caseId": "HYEOB-20261112-006",
+      "inputSha256": "aa6104ac7f7461c952fc95b314002860bb01107d59d3814d1e61282d1ac7a87b",
+      "beforeDecisionSha256": "b78be923b0ace2f87d34e211ea26fbef57d8d100899443a7ec8d298b1f65115e",
+      "afterDecisionSha256": "b78be923b0ace2f87d34e211ea26fbef57d8d100899443a7ec8d298b1f65115e",
+      "state": "compared"
+    },
+    {
+      "caseId": "HYEOB-20261112-007",
+      "inputSha256": "dd530034e235f514b61ee5a8d585978ead905acdfc04a3530e462a09e18ff320",
+      "beforeDecisionSha256": "5a458707c5f5da23596c39db620d6493c5e73f1e962394bd8de3fcbce44c29ca",
+      "afterDecisionSha256": "5a458707c5f5da23596c39db620d6493c5e73f1e962394bd8de3fcbce44c29ca",
+      "state": "compared"
+    },
+    {
+      "caseId": "HYEOB-20261112-008",
+      "inputSha256": "978a57423199674dee21982375171258ab9908701ea6f69934d95afc8ff31dbb",
+      "beforeDecisionSha256": "abd43f0c1231f807b80287d7c48edca0c14c2fd3233e24fae8b9c3e46f037648",
+      "afterDecisionSha256": "abd43f0c1231f807b80287d7c48edca0c14c2fd3233e24fae8b9c3e46f037648",
+      "state": "needs-information"
+    },
+    {
+      "caseId": "HYEOB-20261112-009",
+      "inputSha256": "65c54b7dcfa5d975474542a5675a7c6bb64850d2a4e320845ad67ccaa5d2498e",
+      "beforeDecisionSha256": "a79e4f2d471d5be93f6e352ad6f655f3c82e8655451e8e3f562af9d333f45186",
+      "afterDecisionSha256": "a79e4f2d471d5be93f6e352ad6f655f3c82e8655451e8e3f562af9d333f45186",
+      "state": "needs-information"
+    },
+    {
+      "caseId": "HYEOB-20261112-010",
+      "inputSha256": "898699ed96ab28225c9a2bbf9e1c0770fdb571e49af581832a96d92bf46a090f",
+      "beforeDecisionSha256": "5d10a64e0909067c92188d0cd690f3b36baa0d86a83463aba3e0bccee9aa5b8d",
+      "afterDecisionSha256": "5d10a64e0909067c92188d0cd690f3b36baa0d86a83463aba3e0bccee9aa5b8d",
+      "state": "needs-information"
+    },
+    {
+      "caseId": "OYS-20261110-001",
+      "inputSha256": "1f1163e501b1ade17ed9207933242a51120bb15584f8e95b6e6d736fe0cd67ff",
+      "beforeDecisionSha256": "b893337b7c5a0274f847b700c8308a8dbc359d5f5bf3abbbfb10c3c07d719193",
+      "afterDecisionSha256": "b893337b7c5a0274f847b700c8308a8dbc359d5f5bf3abbbfb10c3c07d719193",
+      "state": "compared"
+    },
+    {
+      "caseId": "OYS-20261110-002",
+      "inputSha256": "0b052aeeb9e97a93699267d68662d8c1b1efee32107f2711d7be6fab78764b2c",
+      "beforeDecisionSha256": "d1a232af60ab3544ef878114c3d0df313c0dd50536806f02f1c579a962ab855d",
+      "afterDecisionSha256": "d1a232af60ab3544ef878114c3d0df313c0dd50536806f02f1c579a962ab855d",
+      "state": "compared"
+    },
+    {
+      "caseId": "OYS-20261110-003",
+      "inputSha256": "6c09027b9a767e917d5b3ffc45a437fd8153ff7b8eec3750ddb9f410eb4403b4",
+      "beforeDecisionSha256": "876b1e947c09a82b6cb08bb0b0d911d39f500ba069ac02e40b7235ec507f23a9",
+      "afterDecisionSha256": "876b1e947c09a82b6cb08bb0b0d911d39f500ba069ac02e40b7235ec507f23a9",
+      "state": "compared"
+    },
+    {
+      "caseId": "OYS-20261110-004",
+      "inputSha256": "7ccbf029c826be106e753dc15997bf608b856a9e893b45497eed4ef533c04d7f",
+      "beforeDecisionSha256": "a08ace448d8ff1a311738bba021eb9f2933449eb9b95db617093db6e28c4192a",
+      "afterDecisionSha256": "a08ace448d8ff1a311738bba021eb9f2933449eb9b95db617093db6e28c4192a",
+      "state": "compared"
+    },
+    {
+      "caseId": "OYS-20261110-006",
+      "inputSha256": "29c76c30e310148b0ab270ef51e2a4fee92d35aab35106560e4ac36d4947bda0",
+      "beforeDecisionSha256": "57947003b1ebc58e42bb7c333bc722f77fcf18729d5dd5ddf9c0e57b6cbabae6",
+      "afterDecisionSha256": "5477cfe237a430e1312594db2c87b97fea60d6b831df3c0bcb90ca595dca5669",
+      "state": "needs-review"
+    },
+    {
+      "caseId": "OYS-20261110-008",
+      "inputSha256": "f3833e8d39ff4b96f94c784d69889c59db17390bd2993d6f5e0883aecd842fa9",
+      "beforeDecisionSha256": "be92a58feb7cb53f2ede3c03691f0a0bd1e2fa7500b8bf41d29fa08f0c0984cd",
+      "afterDecisionSha256": "e6311ed6fa4fa844a7d2e97a702a76fb9c2e88b33fc4a145268a600507840c0c",
+      "state": "needs-review"
+    },
+    {
+      "caseId": "OYS-20261110-009",
+      "inputSha256": "acadb919168dc522ac98cbbc8ba2b27bd6d2224f0bb4779a689f079768da17b7",
+      "beforeDecisionSha256": "e1689598dee7d20f37d7795efd161778925c458708cef549d74bcc3126b5fe3c",
+      "afterDecisionSha256": "e1689598dee7d20f37d7795efd161778925c458708cef549d74bcc3126b5fe3c",
+      "state": "needs-information"
+    },
+    {
+      "caseId": "OYS-20261110-010",
+      "inputSha256": "e83d1f30b91e37a38e70a20963a4db2ecb13287aae67a54e10f92b3509d51d2d",
+      "beforeDecisionSha256": "ab12dd580713b749e5954646d1fc98649acb73b80d067592f33fb68df8202c2b",
+      "afterDecisionSha256": "ab12dd580713b749e5954646d1fc98649acb73b80d067592f33fb68df8202c2b",
+      "state": "needs-information"
+    }
+  ],
+  "limitations": [
+    "Exposed development cases, not an independent accuracy or field validation set.",
+    "Text-only replay; no model/provider calls.",
+    "Reason changes implement optional mass separation (#109) and explicit material clarification (#111)."
+  ]
+}
