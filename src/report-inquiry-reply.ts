@@ -22,7 +22,10 @@ export function renderInquiryReply(view: InquiryReplyView): string {
   const rows = comparison?.baseline.calculations.results.map(before => {
     const route = { recycling: "재활용", landfill: "매립", energy_recovery: "소각·에너지 회수" }[before.route_id];
     const cells = comparison.variants.map((variant, index) => {
-      const result = variant?.calculations.results.find(item => item.case_id === before.case_id && item.route_id === before.route_id);
+      if (variant === null) {
+        return `<td data-label="업체 ${index + 1} 회신 금액 없음 · 기준 모델값"><span data-reply-amount>${escapeHtml(before.display.net_cost_krw ?? "미확보")}</span></td><td data-label="업체 ${index + 1} 차이 (원)">${before.net_cost_krw === null ? "미산정" : "기준과 동일"}</td>`;
+      }
+      const result = variant.calculations.results.find(item => item.case_id === before.case_id && item.route_id === before.route_id);
       const change = before.net_cost_krw === null || result?.net_cost_krw === null || result?.net_cost_krw === undefined
         ? null : (result.net_cost_krw - before.net_cost_krw).toLocaleString("ko-KR", { maximumFractionDigits: 0 });
       return `<td data-label="업체 ${index + 1} 가정 순비용 (원)"><span data-reply-amount>${escapeHtml(result?.display.net_cost_krw ?? "미확보")}</span></td><td data-label="업체 ${index + 1} 차이 (가정 − 기준, 원)">${change === null ? "미산정 (기준값 또는 회신 금액 미확보)" : `<span data-reply-amount>${escapeHtml(change)}</span>`}</td>`;
@@ -56,7 +59,7 @@ export function renderInquiryReply(view: InquiryReplyView): string {
       <p>실측·확정 견적·실제 추천이 아닙니다. 입력 금액은 KECO 가격으로 귀속하지 않습니다. 기준 모델도 실제 사례 비용이 아닙니다.</p>
       <p>각 업체 가정은 같은 기준 모델에서 독립적으로 계산합니다. 공란 항목은 기준 입력을 유지하며, 실제 사례의 null을 채우지 않습니다. 반입 수락·허가 확인일 신고는 계산·적격성·승인에 반영하지 않습니다.</p>
       <p class="screen-only">표가 화면보다 넓으면 좌우로 스크롤해 두 업체를 비교하세요.</p>
-      <div class="table-wrap" data-reply-comparison role="region" aria-label="회신 가정의 순비용 비교" tabindex="0"><table><caption>모델 순비용 비교 · 차이는 가정에서 기준을 뺀 값 · 원 단위 표시</caption><thead><tr><th scope="col">모델 경로</th><th scope="col">기준 순비용 (원)</th>${replies.map((reply, index) => `<th scope="col">업체 ${index + 1}: ${escapeHtml(reply.companyName)} 가정 순비용 (원)</th><th scope="col">업체 ${index + 1} 차이 (가정 − 기준, 원)</th>`).join("")}</tr></thead><tbody>${rows}</tbody></table></div>
+      <div class="table-wrap" data-reply-comparison role="region" aria-label="회신 가정의 순비용 비교" tabindex="0"><table><caption>모델 순비용 비교 · 차이는 가정에서 기준을 뺀 값 · 원 단위 표시</caption><thead><tr><th scope="col">모델 경로</th><th scope="col">기준 순비용 (원)</th>${replies.map((reply, index) => `<th scope="col">업체 ${index + 1}: ${escapeHtml(reply.companyName)} ${comparison.variants[index] === null ? "회신 금액 없음 · 기준 모델값" : "가정 순비용 (원)"}</th><th scope="col">업체 ${index + 1} 차이 (가정 − 기준, 원)</th>`).join("")}</tr></thead><tbody>${rows}</tbody></table></div>
       <p>음수 순비용은 모델의 매각 수입을 공제한 값이며 실제 이익을 보장하지 않습니다. 가격 항목만 바꾸므로 탄소 계산값은 기준 모델과 같습니다.</p>
       <p>다른 미확보 입력과 권리 제한은 유지됩니다. 미국 WARM 및 원주 처리비 경계를 포함한 비공개 연구 계산이며 상업용 내보내기·모델 전송 대상이 아닙니다.</p>
       ${comparison.variants.map((variant, index) => variant ? `<details data-reply-provenance="${index + 1}"><summary>업체 ${index + 1} 계산 가정과 파생 출처</summary><ul>${variant.assumptions.map(item => `<li>${escapeHtml(item)}</li>`).join("")}</ul>

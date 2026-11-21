@@ -295,6 +295,117 @@ async function ownedPage(app: (request: Request) => Promise<Response>, cookie: s
   return result.text();
 }
 
+test("native case POST and versioned edit round-trip 1,900 Korean syllables", async () => {
+  const app = createResourceApp({ origin });
+  try {
+    const cookie = await session(app.fetch);
+    const description = "가".repeat(1900);
+    const path = await submitNative(app.fetch, cookie, { ...nativeFields, description });
+    assert.equal(JSON.parse(await ownedPage(app.fetch, cookie, path + "/input")).description, description);
+    const edited = "나".repeat(1900);
+    const answer = new URLSearchParams({ baseVersion: "1", answerMode: "fields", field_description: edited });
+    assert.equal((await app.fetch(post(path + "/answers", cookie, answer.toString(), formHeaders))).status, 303);
+    assert.equal(JSON.parse(await ownedPage(app.fetch, cookie, path + "/input")).description, edited);
+  } finally { app.dispose(); }
+});
+
+test("native case POST and edit fit the combined decoded text maxima", async () => {
+  const app = createResourceApp({ origin });
+  try {
+    const cookie = await session(app.fetch);
+    const short = "한".repeat(500);
+    const description = "가".repeat(9998) + "\r\n한";
+    const textFields = { description, process: short, polymer: short, contamination: short, region: short };
+    const path = await submitNative(app.fetch, cookie, { ...nativeFields, ...textFields });
+    assert.equal(JSON.parse(await ownedPage(app.fetch, cookie, path + "/input")).description, description);
+    const edit = new URLSearchParams({ baseVersion: "1", answerMode: "fields", photoSelection: "explicit" });
+    textFields.description = "나" + description.slice(1);
+    for (const [name, value] of Object.entries(textFields)) edit.set("field_" + name, value);
+    assert.equal((await app.fetch(post(path + "/answers", cookie, edit.toString(), formHeaders))).status, 303);
+    const saved = JSON.parse(await ownedPage(app.fetch, cookie, path + "/input"));
+    assert.deepEqual({ description: saved.description, process: saved.process, polymer: saved.polymer,
+      contamination: saved.contamination, region: saved.region }, textFields);
+  } finally { app.dispose(); }
+});
+
+test("decoded native text caps reject oversize inputs before evaluation and preserve the saved version", async () => {
+  let evaluations = 0;
+  const app = createResourceApp({ origin, runner: async () => { evaluations++; return {}; } });
+  try {
+    const cookie = await session(app.fetch), path = await submitNative(app.fetch, cookie);
+    const before = await ownedPage(app.fetch, cookie, path + "/input");
+    const beforeCount = evaluations;
+    for (const [name, value] of Object.entries({
+      description: "가".repeat(9999) + "\r\n한", process: "😀".repeat(249) + "\r\na",
+      polymer: "a".repeat(501), contamination: "a".repeat(501), region: "a".repeat(501),
+    })) {
+      const create = new URLSearchParams({ ...nativeFields, [name]: value });
+      assert.equal((await app.fetch(post("/cases", cookie, create.toString(), formHeaders))).status, 400, name);
+      const edit = new URLSearchParams({ baseVersion: "1", answerMode: "fields", ["field_" + name]: value });
+      assert.equal((await app.fetch(post(path + "/answers", cookie, edit.toString(), formHeaders))).status, 400, name);
+    }
+    const answers = '{"massKg":100}'.padEnd(9999) + "\r\n";
+    for (const photoSelection of ["", "explicit"]) {
+      const edit = new URLSearchParams({ baseVersion: "1", answers: answers + " " });
+      if (photoSelection) edit.set("photoSelection", photoSelection);
+      assert.equal((await app.fetch(post(path + "/answers", cookie, edit.toString(), formHeaders))).status, 400);
+    }
+    assert.equal(evaluations, beforeCount);
+    assert.equal(await ownedPage(app.fetch, cookie, path + "/input"), before);
+    assert.match(await ownedPage(app.fetch, cookie, path), /name="baseVersion" value="1"/);
+    const edit = new URLSearchParams({ baseVersion: "1", answers });
+    assert.equal((await app.fetch(post(path + "/answers", cookie, edit.toString(), formHeaders))).status, 303);
+  } finally { app.dispose(); }
+});
+
+test("case wire allowance is bounded for declared and streamed forms and JSON keeps its default", async () => {
+  const app = createResourceApp({ origin });
+  try {
+    const cookie = await session(app.fetch), path = await submitNative(app.fetch, cookie);
+    for (const [target, params] of [
+      ["/cases", new URLSearchParams({ ...nativeFields, massKg: "" })],
+      [path + "/answers", new URLSearchParams({ baseVersion: "1", answerMode: "fields", field_massKg: "1" })],
+    ] as const) {
+      const mass = target === "/cases" ? "massKg" : "field_massKg";
+      params.set(mass, "");
+      params.set(mass, "0".repeat(109024 - params.toString().length) + "1");
+      const wire = params.toString();
+      assert.equal(Buffer.byteLength(wire), 109025);
+      const declared = post(target, cookie, wire, { ...formHeaders, "content-length": "109025" });
+      assert.equal((await app.fetch(declared)).status, 413);
+      const bytes = new TextEncoder().encode(wire);
+      const streamed = new Request(origin + target, { method: "POST", headers: { ...formHeaders, origin, cookie },
+        body: new ReadableStream({ start(controller) {
+          controller.enqueue(bytes.subarray(0, 109024));
+          controller.enqueue(bytes.subarray(109024));
+          controller.close();
+        } }) });
+      assert.equal(streamed.headers.get("content-length"), null);
+      assert.equal((await app.fetch(streamed)).status, 413);
+      assert.equal((await app.fetch(post(target, cookie, "{}".padEnd(16385)))).status, 413);
+    }
+    assert.match(await ownedPage(app.fetch, cookie, path), /name="baseVersion" value="1"/);
+    const edit = new URLSearchParams({ baseVersion: "1", answerMode: "fields", field_massKg: "" });
+    edit.set("field_massKg", "0".repeat(109023 - edit.toString().length) + "1");
+    assert.equal(Buffer.byteLength(edit.toString()), 109024);
+    assert.equal((await app.fetch(post(path + "/answers", cookie, edit.toString(), formHeaders))).status, 303);
+  } finally { app.dispose(); }
+});
+
+test("configured case form body cap is authoritative on create and edit", async () => {
+  const preparer = createAssessmentAdapter();
+  const app = createApp({ origin, preparer, maxBodyBytes: 512 });
+  try {
+    const cookie = await session(app), path = await submitNative(app, cookie);
+    assert.equal((await app(post("/cases", cookie, new URLSearchParams({
+      ...nativeFields, description: "가".repeat(100),
+    }).toString(), formHeaders))).status, 413);
+    const edit = new URLSearchParams({ baseVersion: "1", answerMode: "fields", field_description: "나".repeat(100) });
+    assert.equal((await app(post(path + "/answers", cookie, edit.toString(), formHeaders))).status, 413);
+    assert.match(await ownedPage(app, cookie, path), /name="baseVersion" value="1"/);
+  } finally { app.dispose(); await app.settled(); preparer.dispose(); }
+});
+
 test("O4 native corrections refresh missing questions and remain usable after review", async () => {
   const app = createResourceApp({ origin });
   try {
@@ -427,17 +538,30 @@ test("O4 expired H cases return restart guidance while the owned report survives
 test("committed case editing controls expire while report and input remain accessible", async () => {
   let now = 0;
   const adapter = createAssessmentAdapter();
-  const app = createApp({ origin, now: () => now, preparer: adapter });
+  const app = createApp({ origin, now: () => now, preparer: adapter, actorForRequest: async () => "expiry-owner" });
+  const action = (html: string) => html.match(/<p id="next-action">([\s\S]*?)<\/p>/)?.[1] ?? "";
+  const assertReadOnly = (html: string) => {
+    assert.match(action(html), /아래 보류 사유에서 누락된 정보를 확인하고 필요한 자료를 준비하세요\./);
+    assert.doesNotMatch(action(html), /답변란/);
+    assert.match(html, /<a class="primary-action" href="#checks"/);
+    assert.match(html, /id="checks"/);
+    assert.doesNotMatch(html, /action="[^"]+\/answers"|href="#answer-fields"/);
+  };
   try {
     const cookie = await session(app), path = await submitNative(app, cookie);
     const before = await ownedPage(app, cookie, path + "/report");
     now = 1_799_999;
-    assert.match(await ownedPage(app, cookie, path), /action="[^"]+\/answers"/);
+    const editable = await ownedPage(app, cookie, path);
+    assert.match(action(editable), /누락된 사례 정보를 확인해 답변란에 입력하세요\./);
+    assert.match(editable, /<a class="primary-action" href="#answer-fields"/);
+    assert.match(editable, /id="answer-fields"[\s\S]*?<form method="post" action="[^"]+\/answers"/);
+    assertReadOnly(before);
+    assertReadOnly(await ownedPage(app, cookie, path + "/report?purpose=research"));
     for (const time of [1_800_000, 1_800_001]) {
       now = time;
       const html = await ownedPage(app, cookie, path);
-      assert.doesNotMatch(html, /action="[^"]+\/answers"|href="#answer-fields"/);
-      assert.match(html, /href="\/"/);
+      assert.match(html, /<a href="\/">새 사례를 입력하세요<\/a>/);
+      assertReadOnly(html);
       assert.equal(await ownedPage(app, cookie, path + "/report"), before);
       assert.equal((await app(new Request(origin + path + "/input", { headers: { cookie } }))).status, 200);
       assert.equal((await app(post(path + "/answers", cookie, '{"massKg":100}'))).status, 404);

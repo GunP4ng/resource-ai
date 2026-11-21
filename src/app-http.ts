@@ -33,7 +33,23 @@ function sessionFailureCode(error: unknown): SessionFailureCode | undefined {
   const code = error.code;
   return Object.keys(sessionFailures).find((key): key is SessionFailureCode => key === code);
 }
-export async function body(request: Request, limit: number, signal: AbortSignal): Promise<unknown> {
+export const defaultBodyBytes = 16384;
+export const caseFormTextLimits = {
+  description: 10000, process: 500, polymer: 500, contamination: 500, region: 500, answers: 10000,
+} as const;
+// 12,000 UTF-16 units at up to nine encoded bytes each, plus form metadata.
+const defaultCaseFormBodyBytes = 109024;
+const formMediaType = "application/x-www-form-urlencoded";
+const mediaType = (request: Request) => request.headers.get("content-type")?.split(";", 1)[0]?.trim();
+
+export async function caseBody(request: Request, configuredLimit: number | undefined, signal: AbortSignal) {
+  const format = mediaType(request) === formMediaType ? "form" : "json";
+  const limit = configuredLimit ?? (format === "form" ? defaultCaseFormBodyBytes : defaultBodyBytes);
+  const raw = await body(request, limit, signal, format === "form");
+  return { raw, format } as const;
+}
+
+export async function body(request: Request, limit: number, signal: AbortSignal, caseForm = false): Promise<unknown> {
   const length = request.headers.get("content-length");
   if (length !== null && (!/^\d+$/.test(length) || Number(length) > limit)) throw new HttpFailure(413, "요청 크기 제한을 초과했습니다.");
   if (request.body === null) throw new HttpFailure(400, "입력 본문이 필요합니다.");
@@ -71,8 +87,7 @@ export async function body(request: Request, limit: number, signal: AbortSignal)
     if (error instanceof TypeError) throw new HttpFailure(400, "UTF-8 입력이 필요합니다.");
     throw error;
   }
-  const type = request.headers.get("content-type")?.split(";")[0]?.trim();
-  switch (type) {
+  switch (mediaType(request)) {
     case "application/json": {
       try {
         const parsed: unknown = JSON.parse(raw);
@@ -82,10 +97,21 @@ export async function body(request: Request, limit: number, signal: AbortSignal)
         throw error;
       }
     }
-    case "application/x-www-form-urlencoded": {
+    case formMediaType: {
       const params = new URLSearchParams(raw);
       const keys = [...params.keys()];
       if (new Set(keys).size !== keys.length) throw new HttpFailure(400, "중복 입력 필드는 허용하지 않습니다.");
+      if (caseForm) {
+        for (const [field, max] of Object.entries(caseFormTextLimits)) {
+          const value = params.get(field) ?? "";
+          const editValue = params.get("field_" + field) ?? "";
+          const length = field === "description" || field === "answers" ? value.replace(/\r\n/g, "\n").length : value.length;
+          const editLength = field === "description" ? editValue.replace(/\r\n/g, "\n").length : editValue.length;
+          if (length > max || editLength > max) {
+            throw new HttpFailure(400, "사례 입력 항목의 글자 수 제한을 초과했습니다.");
+          }
+        }
+      }
       return Object.fromEntries(params);
     }
     default: throw new HttpFailure(415, "JSON 또는 폼 입력이 필요합니다.");

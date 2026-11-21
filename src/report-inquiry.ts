@@ -6,6 +6,8 @@ const inquiryStyles = `
 [data-inquiry-sheet] .inquiry-fields dd{min-width:0}
 [data-inquiry-sheet] .inquiry-warning{font-weight:700}
 [data-inquiry-sheet] .inquiry-reply{border-top:var(--border) solid var(--line);padding-top:var(--s12)}
+[data-inquiry-appendix] dt{font-weight:600}
+[data-inquiry-appendix] dd{margin:0 0 var(--s12);white-space:pre-wrap;overflow-wrap:anywhere}
 @page inquiry{size:A4;margin:18mm}
 @media print{
   main:has(>[data-inquiry-sheet])>footer{display:none}
@@ -21,13 +23,18 @@ const inquiryStyles = `
   [data-inquiry-sheet] li{margin:4pt 0;break-inside:avoid}
   [data-inquiry-sheet] .inquiry-reply{padding-top:5pt;margin-top:8pt}
   [data-inquiry-sheet] a{display:inline;padding:0}
+  [data-inquiry-appendix]{break-before:page}
+  [data-inquiry-appendix] dt{break-after:avoid}
 }`;
 
-/** Bounded visible excerpts only; the stored input and full case URL stay intact. */
-function excerpt(value: string | null, limit = 32): string {
-  if (value === null || value.trim() === "") return "미상";
+function excerpt(value: string | null, limit = 32) {
+  if (value === null || value.trim() === "") return { text: "미상", omitted: null };
   const characters = Array.from(value.replace(/\s+/gu, " ").trim());
-  return escapeHtml(characters.slice(0, limit).join("")) + (characters.length > limit ? "… [발췌]" : "");
+  const truncated = characters.length > limit;
+  return {
+    text: escapeHtml(characters.slice(0, limit).join("")) + (truncated ? "… [발췌]" : ""),
+    omitted: truncated ? value : null,
+  };
 }
 
 const contactLabels = { yes: "있음 (yes)", no: "없음 (no)", unknown: "미상 (unknown)" } as const;
@@ -52,16 +59,20 @@ export function renderInquiry(
     : decision.state === "compared" && decision.humanApproval === "approved"
       ? "인간 승인 기록 있음 · 실제 반입·계약 조건은 별도 확인"
       : stateLabels[decision.state];
+  const caseId = escapeHtml(input.caseId);
+  const assessmentDate = escapeHtml(input.assessmentDate);
   const fields = [
-    ["사례 ID", escapeHtml(input.caseId)],
-    ["평가 기준일", excerpt(input.assessmentDate)],
+    ["사례 ID", { text: caseId, omitted: null }],
+    ["평가 기준일", { text: assessmentDate, omitted: null }],
     ["수지 (신고)", excerpt(input.polymer)],
     ["발생 공정 (신고)", excerpt(input.process)],
     ["오염 상태 (신고)", excerpt(input.contamination)],
-    ["질량 (신고)", input.massKg === null ? "미상 · 계량값 확인 필요" : `${escapeHtml(String(input.massKg))} kg`],
+    ["질량 (신고)", { text: input.massKg === null ? "미상 · 계량값 확인 필요" : `${escapeHtml(String(input.massKg))} kg`, omitted: null }],
     ["발생 지역 (신고)", excerpt(input.region)],
     ["설명 (신고)", excerpt(input.description, 72)],
   ] as const;
+  const appendix = fields.map(([label, { omitted }]) =>
+    omitted === null ? "" : `<dt>${label}</dt><dd>${escapeHtml(omitted)}</dd>`).join("");
   return page("처리업체 문의서", `<article data-inquiry-sheet>
     <nav class="screen-only" aria-label="문의서 동작">
       <a href="${escapeHtml(casePath)}">사례로 돌아가기</a>
@@ -73,11 +84,10 @@ export function renderInquiry(
     <p class="state held" data-inquiry-status>${status}</p>
     ${historical ? '<p class="inquiry-warning" data-inquiry-historical>과거 평가의 순위·업체 제안은 사용하지 않습니다. 아래 현재 입력으로 재평가가 필요합니다.</p>' : ""}
     ${options.permissionChanged ? '<p class="notice inquiry-warning" role="alert" data-inquiry-permission>사진 권한이 변경되었습니다. 과거 평가는 당시 권한 기준이며, 이미 전송된 사진은 회수할 수 없습니다. 현재 입력으로 재평가가 필요합니다.</p>' : ""}
-    <p data-inquiry-recipient>수신 업체: ${options.recipientName?.trim() ? `${excerpt(options.recipientName)} (사용자 선택명 · 허가 증빙 아님)` : "________________ (수신자가 작성하는 공란)"}</p>
+    <p data-inquiry-recipient>수신 업체: ${options.recipientName?.trim() ? `${excerpt(options.recipientName).text} (사용자 선택명 · 허가 증빙 아님)` : "________________ (수신자가 작성하는 공란)"}</p>
     <h2>현재 신고 입력</h2>
     <p class="notice inquiry-warning" data-inquiry-contact="${input.hazardousContact}">유해물질 접촉 (신고): ${contactLabels[input.hazardousContact]}. ${input.hazardousContact === "no" ? "신고값이며 무해성 확인을 뜻하지 않습니다." : "접촉 내역과 취급 요건 확인 전 실행을 보류하세요."}</p>
-    <dl class="inquiry-fields">${fields.map(([label, value]) => `<dt>${label}</dt><dd>${value}</dd>`).join("")}</dl>
-    <p data-inquiry-full-input>긴 항목은 [발췌]로 표시됩니다. 발췌만으로 수락하지 마세요. 전체 입력 참조: <a href="${escapeHtml(casePath)}">사례 원문 (ID: ${escapeHtml(input.caseId)})</a>. 원본 입력은 변경하지 않았습니다.</p>
+    <dl class="inquiry-fields">${fields.map(([label, { text, omitted }]) => `<dt>${label}</dt><dd>${text}${omitted === null ? "" : ' <span data-inquiry-full-input>이 항목의 전체 신고 내용은 별지에 있습니다</span>'}</dd>`).join("")}</dl>
     <h2>처리업체에 확인할 질문</h2>
     <ol data-inquiry-questions>
       <li data-inquiry-question="permit">신고 재질과 발생 공정이 귀사 허가의 대상 물질·폐기물 코드·처리 범위에 포함되나요? 허가 문서와 해당 범위를 알려 주세요.</li>
@@ -90,5 +100,10 @@ export function renderInquiry(
       <p>허가 문서·조건·항목별 견적: 별도 회신 첨부 ________________</p>
       <p>반입 수락 여부·조건 ________________ 회신일 ________________</p>
     </div>
+    ${appendix ? `<section data-inquiry-appendix>
+      <h2>별지 · 현재 신고 입력 전문</h2>
+      <p>사례 ID: ${caseId} · 평가 기준일: ${assessmentDate}</p>
+      <dl>${appendix}</dl>
+    </section>` : ""}
   </article>`).replace("</style>", `${inquiryStyles}</style>`);
 }

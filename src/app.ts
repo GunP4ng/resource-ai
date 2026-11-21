@@ -1,7 +1,7 @@
 import { randomBytes } from "node:crypto";
 import type { AppDependencies, StoredAssessment } from "./app-types.ts";
 export type { AppDependencies, AssessmentAdapter, AssessmentEnvelope } from "./app-types.ts";
-import { HttpFailure, bounded, body, errorResponse, idPattern, redirect, response } from "./app-http.ts";
+import { HttpFailure, bounded, body, caseBody, defaultBodyBytes, errorResponse, idPattern, redirect, response } from "./app-http.ts";
 import { form, loginPage, caseListPage, inputPage } from "./app-views.ts";
 import { caseRoute } from "./app-case-routes.ts";
 import { demo } from "./o-demo.ts";
@@ -22,7 +22,7 @@ export function createApp(dependencies: AppDependencies) {
   const origin = new URL(dependencies.origin).origin;
   requireValid(["http:", "https:"].includes(new URL(origin).protocol), "invalid-app-origin");
   const timeoutMs = dependencies.timeoutMs ?? 10000;
-  const maxBodyBytes = dependencies.maxBodyBytes ?? 16384;
+  const maxBodyBytes = dependencies.maxBodyBytes ?? defaultBodyBytes;
   const now = dependencies.now ?? Date.now;
   const caseStore = dependencies.caseStore ?? createCaseStore(now, dependencies.photoExecution);
   const preparer = dependencies.preparer;
@@ -224,7 +224,7 @@ export function createApp(dependencies: AppDependencies) {
           if (adapter === undefined) throw new HttpFailure(503, "입력·세션 연결 준비 중 · H1/H4 어댑터가 없어 검토를 실행하지 않았습니다.");
           if (((reports?.size ?? 0) >= 100 || owners.size >= 100) && !caseId) throw new HttpFailure(429, "저장 가능한 사례 제한에 도달했습니다.");
           const stored = await (async () => {
-            const raw = await body(request, maxBodyBytes, signal);
+            const { raw } = await caseBody(request, dependencies.maxBodyBytes, signal);
             if (signal.aborted) throw new HttpFailure(408, "요청이 취소되었습니다.");
             const output = caseId ? await adapter.answer(caseId, raw, signal) : await adapter.submit(raw, signal);
             if (Buffer.byteLength(JSON.stringify(output), "utf-8") > 524288) throw new HttpFailure(502, "검토 결과 크기 제한을 초과했습니다.");

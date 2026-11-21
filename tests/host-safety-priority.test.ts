@@ -41,6 +41,16 @@ test("safety omitted by the model or the offered-candidate limit is still pinned
   assert.deepEqual(hostVerificationOrder(decision, plan).following.map(item => item.id), [first.id]);
 });
 
+test("reported hazardous contact keeps host safety first when contamination is 미상", async () => {
+  const input = { ...syntheticCase, assessmentDate: "2026-11-25", massKg: 100,
+    hazardousContact: "yes", contamination: " 미상 " } as const;
+  const decision = presentAssessmentDecision(await createResourceDomain(input).decide());
+  assert.equal(decision.state, "needs-review");
+  const order = hostVerificationOrder(decision);
+  assert.equal(order.safety[0], safetyReasons.contactClassification);
+  assert.ok(order.safety.includes(safetyReasons.contaminationUnknown));
+});
+
 test("multiple host safety reasons form the first group even without a model plan", async () => {
   const input: CaseInput = { ...syntheticCase, hazardousContact: "unknown", contamination: "이전 내용물 미확인",
     description: "지정폐기물 의심 입력의 합성 사례" };

@@ -144,7 +144,9 @@ export function renderReport(result: DecisionResult, presentation: ReportPresent
     : result.state === "needs-information" ? readableReasons(result.questions) : [];
   const answerAction = result.state !== "compared" ? view.answerTarget : undefined;
   const nextAction = result.state === "needs-information"
-    ? "누락된 사례 정보를 확인해 답변란에 입력하세요."
+    ? answerAction
+      ? "누락된 사례 정보를 확인해 답변란에 입력하세요."
+      : "아래 보류 사유에서 누락된 정보를 확인하고 필요한 자료를 준비하세요."
     : result.state === "needs-review"
       ? result.conditionalAlternatives?.some(item => item.condition.code === "hazard-classification")
         ? "접촉 물질의 SDS와 시험 자료를 확보해 폐기물 분류를 확인하세요."

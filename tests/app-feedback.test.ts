@@ -100,17 +100,23 @@ test("primary answer links resolve on fixed demos and legacy adapter cases", asy
   async function navigation(response: Response) {
     const ids = new Set<string>(), links: string[] = [];
     let answerId: string | null = null;
+    let nextAction = "";
     await new HTMLRewriter()
       .on("[id]", { element(element) { const id = element.getAttribute("id"); if (id) ids.add(id); } })
       .on('a.primary-action[href^="#"]', { element(element) { const href = element.getAttribute("href"); if (href) links.push(href); } })
       .on('textarea[name="answers"]', { element(element) { answerId = element.getAttribute("id"); } })
+      .on("#next-action", { text(chunk) { nextAction += chunk.text; } })
       .transform(response).text();
     assert.ok(links.length >= 2);
     for (const href of links) assert.ok(ids.has(href.slice(1)), `primary action ${href} must resolve`);
-    return { links, answerId };
+    return { links, answerId, nextAction };
   }
   try {
-    for (const path of ["/demo/held", "/demo/review"]) await navigation(await app(new Request(origin + path)));
+    const held = await navigation(await app(new Request(origin + "/demo/held")));
+    assert.equal(held.answerId, null);
+    assert.equal(held.links[0], "#checks");
+    assert.match(held.nextAction, /아래 보류 사유에서 누락된 정보를 확인하고 필요한 자료를 준비하세요\./);
+    await navigation(await app(new Request(origin + "/demo/review")));
     const home = await app(new Request(origin));
     const cookie = home.headers.get("set-cookie")?.split(";")[0];
     assert.ok(cookie);
@@ -122,6 +128,7 @@ test("primary answer links resolve on fixed demos and legacy adapter cases", asy
     const legacy = await navigation(await app(new Request(origin + path, { headers: { cookie } })));
     assert.ok(legacy.answerId);
     assert.ok(legacy.links.includes("#" + legacy.answerId), "legacy answer action reaches its real JSON control");
+    assert.match(legacy.nextAction, /누락된 사례 정보를 확인해 답변란에 입력하세요\./);
   } finally { app.dispose(); }
 });
 

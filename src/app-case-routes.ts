@@ -3,7 +3,7 @@ import { CaseConflict, parseAssessment } from "./o-case-store.ts";
 import { matchesPhotoConsent } from "./photo-execution.ts";
 import { revision } from "./o-validation.ts";
 import { renderReport } from "./report.ts";
-import { HttpFailure, body, idPattern, redirect, response, sessionFailures, versionOf } from "./app-http.ts";
+import { HttpFailure, body, caseBody, idPattern, redirect, response, sessionFailures, versionOf } from "./app-http.ts";
 import { form, nativeAnswer } from "./app-views.ts";
 import { photoUI, photoRoute } from "./app-photo-routes.ts";
 import { readCaseResearchCatalog } from "./o-case-research.ts";
@@ -158,7 +158,7 @@ export async function caseRoute(services: RouteServices, context: RouteRequest):
   if (request.method === "POST" && (url.pathname === "/cases" || (caseId && suffix === "answers"))) {
     if (request.headers.get("origin") !== origin || request.headers.get("sec-fetch-site") === "cross-site") throw new HttpFailure(403, "같은 앱에서 제출해 주세요.");
     if (!owner) throw new HttpFailure(403, "입력 화면에서 세션을 시작해 주세요.");
-    const raw = await body(request, maxBodyBytes, signal);
+    const { raw, format } = await caseBody(request, dependencies.maxBodyBytes, signal);
     guard(signal);
     if (snapshot && snapshot.editUntil <= now()) throw new HttpFailure(sessionFailures["case-not-found"].status, sessionFailures["case-not-found"].message);
     let payload = raw, expected: number | null = null;
@@ -193,7 +193,7 @@ export async function caseRoute(services: RouteServices, context: RouteRequest):
         payload = { ...patch, photoRefs: selected };
       } else payload = rest["answerMode"] === "fields" ? nativeAnswer(rest) : rest;
     }
-    const input = snapshot ? preparer.prepareAnswer(snapshot.input, payload) : preparer.prepareSubmit(raw, request.headers.get("content-type")?.startsWith("application/x-www-form-urlencoded") ? "form" : "json");
+    const input = snapshot ? preparer.prepareAnswer(snapshot.input, payload) : preparer.prepareSubmit(raw, format);
     const outside = unsupportedScope(input);
     if (outside) { privateGuard(); return response(unsupportedScopePage(outside, snapshot?.input.caseId), 422); }
     const authority = dependencies.photoExecution;
