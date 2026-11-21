@@ -11,6 +11,12 @@ import { buildPublicInputScenario } from "./o-input-public-scenario.ts";
 import { unsupportedScope, unsupportedScopePage } from "./o-supported-scope.ts";
 import { buildCaseGuidance } from "./o-case-guidance.ts";
 import { renderInquiry } from "./report-inquiry.ts";
+import { buildCalculationVariant } from "./o-calculation-variant.ts";
+import type { CalculationContext, CalculationVariant } from "./o-calculation-variant.ts";
+import { InquiryReplyInputError, parseInquiryReply, replyAmountOptions } from "./o-inquiry-reply.ts";
+import type { InquiryReply } from "./o-inquiry-reply.ts";
+import { renderInquiryReply } from "./report-inquiry-reply.ts";
+import { Invalid } from "./o-public-calculation-validation.ts";
 import recyclingDirectory from "../data/reference/public-recycling-candidates-20261121.json" with { type: "json" };
 
 export async function caseRoute(services: RouteServices, context: RouteRequest): Promise<Response> {
@@ -20,6 +26,7 @@ export async function caseRoute(services: RouteServices, context: RouteRequest):
   if (!preparer) throw new HttpFailure(503, "입력 연결을 사용할 수 없습니다.");
   const caseId = caseMatch?.[1];
   const suffix = caseMatch?.[2];
+  if (suffix === "inquiry-reply" && !actor) throw new HttpFailure(403, "회신 가정 비교는 인증된 소유자만 사용할 수 있습니다.");
   if (request.method === "GET" && suffix === "report" && url.searchParams.get("purpose") === "research" && !actor) {
     throw new HttpFailure(403, "연구용 보고서는 인증된 비공개 사례에서만 확인할 수 있습니다.");
   }
@@ -28,6 +35,64 @@ export async function caseRoute(services: RouteServices, context: RouteRequest):
   const report = id ? caseStore.readReport(owner, id) : undefined;
   const snapshot = report?.snapshot;
   if (id && !snapshot) throw new HttpFailure(404, "사례를 찾을 수 없습니다.");
+  if (snapshot && caseId && suffix === "inquiry-reply" && actor && (request.method === "GET" || request.method === "POST")) {
+    const inputRevision = revision(snapshot.input);
+    // Re-read the owned atomic report after every await; permission changes need not change the input revision.
+    const assertUnchanged = () => {
+      privateGuard();
+      const current = caseStore.readReport(owner, caseId);
+      if (!current || revision(current) !== revision(report)) throw new CaseConflict("snapshot-version-mismatch");
+    };
+    let raw: unknown;
+    if (request.method === "POST") {
+      if (request.headers.get("origin") !== origin || request.headers.get("sec-fetch-site") === "cross-site") throw new HttpFailure(403, "같은 앱에서 제출해 주세요.");
+      raw = await body(request, maxBodyBytes, signal);
+      assertUnchanged();
+      if (typeof raw !== "object" || raw === null || !("baseVersion" in raw) || !("inputRevision" in raw)
+        || versionOf(raw.baseVersion) !== snapshot.version || raw.inputRevision !== inputRevision) {
+        throw new CaseConflict("snapshot-version-mismatch");
+      }
+    }
+    const catalog = await readCaseResearchCatalog();
+    assertUnchanged();
+    const material = snapshot.input.polymer?.trim().toUpperCase() ?? null;
+    const options = replyAmountOptions({ calculations: catalog.calculations.data }, material);
+    const eligible = !snapshot.permissionChanged && snapshot.evaluated.revision === inputRevision
+      && snapshot.assessment.decision.state === "compared" && snapshot.input.hazardousContact === "no"
+      && (material === "PET" || material === "HDPE") && snapshot.input.massKg !== null
+      && snapshot.input.massKg > 0 && snapshot.input.photoRefs.length === 0;
+    let context: CalculationContext | null = null;
+    if (eligible) {
+      context = report?.research?.attachment ?? buildPublicInputScenario({
+        actorId: actor, input: snapshot.input, inputRevision,
+      }, catalog);
+      if (context && (context.binding.actorId !== actor || context.binding.caseId !== caseId
+        || context.binding.inputRevision !== inputRevision || context.binding.assessmentDate !== snapshot.input.assessmentDate)) {
+        throw new CaseConflict("research-binding-mismatch");
+      }
+    }
+    let reply: InquiryReply | undefined;
+    let variant: CalculationVariant | undefined;
+    if (request.method === "POST") {
+      try {
+        reply = parseInquiryReply(raw, options);
+        if (context && reply.amount !== null) variant = buildCalculationVariant(context,
+          [{ inputId: reply.inputId, value: reply.amount }],
+          "사용자가 신고한 미검증 업체 회신 금액을 동일한 모델 단위로 가정했습니다. 실제 승인·업체 사실·확정 견적이 아닙니다.");
+      } catch (error) {
+        if (error instanceof InquiryReplyInputError) throw new HttpFailure(400, error.message);
+        if (error instanceof Invalid && error.code === "E_FINITE") throw new HttpFailure(400, "금액이 계산 가능한 범위를 초과했습니다.");
+        throw error;
+      }
+    }
+    const result = response(renderInquiryReply({ caseId, version: snapshot.version, inputRevision, options,
+      blockedReason: context ? null : "보류·유해 접촉 미확인·사진 포함·과거 평가·권한 변경 또는 계산 문맥 미확보 사례에는 수치 비교·최적성·추천을 표시하지 않습니다. 회신은 실제 실행 승인이 아닙니다.",
+      ...(reply ? { reply } : {}), ...(context && variant ? { comparison: { baseline: context, variant } } : {}),
+    }));
+    assertUnchanged();
+    privateGuard();
+    return result;
+  }
   if (request.method === "GET" && snapshot && suffix === "input") {
     const result = Response.json(snapshot.input, { headers: { etag: `"${revision(snapshot.input)}"`, "cache-control": "private, no-store", "content-disposition": `attachment; filename="${snapshot.input.caseId}.json"`, "x-content-type-options": "nosniff" } });
     privateGuard();
@@ -41,6 +106,7 @@ export async function caseRoute(services: RouteServices, context: RouteRequest):
         historical: snapshot.permissionChanged || snapshot.evaluated.revision !== revision(snapshot.input),
         permissionChanged: snapshot.permissionChanged,
         recipientName: url.searchParams.get("recipient") ?? undefined,
+        ...(actor ? { replyTarget: `/cases/${caseId}/inquiry-reply` } : {}),
       }));
       privateGuard();
       return result;
@@ -72,7 +138,7 @@ export async function caseRoute(services: RouteServices, context: RouteRequest):
       ...snapshot.presentation, mode: snapshot.presentation?.mode ?? "live", review: snapshot.review,
       historical: snapshot.evaluated.revision !== revision(snapshot.input),
       execution: stored.execution ? { traceId: stored.execution.traceId, usage: stored.execution.usage ?? null } : undefined,
-    }, audience, { notice, actions, editing, ...(suffix === "report" ? {} : { inquiryTarget: `/cases/${id}/inquiry` }),
+    }, audience, { notice, actions, editing, caseRegion: snapshot.input.region, ...(suffix === "report" ? {} : { inquiryTarget: `/cases/${id}/inquiry` }),
       ...(suffix === "report" || !editable ? {} : { answerTarget: "#answer-fields" as const }) }));
     privateGuard();
     return result;

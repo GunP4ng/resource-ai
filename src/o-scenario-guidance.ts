@@ -1,5 +1,4 @@
-import type { CaseResearchAttachment } from "./o-case-research-schema.ts";
-import type { PublicInputScenario } from "./o-input-public-scenario.ts";
+import type { CalculationContext } from "./o-calculation-variant.ts";
 import { buildPublicCalculations } from "./o-public-calculation-engine.ts";
 import type { VerifiedPublicDataset } from "./o-public-calculation-data.ts";
 import type { PublicCalculationResult } from "./o-public-calculation-schema.ts";
@@ -56,19 +55,19 @@ export interface ScenarioGuidance {
 }
 
 /** Receives a host-prepared context only. No catalog IO, persisted artifact enrichment or actual fee substitution. */
-export function buildScenarioGuidance(context: PublicInputScenario | CaseResearchAttachment): ScenarioGuidance {
+export function buildScenarioGuidance(context: CalculationContext): ScenarioGuidance {
   const calculations = context.calculations;
   const selected = calculations.cases[0];
   const rows = calculations.results.filter(row => row.case_id === selected?.case_id);
   const baseData = { schema_version: 1 as const, model_version: calculations.model_version,
     sources: calculations.sources, inputs: calculations.inputs, cases: calculations.cases,
     limitations: calculations.limitations };
-  const parentFixtureSha256 = context.purpose === "input-public-scenario"
-    ? context.provenance.parentFixtureSha256 : context.calculations.fixtureSha256;
-  const parentManifestSha256 = context.purpose === "input-public-scenario"
-    ? context.provenance.parentManifestSha256 : context.calculations.manifestSha256;
-  const preparedDatasetSha256 = context.purpose === "input-public-scenario"
-    ? context.provenance.derivedDatasetSha256 : context.calculations.fixtureSha256;
+  const parentFixtureSha256 = context.purpose === "research-display"
+    ? context.calculations.fixtureSha256 : context.provenance.parentFixtureSha256;
+  const parentManifestSha256 = context.purpose === "research-display"
+    ? context.calculations.manifestSha256 : context.provenance.parentManifestSha256;
+  const preparedDatasetSha256 = context.purpose === "research-display"
+    ? context.calculations.fixtureSha256 : context.provenance.derivedDatasetSha256;
   const assumptions = [
     "공개 시나리오의 수율·가격·거리·수거·선별·처리비와 WARM 계수를 고정합니다. 현장 관측값이나 견적이 아닙니다.",
     "이 충분조건은 실제 소각비 f_inc가 null인 입력에 한정됩니다. f_inc >= 0 KRW/t는 관측값이 아닌 명시적인 가정입니다.",
@@ -119,8 +118,8 @@ export function buildScenarioGuidance(context: PublicInputScenario | CaseResearc
   }
   const probeData = { ...structuredClone(baseData), inputs: baseData.inputs.map(item => item.input_id === "f_inc"
     ? { ...structuredClone(item), value: 0, assumption_reason: "hypothetical-zero-fee-not-observed" } : structuredClone(item)) };
-  const implementation = context.purpose === "input-public-scenario" ? context.provenance.implementation
-    : context.calculations.implementation;
+  const implementation = context.purpose === "research-display" ? context.calculations.implementation
+    : context.provenance.implementation;
   const verifiedProbe: VerifiedPublicDataset = {
     data: probeData, fixture_sha256: revision(probeData),
     manifest_sha256: revision({ parentFixtureSha256, parentManifestSha256, preparedDatasetSha256,

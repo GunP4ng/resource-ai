@@ -3,7 +3,8 @@ import { parseDecision } from "./o-decision.ts";
 import type { CaseResearchReport } from "./o-case-research-schema.ts";
 import type { PublicInputScenario } from "./o-input-public-scenario.ts";
 import type { CaseGuidance } from "./o-case-guidance.ts";
-import { guidanceConclusion, guidanceProgress, guidanceStability, guidanceOneFact } from "./report-guidance.ts";
+import { guidanceConclusion, guidanceProgress, guidanceStability, guidanceOneFact, guidanceSensitivity } from "./report-guidance.ts";
+import { buildScenarioSensitivity } from "./o-scenario-sensitivity.ts";
 import { escapeHtml, list, page } from "./report-html.ts";
 import { evidenceSection, readableReason } from "./report-evidence.ts";
 import { researchCalculations, researchDirectory, publicInputCalculations, publicRecyclingDirectory, publicScenarioNames } from "./report-research.ts";
@@ -26,6 +27,7 @@ export type ReportContext =
   | { readonly audience: "authenticated-research"; readonly research: CaseResearchReport | null; readonly publicScenario?: PublicInputScenario | null; readonly guidance?: CaseGuidance | null };
 /** Trusted server view fragments; never taken from model output or input metadata. */
 export interface ReportView {
+  readonly caseRegion?: string | null;
   readonly notice?: string;
   readonly actions?: string;
   readonly editing?: string;
@@ -139,9 +141,12 @@ export function renderReport(result: DecisionResult, presentation: ReportPresent
   const researchSections = research ? researchCalculations(research) : "";
   const publicScenario = context.audience === "authenticated-research" ? context.publicScenario : null;
   const guidance = context.audience === "authenticated-research" ? context.guidance : null;
+  const calculationContext = publicScenario ?? research?.attachment;
+  const sensitivity = guidance?.scenario && calculationContext
+    ? buildScenarioSensitivity(calculationContext, guidance.scenario) : null;
   const names = { ...routeNames, ...publicScenarioNames };
   const directories = context.audience === "authenticated-research"
-    ? research ? researchDirectory(research, view.inquiryTarget) : publicRecyclingDirectory(view.inquiryTarget) : "";
+    ? research ? researchDirectory(research, view.inquiryTarget, view.caseRegion) : publicRecyclingDirectory(view.inquiryTarget, view.caseRegion) : "";
   return page("조건부 보고서", `${conclusion(result, guidance ? guidanceConclusion(guidance, names) : undefined)}${view.notice ?? ""}
     <p id="next-action"><strong>다음 행동:</strong> ${escapeHtml(nextAction)}</p>
     <p class="screen-only"><a class="primary-action" href="${answerAction ?? "#checks"}">${answerAction ? result.state === "needs-information" ? "답변 입력하기" : "입력 다시 확인하기" : "실행 전 확인하기"}</a></p>
@@ -149,9 +154,16 @@ export function renderReport(result: DecisionResult, presentation: ReportPresent
     <details id="result-context"><summary>판단 이유·자료 범위 확인하기</summary><p>${mode}</p>${data}
     ${result.state === "compared" && result.confidence ? `<p><strong>확신도: ${result.confidence.level === "medium" ? "중간" : "낮음"}</strong></p>${list(result.confidence.reasons.map(readableReason))}` : ""}
     <p><a class="primary-action secondary-action" href="#evidence">근거 확인하기</a> <a class="primary-action secondary-action" href="#checks">실행 전 확인하기</a></p>${view.actions ?? ""}</details>
-    ${guidance ? guidanceProgress(guidance) + guidanceOneFact(guidance, names) : ""}
+    ${guidance ? `<details id="output-legend"><summary>범례: 추천 · 조건부 최적 · 가설 · 참고값 · 미확보</summary>
+      <dl><dt>추천</dt><dd>현재 근거로 검토할 경로 순서이며 실행 승인이 아닙니다.</dd>
+      <dt>조건부 최적</dt><dd>명시한 가정과 모델 경로 안에서 비용·탄소가 낮거나 같은 계산 결과입니다.</dd>
+      <dt>가설</dt><dd>확인되지 않은 값을 별도로 바꿔 본 결과이며 원래 사실을 고치지 않습니다.</dd>
+      <dt>참고값</dt><dd>출처·범위를 소개한 자료이며 이 사례의 계산값으로 대입하지 않습니다.</dd>
+      <dt>미확보</dt><dd>지원하는 값이 없다는 뜻이며 0이 아닙니다.</dd></dl></details>` : ""}
+    ${guidance ? guidanceProgress(guidance, presentation) + guidanceOneFact(guidance, names) : ""}
     ${publicScenario ? publicInputCalculations(publicScenario) : ""}${view.researchFirst ? researchSections : ""}
     ${guidance ? guidanceStability(guidance, names) : ""}
+    ${sensitivity ? guidanceSensitivity(sensitivity, names) : ""}
     <details id="decision-detail"><summary>판정 상세·확인할 조건 펼치기</summary>${reasons(result, references, presentation)}</details>
     ${result.state !== "compared" && result.conditionalAlternatives?.length ? `<section id="alternatives" aria-label="조건별 대안 비교"><h2>조건별 대안 비교</h2><p>현재 실행 보류는 유지됩니다. 아래는 확인할 조건에 따른 검토 경로이며 처리·반출·계약 승인이 아닙니다.</p>${result.conditionalAlternatives.map(alternative => `<article data-conditional-alternative="${escapeHtml(alternative.routeId)}"><h3>${escapeHtml(alternative.title)}</h3><p><strong>이 조건이라면:</strong> ${escapeHtml(alternative.condition.description)}</p><p>${escapeHtml(alternative.rationale)}</p><p><strong>${alternative.support.state === "route-supported" ? "조건을 확인한 뒤 검토할 공개 근거가 있습니다." : "이 처리 경로의 적합성은 아직 확인하지 못했습니다."}</strong></p>${alternative.support.missingEvidence.length ? list(alternative.support.missingEvidence) : ""}<p><strong>먼저 확인할 것</strong></p>${list(alternative.nextChecks)}<details><summary>이 대안의 근거와 적용 범위</summary>${alternative.citations.map(citation => `<p>${references([citation.sourceId])} ${escapeHtml(citation.locator)} · ${citation.scope === "route-specific" ? "해당 경로의 조건부 근거" : "분류·검토를 위한 일반 기준"}</p><blockquote>${escapeHtml(citation.quote)}</blockquote><p>${escapeHtml(citation.claim)}</p>`).join("")}</details></article>`).join("")}</section>` : ""}
     ${view.researchFirst ? "" : researchSections}${directories}
