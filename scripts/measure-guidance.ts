@@ -7,6 +7,7 @@ import manifest from "../data/evaluation/development.json" with { type: "json" }
 import baseline from "../data/evaluation/round3-20261121/results.json" with { type: "json" };
 import { parseCaseInput } from "../src/input.ts";
 import { createResourceDomain } from "../src/domain.ts";
+import { createVerificationCandidates, presentAssessmentDecision } from "../src/o-verification-plan-candidates.ts";
 import { revision } from "../src/o-validation.ts";
 import { readCaseResearchCatalog } from "../src/o-case-research.ts";
 import { buildPublicInputScenario, publicScenarioEligibility } from "../src/o-input-public-scenario.ts";
@@ -48,6 +49,7 @@ const rows = await Promise.all(manifest.cases.map(async item => {
     publicScenario: scenario ?? undefined, publicDirectoryCount: 4,
   });
   const sensitivity = scenario && guidance.scenario ? buildScenarioSensitivity(scenario, guidance.scenario) : null;
+  const verificationCandidates = createVerificationCandidates(inputBefore, presentAssessmentDecision(decision));
   assert.equal(revision(input), inputBefore);
   assert.equal(revision(decision), decisionBefore);
   assert.equal(revision(scenario), scenarioBefore);
@@ -75,6 +77,10 @@ const rows = await Promise.all(manifest.cases.map(async item => {
     sensitivitySamples: sensitivity?.samples.length ?? 0,
     sensitivityRetained: sensitivity?.samples.filter(sample => sample.retained).length ?? 0,
     priceCrossovers: sensitivity?.priceCrossovers ?? [],
+    verificationCandidateCount: verificationCandidates.candidateCount,
+    verificationOfferedCount: verificationCandidates.offeredCount,
+    verificationOmittedCount: verificationCandidates.omittedCount,
+    verificationCandidates,
     guidance, sensitivity,
     unchangedDecisionRef: `data/evaluation/round3-20261121/results.json#/${baseline.findIndex(row => row.caseId === item.caseId)}/result`,
   };
@@ -88,6 +94,8 @@ const implementation = await Promise.all([
   "src/report.ts", "src/report-guidance.ts", "src/report-inquiry.ts", "src/report-model-audit.ts",
   "src/o-model-audit.ts", "src/o-model-audit-schema.ts", "src/domain.ts", "src/session.ts",
   "src/app-types.ts", "src/o-case-record-validation.ts",
+  "src/o-verification-plan.ts", "src/o-verification-plan-schema.ts", "src/o-verification-plan-candidates.ts",
+  "src/extension.ts", "src/report-verification-plan.ts", "src/report-evidence.ts",
   "src/report-research.ts", "src/report-styles.ts",
   "scripts/measure-guidance.ts",
   "data/reference/domestic-scenario-context-20261121.json",
@@ -105,6 +113,13 @@ const summary = {
   recommendedWithoutPublicScenarioWithReasons: rows.filter(row => row.state === "compared"
     && !row.automaticPublicScenario && row.publicScenarioOmissionReasons.length > 0).length,
   computedPriceCrossovers: rows.reduce((sum, row) => sum + row.priceCrossovers.filter(point => point.minimumPrice !== null).length, 0),
+  verificationCandidateInventory: {
+    cases: rows.length,
+    candidates: rows.reduce((sum, row) => sum + row.verificationCandidateCount, 0),
+    offered: rows.reduce((sum, row) => sum + row.verificationOfferedCount, 0),
+    omitted: rows.reduce((sum, row) => sum + row.verificationOmittedCount, 0),
+    interpretation: "Host-issued verification options only; no model selection or priority-quality measurement occurred in this replay.",
+  },
   heldCasesWithOneFactPriority: rows.filter(row => row.firstFact !== null).length,
   hypotheticalOneFactProbes: rows.reduce((sum, row) => sum + row.probeCount, 0),
   heldWithoutPriorityWithRequiredFacts: rows.filter(row => row.noPriorityFacts.length > 0).length,
@@ -131,5 +146,5 @@ const summary = {
 };
 await writeFile(resolve(output, "results.json"), JSON.stringify(rows, null, 2) + "\n");
 await writeFile(resolve(output, "summary.json"), JSON.stringify(summary, null, 2) + "\n");
-await writeFile(resolve(output, "compact.json"), JSON.stringify(rows.map(({ guidance: _g, sensitivity: _s, ...row }) => row), null, 2) + "\n");
+await writeFile(resolve(output, "compact.json"), JSON.stringify(rows.map(({ guidance: _g, sensitivity: _s, verificationCandidates: _v, ...row }) => row), null, 2) + "\n");
 console.log(JSON.stringify(summary));
