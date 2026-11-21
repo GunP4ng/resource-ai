@@ -3,6 +3,7 @@ import { parseDecision } from "./o-decision.ts";
 import type { CaseResearchReport } from "./o-case-research-schema.ts";
 import type { PublicInputScenario } from "./o-input-public-scenario.ts";
 import type { CaseGuidance } from "./o-case-guidance.ts";
+import type { ModelHostAudit } from "./o-model-audit.ts";
 import { guidanceConclusion, guidanceProgress, guidanceStability, guidanceOneFact, guidanceSensitivity } from "./report-guidance.ts";
 import { buildScenarioSensitivity } from "./o-scenario-sensitivity.ts";
 import { escapeHtml, list, page } from "./report-html.ts";
@@ -11,6 +12,7 @@ import { researchCalculations, researchDirectory, publicInputCalculations, publi
 import { comparisonSummary, comparisonConditions, prioritySummary, routeConditions, scenarioAudit } from "./report-comparison.ts";
 import type { EvidenceReferences } from "./report-comparison.ts";
 export interface ReportPresentation {
+  readonly modelAudit?: ModelHostAudit;
   readonly mode: "synthetic" | "offline" | "live" | "recording";
   readonly scenarioLabels?: readonly string[];
   readonly execution?: { readonly traceId: string; readonly usage: string | null };
@@ -28,6 +30,7 @@ export type ReportContext =
 /** Trusted server view fragments; never taken from model output or input metadata. */
 export interface ReportView {
   readonly caseRegion?: string | null;
+  readonly publicScenarioMissing?: readonly string[];
   readonly notice?: string;
   readonly actions?: string;
   readonly editing?: string;
@@ -161,6 +164,8 @@ export function renderReport(result: DecisionResult, presentation: ReportPresent
       <dt>참고값</dt><dd>출처·범위를 소개한 자료이며 이 사례의 계산값으로 대입하지 않습니다.</dd>
       <dt>미확보</dt><dd>지원하는 값이 없다는 뜻이며 0이 아닙니다.</dd></dl></details>` : ""}
     ${guidance ? guidanceProgress(guidance, presentation) + guidanceOneFact(guidance, names) : ""}
+    ${context.audience === "authenticated-research" && view.publicScenarioMissing?.length
+      ? `<section id="public-scenario-unavailable"><h2>공개 비용·탄소 비교가 없는 이유</h2>${list(view.publicScenarioMissing)}<p>추천은 기존 공개 근거에 따른 검토 순서입니다. 비교 부재를 비용 0이나 재활용 불가로 해석하지 않습니다.</p></section>` : ""}
     ${publicScenario ? publicInputCalculations(publicScenario) : ""}${view.researchFirst ? researchSections : ""}
     ${guidance ? guidanceStability(guidance, names) : ""}
     ${sensitivity ? guidanceSensitivity(sensitivity, names) : ""}

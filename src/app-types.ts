@@ -4,9 +4,11 @@ import type { createLocalAuth } from "./o-auth.ts";
 import type { OCaseStore } from "./o-case-store.ts";
 import type { createPhotoStore } from "./photos.ts";
 import type { PhotoExecutionAuthority } from "./photo-execution.ts";
+import type { ModelHostAudit } from "./o-model-audit.ts";
 export interface AssessmentEnvelope {
   readonly decision: DecisionResult;
   readonly execution?: { readonly traceId: string; readonly usage?: string | null };
+  readonly modelAudit?: ModelHostAudit;
 }
 export type StoredAssessment = AssessmentEnvelope;
 /** Proposed H1/H4 handoff; not a senpi API. No provider is invoked by this module. */

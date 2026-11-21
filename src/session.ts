@@ -24,6 +24,7 @@ import type { PhotoObservations } from "./photo-observations.ts";
 import { createDecisionReferences } from "./decision-references.ts";
 import { subscriptionRoute, subscriptionCredentials, siwcAccessToken, SIWC_ENDPOINT, type SubscriptionConfiguration, type SubscriptionRoute } from "./subscription-configuration.ts";
 import { completedSubscriptionResponse } from "./subscription-response.ts";
+import { createModelHostAudit, type ModelHostAudit, type HostProposalObservation } from "./o-model-audit.ts";
 
 export type SessionFailureCode = "cancelled" | "timeout" | "authentication" | "rate-limit" | "provider" | "not-configured" | "invalid-model-output" | "case-not-found" | "case-busy" | "capacity" | "turn-limit";
 export class SessionFailure extends Error {
@@ -40,6 +41,8 @@ export interface CaseRunResult {
   readonly photoObservations?: PhotoObservations;
 }
 export type CaseRunner = (input: CaseInput, signal: AbortSignal, resources?: DomainResources) => Promise<CaseRunResult>;
+// Only this runner implementation can attest that it resolved a host-issued reference.
+const modelOrigins = new WeakMap<CaseRunResult, ModelHostAudit["origin"]>();
 /** Server-owned loader; called again for every case revision, within the request timeout. */
 export type ResourceProvider = (input: CaseInput, signal: AbortSignal) => DomainResources | Promise<DomainResources>;
 
@@ -201,20 +204,28 @@ export function createAssessmentAdapter(options: { readonly runner?: CaseRunner;
     const cancel = () => controller.abort();
     signal.addEventListener("abort", cancel, { once: true }); active.add(controller);
     try {
+      let audit: { proposal: unknown; origin: ModelHostAudit["origin"]; observation: HostProposalObservation } | undefined;
       const result = await boundedRun(async (value, runSignal) => {
         const resources = structuredClone(await options.resources?.(structuredClone(value), runSignal) ?? {});
         runSignal.throwIfAborted();
         const proposed = await options.runner?.(structuredClone(value), runSignal, structuredClone(resources)) ?? {};
         runSignal.throwIfAborted();
         const domain = createResourceDomain(value, resources, proposed.photoObservations);
-        return { ...proposed, proposal: await domain.decide(proposed.proposal) };
+        const proposal = structuredClone(proposed.proposal);
+        let observation: HostProposalObservation | undefined;
+        const decision = await domain.decide(proposal, receipt => { observation = structuredClone(receipt); });
+        if (proposal !== undefined && observation !== undefined) {
+          audit = { proposal, origin: modelOrigins.get(proposed) ?? "runner-output", observation };
+        }
+        return { proposal: decision, execution: proposed.execution };
       }, input, controller.signal, timeoutMs, pendingWork);
       if (controller.signal.aborted || disposed) throw new SessionFailure("cancelled");
       const decision = parseDecision(result.proposal);
       // O4 currently has one free-text answer box. Make the explicit patch syntax visible.
       const presented = decision.state === "needs-information" ? { ...decision, questions: [...decision.questions,
         '추가 답변은 필드별 JSON으로 입력해 주세요. 예: {"massKg":100,"process":"사출"}. 숫자에는 따옴표를 붙이지 않습니다.'] } : decision;
-      return { decision: presented, ...(result.execution === undefined ? {} : { execution: result.execution }) };
+      return { decision: presented, ...(result.execution === undefined ? {} : { execution: result.execution }),
+        ...(audit === undefined ? {} : { modelAudit: createModelHostAudit(input, { ...audit, decision: presented }) }) };
     } finally { active.delete(controller); signal.removeEventListener("abort", cancel); }
   };
   const prune = () => { for (const [id, item] of cases) if (!item.busy && item.expires <= now()) cases.delete(id); };
@@ -447,11 +458,13 @@ function createModelRunner(provider: "azure-openai-responses" | "chatgpt-subscri
       }
       const text = last.content.filter((part) => part.type === "text").map((part) => part.text).join("");
       let proposal: unknown;
+      let origin: ModelHostAudit["origin"] = "model-output";
       try { proposal = JSON.parse(text); } catch { throw new SessionFailure("invalid-model-output"); }
       if (record(proposal) && Object.hasOwn(proposal, "decisionReference")) {
         try {
           if (!owned.resolveDecisionReference) throw new Error("reference-unavailable");
           proposal = owned.resolveDecisionReference(proposal);
+          origin = "host-decision-reference";
         } catch { throw new SessionFailure("invalid-model-output"); }
       }
       let photoObservations: PhotoObservations | undefined;
@@ -461,9 +474,11 @@ function createModelRunner(provider: "azure-openai-responses" | "chatgpt-subscri
         catch { throw new SessionFailure("invalid-model-output"); }
       }
       const stats = session.getSessionStats();
-      return { proposal, ...(photoObservations === undefined ? {} : { photoObservations }), execution: { traceId: requestId ? `${provider === "azure-openai-responses" ? "azure" : provider}:${requestId}` : `senpi:${session.sessionId}`,
+      const result: CaseRunResult = { proposal, ...(photoObservations === undefined ? {} : { photoObservations }), execution: { traceId: requestId ? `${provider === "azure-openai-responses" ? "azure" : provider}:${requestId}` : `senpi:${session.sessionId}`,
         usage: JSON.stringify({ provider, modelId, input: stats.tokens.input, output: stats.tokens.output, cacheRead: stats.tokens.cacheRead, cacheWrite: stats.tokens.cacheWrite, total: stats.tokens.total,
           imageCount: photos.images.length, imageSha256: photos.hashes }) } };
+      modelOrigins.set(result, origin);
+      return result;
     } catch (error) {
       if (signal.aborted) throw new SessionFailure("cancelled");
       if (error instanceof SessionFailure) throw error;

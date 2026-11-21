@@ -44,6 +44,26 @@ for (const material of ["PET", "HDPE"] as const) {
         assert.ok(Math.abs(sample.feeMinimum - (firstCost - inc.net_cost_krw) / (context.userMassKg / 1000)) < 1e-7);
       }
     }
+    assert.deepEqual(sensitivity.priceCrossovers.map(row => row.allocation), [0.6, 0.8, 1]);
+    for (const boundary of sensitivity.priceCrossovers) {
+      assert.ok(boundary.minimumPrice !== null && boundary.minimumPrice > 0);
+      for (const offset of [-1, 0, 1]) {
+        const variant = buildCalculationVariant(context, [
+          { inputId: `${material}.y`, value: boundary.allocation },
+          { inputId: `${material}.price`, value: boundary.minimumPrice + offset },
+          { inputId: "f_inc", value: 0 },
+        ], "가격 경계의 양쪽과 동률을 기존 엔진으로 대조");
+        const first = variant.calculations.results.find(row => row.route_id === "recycling");
+        const others = variant.calculations.results.filter(row => row.route_id !== "recycling");
+        assert.ok(first && first.net_cost_krw !== null && first.net_carbon_kgco2e !== null);
+        const cost = first.net_cost_krw, carbon = first.net_carbon_kgco2e;
+        const dominated = others.every(row => row.net_cost_krw !== null && row.net_carbon_kgco2e !== null
+          && cost <= row.net_cost_krw + 1e-8 && carbon <= row.net_carbon_kgco2e);
+        assert.equal(dominated, offset >= 0);
+        if (offset === 0) assert.deepEqual(others.filter(row => row.net_cost_krw !== null
+          && Math.abs(cost - row.net_cost_krw) < 1e-8).map(row => row.route_id), boundary.limitingRouteIds);
+      }
+    }
     assert.equal(canonical({ context, baseline }), before);
     assert.equal(context.calculations.inputs.find(row => row.input_id === "f_inc")?.value, null);
     assert.equal(context.calculations.results.find(row => row.route_id === "energy_recovery")?.net_cost_krw, null);

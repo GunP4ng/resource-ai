@@ -11,6 +11,7 @@ import { canonical, date, evidenceIssue, period, requireValid, revision, validat
 import { parseDecision } from "./o-decision.ts";
 import { executionChecksFor, recommend, recommendationBlockers } from "./recommendation.ts";
 import { lookupLegalEvidence } from "./evidence.ts";
+import type { HostProposalObservation, ModelAuditCheck } from "./o-model-audit-schema.ts";
 
 /** Server-owned supplements only; never deserialize these from model/app input. */
 export interface DomainResources {
@@ -69,7 +70,7 @@ export function createResourceDomain(input: CaseInput, resources: DomainResource
   return {
     ...domain,
     assess,
-    async decide(proposal?: unknown): Promise<DecisionResult> {
+    async decide(proposal?: unknown, observe?: (receipt: HostProposalObservation) => void): Promise<DecisionResult> {
       const assessment = assess();
       // Keep strict route eligibility intact; weak relevance is advisory only for recommendations.
       const recommendationAssessment = { ...assessment, legal: lookupLegalEvidence(facts, undefined,
@@ -81,9 +82,15 @@ export function createResourceDomain(input: CaseInput, resources: DomainResource
         reasons: [...new Set([...reasons, ...assessment.questions])], preExecutionChecks: executionChecksFor(recommendationAssessment) });
       let result: DecisionResult = fallback;
       try {
-        if (assessment.reviewIssues.length > 0) return hold(...assessment.reviewIssues, "route-review-conflict");
+        if (assessment.reviewIssues.length > 0) {
+          observe?.({ status: "not-evaluated", passedChecks: [], failedCheck: null, reasons: [...assessment.reviewIssues, "route-review-conflict"] });
+          return hold(...assessment.reviewIssues, "route-review-conflict");
+        }
         const blockers = recommendationBlockers(facts, recommendationAssessment, owned.routeReviews);
-        if (blockers.length > 0) return hold(...blockers);
+        if (blockers.length > 0) {
+          observe?.({ status: "not-evaluated", passedChecks: [], failedCheck: null, reasons: blockers });
+          return hold(...blockers);
+        }
         if (facts.massKg !== null && owned.comparison !== undefined && owned.calculations !== undefined) {
           assertComparisonEvidence(owned.comparison);
         }
@@ -141,23 +148,42 @@ export function createResourceDomain(input: CaseInput, resources: DomainResource
         }
       } catch (error) { result = hold(error instanceof ValidationError ? error.reason : "host-comparison-invalid"); }
       if (proposal !== undefined) {
+        const passedChecks: ModelAuditCheck[] = [];
+        let check: ModelAuditCheck = "syntax";
         try {
           const candidate = parseDecision(proposal);
+          passedChecks.push(check);
           if (candidate.state !== "compared" && candidate.conditionalAlternatives !== undefined) {
+            check = "alternatives";
             requireValid(fallback.state !== "compared"
               && canonical(candidate.conditionalAlternatives) === canonical(fallback.conditionalAlternatives),
             "proposal-alternatives-mismatch");
+            passedChecks.push(check);
           }
+          check = "case-binding";
           requireValid(candidate.caseId === facts.caseId, "proposal-case-mismatch");
+          passedChecks.push(check);
+          check = "evidence";
           for (const record of candidate.evidence) {
             const trusted = result.evidence.find((item) => item.sourceId === record.sourceId);
             requireValid(trusted !== undefined && canonical(trusted) === canonical(record), "proposal-evidence-conflict");
           }
+          passedChecks.push(check);
           if (candidate.state === "compared") {
+            check = "comparison";
             requireValid(candidate.humanApproval === "pending", "proposal-human-approval-forbidden");
             requireValid(result.state === "compared" && canonical(candidate) === canonical(result), "proposal-comparison-mismatch");
+            passedChecks.push(check);
           }
-        } catch (error) { return hold(error instanceof ValidationError ? error.reason : "proposal-invalid"); }
+        } catch (error) {
+          const reason = error instanceof ValidationError ? error.reason : "proposal-invalid";
+          observe?.({ status: reason === "invalid-decision-result" ? "syntax-invalid" : "validation-rejected",
+            passedChecks, failedCheck: check, reasons: [reason] });
+          return hold(reason);
+        }
+        observe?.({ status: "validation-passed", passedChecks, failedCheck: null, reasons: [] });
+      } else {
+        observe?.({ status: "absent", passedChecks: [], failedCheck: null, reasons: [] });
       }
       return structuredClone(result);
     },

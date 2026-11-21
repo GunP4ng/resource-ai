@@ -45,6 +45,9 @@ dl{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:var(--s12)
 dd{margin:0;font-variant-numeric:tabular-nums}
 li{margin-block:var(--s8)}
 .table-wrap{overflow-x:auto}
+[data-reply-comparison] table{min-width:calc(68ch - 2 * var(--s20))}
+[data-reply-amount]{white-space:nowrap}
+.reply-route{overflow-wrap:normal}
 .case-list{max-width:100%;min-width:0}
 .case-list table{min-width:0}
 .case-list a{display:inline-flex;align-items:center;min-height:var(--target);min-width:var(--target)}
@@ -96,5 +99,6 @@ code{font-family:ui-monospace,monospace}
   p{orphans:3;widows:3}
   footer{margin-top:var(--s8);padding-top:var(--s8)}
   .table-wrap{overflow:visible}
+  [data-reply-comparison] table{min-width:0}
 }
 `;

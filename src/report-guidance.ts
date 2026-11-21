@@ -3,6 +3,7 @@ import type { ReportPresentation } from "./report.ts";
 import type { ScenarioSensitivity } from "./o-scenario-sensitivity.ts";
 import { escapeHtml, list } from "./report-html.ts";
 import { readableReason } from "./report-evidence.ts";
+import { renderModelHostAudit } from "./report-model-audit.ts";
 
 type Names = Readonly<Record<string, string>>;
 const number = (value: number, digits: number) => value.toLocaleString("ko-KR", { maximumFractionDigits: digits });
@@ -61,10 +62,11 @@ export function guidanceProgress(guidance: CaseGuidance, presentation: ReportPre
     <ol class="guidance-stages">${guidance.stages.map(stage => `<li data-guidance-stage="${stage.stage}" data-state="${stage.status}">
       <strong>${stage.stage}. ${stageNames[stage.stage - 1]}</strong><span>${statusNames[stage.status]}</span></li>`).join("")}</ol>
     <details><summary>단계별 생성 방식·근거·빈 단계의 사유</summary>
-      <p data-model-execution="${executionState}">${executionLabel}. 단계별 모델 기여·성공·실패 기록은 없습니다. 설정이나 추적 식별자만으로 제공자 실행 성공을 확정하지 않습니다.</p>
+      <p data-model-execution="${executionState}">${executionLabel}. ${presentation.modelAudit ? "아래에 이 평가의 제안·호스트 검사 기록을 표시합니다." : "단계별 모델 기여·성공·실패 기록은 없습니다."} 설정이나 추적 식별자만으로 제공자 실행 성공을 확정하지 않습니다.</p>
       <p>모델 사용 경로에서는 제안을 받은 뒤 호스트 규칙으로 검증합니다. 아래 안내와 비용·탄소는 호스트가 정리·계산합니다.</p>
+      ${presentation.modelAudit ? renderModelHostAudit(presentation.modelAudit) : ""}
       ${guidance.stages.map(stage => `<section data-stage-method="${stage.stage}"><h3>${stage.stage}. ${escapeHtml(stage.name)} · ${statusNames[stage.status]}</h3>
-      <p>생성 방식: ${stageMethods[stage.stage]} · 단계별 모델 기록 없음</p>
+      <p>생성 방식: ${stageMethods[stage.stage]}${presentation.modelAudit ? "" : " · 단계별 모델 기록 없음"}</p>
       ${stage.outputs.length ? list(stage.outputs) : "<p>현재 연결된 산출물이 없습니다.</p>"}${list(stage.reasons)}</section>`).join("")}</details></section>`;
 }
 
@@ -125,6 +127,18 @@ export function guidanceSensitivity(value: ScenarioSensitivity, names: Names): s
       <thead><tr><th scope="col">모델 배분</th><th scope="col">가격 80%</th><th scope="col">가격 100%</th><th scope="col">가격 120%</th></tr></thead>
       <tbody>${[0.6, 0.8, 1].map(allocation => `<tr><th scope="row">${allocation}</th>${value.samples.filter(sample => sample.allocation === allocation)
         .map(sample => `<td data-sensitivity-cell="${sample.allocation}:${sample.priceMultiplier}" data-retained="${sample.retained}">${sample.retained ? "조건부 유지" : "미확정"}</td>`).join("")}</tr>`).join("")}</tbody></table></div>
+    <h3>판매단가 교차점 (소각단가 0 가정)</h3>
+    <ul>${value.priceCrossovers.map(row => `<li data-price-crossover="${row.allocation}">배분 ${row.allocation}:
+      ${row.minimumPrice === null ? "미확정" : `약 ${number(row.minimumPrice, 2)} ${escapeHtml(value.priceUnit === "KRW/metric_tonne" ? "원/t (1,000kg)" : value.priceUnit)}`}</li>`).join("")}</ul>
+    <p><strong>소각단가 0원/t 가정에서 판매단가가 이 값 아래에서는 결론이 바뀜:</strong> 재활용의 비용·탄소 약우월성을 유지하지 못합니다.
+      교차점에서는 제한 경로와 비용이 같습니다. 실제 소각단가가 더 높으면 경계도 달라지므로 실제 경로 전환·승인을 뜻하지 않습니다.
+      음수 교차점이면 판매단가 0 이상 범위에는 이 경계가 없습니다.</p>
+    <details><summary>교차 단가의 계산식·정밀값</summary>
+      <p>기존 엔진의 판매단가 0 계산에서 (재활용 순비용 − 각 비교 경로 순비용) ÷ 재활용 배분 질량(t)의 최댓값입니다.
+        배분별 탄소가 모든 비교 경로 이하인 경우에만 표시합니다. 나머지 단가·거리·계수는 고정하고 실제 소각단가는 null로 남깁니다.</p>
+      <ul>${value.priceCrossovers.map(row => `<li>배분 ${row.allocation}: ${row.minimumPrice === null
+        ? escapeHtml(row.unavailableReason ?? "미확보") : `${escapeHtml(String(row.minimumPrice))} ${escapeHtml(value.priceUnit)} · 제한 경로 ${escapeHtml(row.limitingRouteIds.map(id => names[id] ?? id).join(", "))}`}</li>`).join("")}</ul>
+      <p>9점 표의 중간값 일반 보장과는 별개인, 고정된 선형 비용식의 가격 경계입니다.</p></details>
     <details><summary>각 가정의 단가·소각비 조건</summary><ul>${value.samples.map(sample => `<li>배분 ${sample.allocation} · 가격 ${number(sample.price, 0)} ${escapeHtml(value.priceUnit)}:
       ${sample.feeMinimum === null ? "충분한 소각비 경계 미확보" : `계산상 소각비 충분 하한 ${number(sample.feeMinimum, 2)} KRW/t`}
       ${list(sample.reasons)}</li>`).join("")}</ul>

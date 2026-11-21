@@ -12,6 +12,14 @@ export interface ScenarioSensitivity {
   readonly baselineRouteId: NonNullable<ScenarioGuidance["firstRouteId"]>;
   readonly preparedDatasetSha256: string;
   readonly sampledOnly: true;
+  readonly priceCrossovers: readonly {
+    readonly allocation: number;
+    readonly minimumPrice: number | null;
+    readonly limitingRouteIds: readonly string[];
+    readonly unavailableReason: string | null;
+    readonly datasetSha256: string;
+    readonly provenanceSha256: string;
+  }[];
   readonly samples: readonly {
     readonly allocation: number;
     readonly priceMultiplier: number;
@@ -36,6 +44,37 @@ export function buildScenarioSensitivity(context: CalculationContext, baseline: 
   const price = context.calculations.inputs.find(input => input.input_id === priceInputId);
   if (price === undefined || price.value === null) return null;
   const basePrice = price.value;
+  const priceCrossovers = [0.6, 0.8, 1].map(allocation => {
+    const zero = buildCalculationVariant(context, [
+      { inputId: `${material}.y`, value: allocation },
+      { inputId: priceInputId, value: 0 },
+      { inputId: "f_inc", value: 0 },
+    ], "가격 교차점 계산을 위한 판매단가 0·소각단가 0 가정. 실제 미확보값은 유지합니다.");
+    const rows = zero.calculations.results;
+    const recycling = rows.find(row => row.route_id === "recycling");
+    const other = rows.filter(row => row.route_id !== "recycling");
+    const allocatedMass = zero.calculations.routes.find(row => row.route_id === "recycling")?.mass_flow.recycling_t;
+    const receipt = { allocation, datasetSha256: zero.provenance.derivedDatasetSha256,
+      provenanceSha256: zero.provenance.derivedProvenanceSha256 };
+    const recyclingCost = recycling?.net_cost_krw;
+    const recyclingCarbon = recycling?.net_carbon_kgco2e;
+    if (baseline.firstRouteId !== "recycling" || recycling === undefined || recyclingCost == null || recyclingCarbon == null
+      || allocatedMass == null || allocatedMass <= 0 || other.length !== 2
+      || other.some(row => row.net_cost_krw === null || row.net_carbon_kgco2e === null
+        || row.carbon_boundary_id !== recycling.carbon_boundary_id || recyclingCarbon > row.net_carbon_kgco2e)) {
+      return { ...receipt, minimumPrice: null, limitingRouteIds: [],
+        unavailableReason: "동일 경계의 비용·탄소와 양의 재활용 배분 질량이 없어 가격만의 경계를 제시하지 않습니다." };
+    }
+    // Existing engine has C_recycling(p) = C_recycling(0) - recycling_t * p.
+    // The maximum pairwise crossing preserves separate cost/carbon dominance, not a weighted score.
+    const crossings = other.flatMap(row => row.net_cost_krw === null ? []
+      : [{ routeId: row.route_id, price: (recyclingCost - row.net_cost_krw) / allocatedMass }]);
+    const minimumPrice = Math.max(...crossings.map(row => row.price));
+    return Number.isFinite(minimumPrice)
+      ? { ...receipt, minimumPrice, limitingRouteIds: crossings.filter(row => row.price === minimumPrice).map(row => row.routeId),
+        unavailableReason: null }
+      : { ...receipt, minimumPrice: null, limitingRouteIds: [], unavailableReason: "유한한 가격 경계를 계산하지 못했습니다." };
+  });
   const samples = [0.6, 0.8, 1].flatMap(allocation => [0.8, 1, 1.2].map(priceMultiplier => {
     const common = { allocation, priceMultiplier, price: basePrice * priceMultiplier };
     try {
@@ -58,5 +97,5 @@ export function buildScenarioSensitivity(context: CalculationContext, baseline: 
     }
   }));
   return { material, priceInputId, basePrice, priceUnit: price.unit, baselineRouteId: baseline.firstRouteId,
-    preparedDatasetSha256, sampledOnly: true, samples };
+    preparedDatasetSha256, sampledOnly: true, samples, priceCrossovers };
 }
