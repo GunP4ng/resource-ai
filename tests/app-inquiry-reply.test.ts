@@ -76,7 +76,7 @@ for (const material of ["PET", "HDPE"] as const) {
       const form = await env.app(new Request(origin + target));
       assert.equal(form.status, 200);
       const values: Record<string, string | null> = {};
-      await new HTMLRewriter().on("input[type=hidden]", { element(element) {
+      await new HTMLRewriter().on("input[name=baseVersion], input[name=inputRevision]", { element(element) {
         values[element.getAttribute("name") ?? ""] = element.getAttribute("value");
       } }).transform(form).text();
       assert.deepEqual(values, { baseVersion: String(env.saved.snapshot.version), inputRevision: revision(env.input) });
@@ -199,7 +199,9 @@ test("held, hazardous, historical, permission-changed and photo cases show no nu
     for (const map of variants) {
       env.map(map);
       const current = map(env.saved);
-      const response = await env.post({ inputRevision: revision(current.snapshot.input), acceptance: "yes" });
+      const response = await env.post({ inputRevision: revision(current.snapshot.input), acceptance: "yes",
+        second_companyName: "두 번째 미검증 업체", second_acceptance: "yes",
+        second_inputId: "f_inc", second_unit: env.fields.unit, second_amount: "0" });
       assert.equal(response.status, 200);
       assert.deepEqual(await results(response), []);
     }

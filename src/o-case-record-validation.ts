@@ -11,6 +11,8 @@ import { parseCaseInput } from "./input.ts";
 import { parseDecision } from "./o-decision.ts";
 import { canonical, date, revision, requireValid } from "./o-validation.ts";
 import { ResearchCaseArtifactSchema } from "./o-case-artifact.ts";
+import { ModelHostAuditSchema } from "./o-model-audit-schema.ts";
+import { parseModelHostAudit } from "./o-model-audit.ts";
 
 export const instant = Type.Integer({ minimum: 0, maximum: Number.MAX_SAFE_INTEGER });
 export const positive = Type.Integer({ minimum: 1, maximum: Number.MAX_SAFE_INTEGER });
@@ -21,13 +23,15 @@ export const photoRef = Type.String({ pattern: "^[a-f0-9-]{36}$" });
 const originSchema = Type.Object({ kind: Type.Union([Type.Literal("synthetic"), Type.Literal("field")]), reference: Type.String({ minLength: 1, maxLength: 10000, pattern: "\\S" }) }, { additionalProperties: false });
 const executionSchema = Type.Object({ traceId: Type.String({ minLength: 1, maxLength: 200, pattern: "\\S" }),
   usage: Type.Optional(Type.Union([Type.String({ minLength: 1, maxLength: 2000, pattern: "\\S" }), Type.Null()])) }, { additionalProperties: false });
-const envelopeSchema = Type.Object({ decision: Type.Unknown(), execution: Type.Optional(executionSchema) }, { additionalProperties: false });
+const envelopeSchema = Type.Object({ decision: Type.Unknown(), execution: Type.Optional(executionSchema),
+  modelAudit: Type.Optional(ModelHostAuditSchema) }, { additionalProperties: false });
 /** Shared HTTP/storage envelope parser; app's temporary copy may now import this export. */
 export function parseAssessment(output: unknown): AssessmentEnvelope {
   if (typeof output !== "object" || output === null || !Object.hasOwn(output, "decision")) return { decision: parseDecision(output) };
   requireValid(Value.Check(envelopeSchema, output), "invalid-assessment-envelope");
   const decision = parseDecision(output.decision);
-  return output.execution === undefined ? { decision } : { decision, execution: { traceId: output.execution.traceId, usage: output.execution.usage ?? null } };
+  return { decision, ...(output.execution === undefined ? {} : { execution: { traceId: output.execution.traceId, usage: output.execution.usage ?? null } }),
+    ...(output.modelAudit === undefined ? {} : { modelAudit: parseModelHostAudit(output.modelAudit, decision) }) };
 }
 export const presentationSchema = Type.Object({ mode: Type.Union([Type.Literal("synthetic"), Type.Literal("offline"), Type.Literal("live"), Type.Literal("recording")]),
   scenarioLabels: Type.Optional(Type.Array(Type.String({ maxLength: 2000 }), { maxItems: 100 })), execution: Type.Optional(Type.Object({ traceId: executionSchema.properties.traceId,
@@ -119,6 +123,7 @@ export function createCaseRecordValidation(db: RuntimeDatabase["database"]) {
     requireValid(Buffer.byteLength(record.snapshot) <= maxSnapshot, "storage-byte-limit");
     const value: unknown = JSON.parse(record.snapshot); requireValid(Value.Check(snapshotSchema, value), "invalid-case-snapshot");
     const input = parseInput(value.input), assessment = parseAssessment(value.assessment);
+    requireValid(assessment.modelAudit === undefined || assessment.modelAudit.inputRevision === value.evaluated.revision, "model-audit-input-mismatch");
     requireValid(input.caseId === record.case_id && assessment.decision.caseId === record.case_id && value.owner === record.owner
       && value.version === record.version && value.expires === record.expires && value.editUntil === record.edit_until
       && Value.Check(positive, record.row_revision) && Value.Check(instant, record.notice_generation)

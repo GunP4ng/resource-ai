@@ -7,13 +7,13 @@ import { HttpFailure, body, idPattern, redirect, response, sessionFailures, vers
 import { form, nativeAnswer } from "./app-views.ts";
 import { photoUI, photoRoute } from "./app-photo-routes.ts";
 import { readCaseResearchCatalog } from "./o-case-research.ts";
-import { buildPublicInputScenario } from "./o-input-public-scenario.ts";
+import { buildPublicInputScenario, publicScenarioEligibility } from "./o-input-public-scenario.ts";
 import { unsupportedScope, unsupportedScopePage } from "./o-supported-scope.ts";
 import { buildCaseGuidance } from "./o-case-guidance.ts";
 import { renderInquiry } from "./report-inquiry.ts";
 import { buildCalculationVariant } from "./o-calculation-variant.ts";
 import type { CalculationContext, CalculationVariant } from "./o-calculation-variant.ts";
-import { InquiryReplyInputError, parseInquiryReply, replyAmountOptions } from "./o-inquiry-reply.ts";
+import { InquiryReplyInputError, parseInquiryReplies, replyAmountOptions } from "./o-inquiry-reply.ts";
 import type { InquiryReply } from "./o-inquiry-reply.ts";
 import { renderInquiryReply } from "./report-inquiry-reply.ts";
 import { Invalid } from "./o-public-calculation-validation.ts";
@@ -71,14 +71,17 @@ export async function caseRoute(services: RouteServices, context: RouteRequest):
         throw new CaseConflict("research-binding-mismatch");
       }
     }
-    let reply: InquiryReply | undefined;
-    let variant: CalculationVariant | undefined;
+    let replies: readonly InquiryReply[] = [];
+    let variants: readonly (CalculationVariant | null)[] = [];
     if (request.method === "POST") {
       try {
-        reply = parseInquiryReply(raw, options);
-        if (context && reply.amount !== null) variant = buildCalculationVariant(context,
-          [{ inputId: reply.inputId, value: reply.amount }],
-          "사용자가 신고한 미검증 업체 회신 금액을 동일한 모델 단위로 가정했습니다. 실제 승인·업체 사실·확정 견적이 아닙니다.");
+        replies = parseInquiryReplies(raw, options);
+        const baseline = context;
+        variants = replies.map(reply => {
+          const overrides = reply.amounts.flatMap(item => item.amount === null ? [] : [{ inputId: item.inputId, value: item.amount }]);
+          return baseline && overrides.length ? buildCalculationVariant(baseline, overrides,
+            "사용자가 신고한 미검증 업체 회신 금액을 동일한 모델 단위로 가정했습니다. 실제 승인·업체 사실·확정 견적이 아닙니다.") : null;
+        });
       } catch (error) {
         if (error instanceof InquiryReplyInputError) throw new HttpFailure(400, error.message);
         if (error instanceof Invalid && error.code === "E_FINITE") throw new HttpFailure(400, "금액이 계산 가능한 범위를 초과했습니다.");
@@ -87,7 +90,7 @@ export async function caseRoute(services: RouteServices, context: RouteRequest):
     }
     const result = response(renderInquiryReply({ caseId, version: snapshot.version, inputRevision, options,
       blockedReason: context ? null : "보류·유해 접촉 미확인·사진 포함·과거 평가·권한 변경 또는 계산 문맥 미확보 사례에는 수치 비교·최적성·추천을 표시하지 않습니다. 회신은 실제 실행 승인이 아닙니다.",
-      ...(reply ? { reply } : {}), ...(context && variant ? { comparison: { baseline: context, variant } } : {}),
+      replies, ...(context && variants.some(Boolean) ? { comparison: { baseline: context, variants } } : {}),
     }));
     assertUnchanged();
     privateGuard();
@@ -127,6 +130,9 @@ export async function caseRoute(services: RouteServices, context: RouteRequest):
     const audience = privateAudience
       ? { audience: "authenticated-research", research: report?.research ?? null, publicScenario, guidance } as const
       : { audience: "commercial" } as const;
+    const eligibility = publicScenarioEligibility(snapshot.input);
+    const publicScenarioMissing = privateAudience && !publicScenario && !report?.research?.attachment
+      && eligibility.status === "unavailable" ? eligibility.reasons : undefined;
     const editable = snapshot.editUntil > now();
     const optionalMass = stored.decision.state === "compared" && snapshot.input.massKg === null && editable
       ? '<p class="screen-only"><a class="primary-action secondary-action" href="#answer-fields">질량을 입력하면 비용·탄소를 계산해요</a> (선택)</p><p>견적·탄소 계수 등 근거가 있는 항목부터 계산합니다. 자료가 없으면 필요한 내용을 알려드려요.</p>' : "";
@@ -138,7 +144,8 @@ export async function caseRoute(services: RouteServices, context: RouteRequest):
       ...snapshot.presentation, mode: snapshot.presentation?.mode ?? "live", review: snapshot.review,
       historical: snapshot.evaluated.revision !== revision(snapshot.input),
       execution: stored.execution ? { traceId: stored.execution.traceId, usage: stored.execution.usage ?? null } : undefined,
-    }, audience, { notice, actions, editing, caseRegion: snapshot.input.region, ...(suffix === "report" ? {} : { inquiryTarget: `/cases/${id}/inquiry` }),
+      ...(privateAudience && stored.modelAudit ? { modelAudit: stored.modelAudit } : {}),
+    }, audience, { notice, actions, editing, caseRegion: snapshot.input.region, publicScenarioMissing, ...(suffix === "report" ? {} : { inquiryTarget: `/cases/${id}/inquiry` }),
       ...(suffix === "report" || !editable ? {} : { answerTarget: "#answer-fields" as const }) }));
     privateGuard();
     return result;

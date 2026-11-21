@@ -1,7 +1,8 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
+import type { CaseInput } from "../src/contracts.ts";
 import { readCaseResearchCatalog } from "../src/o-case-research.ts";
-import { buildPublicInputScenario } from "../src/o-input-public-scenario.ts";
+import { buildPublicInputScenario, publicScenarioEligibility } from "../src/o-input-public-scenario.ts";
 import { buildCaseGuidance } from "../src/o-case-guidance.ts";
 import { createResourceDomain } from "../src/domain.ts";
 import { revision } from "../src/o-validation.ts";
@@ -73,13 +74,45 @@ test("the current private result shows nine sensitivity cells while the commerci
   const publicScenario = buildPublicInputScenario({ actorId: "view-owner", input, inputRevision: revision(input) }, data);
   assert.ok(publicScenario);
   const guidance = await buildCaseGuidance(input, decision, { publicScenario });
-  let privateCells = 0, commercialCells = 0;
+  let privateCells = 0, commercialCells = 0, privateCrossovers = 0, commercialCrossovers = 0;
   await new HTMLRewriter().on("[data-sensitivity-cell]", { element() { privateCells++; } })
+    .on("[data-price-crossover]", { element() { privateCrossovers++; } })
     .transform(new Response(renderReport(decision, { mode: "offline" }, {
       audience: "authenticated-research", research: null, publicScenario, guidance,
     }))).text();
   await new HTMLRewriter().on("[data-sensitivity-cell]", { element() { commercialCells++; } })
+    .on("[data-price-crossover]", { element() { commercialCrossovers++; } })
     .transform(new Response(renderReport(decision, { mode: "offline" }))).text();
   assert.equal(privateCells, 9);
   assert.equal(commercialCells, 0);
+  assert.equal(privateCrossovers, 3);
+  assert.equal(commercialCrossovers, 0);
+});
+
+test("public comparison omissions explain material and mass gaps only in the private result", async () => {
+  const data = await catalog, source = data.calculations.data.cases[0];
+  assert.ok(source);
+  for (const [polymer, massKg, expectedReasons] of [
+    ["PP", null, 2], ["LDPE", 12, 1], ["PET", null, 1], ["<img src=x onerror=alert(1)>", 12, 1],
+  ] as const) {
+    const input: CaseInput = { ...source.original, polymer, massKg };
+    const eligibility = publicScenarioEligibility(input);
+    assert.equal(eligibility.status, "unavailable");
+    if (eligibility.status !== "unavailable") return;
+    assert.equal(eligibility.reasons.length, expectedReasons);
+    assert.equal(buildPublicInputScenario({ actorId: "view-owner", input, inputRevision: revision(input) }, data), null);
+    const decision = await createResourceDomain(input).decide();
+    let privateReasons = 0, commercialReasons = 0, injectedImages = 0;
+    const view = { publicScenarioMissing: eligibility.reasons };
+    await new HTMLRewriter().on("#public-scenario-unavailable li", { element() { privateReasons++; } })
+      .on("#public-scenario-unavailable img", { element() { injectedImages++; } })
+      .transform(new Response(renderReport(decision, { mode: "offline" }, {
+        audience: "authenticated-research", research: null,
+      }, view))).text();
+    await new HTMLRewriter().on("#public-scenario-unavailable", { element() { commercialReasons++; } })
+      .transform(new Response(renderReport(decision, { mode: "offline" }, { audience: "commercial" }, view))).text();
+    assert.equal(privateReasons, expectedReasons);
+    assert.equal(commercialReasons, 0);
+    assert.equal(injectedImages, 0);
+  }
 });
