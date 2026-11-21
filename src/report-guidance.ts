@@ -1,4 +1,4 @@
-import type { CaseGuidance } from "./o-case-guidance.ts";
+import type { CaseGuidance, GuidanceStage } from "./o-case-guidance.ts";
 import type { ReportPresentation } from "./report.ts";
 import type { ScenarioSensitivity } from "./o-scenario-sensitivity.ts";
 import { escapeHtml, list } from "./report-html.ts";
@@ -14,6 +14,15 @@ const stageMethods = {
   1: "입력 필드와 기존 판정 연결", 2: "기존 경로 조건 정리", 3: "기존 규정 근거 정리",
   4: "공개 명부 대조", 5: "호스트 계산기", 6: "기존 판정과 가정 비교 정리",
 } as const;
+
+export function publicCaseProgress(stages: readonly Pick<GuidanceStage, "stage" | "name" | "status" | "reasons">[]): string {
+  return `<section id="case-progress" data-progress-audience="public"><h2>이 사례의 6단계</h2>
+    <p>현재 산출물의 채움 상태입니다. 현장 확인·허가·인수·실행 승인을 뜻하지 않습니다. 연구용 가정 계산은 포함하지 않습니다.</p>
+    <ol class="guidance-stages">${stages.map(stage => `<li data-guidance-stage="${stage.stage}" data-state="${stage.status}">
+      <strong>${stage.stage}. ${stageNames[stage.stage - 1]}</strong><span>${statusNames[stage.status]}</span></li>`).join("")}</ol>
+    <details><summary>단계별 상태와 미확보 사유</summary>${stages.map(stage => `<section id="guidance-stage-${stage.stage}">
+      <h3>${stage.stage}. ${escapeHtml(stage.name)} · ${statusNames[stage.status]}</h3>${list(readableReasons(stage.reasons))}</section>`).join("")}</details></section>`;
+}
 
 /** A scenario result never becomes an actual second recommendation or an execution permit. */
 export function guidanceScenarioConclusion(guidance: CaseGuidance, names: Names): string | undefined {

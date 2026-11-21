@@ -9,7 +9,7 @@ import { photoUI, photoRoute } from "./app-photo-routes.ts";
 import { readCaseResearchCatalog } from "./o-case-research.ts";
 import { buildPublicInputScenario, publicScenarioEligibility } from "./o-input-public-scenario.ts";
 import { unsupportedScope, unsupportedScopePage } from "./o-supported-scope.ts";
-import { buildCaseGuidance } from "./o-case-guidance.ts";
+import { buildCaseGuidance, buildPublicCaseProgress } from "./o-case-guidance.ts";
 import { renderInquiry } from "./report-inquiry.ts";
 import { buildCalculationVariant } from "./o-calculation-variant.ts";
 import type { CalculationContext, CalculationVariant } from "./o-calculation-variant.ts";
@@ -146,7 +146,10 @@ export async function caseRoute(services: RouteServices, context: RouteRequest):
       execution: stored.execution ? { traceId: stored.execution.traceId, usage: stored.execution.usage ?? null } : undefined,
       ...(privateAudience && stored.modelAudit ? { modelAudit: stored.modelAudit } : {}),
       ...(privateAudience && stored.verificationPlan ? { verificationPlan: stored.verificationPlan } : {}),
-    }, audience, { notice, actions, editing, answerPrompt: suffix === "report" ? "" : optionalMass, caseRegion: snapshot.input.region, publicScenarioMissing, ...(suffix === "report" ? {} : { inquiryTarget: `/cases/${id}/inquiry` }),
+    }, audience, { notice, actions, editing, answerPrompt: suffix === "report" ? "" : optionalMass,
+      ...(!guidance && !snapshot.permissionChanged && snapshot.evaluated.revision === revision(snapshot.input)
+        ? { progress: buildPublicCaseProgress(snapshot.input, stored.decision) } : {}),
+      caseRegion: snapshot.input.region, publicScenarioMissing, ...(suffix === "report" ? {} : { inquiryTarget: `/cases/${id}/inquiry` }),
       ...(suffix === "report" || !editable ? {} : { answerTarget: "#answer-fields" as const }) }));
     privateGuard();
     return result;

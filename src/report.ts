@@ -2,11 +2,11 @@ import type { DecisionResult } from "./contracts.ts";
 import { parseDecision } from "./o-decision.ts";
 import type { CaseResearchReport } from "./o-case-research-schema.ts";
 import type { PublicInputScenario } from "./o-input-public-scenario.ts";
-import type { CaseGuidance } from "./o-case-guidance.ts";
+import type { CaseGuidance, GuidanceStage } from "./o-case-guidance.ts";
 import type { ModelHostAudit } from "./o-model-audit.ts";
 import type { VerificationPlan } from "./o-verification-plan.ts";
 import { renderVerificationPlan } from "./report-verification-plan.ts";
-import { guidanceConclusion, guidanceScenarioConclusion, guidanceProgress, guidanceStability, guidanceOneFact, guidanceSensitivity } from "./report-guidance.ts";
+import { guidanceConclusion, guidanceScenarioConclusion, guidanceProgress, guidanceStability, guidanceOneFact, guidanceSensitivity, publicCaseProgress } from "./report-guidance.ts";
 import { buildScenarioSensitivity } from "./o-scenario-sensitivity.ts";
 import { escapeHtml, list, page } from "./report-html.ts";
 import { evidenceSection, readableReasons } from "./report-evidence.ts";
@@ -36,6 +36,7 @@ export interface ReportView {
   readonly publicScenarioMissing?: readonly string[];
   readonly notice?: string;
   readonly answerPrompt?: string;
+  readonly progress?: readonly Pick<GuidanceStage, "stage" | "name" | "status" | "reasons">[];
   readonly actions?: string;
   readonly editing?: string;
   readonly answerTarget?: "#answer-fields" | "#answers";
@@ -181,7 +182,7 @@ export function renderReport(result: DecisionResult, presentation: ReportPresent
       <dt>가설</dt><dd>확인되지 않은 값을 별도로 바꿔 본 결과이며 원래 사실을 고치지 않습니다.</dd>
       <dt>참고값</dt><dd>출처·범위를 소개한 자료이며 이 사례의 계산값으로 대입하지 않습니다.</dd>
       <dt>미확보</dt><dd>지원하는 값이 없다는 뜻이며 0이 아닙니다.</dd></dl></details>` : ""}
-    ${guidance ? guidanceProgress(guidance, presentation, names) + guidanceOneFact(guidance, names) : ""}
+    ${guidance ? guidanceProgress(guidance, presentation, names) + guidanceOneFact(guidance, names) : view.progress ? publicCaseProgress(view.progress) : ""}
     ${context.audience === "authenticated-research" && view.publicScenarioMissing?.length
       ? `<section id="public-scenario-unavailable"><h2>공개 비용·탄소 비교가 없는 이유</h2>${list(view.publicScenarioMissing)}<p>추천은 기존 공개 근거에 따른 검토 순서입니다. 비교 부재를 비용 0이나 재활용 불가로 해석하지 않습니다.</p></section>` : ""}
     ${publicScenario ? publicInputCalculations(publicScenario) : ""}${view.researchFirst ? researchSections : ""}
