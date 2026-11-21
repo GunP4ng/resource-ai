@@ -310,6 +310,38 @@ test("default authenticated demo binds PET and HDPE decisions to source inputs w
   } finally { app.dispose(); await app.settled(); }
 });
 
+test("authenticated research demo normalizes supported material and defaults only when absent", async () => {
+  const app = createApp({ origin, actorForRequest: async () => "demo-operator" });
+  try {
+    for (const [query, caseId] of [
+      ["material=hdpe", "OYS-20261110-002"],
+      ["material=HDPE", "OYS-20261110-002"],
+      ["material=%20hDpE%20", "OYS-20261110-002"],
+      ["material=%20pet%20", "OYS-20261110-001"],
+      ["", "OYS-20261110-001"],
+    ] as const) {
+      const response = await app(new Request(origin + "/demo/normal?purpose=research" + (query ? "&" + query : "")));
+      assert.equal(response.status, 200);
+      assert.match(await response.text(), new RegExp(caseId));
+    }
+  } finally { app.dispose(); await app.settled(); }
+});
+
+test("authenticated research demo notices unsupported and empty material instead of showing PET calculations", async () => {
+  const app = createApp({ origin, actorForRequest: async () => "demo-operator" });
+  try {
+    for (const query of ["material=pp", "material=", "material=%20%20"]) {
+      const response = await app(new Request(origin + "/demo/normal?purpose=research&" + query));
+      assert.equal(response.status, 400);
+      const html = await response.text();
+      assert.match(html, /이 재질은 공개 연구 계산 예시가 없습니다\(현재 PET·HDPE\)/);
+      assert.match(html, /href="\/demo\/normal\?purpose=research"/);
+      assert.match(html, /href="\/demo\/normal\?purpose=research&amp;material=HDPE"/);
+      assert.doesNotMatch(html, /data-research-result|OYS-20261110-001/);
+    }
+  } finally { app.dispose(); await app.settled(); }
+});
+
 test("anonymous demo remains public but research query cannot grant an audience", async () => {
   for (const authenticated of [false, true]) {
     const app = createApp({ origin, ...(authenticated ? { actorForRequest: async () => null } : {}) });
