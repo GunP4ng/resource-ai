@@ -412,6 +412,19 @@ test("O4 native corrections refresh missing questions and remain usable after re
     const cookie = await session(app.fetch), path = await submitNative(app.fetch, cookie);
     const before = await ownedPage(app.fetch, cookie, path);
     assert.match(before, /수지/);
+    const visibleQuestions: string[] = [], hiddenQuestions: string[] = [];
+    const answerLinks: (string | null)[] = [], hiddenAnswerLinks: (string | null)[] = [];
+    await new HTMLRewriter()
+      .on("main > #case-reasons li", { text(chunk) { visibleQuestions.push(chunk.text); } })
+      .on("details #case-reasons li", { text(chunk) { hiddenQuestions.push(chunk.text); } })
+      .on('main > p > a[href="#answer-fields"]', { element(element) { answerLinks.push(element.getAttribute("href")); } })
+      .on('details a[href="#answer-fields"]', { element(element) { hiddenAnswerLinks.push(element.getAttribute("href")); } })
+      .transform(new Response(before)).text();
+    assert.match(visibleQuestions.join(""), /수지/);
+    assert.deepEqual(hiddenQuestions, []);
+    assert.deepEqual(answerLinks, ["#answer-fields"]);
+    assert.deepEqual(hiddenAnswerLinks, []);
+    assert.match(before, /추가 정보 필요 · 실행 보류/);
     assert.doesNotMatch(before, /확인된 질량은 몇 kg인가요/);
     assert.match(before, /<textarea[^>]*name="answers"[^>]*><\/textarea>/);
     const polymer = await app.fetch(post(path + "/answers", cookie, new URLSearchParams({ answers: '{"polymer":"PP"}' }).toString(), formHeaders));
@@ -438,6 +451,16 @@ test("optional mass answer updates the same recommended case with supported cost
     const before = await ownedPage(app.fetch, cookie, path);
     assert.match(before, /기계적 재활용 추천/);
     assert.match(before, /질량을 입력하면 비용·탄소를 계산해요/);
+    const massLinks: string[] = [], hiddenMassLinks: string[] = [], order: string[] = [];
+    await new HTMLRewriter()
+      .on('main > p > a[href="#answer-fields"]', { text(chunk) { massLinks.push(chunk.text); } })
+      .on('details a[href="#answer-fields"]', { text(chunk) { hiddenMassLinks.push(chunk.text); } })
+      .on('#next-action, a[href="#answer-fields"], #result-context', {
+        element(element) { order.push(element.getAttribute("id") ?? "mass-link"); },
+      }).transform(new Response(before)).text();
+    assert.match(massLinks.join(""), /질량을 입력하면 비용·탄소를 계산해요/);
+    assert.deepEqual(hiddenMassLinks, []);
+    assert.deepEqual(order, ["next-action", "mass-link", "result-context"]);
     assert.match(before, /질량을 몰라 비용을 계산하지 않았어요/);
     assert.doesNotMatch(before, /240,000 KRW|45 kgCO2e/);
     const answer = new URLSearchParams({
