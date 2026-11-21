@@ -101,8 +101,8 @@ for (const [material, base] of [
 }
 
 for (const [field, question] of [
-  ["process", "폐플라스틱이 발생한 공정 또는 발생원은 무엇인가요?"],
-  ["region", "폐플라스틱이 발생한 지역은 어디인가요?"],
+  ["process", "폐자원이 발생한 공정 또는 발생원은 무엇인가요?"],
+  ["region", "폐자원이 발생한 지역은 어디인가요?"],
 ] as const) {
   test(`native ${field} corrections keep the detail and report waiting for the missing fact`, async t => {
     const app = fixture(t);
@@ -369,7 +369,7 @@ const paperLabel = "종이 라벨이 붙은 사출 용기 파쇄품";
 async function assertMissingResin(app: ReturnType<typeof fixture>, path: string, cookie: string, version: number) {
   const detail = await readable(await app.get(path, cookie));
   assert.match(detail, /<h1>추가 정보 필요<\/h1>/);
-  assert.ok(detail.includes(resinQuestion));
+  assert.ok(detail.includes("확인된 재질·품목과 이를 확인한 자료(라벨·재질 명세·발생 이력 등)가 있나요?"));
   assert.ok(detail.includes(`<p>버전 ${version}</p>`));
 }
 

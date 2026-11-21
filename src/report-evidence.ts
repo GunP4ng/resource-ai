@@ -23,6 +23,9 @@ const reasons: Readonly<Record<string, string>> = {
 };
 export function readableReason(reason: string): string {
   let text = reason.replace("합성 보류 예시:", "합성 추가 정보 예시:");
+  text = text.replaceAll("폐플라스틱이 발생한", "폐자원이 발생한")
+    .replace("확인된 수지 종류와 이를 확인한 자료(라벨·재질 명세 등)가 있나요?",
+      "확인된 재질·품목과 이를 확인한 자료(라벨·재질 명세·발생 이력 등)가 있나요?");
   for (const [code, korean] of Object.entries(reasons)) text = text.replaceAll(code, korean);
   text = text.replace(/\s*\((?:legal-|waste-rule-)[^)]+\)/g, "");
   text = text.replace("비용·탄소 비교값이 없어 검토 순서만 제시합니다.",

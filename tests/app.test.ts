@@ -420,7 +420,7 @@ test("O4 native corrections refresh missing questions and remain usable after re
       .on('main > p > a.primary-action:not(.secondary-action)[href="#answer-fields"]', { element(element) { answerLinks.push(element.getAttribute("href")); } })
       .on('details a[href="#answer-fields"]', { element(element) { hiddenAnswerLinks.push(element.getAttribute("href")); } })
       .transform(new Response(before)).text();
-    assert.match(visibleQuestions.join(""), /수지/);
+    assert.match(visibleQuestions.join(""), /재질·품목/);
     assert.deepEqual(hiddenQuestions, []);
     assert.deepEqual(answerLinks, ["#answer-fields"]);
     assert.deepEqual(hiddenAnswerLinks, []);
@@ -705,7 +705,7 @@ test("O4 source and packaged launchers reduce missing questions before review an
       const page = await fetch(url + path, { headers: { cookie }, signal: AbortSignal.timeout(2000) });
       assert.equal(page.status, 200);
       const initial = await page.text();
-      const polymerQuestion = "확인된 수지 종류와 이를 확인한 자료(라벨·재질 명세 등)가 있나요?";
+      const polymerQuestion = "확인된 재질·품목과 이를 확인한 자료(라벨·재질 명세·발생 이력 등)가 있나요?";
       const massQuestion = "확인된 질량은 몇 kg인가요?";
       const questions = (html: string): string[] => {
         assert.match(html, /<h1>추가 정보 필요<\/h1>/);

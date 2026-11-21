@@ -102,13 +102,14 @@ test("#121 and #122 incomplete denials and contradictory list items never declar
   assert.notEqual((await createResourceDomain({ ...paper, polymer: "골판지 (PP 코팅)" }).decide()).state, "compared");
 });
 
-for (const oil of ["절삭유", "윤활유", "작동유", "유압유", "그리스", "기름", "유분", "오일", "유류"]) {
-  test(`#126 ${oil} affirmation survives denials in every field and either order`, async () => {
-    for (const { input } of cases.filter(item => item.issue === 121)) {
-      const denied = { ...input, contamination: `${oil} 없음` };
+for (const substance of ["절삭유", "윤활유", "작동유", "유압유", "그리스", "기름", "유분", "오일", "유류",
+  "절삭액", "냉각수", "방청제", "도금", "납", "납땜", "카드뮴", "크롬", "석면", "중금속", "PCB", "pcb", "ＰＣＢ"]) {
+  test(`${substance} affirmation survives denials in every material field and either order`, async () => {
+    for (const { input } of cases) {
+      const denied = { ...input, contamination: `${substance} 없음` };
       assert.equal((await createResourceDomain(denied).decide()).state, "compared", `${input.caseId}: explicit absence`);
       for (const field of ["description", "process", "contamination"] as const) {
-        for (const value of [`${denied[field]}, ${oil} 다량 부착`, `${oil} 다량 부착, ${denied[field]}`]) {
+        for (const value of [`${denied[field]}, ${substance} 다량 부착`, `${substance} 다량 부착, ${denied[field]}`]) {
           const facts = { ...denied, [field]: value };
           const original = structuredClone(facts);
           const result = await createResourceDomain(facts).decide();
@@ -120,6 +121,30 @@ for (const oil of ["절삭유", "윤활유", "작동유", "유압유", "그리�
     }
   });
 }
+
+test("unrecognized material contamination asks instead of relying on missing legal citations", async () => {
+  for (const { input } of cases) {
+    for (const contamination of ["푸른 잔류막", "오일 없음, 푸른 잔류막", "푸른 잔류막, 오일 없음", "미상", "모름"]) {
+      const facts = { ...input, contamination };
+      const original = structuredClone(facts);
+      const result = await createResourceDomain(facts).decide();
+      assert.equal(result.state, "needs-information", `${input.caseId}: ${contamination}`);
+      assert.ok(result.questions.includes(safetyReasons.contaminationUnknown));
+      assert.deepEqual(facts, original);
+    }
+    for (const contamination of ["없음", "무오염", "깨끗", "청정", "none", "clean"]) {
+      assert.equal((await createResourceDomain({ ...input, contamination }).decide()).state, "compared");
+    }
+  }
+});
+
+test("lead detection does not mistake ordinary Korean words for the substance 납", async () => {
+  const copper = cases[0]?.input;
+  assert.ok(copper);
+  for (const description of ["납품용 구리 자투리", "납작한 구리 조각", "수납용 부품의 구리 자투리"]) {
+    assert.equal((await createResourceDomain({ ...copper, description }).decide()).state, "compared", description);
+  }
+});
 
 test("#126 lead cutting-oil description remains held through the native route", async () => {
   const origin = "http://localhost:3000";
