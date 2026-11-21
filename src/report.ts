@@ -11,6 +11,7 @@ import { buildScenarioSensitivity } from "./o-scenario-sensitivity.ts";
 import { escapeHtml, list, page } from "./report-html.ts";
 import { evidenceSection, readableReasons } from "./report-evidence.ts";
 import { massQuestion } from "./input.ts";
+import { isHostSafetyReason } from "./o-safety-reasons.ts";
 import { researchCalculations, researchDirectory, publicInputCalculations, publicRecyclingDirectory, publicScenarioNames } from "./report-research.ts";
 import { comparisonSummary, comparisonConditions, prioritySummary, routeConditions, scenarioAudit } from "./report-comparison.ts";
 import type { EvidenceReferences } from "./report-comparison.ts";
@@ -153,6 +154,13 @@ export function renderReport(result: DecisionResult, presentation: ReportPresent
   const checks = "preExecutionChecks" in result ? result.preExecutionChecks ?? [] : [];
   const heldReasons = result.state === "needs-review" ? readableReasons(result.reasons.filter(reason => reason !== massQuestion))
     : result.state === "needs-information" ? readableReasons(result.questions.filter(question => question !== massQuestion)) : [];
+  const supportingReasons = result.state === "needs-review" && result.reasons.some(isHostSafetyReason)
+    ? heldReasons.filter(reason => reason.includes("인용 부족")) : [];
+  const primaryReasons = heldReasons.filter(reason => !supportingReasons.includes(reason));
+  const reasonItem = (reason: string): string => {
+    const number = heldReasons.indexOf(reason) + 1;
+    return `<li id="case-reason-${number}"><strong>사유 ${number}.</strong> ${escapeHtml(reason)}</li>`;
+  };
   const answerAction = result.state !== "compared" ? view.answerTarget : undefined;
   const nextAction = result.state === "needs-information"
     ? answerAction
@@ -179,7 +187,8 @@ export function renderReport(result: DecisionResult, presentation: ReportPresent
     <p id="next-action"><strong>다음 행동:</strong> ${escapeHtml(nextAction)}</p>
     <p class="screen-only"><a class="primary-action" href="${answerAction ?? "#checks"}">${answerAction ? result.state === "needs-information" ? "답변 입력하기" : "입력 다시 확인하기" : "실행 전 확인하기"}</a></p>
     ${result.state === "compared" ? view.answerPrompt ?? "" : ""}
-    ${heldReasons.length ? `<section id="case-reasons"><h2>보류 사유와 필요한 확인</h2><ul>${heldReasons.map((reason, index) => `<li id="case-reason-${index + 1}"><strong>사유 ${index + 1}.</strong> ${escapeHtml(reason)}</li>`).join("")}</ul></section>` : ""}
+    ${heldReasons.length ? `<section id="case-reasons"><h2>보류 사유와 필요한 확인</h2><ul>${primaryReasons.map(reasonItem).join("")}</ul>
+      ${supportingReasons.length ? `<div class="supporting-reasons" role="group" aria-label="추가 근거 확인"><p class="muted">추가 근거 확인</p><ul>${supportingReasons.map(reasonItem).join("")}</ul></div>` : ""}</section>` : ""}
     ${result.state !== "compared" ? view.answerPrompt ?? "" : ""}
     ${guidance ? renderVerificationPlan(presentation.verificationPlan, result) : ""}
     ${presentation.historical ? '<p class="notice">과거 평가: 현재 입력과 평가 당시 입력이 다릅니다. 명시적으로 다시 평가해 주세요.</p>' : ""}

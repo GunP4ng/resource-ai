@@ -44,6 +44,8 @@ button:disabled,button[aria-disabled="true"]{cursor:progress}
 dl{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:var(--s12)}
 dd{margin:0;font-variant-numeric:tabular-nums}
 li{margin-block:var(--s8)}
+.supporting-reasons{margin-inline-start:var(--s20);padding-inline-start:var(--s16);border-inline-start:var(--border) solid var(--line);color:var(--muted)}
+.supporting-reasons>p{margin-block:var(--s12) var(--s8)}
 .table-wrap{overflow-x:auto}
 [data-reply-comparison] table{min-width:calc(68ch - 2 * var(--s20))}
 [data-reply-amount]{white-space:nowrap}
