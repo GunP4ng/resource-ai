@@ -217,7 +217,7 @@ async function oneFactPriority(input: CaseInput, decision: DecisionResult, optio
 }
 
 /** Ephemeral host UI guidance; callers supply only the current evaluated input and optional authenticated research context. */
-export async function buildCaseGuidance(input: CaseInput, decision: DecisionResult, options: CaseGuidanceOptions = {}): Promise<CaseGuidance> {
+function caseGuidanceContent(input: CaseInput, decision: DecisionResult, options: CaseGuidanceOptions = {}): Omit<CaseGuidance, "oneFactPriority"> {
   requireValid(input.caseId === decision.caseId, "guidance-case-mismatch");
   const inputRevision = revision(input);
   const context = options.publicScenario ?? options.research;
@@ -285,6 +285,14 @@ export async function buildCaseGuidance(input: CaseInput, decision: DecisionResu
       reasons: ["조건부 약우월성은 명시한 모델 경로·계산 경계·범위 안에서만 성립합니다. 실제 실행·반출·계약 승인은 별도입니다.",
         ...comparison.unavailableReasons] },
   ];
-  return { purpose: "presentation-only", inputRevision, actualComparison: comparison, stages, scenario,
-    oneFactPriority: await oneFactPriority(input, decision, options), limitations };
+  return { purpose: "presentation-only", inputRevision, actualComparison: comparison, stages, scenario, limitations };
+}
+
+/** Public progress never receives research context or exposes outputs or numerical comparisons. */
+export function buildPublicCaseProgress(input: CaseInput, decision: DecisionResult): readonly Pick<GuidanceStage, "stage" | "name" | "status" | "reasons">[] {
+  return caseGuidanceContent(input, decision).stages.map(({ stage, name, status, reasons }) => ({ stage, name, status, reasons }));
+}
+
+export async function buildCaseGuidance(input: CaseInput, decision: DecisionResult, options: CaseGuidanceOptions = {}): Promise<CaseGuidance> {
+  return { ...caseGuidanceContent(input, decision, options), oneFactPriority: await oneFactPriority(input, decision, options) };
 }

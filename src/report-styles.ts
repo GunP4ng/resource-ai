@@ -82,6 +82,9 @@ code{font-family:ui-monospace,monospace}
   :root{color-scheme:light;--bg:#ffffff;--ink:#252824;--muted:#535b52;--surface:#ffffff;--focus:#076641;--line:#737b72;--action:#273e31;--on-action:#ffffff;--question:#245888;--held:#8a3a16;--selection:#d7e9dc}
   nav,form,.screen-only,.skip-link{display:none}
   a{min-height:0;min-width:0}
+  summary{min-height:0;padding:0;margin-block:4pt;break-after:avoid}
+  .primary-action{min-height:0;padding:0;margin:0;border:0}
+  blockquote{margin:6pt 0;padding:6pt 8pt}
   .print-only{display:block}
   body{font-size:10.5pt;line-height:1.45}
   main{max-width:none;padding:0}
@@ -89,12 +92,14 @@ code{font-family:ui-monospace,monospace}
   h1{font-size:21pt;margin:var(--s12) 0 var(--s8)}
   h2{font-size:16pt;margin:var(--s20) 0 var(--s8)}
   h3{font-size:12.5pt;margin:var(--s12) 0 var(--s8)}
-  section{margin-block:var(--s12)}
+  section{margin-block:var(--s8)}
   th,td,caption{padding:var(--s8)}
-  ul,ol,p{margin-block:var(--s8)}
+  ul,ol,p{margin-block:4px}
   li{margin-block:0}
   dl{gap:var(--s8);margin-block:var(--s8)}
   tr,section[aria-labelledby="priority-heading"] li{break-inside:avoid}
+  #advanced{break-inside:avoid}
+  #advanced p{margin-block:4pt}
   thead{display:table-header-group}
   p{orphans:3;widows:3}
   footer{margin-top:var(--s8);padding-top:var(--s8)}

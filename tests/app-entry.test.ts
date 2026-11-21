@@ -63,7 +63,12 @@ test("current guidance and inquiry stay case-bound while commercial and other ow
     assert.doesNotMatch(inquiryHtml, /data-epd-reference|data-public-scenario-result|id="rank-stability"/);
     assert.equal(await (await app.fetch(new Request(origin + path + "/input"))).text(), beforeInput);
     const commercial = await (await app.fetch(new Request(origin + path + "/report"))).text();
-    assert.doesNotMatch(commercial, /data-epd-reference|data-guidance-stage|id="rank-stability"/);
+    const publicStages: (string | null)[] = [];
+    await new HTMLRewriter().on('[data-progress-audience="public"] [data-guidance-stage]', {
+      element(element) { publicStages.push(element.getAttribute("data-guidance-stage")); },
+    }).transform(new Response(commercial)).text();
+    assert.deepEqual(publicStages, ["1", "2", "3", "4", "5", "6"]);
+    assert.doesNotMatch(commercial, /data-epd-reference|data-public-scenario-result|data-research-result|id="rank-stability"/);
     actor = "other-owner";
     const denied = await app.fetch(new Request(origin + path + "/inquiry"));
     assert.equal(denied.status, 404);

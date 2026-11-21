@@ -9,7 +9,7 @@ import { photoUI, photoRoute } from "./app-photo-routes.ts";
 import { readCaseResearchCatalog } from "./o-case-research.ts";
 import { buildPublicInputScenario, publicScenarioEligibility } from "./o-input-public-scenario.ts";
 import { unsupportedScope, unsupportedScopePage } from "./o-supported-scope.ts";
-import { buildCaseGuidance } from "./o-case-guidance.ts";
+import { buildCaseGuidance, buildPublicCaseProgress } from "./o-case-guidance.ts";
 import { renderInquiry } from "./report-inquiry.ts";
 import { buildCalculationVariant } from "./o-calculation-variant.ts";
 import type { CalculationContext, CalculationVariant } from "./o-calculation-variant.ts";
@@ -136,7 +136,7 @@ export async function caseRoute(services: RouteServices, context: RouteRequest):
     const editable = snapshot.editUntil > now();
     const optionalMass = stored.decision.state === "compared" && snapshot.input.massKg === null && editable
       ? '<p class="screen-only"><a class="primary-action secondary-action" href="#answer-fields">질량을 입력하면 비용·탄소를 계산해요</a> (선택)</p><p>견적·탄소 계수 등 근거가 있는 항목부터 계산합니다. 자료가 없으면 필요한 내용을 알려드려요.</p>' : "";
-    const actions = suffix === "report" ? "" : `${optionalMass}<p class="cluster screen-only"><a href="/cases/${id}/report">상업용 보고서</a>${actor ? `<a href="/cases/${id}/report?purpose=research">비공개 연구용 보고서</a>` : ""}<a href="/cases/${id}/input">정확한 입력 내보내기</a><a href="/cases">내 사례</a></p>`;
+    const actions = suffix === "report" ? "" : `<p class="cluster screen-only"><a href="/cases/${id}/report">상업용 보고서</a>${actor ? `<a href="/cases/${id}/report?purpose=research">비공개 연구용 보고서</a>` : ""}<a href="/cases/${id}/input">정확한 입력 내보내기</a><a href="/cases">내 사례</a></p>`;
     const editing = suffix === "report" ? "" : `<p>버전 ${snapshot.version}</p>${editable
       ? `<p>수정 가능 기한 (UTC): ${new Date(snapshot.editUntil).toISOString()}</p>${form(`/cases/${id}/answers`, true, snapshot.version, selection, snapshot.input)}`
       : '<p class="notice">수정 기한이 지났습니다. 보관 중인 보고서와 입력은 확인할 수 있습니다. 다시 평가하려면 <a href="/">새 사례를 입력하세요</a>.</p>'}${photoUI(snapshot, ticket, services)}`;
@@ -146,7 +146,10 @@ export async function caseRoute(services: RouteServices, context: RouteRequest):
       execution: stored.execution ? { traceId: stored.execution.traceId, usage: stored.execution.usage ?? null } : undefined,
       ...(privateAudience && stored.modelAudit ? { modelAudit: stored.modelAudit } : {}),
       ...(privateAudience && stored.verificationPlan ? { verificationPlan: stored.verificationPlan } : {}),
-    }, audience, { notice, actions, editing, caseRegion: snapshot.input.region, publicScenarioMissing, ...(suffix === "report" ? {} : { inquiryTarget: `/cases/${id}/inquiry` }),
+    }, audience, { notice, actions, editing, answerPrompt: suffix === "report" ? "" : optionalMass,
+      ...(!guidance && !snapshot.permissionChanged && snapshot.evaluated.revision === revision(snapshot.input)
+        ? { progress: buildPublicCaseProgress(snapshot.input, stored.decision) } : {}),
+      caseRegion: snapshot.input.region, publicScenarioMissing, ...(suffix === "report" ? {} : { inquiryTarget: `/cases/${id}/inquiry` }),
       ...(suffix === "report" || !editable ? {} : { answerTarget: "#answer-fields" as const }) }));
     privateGuard();
     return result;

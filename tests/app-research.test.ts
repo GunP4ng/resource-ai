@@ -115,6 +115,12 @@ test("committed research uses one atomic report read and only explicit private r
     assert.match(normal, /data-research-result/);
     assert.doesNotMatch(normal, /data-public-scenario-result/);
     assert.match(research, /data-research-result/);
+    const publicStages: string[] = [];
+    await new HTMLRewriter().on('[data-progress-audience="public"] [data-guidance-stage]', {
+      element(element) { publicStages.push(element.getAttribute("data-guidance-stage") ?? ""); },
+    }).transform(new Response(commercial)).text();
+    assert.deepEqual(publicStages, ["1", "2", "3", "4", "5", "6"]);
+    assert.doesNotMatch(commercial, /id="hypothetical-summary"|id="rank-stability"|data-model-audit-origin|data-sensitivity/);
     assert.doesNotMatch(commercial, /data-public-scenario-result|data-research-result|data-directory-row|data-recycling-directory-row|WARM|Wonju|-13867|-27\.51/);
     assert.doesNotMatch(commercial, /<form\b/);
     assert.deepEqual(await exported.json(), initial.input);
@@ -125,6 +131,38 @@ test("committed research uses one atomic report read and only explicit private r
     enabled = false;
     assert.equal((await app.fetch(new Request(origin + path + "/report?purpose=research"))).status, 403);
   } finally { app.dispose(); await app.close(); store.dispose(); }
+});
+
+test("anonymous current case and commercial report expose status-only stages without research calculations", async () => {
+  const app = createResourceApp({ origin, presentationMode: "offline" });
+  try {
+    const home = await app.fetch(new Request(origin));
+    const cookie = home.headers.get("set-cookie")?.split(";")[0];
+    assert.ok(cookie);
+    const created = await app.fetch(new Request(origin + "/cases", {
+      method: "POST", headers: { origin, cookie, "content-type": "application/json" },
+      body: JSON.stringify({ description: "합성 PET 사출 부산물", photoRefs: [], process: "사출", polymer: "PET",
+        contamination: "없음", hazardousContact: "no", massKg: 100, region: "울산", assessmentDate: "2026-11-25" }),
+    }));
+    assert.equal(created.status, 303);
+    const path = created.headers.get("location");
+    assert.ok(path);
+    for (const suffix of ["", "/report"]) {
+      const stages: (string | null)[] = [], states: (string | null)[] = [];
+      let reasons = "";
+      const html = await new HTMLRewriter()
+        .on('[data-progress-audience="public"] [data-guidance-stage]', {
+          element(element) { stages.push(element.getAttribute("data-guidance-stage")); states.push(element.getAttribute("data-state")); },
+        })
+        .on('#guidance-stage-5', { text(chunk) { reasons += chunk.text; } })
+        .transform(await app.fetch(new Request(origin + path + suffix, { headers: { cookie } }))).text();
+      assert.deepEqual(stages, ["1", "2", "3", "4", "5", "6"]);
+      assert.deepEqual(states, ["available", "partial", "partial", "missing", "missing", "partial"]);
+      assert.match(reasons, /실제 1·2순위.*없습니다/);
+      assert.doesNotMatch(html, /data-public-scenario-result|data-research-result|WARM|Wonju|parentFixtureSha256|id="rank-stability"|id="hypothetical-summary"/);
+    }
+    assert.equal((await app.fetch(new Request(origin + path + "/report?purpose=research", { headers: { cookie } }))).status, 403);
+  } finally { app.dispose(); await app.close(); }
 });
 
 test("anonymous session cannot opt into research purpose", async () => {
