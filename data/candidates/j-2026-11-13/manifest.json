@@ -1,0 +1,310 @@
+{
+  "manifestVersion": 1,
+  "creationDate": "2026-11-13",
+  "owner": "drivee2242",
+  "status": "Exposed development candidates only; no field cases, independent labels or locked evaluation allocation",
+  "sourceGroupCount": 10,
+  "modelTransmissionApproval": false,
+  "candidates": [
+    {
+      "candidateId": "J-20261113-001",
+      "inputFile": "inputs/J-20261113-001.json",
+      "inputSha256": "98587bd18dc0a94f316b7163a08e3f154654fdd460bba122a4338e782a8c737d",
+      "origin": "public-photo-context-with-synthetic-unknown-input",
+      "sourceId": "commons-file-1968591",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:-_Recycling_in_Germany_-_Plastic_waste_to_be_collected_-.jpg",
+      "originalImage": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/3/34/-_Recycling_in_Germany_-_Plastic_waste_to_be_collected_-.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "sha1": "7be183f069e33ee62cbe887c3c61ce0b0622f114",
+        "sha256": null,
+        "bytes": 1330171,
+        "downloaded": false
+      },
+      "metadataSnapshot": {
+        "path": "sources/commons-metadata.json",
+        "sha256": "6fa3452b1be5bce849f0f23e445f696be45ed3b0b3663bd5ed8511eb99ea29a0",
+        "locator": "files[pageId=1968591]"
+      },
+      "author": "User:Nino Barbieri",
+      "license": "CC BY-SA 2.5",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.5",
+      "rightsStatus": "Commons file license declared; site permission, privacy and model transmission unapproved",
+      "duplicateGroupId": "commons-page-1968591",
+      "sourceGroupReview": null,
+      "independentLabels": null,
+      "reviewers": null,
+      "split": null,
+      "acceptance": null
+    },
+    {
+      "candidateId": "J-20261113-002",
+      "inputFile": "inputs/J-20261113-002.json",
+      "inputSha256": "84fe1e2e2295fe5bd8a2421d50deba8c1bb050943576abe61d756a93b6a68d26",
+      "origin": "public-photo-context-with-synthetic-unknown-input",
+      "sourceId": "commons-file-128158385",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Plastic_bags_recycling_bins_in_a_Sainsbury%27s.jpg",
+      "originalImage": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/6/64/Plastic_bags_recycling_bins_in_a_Sainsbury%27s.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "sha1": "0c9cca1d48b9133783f4d03468fa9b4cd876433a",
+        "sha256": null,
+        "bytes": 4160286,
+        "downloaded": false
+      },
+      "metadataSnapshot": {
+        "path": "sources/commons-metadata.json",
+        "sha256": "6fa3452b1be5bce849f0f23e445f696be45ed3b0b3663bd5ed8511eb99ea29a0",
+        "locator": "files[pageId=128158385]"
+      },
+      "author": "Andy Li",
+      "license": "CC0",
+      "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+      "rightsStatus": "Commons file license declared; site permission, privacy and model transmission unapproved",
+      "duplicateGroupId": "commons-page-128158385",
+      "sourceGroupReview": null,
+      "independentLabels": null,
+      "reviewers": null,
+      "split": null,
+      "acceptance": null
+    },
+    {
+      "candidateId": "J-20261113-003",
+      "inputFile": "inputs/J-20261113-003.json",
+      "inputSha256": "e7740416ce6e15437c83c997568174d56243fb4598617d514c90a15d29900c5d",
+      "origin": "public-photo-context-with-synthetic-unknown-input",
+      "sourceId": "commons-file-147400058",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Plastic_waste_(bottles_and_sachets).jpg",
+      "originalImage": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/7/77/Plastic_waste_%28bottles_and_sachets%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "sha1": "f6df7f6b035e8eb8ff28124915a4c245ae608762",
+        "sha256": null,
+        "bytes": 158805,
+        "downloaded": false
+      },
+      "metadataSnapshot": {
+        "path": "sources/commons-metadata.json",
+        "sha256": "6fa3452b1be5bce849f0f23e445f696be45ed3b0b3663bd5ed8511eb99ea29a0",
+        "locator": "files[pageId=147400058]"
+      },
+      "author": "Cornelius Agordome",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "rightsStatus": "Commons file license declared; site permission, privacy and model transmission unapproved",
+      "duplicateGroupId": "commons-page-147400058",
+      "sourceGroupReview": null,
+      "independentLabels": null,
+      "reviewers": null,
+      "split": null,
+      "acceptance": null
+    },
+    {
+      "candidateId": "J-20261113-004",
+      "inputFile": "inputs/J-20261113-004.json",
+      "inputSha256": "0415adaf42df7fae1fa3a4d2d9d9404641414d72e216eab272da8541bfdd66ce",
+      "origin": "public-photo-context-with-synthetic-unknown-input",
+      "sourceId": "commons-file-148914436",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Photos_from_Minh_Khai_Village_(top_to_down)_showing_front_yard_recycling,_storing_plastic_in_the_environment_and_the_street_and_European_plastic_pile_imported_for_recycling.webp",
+      "originalImage": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/5/5e/Photos_from_Minh_Khai_Village_%28top_to_down%29_showing_front_yard_recycling%2C_storing_plastic_in_the_environment_and_the_street_and_European_plastic_pile_imported_for_recycling.webp?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "sha1": "6c59c89226266f98466d984ab6fd9a1c0d309526",
+        "sha256": null,
+        "bytes": 595594,
+        "downloaded": false
+      },
+      "metadataSnapshot": {
+        "path": "sources/commons-metadata.json",
+        "sha256": "6fa3452b1be5bce849f0f23e445f696be45ed3b0b3663bd5ed8511eb99ea29a0",
+        "locator": "files[pageId=148914436]"
+      },
+      "author": "Authors of the study: Kaustubh Thapa, Walter J. V. Vermeulen, Mo Ming De Waal, Pauline Deutz & Hồng Quân Nguyễn",
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0",
+      "rightsStatus": "Commons file license declared; site permission, privacy and model transmission unapproved",
+      "duplicateGroupId": "commons-page-148914436",
+      "sourceGroupReview": null,
+      "independentLabels": null,
+      "reviewers": null,
+      "split": null,
+      "acceptance": null
+    },
+    {
+      "candidateId": "J-20261113-005",
+      "inputFile": "inputs/J-20261113-005.json",
+      "inputSha256": "591826a83d34bf5dd73f8d3b98711e8dbd67b324f1bc68530e9e626e5cb1dc24",
+      "origin": "public-photo-context-with-synthetic-unknown-input",
+      "sourceId": "commons-file-150280968",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Plastic_waste_to_be_recycled.jpg",
+      "originalImage": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/f/f4/Plastic_waste_to_be_recycled.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "sha1": "f5ba413e0d258449602b3759443238e4d518562b",
+        "sha256": null,
+        "bytes": 23631077,
+        "downloaded": false
+      },
+      "metadataSnapshot": {
+        "path": "sources/commons-metadata.json",
+        "sha256": "6fa3452b1be5bce849f0f23e445f696be45ed3b0b3663bd5ed8511eb99ea29a0",
+        "locator": "files[pageId=150280968]"
+      },
+      "author": "Picsgenius",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "rightsStatus": "Commons file license declared; site permission, privacy and model transmission unapproved",
+      "duplicateGroupId": "commons-page-150280968",
+      "sourceGroupReview": null,
+      "independentLabels": null,
+      "reviewers": null,
+      "split": null,
+      "acceptance": null
+    },
+    {
+      "candidateId": "J-20261113-006",
+      "inputFile": "inputs/J-20261113-006.json",
+      "inputSha256": "e0efe5e8de99a78e6d4b93777f05de9507d211aa1603cfef54c16fb601a57066",
+      "origin": "public-photo-context-with-synthetic-unknown-input",
+      "sourceId": "commons-file-80288540",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Pellets_of_reclycle_ABS.jpg",
+      "originalImage": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/8/80/Pellets_of_reclycle_ABS.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "sha1": "13c55e662803357e2286c65386e0be22dbddf0fb",
+        "sha256": null,
+        "bytes": 205296,
+        "downloaded": false
+      },
+      "metadataSnapshot": {
+        "path": "sources/commons-metadata.json",
+        "sha256": "6fa3452b1be5bce849f0f23e445f696be45ed3b0b3663bd5ed8511eb99ea29a0",
+        "locator": "files[pageId=80288540]"
+      },
+      "author": "Amandaprc",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "rightsStatus": "Commons file license declared; site permission, privacy and model transmission unapproved",
+      "duplicateGroupId": "commons-page-80288540",
+      "sourceGroupReview": null,
+      "independentLabels": null,
+      "reviewers": null,
+      "split": null,
+      "acceptance": null
+    },
+    {
+      "candidateId": "J-20261113-007",
+      "inputFile": "inputs/J-20261113-007.json",
+      "inputSha256": "120b2bf3c96979646634cc23d596c51ea5eac875433715a9edff37000413e091",
+      "origin": "public-photo-context-with-synthetic-unknown-input",
+      "sourceId": "commons-file-90594096",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Aluminium_en_plastic_folie_verpakkingsmateriaal_-_Aluminium_and_plastic_foil_food_packaging_-_The_Netherlands,_May_2020.jpg",
+      "originalImage": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/b/b3/Aluminium_en_plastic_folie_verpakkingsmateriaal_-_Aluminium_and_plastic_foil_food_packaging_-_The_Netherlands%2C_May_2020.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "sha1": "3fc9faf49e06935e6f8d46b592a9f6a5fc7431ff",
+        "sha256": null,
+        "bytes": 898797,
+        "downloaded": false
+      },
+      "metadataSnapshot": {
+        "path": "sources/commons-metadata.json",
+        "sha256": "6fa3452b1be5bce849f0f23e445f696be45ed3b0b3663bd5ed8511eb99ea29a0",
+        "locator": "files[pageId=90594096]"
+      },
+      "author": "Hansmuller",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "rightsStatus": "Commons file license declared; site permission, privacy and model transmission unapproved",
+      "duplicateGroupId": "commons-page-90594096",
+      "sourceGroupReview": null,
+      "independentLabels": null,
+      "reviewers": null,
+      "split": null,
+      "acceptance": null
+    },
+    {
+      "candidateId": "J-20261113-008",
+      "inputFile": "inputs/J-20261113-008.json",
+      "inputSha256": "39b63a915b9a12eea8c723d7e0a2ece391fd131ab2492b0baf1e451f16593475",
+      "origin": "public-photo-context-with-synthetic-unknown-input",
+      "sourceId": "commons-file-38861833",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Waste_sorting_containers_20150310_DSC_0245.JPG",
+      "originalImage": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/0/03/Waste_sorting_containers_20150310_DSC_0245.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "sha1": "68335dc055aa2cb19fbd4196b9e3635667648de8",
+        "sha256": null,
+        "bytes": 6881352,
+        "downloaded": false
+      },
+      "metadataSnapshot": {
+        "path": "sources/commons-metadata.json",
+        "sha256": "6fa3452b1be5bce849f0f23e445f696be45ed3b0b3663bd5ed8511eb99ea29a0",
+        "locator": "files[pageId=38861833]"
+      },
+      "author": "Branko Radovanović",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "rightsStatus": "Commons file license declared; site permission, privacy and model transmission unapproved",
+      "duplicateGroupId": "commons-page-38861833",
+      "sourceGroupReview": null,
+      "independentLabels": null,
+      "reviewers": null,
+      "split": null,
+      "acceptance": null
+    },
+    {
+      "candidateId": "J-20261113-009",
+      "inputFile": "inputs/J-20261113-009.json",
+      "inputSha256": "d0314f74988a4c204bc63cfb8b12d2caa127c6ca0a29c50b015400071de5a48b",
+      "origin": "public-photo-context-with-synthetic-unknown-input",
+      "sourceId": "commons-file-72349928",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Plastic_cap_collection_in_Nesebar.jpg",
+      "originalImage": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/8/89/Plastic_cap_collection_in_Nesebar.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "sha1": "363742c743debaabd4f616fd91457f52e53350af",
+        "sha256": null,
+        "bytes": 5683200,
+        "downloaded": false
+      },
+      "metadataSnapshot": {
+        "path": "sources/commons-metadata.json",
+        "sha256": "6fa3452b1be5bce849f0f23e445f696be45ed3b0b3663bd5ed8511eb99ea29a0",
+        "locator": "files[pageId=72349928]"
+      },
+      "author": "Kritzolina",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "rightsStatus": "Commons file license declared; site permission, privacy and model transmission unapproved",
+      "duplicateGroupId": "commons-page-72349928",
+      "sourceGroupReview": null,
+      "independentLabels": null,
+      "reviewers": null,
+      "split": null,
+      "acceptance": null
+    },
+    {
+      "candidateId": "J-20261113-010",
+      "inputFile": "inputs/J-20261113-010.json",
+      "inputSha256": "70ae600947f2a9ef1f0f7358ff981f4e025292f3e76f2fbae0f6cb3a48a52c10",
+      "origin": "public-photo-context-with-synthetic-unknown-input",
+      "sourceId": "commons-file-86437430",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Divided_plastic_waste_container.jpg",
+      "originalImage": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/8/8b/Divided_plastic_waste_container.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "sha1": "3e35d95f97cf5055d0b703de5d0a5c71f7c68b3b",
+        "sha256": null,
+        "bytes": 5042243,
+        "downloaded": false
+      },
+      "metadataSnapshot": {
+        "path": "sources/commons-metadata.json",
+        "sha256": "6fa3452b1be5bce849f0f23e445f696be45ed3b0b3663bd5ed8511eb99ea29a0",
+        "locator": "files[pageId=86437430]"
+      },
+      "author": "Visviva",
+      "license": "CC0",
+      "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+      "rightsStatus": "Commons file license declared; site permission, privacy and model transmission unapproved",
+      "duplicateGroupId": "commons-page-86437430",
+      "sourceGroupReview": null,
+      "independentLabels": null,
+      "reviewers": null,
+      "split": null,
+      "acceptance": null
+    }
+  ]
+}
