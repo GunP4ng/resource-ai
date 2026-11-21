@@ -57,8 +57,16 @@ the remaining 6 calls from the previous 10-call allowance, with all outcomes kep
 The model is never instructed to disagree, produce a rejection, change the host
 order, or reach a desired score.
 
-Final canonical checks passed 1222 tests with no failures, official typechecks,
+Final canonical checks passed 1223 tests with no failures, official typechecks,
 both builds and local smoke. A first-run SDK timeout remains recorded as
 unexplained timing; it passed in isolation and both later full runs. The second
 run exposed an old HTML question extractor; only its structural extraction was
 updated, preserving all exact question/state/count assertions. No timeout changed.
+
+The first gate found six held cases whose hypothetical follow-up lists repeated
+their canonical reasons. Both priority and per-probe lists now link to numbered
+canonical reasons while retaining hypothesis-specific information. A regression
+renders every original held case, checks each reason appears once and verifies
+the exact referenced reason identity. Native HYEOB-005/009 content was also
+checked at 390/1440 pixels. The final replay is under
+`data/evaluation/round7-r2-20261121`; the initial replay is retained unchanged.
