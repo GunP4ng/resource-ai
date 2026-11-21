@@ -2,7 +2,7 @@ import registryJson from "../data/sources/evidence-candidates.json" with { type:
 import type { CaseInput, EvidenceRecord } from "./contracts.ts";
 import { sourceManifest } from "./sources.ts";
 import { loadEvidenceRegistry } from "./evidence-registry.ts";
-import { canonicalMaterial, materialFamily, materialStream } from "./material-context.ts";
+import { canonicalMaterial, isDeclaredCleanMaterial, materialFamily, materialStream } from "./material-context.ts";
 import type { MaterialFamily, MaterialStream } from "./material-context.ts";
 import { isUnknownCaseText } from "./o-validation.ts";
 export { loadEvidenceRegistry } from "./evidence-registry.ts";
@@ -154,6 +154,8 @@ const registry = loadEvidenceRegistry(registryJson);
 export function lookupLegalEvidence(input: CaseInput, candidates?: readonly EvidenceCandidate[], options?: { readonly intendedUse?: "general-resin" | "food-container"; readonly includeWeakContext?: boolean }): EvidenceLookup {
   if (!validDate(input.assessmentDate)) return { evidence: [], citations: [], reviewRequirements: [], issues: [{ kind: "invalid-date", sourceId: null }] };
   const family = materialFamily(input);
+  const contaminationContext = family !== null && isDeclaredCleanMaterial(input.contamination, family)
+    ? "없음" : input.contamination;
   const selected = (candidates ?? registry.candidates).filter(candidate =>
     ((candidates !== undefined && candidate.materialFamily === undefined) || (family === null ? candidate.materialFamily === undefined
       : candidate.materialFamily === family || (candidate.materialFamily === undefined && candidate.versionFamily === "waste-rule-article4-2"))
@@ -178,7 +180,7 @@ export function lookupLegalEvidence(input: CaseInput, candidates?: readonly Evid
   for (const candidate of applicable) {
     const context = [contextMatch(input.process, candidate.processTerms, "process"),
       contextMatch(input.polymer, candidate.polymerTerms, "polymer"),
-      contextMatch(input.contamination, candidate.contaminationTerms, "contamination")];
+      contextMatch(contaminationContext, candidate.contaminationTerms, "contamination")];
     const [process, polymer, contamination] = context;
     const contextIssue = context.includes("unrelated") ? "unrelated"
       : context.includes("ambiguous") ? "context-ambiguous"
