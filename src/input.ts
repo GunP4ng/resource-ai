@@ -1,4 +1,5 @@
 import type { CaseInput } from "./contracts.ts";
+import { safetyReasons } from "./o-safety-reasons.ts";
 
 export const massQuestion = "확인된 질량은 몇 kg인가요?";
 
@@ -105,7 +106,7 @@ export function collectMissingQuestions(input: CaseInput): readonly string[] {
   if (missingText(input.process)) questions.push("폐플라스틱이 발생한 공정 또는 발생원은 무엇인가요?");
   if (missingText(input.polymer)) questions.push("확인된 수지 종류와 이를 확인한 자료(라벨·재질 명세 등)가 있나요?");
   if (missingText(input.contamination)) questions.push("오염이나 이물질이 있나요? 확인된 상태를 알려 주세요.");
-  if (input.hazardousContact === "unknown") questions.push("유해물질과 접촉했는지 확인할 수 있나요?");
+  if (input.hazardousContact === "unknown") questions.push(safetyReasons.contactUnknown);
   if (input.massKg === null) questions.push(massQuestion);
   if (missingText(input.region)) questions.push("폐플라스틱이 발생한 지역은 어디인가요?");
   return questions;

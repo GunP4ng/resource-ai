@@ -8,6 +8,7 @@ import baseline from "../data/evaluation/round3-20261121/results.json" with { ty
 import { parseCaseInput } from "../src/input.ts";
 import { createResourceDomain } from "../src/domain.ts";
 import { createVerificationCandidates, presentAssessmentDecision } from "../src/o-verification-plan-candidates.ts";
+import { hostVerificationOrder } from "../src/o-verification-plan.ts";
 import { revision } from "../src/o-validation.ts";
 import { readCaseResearchCatalog } from "../src/o-case-research.ts";
 import { buildPublicInputScenario, publicScenarioEligibility } from "../src/o-input-public-scenario.ts";
@@ -80,6 +81,7 @@ const rows = await Promise.all(manifest.cases.map(async item => {
     verificationCandidateCount: verificationCandidates.candidateCount,
     verificationOfferedCount: verificationCandidates.offeredCount,
     verificationOmittedCount: verificationCandidates.omittedCount,
+    hostSafetyReasons: hostVerificationOrder(decision).safety,
     verificationCandidates,
     guidance, sensitivity,
     unchangedDecisionRef: `data/evaluation/round3-20261121/results.json#/${baseline.findIndex(row => row.caseId === item.caseId)}/result`,
@@ -96,6 +98,7 @@ const implementation = await Promise.all([
   "src/app-types.ts", "src/o-case-record-validation.ts",
   "src/o-verification-plan.ts", "src/o-verification-plan-schema.ts", "src/o-verification-plan-candidates.ts",
   "src/extension.ts", "src/report-verification-plan.ts", "src/report-evidence.ts",
+  "src/o-safety-reasons.ts", "src/input.ts", "src/assessment.ts", "src/recommendation.ts",
   "src/report-research.ts", "src/report-styles.ts",
   "scripts/measure-guidance.ts",
   "data/reference/domestic-scenario-context-20261121.json",
@@ -120,6 +123,7 @@ const summary = {
     omitted: rows.reduce((sum, row) => sum + row.verificationOmittedCount, 0),
     interpretation: "Host-issued verification options only; no model selection or priority-quality measurement occurred in this replay.",
   },
+  heldCasesWithHostSafetyPriority: rows.filter(row => row.hostSafetyReasons.length > 0).length,
   heldCasesWithOneFactPriority: rows.filter(row => row.firstFact !== null).length,
   hypotheticalOneFactProbes: rows.reduce((sum, row) => sum + row.probeCount, 0),
   heldWithoutPriorityWithRequiredFacts: rows.filter(row => row.noPriorityFacts.length > 0).length,

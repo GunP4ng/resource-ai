@@ -166,7 +166,7 @@ export function renderReport(result: DecisionResult, presentation: ReportPresent
     <p id="next-action"><strong>다음 행동:</strong> ${escapeHtml(nextAction)}</p>
     <p class="screen-only"><a class="primary-action" href="${answerAction ?? "#checks"}">${answerAction ? result.state === "needs-information" ? "답변 입력하기" : "입력 다시 확인하기" : "실행 전 확인하기"}</a></p>
     ${heldReasons.length ? `<section id="case-reasons"><h2>보류 사유와 필요한 확인</h2><ul>${heldReasons.map((reason, index) => `<li id="case-reason-${index + 1}"><strong>사유 ${index + 1}.</strong> ${escapeHtml(reason)}</li>`).join("")}</ul></section>` : ""}
-    ${guidance && presentation.verificationPlan ? renderVerificationPlan(presentation.verificationPlan, heldReasons) : ""}
+    ${guidance ? renderVerificationPlan(presentation.verificationPlan, result) : ""}
     ${presentation.historical ? '<p class="notice">과거 평가: 현재 입력과 평가 당시 입력이 다릅니다. 명시적으로 다시 평가해 주세요.</p>' : ""}
     <details id="result-context"><summary>판단 이유·자료 범위 확인하기</summary><p>${mode}</p>${data}
     ${result.state === "compared" && result.confidence ? `<p><strong>확신도: ${result.confidence.level === "medium" ? "중간" : "낮음"}</strong></p>${list(readableReasons(result.confidence.reasons))}` : ""}

@@ -1,0 +1,719 @@
+[
+  {
+    "caseId": "HYEOB-20261112-001",
+    "originalSha256": "99a243a95f2500e350512a3ffbe53c896b76df41eb2e9be5b97d305cd96f0f40",
+    "executionInputSha256": "6a7e8936e469f8950b629aade66dbc99ff1dc4af31c1960ad2154a75e1e98ce4",
+    "assessmentDate": "2026-11-12",
+    "state": "compared",
+    "canonicalDecisionUnchanged": true,
+    "decisionSha256": "b5fa3687374b1f90a65356e06fd5e3723f2887070d51e9bd0313f15c5ecffcc4",
+    "automaticPublicScenario": true,
+    "publicScenarioOmissionReasons": [],
+    "conditionalOptimum": true,
+    "actualSecondAvailable": false,
+    "firstFact": null,
+    "probeCount": 0,
+    "noPriorityStatus": "not-held",
+    "noPriorityFacts": [],
+    "sensitivitySamples": 9,
+    "sensitivityRetained": 9,
+    "priceCrossovers": [
+      {
+        "allocation": 0.6,
+        "datasetSha256": "f7e90f15c6e3b083ad9c0807006b27c74721880d9cae629da69fa9a0348a1824",
+        "provenanceSha256": "ff9f002d948acf73881e0995dfe1e7e39300551f0acf23ca2f6e56446c83d66b",
+        "minimumPrice": 108366.6666666667,
+        "limitingRouteIds": [
+          "energy_recovery"
+        ],
+        "unavailableReason": null
+      },
+      {
+        "allocation": 0.8,
+        "datasetSha256": "576dd6cd95c13584b2ef9081f226863b1c000250803a49dc49a044cd7acf8d3a",
+        "provenanceSha256": "325f75a78bd40f3cb9c1bfe580c4b2b048ef02794cba708e420b42cfccfd0cc6",
+        "minimumPrice": 55012.499999999985,
+        "limitingRouteIds": [
+          "energy_recovery"
+        ],
+        "unavailableReason": null
+      },
+      {
+        "allocation": 1,
+        "datasetSha256": "c0f3ece6cd0a4b47b980f35019244dc558998f276c783a5ef99cab064d8507ce",
+        "provenanceSha256": "e73213b481a1c1baed954f474a44409853408df6b0842300b8910250897747ab",
+        "minimumPrice": 23000,
+        "limitingRouteIds": [
+          "energy_recovery"
+        ],
+        "unavailableReason": null
+      }
+    ],
+    "verificationCandidateCount": 15,
+    "verificationOfferedCount": 12,
+    "verificationOmittedCount": 3,
+    "hostSafetyReasons": [],
+    "unchangedDecisionRef": "data/evaluation/round3-20261121/results.json#/0/result"
+  },
+  {
+    "caseId": "HYEOB-20261112-002",
+    "originalSha256": "140d4db53120d25db32c3d70a982d2de8cf2e45ac90c934550ed76fff7e76db5",
+    "executionInputSha256": "ce8f3cc486c4005b38d595cc5a8ee75e7a6943353b6523c858aabce11d2310bd",
+    "assessmentDate": "2026-11-12",
+    "state": "compared",
+    "canonicalDecisionUnchanged": true,
+    "decisionSha256": "b759d3331852b2fe26626d57a03b7cec27b13eacd5aab7b64ccaacb329480964",
+    "automaticPublicScenario": true,
+    "publicScenarioOmissionReasons": [],
+    "conditionalOptimum": true,
+    "actualSecondAvailable": false,
+    "firstFact": null,
+    "probeCount": 0,
+    "noPriorityStatus": "not-held",
+    "noPriorityFacts": [],
+    "sensitivitySamples": 9,
+    "sensitivityRetained": 9,
+    "priceCrossovers": [
+      {
+        "allocation": 0.6,
+        "datasetSha256": "78be40df4df711b224302f43679f25346b6702f7daeff4df8a46b5bf7df50db9",
+        "provenanceSha256": "a6ade1db182bf1c7d1c17df354ccfbefb121a9d5bae58285f5a2170ad59aa176",
+        "minimumPrice": 108366.66666666667,
+        "limitingRouteIds": [
+          "energy_recovery"
+        ],
+        "unavailableReason": null
+      },
+      {
+        "allocation": 0.8,
+        "datasetSha256": "001f24e3411d6b71e6000d845406cb23683927ab18f3797d3195e57b89bb2faf",
+        "provenanceSha256": "87476acd80abad4c730a4aa3b37b3843a33790cc9ed2812a022fdebe83cb1f69",
+        "minimumPrice": 55012.5,
+        "limitingRouteIds": [
+          "energy_recovery"
+        ],
+        "unavailableReason": null
+      },
+      {
+        "allocation": 1,
+        "datasetSha256": "5e750613896c9b19f1361ac08cd1b522dc4c05462e41866d26dcd8ea873cda5a",
+        "provenanceSha256": "829fdf4bc1876d4dbe4de39d40d24d797ebf02c6b749602b27e0f83d42dcc521",
+        "minimumPrice": 23000,
+        "limitingRouteIds": [
+          "energy_recovery"
+        ],
+        "unavailableReason": null
+      }
+    ],
+    "verificationCandidateCount": 15,
+    "verificationOfferedCount": 12,
+    "verificationOmittedCount": 3,
+    "hostSafetyReasons": [],
+    "unchangedDecisionRef": "data/evaluation/round3-20261121/results.json#/1/result"
+  },
+  {
+    "caseId": "HYEOB-20261112-003",
+    "originalSha256": "e99456505b42ee03d6b8f1e87771791750e1262a43047db72c613e85504a5b07",
+    "executionInputSha256": "adaec26bf29d0d869d1fa9434eddeca3b427d16fceb6dfdc58902776081dc8ef",
+    "assessmentDate": "2026-11-12",
+    "state": "needs-review",
+    "canonicalDecisionUnchanged": true,
+    "decisionSha256": "e173d4962ac03b06dfc5023283b8b5938a6b1fc7eb201620caf8166a34cefc84",
+    "automaticPublicScenario": false,
+    "publicScenarioOmissionReasons": [
+      "신고 수지 PP/PE 다층 (라벨 PP)에 대응하는 공개 가격·탄소 계산 묶음이 없습니다. 현재 계산은 단일 PET·HDPE만 지원하며 다른 수지의 계수를 대신 넣지 않습니다."
+    ],
+    "conditionalOptimum": false,
+    "actualSecondAvailable": false,
+    "firstFact": "polymer:PE",
+    "probeCount": 2,
+    "noPriorityStatus": "evaluated",
+    "noPriorityFacts": [],
+    "sensitivitySamples": 0,
+    "sensitivityRetained": 0,
+    "priceCrossovers": [],
+    "verificationCandidateCount": 16,
+    "verificationOfferedCount": 12,
+    "verificationOmittedCount": 4,
+    "hostSafetyReasons": [],
+    "unchangedDecisionRef": "data/evaluation/round3-20261121/results.json#/2/result"
+  },
+  {
+    "caseId": "HYEOB-20261112-004",
+    "originalSha256": "26eb5e7d5d21df9ed16f6c00cab3dba7e5e810bd3b354e5f9851abcd8217e493",
+    "executionInputSha256": "1fe247c1e8976ca372e772b2aa933b707ba642592f534a483cd12cf36857ba97",
+    "assessmentDate": "2026-11-12",
+    "state": "needs-information",
+    "canonicalDecisionUnchanged": true,
+    "decisionSha256": "be303d26dde7322339cd39d16c38a40e83dae438f7f097e14a3a2940942c5822",
+    "automaticPublicScenario": true,
+    "publicScenarioOmissionReasons": [],
+    "conditionalOptimum": false,
+    "actualSecondAvailable": false,
+    "firstFact": "contamination:없음",
+    "probeCount": 1,
+    "noPriorityStatus": "evaluated",
+    "noPriorityFacts": [],
+    "sensitivitySamples": 0,
+    "sensitivityRetained": 0,
+    "priceCrossovers": [],
+    "verificationCandidateCount": 1,
+    "verificationOfferedCount": 1,
+    "verificationOmittedCount": 0,
+    "hostSafetyReasons": [
+      "오염·접촉 이력에 미확인 내용이 있습니다. 이전 내용물·접촉 물질명과 SDS 등 확인 자료, 잔류물·세척 확인 자료가 있나요? 확인 전에는 세척 여부만으로 유해물질 접촉이 없었다고 확정하지 않습니다."
+    ],
+    "unchangedDecisionRef": "data/evaluation/round3-20261121/results.json#/3/result"
+  },
+  {
+    "caseId": "HYEOB-20261112-005",
+    "originalSha256": "41f6f74e6551b3aae5449a1a0d11d2d1a37b7291974f9a1bc70618023de404fd",
+    "executionInputSha256": "203d5302d726bc4e216f17a55ccc92404782c33dc526deb9ca75fa35cecca38c",
+    "assessmentDate": "2026-11-12",
+    "state": "needs-review",
+    "canonicalDecisionUnchanged": true,
+    "decisionSha256": "aaeb7919a5c9dc8aebb88449238efa1cd90db6b58648cd38bac877e27c00ad8c",
+    "automaticPublicScenario": false,
+    "publicScenarioOmissionReasons": [
+      "신고 수지 PE와 기타 수지 혼합에 대응하는 공개 가격·탄소 계산 묶음이 없습니다. 현재 계산은 단일 PET·HDPE만 지원하며 다른 수지의 계수를 대신 넣지 않습니다.",
+      "입력 질량이 없어 비용·탄소의 기능단위를 정할 수 없습니다. 정성 추천과 수치 비교는 별개입니다."
+    ],
+    "conditionalOptimum": false,
+    "actualSecondAvailable": false,
+    "firstFact": null,
+    "probeCount": 3,
+    "noPriorityStatus": "evaluated",
+    "noPriorityFacts": [
+      "혼합·다층 또는 라벨 불일치가 보고되었습니다. 층별·구성 수지의 재질 명세, 라벨 확인 자료와 수지별 분리 가능 여부를 확인할 수 있나요?",
+      "유해물질과 접촉했는지 확인할 수 있나요?",
+      "확인된 질량은 몇 kg인가요?",
+      "폐플라스틱이 발생한 지역은 어디인가요?"
+    ],
+    "sensitivitySamples": 0,
+    "sensitivityRetained": 0,
+    "priceCrossovers": [],
+    "verificationCandidateCount": 19,
+    "verificationOfferedCount": 12,
+    "verificationOmittedCount": 7,
+    "hostSafetyReasons": [
+      "유해물질과 접촉했는지 확인할 수 있나요?"
+    ],
+    "unchangedDecisionRef": "data/evaluation/round3-20261121/results.json#/4/result"
+  },
+  {
+    "caseId": "HYEOB-20261112-006",
+    "originalSha256": "aa6104ac7f7461c952fc95b314002860bb01107d59d3814d1e61282d1ac7a87b",
+    "executionInputSha256": "3a5cea27a56e2d79ea774a30bafff8d69fe80f1687f62ab0a7b345b6cd2036a2",
+    "assessmentDate": "2026-11-12",
+    "state": "compared",
+    "canonicalDecisionUnchanged": true,
+    "decisionSha256": "b78be923b0ace2f87d34e211ea26fbef57d8d100899443a7ec8d298b1f65115e",
+    "automaticPublicScenario": true,
+    "publicScenarioOmissionReasons": [],
+    "conditionalOptimum": true,
+    "actualSecondAvailable": false,
+    "firstFact": null,
+    "probeCount": 0,
+    "noPriorityStatus": "not-held",
+    "noPriorityFacts": [],
+    "sensitivitySamples": 9,
+    "sensitivityRetained": 9,
+    "priceCrossovers": [
+      {
+        "allocation": 0.6,
+        "datasetSha256": "7b12f93a51f79bbd3b67f1446022bdca658ab02ffb0769d0c356c307177eeefc",
+        "provenanceSha256": "1b946bb413c4e37c6ed52a350aa30b3d6ab37a72d58850fe5f85eff6151a38a9",
+        "minimumPrice": 108366.6666666667,
+        "limitingRouteIds": [
+          "energy_recovery"
+        ],
+        "unavailableReason": null
+      },
+      {
+        "allocation": 0.8,
+        "datasetSha256": "cc1f2786e16f81d5aeb014c5232e7e3f3f0ce73ae291d8749352e1ad4b07a520",
+        "provenanceSha256": "e7db0e85a554811618e897ad0e0a203e1e6b618c2599f0bde6b42a78528c0453",
+        "minimumPrice": 55012.499999999985,
+        "limitingRouteIds": [
+          "energy_recovery"
+        ],
+        "unavailableReason": null
+      },
+      {
+        "allocation": 1,
+        "datasetSha256": "3d5ed50963d6a274024920bd2397075919f0c4936cdf6f4ca024af8d41bd714a",
+        "provenanceSha256": "be8db952d9c047421d70517d1282c49f8b05e4598483e573176c480bd29bbadb",
+        "minimumPrice": 23000,
+        "limitingRouteIds": [
+          "energy_recovery"
+        ],
+        "unavailableReason": null
+      }
+    ],
+    "verificationCandidateCount": 15,
+    "verificationOfferedCount": 12,
+    "verificationOmittedCount": 3,
+    "hostSafetyReasons": [],
+    "unchangedDecisionRef": "data/evaluation/round3-20261121/results.json#/5/result"
+  },
+  {
+    "caseId": "HYEOB-20261112-007",
+    "originalSha256": "dd530034e235f514b61ee5a8d585978ead905acdfc04a3530e462a09e18ff320",
+    "executionInputSha256": "d106cadf11c70c993b73486c671ec9c7423f9c44d27a605e8446c3f29998cbba",
+    "assessmentDate": "2026-11-12",
+    "state": "compared",
+    "canonicalDecisionUnchanged": true,
+    "decisionSha256": "5a458707c5f5da23596c39db620d6493c5e73f1e962394bd8de3fcbce44c29ca",
+    "automaticPublicScenario": true,
+    "publicScenarioOmissionReasons": [],
+    "conditionalOptimum": true,
+    "actualSecondAvailable": false,
+    "firstFact": null,
+    "probeCount": 0,
+    "noPriorityStatus": "not-held",
+    "noPriorityFacts": [],
+    "sensitivitySamples": 9,
+    "sensitivityRetained": 9,
+    "priceCrossovers": [
+      {
+        "allocation": 0.6,
+        "datasetSha256": "42408f69b033747abe546e916821afb32105c81132ea41c852d0d4f5dd687abe",
+        "provenanceSha256": "dfe52d928e2c25c13285becd0d049f69d124e4be46ef93d1a12c1163debbc710",
+        "minimumPrice": 108366.6666666667,
+        "limitingRouteIds": [
+          "energy_recovery"
+        ],
+        "unavailableReason": null
+      },
+      {
+        "allocation": 0.8,
+        "datasetSha256": "9a4f0d4435e738861b3b05ca0b1ea68ee3a889fa1bef2aa5de16b10c45d1827c",
+        "provenanceSha256": "471ae84e93d2cb2794de8ac96c7c30545e08a7fa1d32fcce2fc512f87c32cd0a",
+        "minimumPrice": 55012.499999999985,
+        "limitingRouteIds": [
+          "energy_recovery"
+        ],
+        "unavailableReason": null
+      },
+      {
+        "allocation": 1,
+        "datasetSha256": "040bc1b4a1383b15751ff3bd127ef00c647232e762809529a28943f874c41d4b",
+        "provenanceSha256": "2fa8d19b6011eb8623e1ac1275aedd8199f4614176af574b9df890783d10c996",
+        "minimumPrice": 23000,
+        "limitingRouteIds": [
+          "energy_recovery"
+        ],
+        "unavailableReason": null
+      }
+    ],
+    "verificationCandidateCount": 18,
+    "verificationOfferedCount": 12,
+    "verificationOmittedCount": 6,
+    "hostSafetyReasons": [],
+    "unchangedDecisionRef": "data/evaluation/round3-20261121/results.json#/6/result"
+  },
+  {
+    "caseId": "HYEOB-20261112-008",
+    "originalSha256": "978a57423199674dee21982375171258ab9908701ea6f69934d95afc8ff31dbb",
+    "executionInputSha256": "122467280c42593d1ac2ac5c6382acd1d72ceadd83cb8ef6fee8c79200643150",
+    "assessmentDate": "2026-11-12",
+    "state": "needs-information",
+    "canonicalDecisionUnchanged": true,
+    "decisionSha256": "abd43f0c1231f807b80287d7c48edca0c14c2fd3233e24fae8b9c3e46f037648",
+    "automaticPublicScenario": false,
+    "publicScenarioOmissionReasons": [
+      "신고 수지 PP에 대응하는 공개 가격·탄소 계산 묶음이 없습니다. 현재 계산은 단일 PET·HDPE만 지원하며 다른 수지의 계수를 대신 넣지 않습니다."
+    ],
+    "conditionalOptimum": false,
+    "actualSecondAvailable": false,
+    "firstFact": "contamination:없음",
+    "probeCount": 1,
+    "noPriorityStatus": "evaluated",
+    "noPriorityFacts": [],
+    "sensitivitySamples": 0,
+    "sensitivityRetained": 0,
+    "priceCrossovers": [],
+    "verificationCandidateCount": 1,
+    "verificationOfferedCount": 1,
+    "verificationOmittedCount": 0,
+    "hostSafetyReasons": [
+      "오염·접촉 이력에 미확인 내용이 있습니다. 이전 내용물·접촉 물질명과 SDS 등 확인 자료, 잔류물·세척 확인 자료가 있나요? 확인 전에는 세척 여부만으로 유해물질 접촉이 없었다고 확정하지 않습니다."
+    ],
+    "unchangedDecisionRef": "data/evaluation/round3-20261121/results.json#/7/result"
+  },
+  {
+    "caseId": "HYEOB-20261112-009",
+    "originalSha256": "65c54b7dcfa5d975474542a5675a7c6bb64850d2a4e320845ad67ccaa5d2498e",
+    "executionInputSha256": "1fd4f6edfb8fe525f8eb4ed67bd38d4566c203d432113eb66e6343c7f2c556cd",
+    "assessmentDate": "2026-11-12",
+    "state": "needs-information",
+    "canonicalDecisionUnchanged": true,
+    "decisionSha256": "a79e4f2d471d5be93f6e352ad6f655f3c82e8655451e8e3f562af9d333f45186",
+    "automaticPublicScenario": false,
+    "publicScenarioOmissionReasons": [
+      "수지가 미확인이라 공개 가격·탄소 계산 묶음을 연결하지 않았습니다. 재질을 추정하지 않습니다.",
+      "입력 질량이 없어 비용·탄소의 기능단위를 정할 수 없습니다. 정성 추천과 수치 비교는 별개입니다."
+    ],
+    "conditionalOptimum": false,
+    "actualSecondAvailable": false,
+    "firstFact": null,
+    "probeCount": 2,
+    "noPriorityStatus": "evaluated",
+    "noPriorityFacts": [
+      "폐플라스틱이 발생한 공정 또는 발생원은 무엇인가요?",
+      "확인된 수지 종류와 이를 확인한 자료(라벨·재질 명세 등)가 있나요?",
+      "오염이나 이물질이 있나요? 확인된 상태를 알려 주세요.",
+      "유해물질과 접촉했는지 확인할 수 있나요?",
+      "폐플라스틱이 발생한 지역은 어디인가요?"
+    ],
+    "sensitivitySamples": 0,
+    "sensitivityRetained": 0,
+    "priceCrossovers": [],
+    "verificationCandidateCount": 5,
+    "verificationOfferedCount": 5,
+    "verificationOmittedCount": 0,
+    "hostSafetyReasons": [
+      "유해물질과 접촉했는지 확인할 수 있나요?"
+    ],
+    "unchangedDecisionRef": "data/evaluation/round3-20261121/results.json#/8/result"
+  },
+  {
+    "caseId": "HYEOB-20261112-010",
+    "originalSha256": "898699ed96ab28225c9a2bbf9e1c0770fdb571e49af581832a96d92bf46a090f",
+    "executionInputSha256": "44df39eb7cb1489ca1f334a4ef69a2da6260a51fd2ae6a684aafde392cf12eeb",
+    "assessmentDate": "2026-11-12",
+    "state": "needs-information",
+    "canonicalDecisionUnchanged": true,
+    "decisionSha256": "5d10a64e0909067c92188d0cd690f3b36baa0d86a83463aba3e0bccee9aa5b8d",
+    "automaticPublicScenario": false,
+    "publicScenarioOmissionReasons": [
+      "수지가 미확인이라 공개 가격·탄소 계산 묶음을 연결하지 않았습니다. 재질을 추정하지 않습니다.",
+      "입력 질량이 없어 비용·탄소의 기능단위를 정할 수 없습니다. 정성 추천과 수치 비교는 별개입니다."
+    ],
+    "conditionalOptimum": false,
+    "actualSecondAvailable": false,
+    "firstFact": null,
+    "probeCount": 2,
+    "noPriorityStatus": "evaluated",
+    "noPriorityFacts": [
+      "폐플라스틱이 발생한 공정 또는 발생원은 무엇인가요?",
+      "확인된 수지 종류와 이를 확인한 자료(라벨·재질 명세 등)가 있나요?",
+      "오염이나 이물질이 있나요? 확인된 상태를 알려 주세요.",
+      "유해물질과 접촉했는지 확인할 수 있나요?",
+      "폐플라스틱이 발생한 지역은 어디인가요?"
+    ],
+    "sensitivitySamples": 0,
+    "sensitivityRetained": 0,
+    "priceCrossovers": [],
+    "verificationCandidateCount": 5,
+    "verificationOfferedCount": 5,
+    "verificationOmittedCount": 0,
+    "hostSafetyReasons": [
+      "유해물질과 접촉했는지 확인할 수 있나요?"
+    ],
+    "unchangedDecisionRef": "data/evaluation/round3-20261121/results.json#/9/result"
+  },
+  {
+    "caseId": "OYS-20261110-001",
+    "originalSha256": "1f1163e501b1ade17ed9207933242a51120bb15584f8e95b6e6d736fe0cd67ff",
+    "executionInputSha256": "d2190d16b4f315e77f70f1644450757a09e88b47754e23ba0cee61f0fd56c124",
+    "assessmentDate": "2026-11-10",
+    "state": "compared",
+    "canonicalDecisionUnchanged": true,
+    "decisionSha256": "b893337b7c5a0274f847b700c8308a8dbc359d5f5bf3abbbfb10c3c07d719193",
+    "automaticPublicScenario": true,
+    "publicScenarioOmissionReasons": [],
+    "conditionalOptimum": true,
+    "actualSecondAvailable": false,
+    "firstFact": null,
+    "probeCount": 0,
+    "noPriorityStatus": "not-held",
+    "noPriorityFacts": [],
+    "sensitivitySamples": 9,
+    "sensitivityRetained": 9,
+    "priceCrossovers": [
+      {
+        "allocation": 0.6,
+        "datasetSha256": "850bebf91122f31ab2fa25c2aecb9531dc54c84e4851c1de3aa6116133783f9c",
+        "provenanceSha256": "18876198fa41a689608dd32dc69cdedec3a0a1f3e8ad8bee1d6053348482aa19",
+        "minimumPrice": 108366.66666666667,
+        "limitingRouteIds": [
+          "energy_recovery"
+        ],
+        "unavailableReason": null
+      },
+      {
+        "allocation": 0.8,
+        "datasetSha256": "58b072b9d64936bd84e2fb56aa4a4be37b9b29d012a48844367c36771394c2ee",
+        "provenanceSha256": "fed9ee922a8dd0440692aef53f4b99e2df2ee68ddba8781cb9cfc75ba79967d5",
+        "minimumPrice": 55012.499999999985,
+        "limitingRouteIds": [
+          "energy_recovery"
+        ],
+        "unavailableReason": null
+      },
+      {
+        "allocation": 1,
+        "datasetSha256": "a3e02df266c6829c5e562b7f0ffb51e70e62b882fbe6be04d02614cb26181089",
+        "provenanceSha256": "e9669e4972909a5a1551120173b9953e1bc57d2ccda9324d51537f235648be28",
+        "minimumPrice": 23000,
+        "limitingRouteIds": [
+          "energy_recovery"
+        ],
+        "unavailableReason": null
+      }
+    ],
+    "verificationCandidateCount": 15,
+    "verificationOfferedCount": 12,
+    "verificationOmittedCount": 3,
+    "hostSafetyReasons": [],
+    "unchangedDecisionRef": "data/evaluation/round3-20261121/results.json#/10/result"
+  },
+  {
+    "caseId": "OYS-20261110-002",
+    "originalSha256": "0b052aeeb9e97a93699267d68662d8c1b1efee32107f2711d7be6fab78764b2c",
+    "executionInputSha256": "5700279294e19066fcf43bc6866b451ef81fbb9a4cf0ac93f93e5e5dbef049d2",
+    "assessmentDate": "2026-11-10",
+    "state": "compared",
+    "canonicalDecisionUnchanged": true,
+    "decisionSha256": "d1a232af60ab3544ef878114c3d0df313c0dd50536806f02f1c579a962ab855d",
+    "automaticPublicScenario": true,
+    "publicScenarioOmissionReasons": [],
+    "conditionalOptimum": true,
+    "actualSecondAvailable": false,
+    "firstFact": null,
+    "probeCount": 0,
+    "noPriorityStatus": "not-held",
+    "noPriorityFacts": [],
+    "sensitivitySamples": 9,
+    "sensitivityRetained": 9,
+    "priceCrossovers": [
+      {
+        "allocation": 0.6,
+        "datasetSha256": "332eed96e9c8b5b850f8add6d0ac4b20a332dc5b4920d9f53d7584e8cfff1201",
+        "provenanceSha256": "ba8e640afb1b993fc0aaf7fd58b4a3e7038bb963d7b650f1b2eedd5f0552db68",
+        "minimumPrice": 108366.66666666669,
+        "limitingRouteIds": [
+          "energy_recovery"
+        ],
+        "unavailableReason": null
+      },
+      {
+        "allocation": 0.8,
+        "datasetSha256": "7ef5352694463fa6053bb4b61320810ee1ab04b33766899b455a4968f569c37d",
+        "provenanceSha256": "a471bfd4500388fdcde280e0886825c0620cb5551d9de6d604d33e27d13e3240",
+        "minimumPrice": 55012.49999999999,
+        "limitingRouteIds": [
+          "energy_recovery"
+        ],
+        "unavailableReason": null
+      },
+      {
+        "allocation": 1,
+        "datasetSha256": "4a1c5274662ab31e335ba0f9eb31c0a47d20711f018f0a74010927cbc42de145",
+        "provenanceSha256": "1b566d7c7877a900c8db5c02a05f9478b50887bc5a47c56c7db9edc8486b13ca",
+        "minimumPrice": 23000,
+        "limitingRouteIds": [
+          "energy_recovery"
+        ],
+        "unavailableReason": null
+      }
+    ],
+    "verificationCandidateCount": 15,
+    "verificationOfferedCount": 12,
+    "verificationOmittedCount": 3,
+    "hostSafetyReasons": [],
+    "unchangedDecisionRef": "data/evaluation/round3-20261121/results.json#/11/result"
+  },
+  {
+    "caseId": "OYS-20261110-003",
+    "originalSha256": "6c09027b9a767e917d5b3ffc45a437fd8153ff7b8eec3750ddb9f410eb4403b4",
+    "executionInputSha256": "d04ede73266af20b8d3fe0c98dde7934933264bfa083457e5dd8cbdbba095a92",
+    "assessmentDate": "2026-11-10",
+    "state": "compared",
+    "canonicalDecisionUnchanged": true,
+    "decisionSha256": "876b1e947c09a82b6cb08bb0b0d911d39f500ba069ac02e40b7235ec507f23a9",
+    "automaticPublicScenario": false,
+    "publicScenarioOmissionReasons": [
+      "신고 수지 PP에 대응하는 공개 가격·탄소 계산 묶음이 없습니다. 현재 계산은 단일 PET·HDPE만 지원하며 다른 수지의 계수를 대신 넣지 않습니다.",
+      "입력 질량이 없어 비용·탄소의 기능단위를 정할 수 없습니다. 정성 추천과 수치 비교는 별개입니다."
+    ],
+    "conditionalOptimum": false,
+    "actualSecondAvailable": false,
+    "firstFact": null,
+    "probeCount": 0,
+    "noPriorityStatus": "not-held",
+    "noPriorityFacts": [],
+    "sensitivitySamples": 0,
+    "sensitivityRetained": 0,
+    "priceCrossovers": [],
+    "verificationCandidateCount": 15,
+    "verificationOfferedCount": 12,
+    "verificationOmittedCount": 3,
+    "hostSafetyReasons": [],
+    "unchangedDecisionRef": "data/evaluation/round3-20261121/results.json#/12/result"
+  },
+  {
+    "caseId": "OYS-20261110-004",
+    "originalSha256": "7ccbf029c826be106e753dc15997bf608b856a9e893b45497eed4ef533c04d7f",
+    "executionInputSha256": "b92fef23cebfcfae2c084b3529944f83e81e93a051b0c111c5510cea46a43b6f",
+    "assessmentDate": "2026-11-10",
+    "state": "compared",
+    "canonicalDecisionUnchanged": true,
+    "decisionSha256": "a08ace448d8ff1a311738bba021eb9f2933449eb9b95db617093db6e28c4192a",
+    "automaticPublicScenario": false,
+    "publicScenarioOmissionReasons": [
+      "신고 수지 LDPE에 대응하는 공개 가격·탄소 계산 묶음이 없습니다. 현재 계산은 단일 PET·HDPE만 지원하며 다른 수지의 계수를 대신 넣지 않습니다."
+    ],
+    "conditionalOptimum": false,
+    "actualSecondAvailable": false,
+    "firstFact": null,
+    "probeCount": 0,
+    "noPriorityStatus": "not-held",
+    "noPriorityFacts": [],
+    "sensitivitySamples": 0,
+    "sensitivityRetained": 0,
+    "priceCrossovers": [],
+    "verificationCandidateCount": 15,
+    "verificationOfferedCount": 12,
+    "verificationOmittedCount": 3,
+    "hostSafetyReasons": [],
+    "unchangedDecisionRef": "data/evaluation/round3-20261121/results.json#/13/result"
+  },
+  {
+    "caseId": "OYS-20261110-006",
+    "originalSha256": "29c76c30e310148b0ab270ef51e2a4fee92d35aab35106560e4ac36d4947bda0",
+    "executionInputSha256": "a65f7bbbc9ed7d6f556020453206139ce98185af8c60651d7e0427eaf2b48e98",
+    "assessmentDate": "2026-11-10",
+    "state": "needs-review",
+    "canonicalDecisionUnchanged": true,
+    "decisionSha256": "57947003b1ebc58e42bb7c333bc722f77fcf18729d5dd5ddf9c0e57b6cbabae6",
+    "automaticPublicScenario": false,
+    "publicScenarioOmissionReasons": [
+      "수지가 미확인이라 공개 가격·탄소 계산 묶음을 연결하지 않았습니다. 재질을 추정하지 않습니다.",
+      "입력 질량이 없어 비용·탄소의 기능단위를 정할 수 없습니다. 정성 추천과 수치 비교는 별개입니다."
+    ],
+    "conditionalOptimum": false,
+    "actualSecondAvailable": false,
+    "firstFact": null,
+    "probeCount": 2,
+    "noPriorityStatus": "evaluated",
+    "noPriorityFacts": [
+      "입력 자체 모순 확인 필요",
+      "확인된 수지 종류와 이를 확인한 자료(라벨·재질 명세 등)가 있나요?",
+      "오염이나 이물질이 있나요? 확인된 상태를 알려 주세요.",
+      "유해물질과 접촉했는지 확인할 수 있나요?",
+      "확인된 질량은 몇 kg인가요?"
+    ],
+    "sensitivitySamples": 0,
+    "sensitivityRetained": 0,
+    "priceCrossovers": [],
+    "verificationCandidateCount": 20,
+    "verificationOfferedCount": 12,
+    "verificationOmittedCount": 8,
+    "hostSafetyReasons": [
+      "유해물질과 접촉했는지 확인할 수 있나요?"
+    ],
+    "unchangedDecisionRef": "data/evaluation/round3-20261121/results.json#/14/result"
+  },
+  {
+    "caseId": "OYS-20261110-008",
+    "originalSha256": "f3833e8d39ff4b96f94c784d69889c59db17390bd2993d6f5e0883aecd842fa9",
+    "executionInputSha256": "24710cebf5c110e39e43dbee967a34d673e3c9061f19617c3b493c3f4b5fbf6e",
+    "assessmentDate": "2026-11-10",
+    "state": "needs-review",
+    "canonicalDecisionUnchanged": true,
+    "decisionSha256": "be92a58feb7cb53f2ede3c03691f0a0bd1e2fa7500b8bf41d29fa08f0c0984cd",
+    "automaticPublicScenario": false,
+    "publicScenarioOmissionReasons": [
+      "입력 질량이 없어 비용·탄소의 기능단위를 정할 수 없습니다. 정성 추천과 수치 비교는 별개입니다."
+    ],
+    "conditionalOptimum": false,
+    "actualSecondAvailable": false,
+    "firstFact": null,
+    "probeCount": 0,
+    "noPriorityStatus": "limited",
+    "noPriorityFacts": [
+      "유해물질 접촉·지정폐기물 해당 여부 검토 필요",
+      "확인된 질량은 몇 kg인가요?",
+      "오염·접촉 이력에 미확인 내용이 있습니다. 이전 내용물·접촉 물질명과 SDS 등 확인 자료, 잔류물·세척 확인 자료가 있나요? 확인 전에는 세척 여부만으로 유해물질 접촉이 없었다고 확정하지 않습니다."
+    ],
+    "sensitivitySamples": 0,
+    "sensitivityRetained": 0,
+    "priceCrossovers": [],
+    "verificationCandidateCount": 18,
+    "verificationOfferedCount": 12,
+    "verificationOmittedCount": 6,
+    "hostSafetyReasons": [
+      "유해물질 접촉·지정폐기물 해당 여부 검토 필요",
+      "오염·접촉 이력에 미확인 내용이 있습니다. 이전 내용물·접촉 물질명과 SDS 등 확인 자료, 잔류물·세척 확인 자료가 있나요? 확인 전에는 세척 여부만으로 유해물질 접촉이 없었다고 확정하지 않습니다."
+    ],
+    "unchangedDecisionRef": "data/evaluation/round3-20261121/results.json#/15/result"
+  },
+  {
+    "caseId": "OYS-20261110-009",
+    "originalSha256": "acadb919168dc522ac98cbbc8ba2b27bd6d2224f0bb4779a689f079768da17b7",
+    "executionInputSha256": "2e8c55b62068b6b8cdc0db087b2c436414bac4509d1d49e1479dde1566f3d6f3",
+    "assessmentDate": "2026-11-10",
+    "state": "needs-information",
+    "canonicalDecisionUnchanged": true,
+    "decisionSha256": "e1689598dee7d20f37d7795efd161778925c458708cef549d74bcc3126b5fe3c",
+    "automaticPublicScenario": false,
+    "publicScenarioOmissionReasons": [
+      "신고 수지 PP에 대응하는 공개 가격·탄소 계산 묶음이 없습니다. 현재 계산은 단일 PET·HDPE만 지원하며 다른 수지의 계수를 대신 넣지 않습니다."
+    ],
+    "conditionalOptimum": false,
+    "actualSecondAvailable": false,
+    "firstFact": null,
+    "probeCount": 2,
+    "noPriorityStatus": "evaluated",
+    "noPriorityFacts": [
+      "유해물질과 접촉했는지 확인할 수 있나요?",
+      "오염·접촉 이력에 미확인 내용이 있습니다. 이전 내용물·접촉 물질명과 SDS 등 확인 자료, 잔류물·세척 확인 자료가 있나요? 확인 전에는 세척 여부만으로 유해물질 접촉이 없었다고 확정하지 않습니다."
+    ],
+    "sensitivitySamples": 0,
+    "sensitivityRetained": 0,
+    "priceCrossovers": [],
+    "verificationCandidateCount": 2,
+    "verificationOfferedCount": 2,
+    "verificationOmittedCount": 0,
+    "hostSafetyReasons": [
+      "유해물질과 접촉했는지 확인할 수 있나요?",
+      "오염·접촉 이력에 미확인 내용이 있습니다. 이전 내용물·접촉 물질명과 SDS 등 확인 자료, 잔류물·세척 확인 자료가 있나요? 확인 전에는 세척 여부만으로 유해물질 접촉이 없었다고 확정하지 않습니다."
+    ],
+    "unchangedDecisionRef": "data/evaluation/round3-20261121/results.json#/16/result"
+  },
+  {
+    "caseId": "OYS-20261110-010",
+    "originalSha256": "e83d1f30b91e37a38e70a20963a4db2ecb13287aae67a54e10f92b3509d51d2d",
+    "executionInputSha256": "a338cdb5fb482bfeb9b3c9ad68b1db1f49d6450904a8a29bb3aa5b162882bbe2",
+    "assessmentDate": "2026-11-10",
+    "state": "needs-information",
+    "canonicalDecisionUnchanged": true,
+    "decisionSha256": "ab12dd580713b749e5954646d1fc98649acb73b80d067592f33fb68df8202c2b",
+    "automaticPublicScenario": false,
+    "publicScenarioOmissionReasons": [
+      "입력 질량이 없어 비용·탄소의 기능단위를 정할 수 없습니다. 정성 추천과 수치 비교는 별개입니다."
+    ],
+    "conditionalOptimum": false,
+    "actualSecondAvailable": false,
+    "firstFact": null,
+    "probeCount": 2,
+    "noPriorityStatus": "evaluated",
+    "noPriorityFacts": [
+      "오염이나 이물질이 있나요? 확인된 상태를 알려 주세요.",
+      "유해물질과 접촉했는지 확인할 수 있나요?",
+      "폐플라스틱이 발생한 지역은 어디인가요?"
+    ],
+    "sensitivitySamples": 0,
+    "sensitivityRetained": 0,
+    "priceCrossovers": [],
+    "verificationCandidateCount": 3,
+    "verificationOfferedCount": 3,
+    "verificationOmittedCount": 0,
+    "hostSafetyReasons": [
+      "유해물질과 접촉했는지 확인할 수 있나요?"
+    ],
+    "unchangedDecisionRef": "data/evaluation/round3-20261121/results.json#/17/result"
+  }
+]
