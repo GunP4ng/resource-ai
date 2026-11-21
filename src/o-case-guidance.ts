@@ -1,5 +1,6 @@
 import type { CaseInput, DecisionResult, RouteAssessment } from "./contracts.ts";
 import { createResourceDomain } from "./domain.ts";
+import { isMissingProcessOrRegion } from "./input.ts";
 import type { CaseResearchAttachment } from "./o-case-research-schema.ts";
 import type { PublicInputScenario } from "./o-input-public-scenario.ts";
 import { buildScenarioGuidance } from "./o-scenario-guidance.ts";
@@ -242,7 +243,7 @@ function caseGuidanceContent(input: CaseInput, decision: DecisionResult, options
   const actualScenarios = decision.state === "compared" ? decision.scenarios : [];
   const identificationGaps = [
     ...(!input.polymer?.trim() ? ["수지 확인 자료가 없습니다."] : []),
-    ...(!input.process?.trim() ? ["발생 공정이 미확보입니다."] : []),
+    ...(isMissingProcessOrRegion(input.process) ? ["발생 공정이 미확보입니다."] : []),
     ...(!input.contamination?.trim() ? ["오염 상태가 미확보입니다."] : []),
     ...(input.hazardousContact !== "no" ? ["접촉·유해성 분류 확인이 남았습니다."] : []),
     ...(held ? unresolved(decision) : []),

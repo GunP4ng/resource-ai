@@ -96,6 +96,11 @@ export function parseCaseInput(raw: unknown): CaseInputParseResult {
   } };
 }
 
+export function isMissingProcessOrRegion(value: string | null): boolean {
+  const text = value?.trim();
+  return text === undefined || text === "" || text === "미상";
+}
+
 /**
  * Call after parsing. Questions depend only on explicit structured facts.
  * Blank free text remains unchanged but needs clarification; no material is inferred.
@@ -103,11 +108,11 @@ export function parseCaseInput(raw: unknown): CaseInputParseResult {
 export function collectMissingQuestions(input: CaseInput): readonly string[] {
   const questions: string[] = [];
   const missingText = (value: string | null): boolean => value === null || value.trim() === "";
-  if (missingText(input.process)) questions.push("폐플라스틱이 발생한 공정 또는 발생원은 무엇인가요?");
+  if (isMissingProcessOrRegion(input.process)) questions.push("폐플라스틱이 발생한 공정 또는 발생원은 무엇인가요?");
   if (missingText(input.polymer)) questions.push("확인된 수지 종류와 이를 확인한 자료(라벨·재질 명세 등)가 있나요?");
   if (missingText(input.contamination)) questions.push("오염이나 이물질이 있나요? 확인된 상태를 알려 주세요.");
   if (input.hazardousContact === "unknown") questions.push(safetyReasons.contactUnknown);
   if (input.massKg === null) questions.push(massQuestion);
-  if (missingText(input.region)) questions.push("폐플라스틱이 발생한 지역은 어디인가요?");
+  if (isMissingProcessOrRegion(input.region)) questions.push("폐플라스틱이 발생한 지역은 어디인가요?");
   return questions;
 }

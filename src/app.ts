@@ -145,7 +145,8 @@ export function createApp(dependencies: AppDependencies) {
           const deadlineLabel = actor ? "보관 만료 (UTC)" : "조회 가능 기한 (UTC)";
           const rows = caseStore.list(owner).map(item => {
             const deadline = Math.min(item.expires, sessionDeadline ?? Infinity);
-            return `<tr><td data-label="사례"><a href="/cases/${item.caseId}">${escapeHtml(caseStore.read(owner, item.caseId)?.input.description ?? item.caseId)}</a></td><td data-label="버전">${item.version}</td><td data-label="${deadlineLabel}">${new Date(deadline).toISOString()}</td><td data-label="결과"><a href="/cases/${item.caseId}/report">보고서</a></td></tr>`;
+            const description = caseStore.read(owner, item.caseId)?.input.description;
+            return `<tr><td data-label="사례"><a href="/cases/${item.caseId}">${escapeHtml(description?.trim() ? description : item.caseId)}</a></td><td data-label="버전">${item.version}</td><td data-label="${deadlineLabel}">${new Date(deadline).toISOString()}</td><td data-label="결과"><a href="/cases/${item.caseId}/report">보고서</a></td></tr>`;
           }).join("");
           const result = response(caseListPage(rows, !!dependencies.localAuth, deadlineLabel));
           privateGuard();
