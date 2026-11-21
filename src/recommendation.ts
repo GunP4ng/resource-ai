@@ -1,5 +1,6 @@
 import type { CaseInput, DecisionResult, Estimate, RecommendationMetric, RouteAssessment, RouteRecommendation } from "./contracts.ts";
 import type { CaseAssessment, RouteReviewContext } from "./assessment.ts";
+import { isProhibitedReviewExplanation, safetyReasons } from "./o-safety-reasons.ts";
 import { parseDecision } from "./o-decision.ts";
 import { massQuestion } from "./input.ts";
 
@@ -32,11 +33,11 @@ function publicRecyclingEvidence(assessment: CaseAssessment): readonly string[] 
 /** Lookup excludes unusable citations; one rejected source does not veto other routes. */
 export function recommendationBlockers(facts: CaseInput, assessment: CaseAssessment, reviews?: RouteReviewContext): readonly string[] {
   return [
-    ...(facts.hazardousContact === "yes" ? ["유해물질 접촉·지정폐기물 해당 여부 검토 필요"] : []),
+    ...(facts.hazardousContact === "yes" ? [safetyReasons.contactClassification] : []),
     ...(/지정폐기물\s*(?:의심|해당(?!\s*(?:없|아님|하지\s*않))|가능)|(?:suspected|confirmed)\s+hazardous\s+waste/iu.test(
-      [facts.description, facts.process, facts.contamination].join(" ")) ? ["지정폐기물 의심 입력"] : []),
+      [facts.description, facts.process, facts.contamination].join(" ")) ? [safetyReasons.designatedSuspected] : []),
     ...(/유해물질\s*접촉\s*(?:있음|의심)|(?:suspected|confirmed)\s+hazardous\s+contact/iu.test(
-      [facts.description, facts.contamination].join(" ")) ? ["유해물질 접촉 의심 입력"] : []),
+      [facts.description, facts.contamination].join(" ")) ? [safetyReasons.contactSuspected] : []),
     ...assessment.reviewIssues,
     ...(assessment.legal.evidence.length === 0 || assessment.legal.citations.length === 0 ? ["검증된 법령 인용 없음"] : []),
     ...(assessment.questions.every(question => question === massQuestion) && publicRecyclingEvidence(assessment).length === 0
@@ -46,7 +47,7 @@ export function recommendationBlockers(facts: CaseInput, assessment: CaseAssessm
       || /사출\s*아님|압출\s*아님/u.test(facts.process ?? "") ? ["입력 자체 모순 확인 필요"] : []),
     ...(reviews?.reviews.flatMap(review => review.checks.filter(check => check.state === "not-met"
       && (check.requirement.includes("지정폐기물 제외")
-        || /(?:법령|법률)상.*금지|명백히\s*금지|\bprohibited\b|\billegal\b/iu.test(check.explanation)))
+        || isProhibitedReviewExplanation(check.explanation)))
       .map(check => `${check.requirement}: ${check.explanation}`)) ?? []),
     ...assessment.questions.filter(question => /혼합·다층 또는 라벨 불일치가 보고/u.test(question)),
   ];

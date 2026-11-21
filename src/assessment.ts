@@ -11,6 +11,7 @@ import { parseDecision } from "./o-decision.ts";
 import { canonical, DocumentSchema, EvidenceSchema, requireValid, revision, RouteKindSchema, strings, text, unique as uniqueIds, ValidationError } from "./o-validation.ts";
 import type { EvidenceContext } from "./o-validation.ts";
 import { conditionalAlternatives } from "./conditional-alternatives.ts";
+import { safetyReasons } from "./o-safety-reasons.ts";
 
 const ReviewSchema = Type.Object({
   caseId: text, caseRevision: text, route: RouteKindSchema,
@@ -87,7 +88,7 @@ function contextQuestions(facts: CaseInput): readonly string[] {
   // A populated answer such as "washed, previous contents unknown" is not a resolved fact.
   // Ask for records without changing hazardousContact or declaring a hazardous waste code.
   if (/미확인|불명|모름|알\s*수\s*없|확인(?:되지|하지)\s*않|\b(?:unknown|unconfirmed|uncertain)\b/iu.test(facts.contamination ?? "")) {
-    questions.push("오염·접촉 이력에 미확인 내용이 있습니다. 이전 내용물·접촉 물질명과 SDS 등 확인 자료, 잔류물·세척 확인 자료가 있나요? 확인 전에는 세척 여부만으로 유해물질 접촉이 없었다고 확정하지 않습니다.");
+    questions.push(safetyReasons.contaminationUnknown);
   }
   return questions;
 }
@@ -115,7 +116,7 @@ export function assessCase(input: CaseInput, options: AssessmentOptions = {}, re
   const pendingLegal = structuredClone(pendingLegalSources(facts));
   const reviewReasons = unique([
     ...(facts.hazardousContact === "yes"
-      ? ["유해물질 접촉이 보고되었습니다. 접촉 물질·시험 자료와 지정폐기물 해당 여부를 별도 검토해야 합니다."] : []),
+      ? [safetyReasons.contactReported] : []),
     ...legal.reviewRequirements,
     ...[...legal.issues, ...pendingLegal.issues].map((issue) =>
       `법령 근거 확인 필요: ${issue.kind}${issue.sourceId === null ? "" : ` (${issue.sourceId})`}`),

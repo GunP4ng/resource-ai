@@ -3,7 +3,18 @@ import type { CaseInput, DecisionResult } from "./contracts.ts";
 import { requireValid, revision } from "./o-validation.ts";
 import { createVerificationCandidates } from "./o-verification-plan-candidates.ts";
 import { VerificationPlanProposalSchema, VerificationPlanSchema, type VerificationPlan } from "./o-verification-plan-schema.ts";
+import { isHostSafetyReason } from "./o-safety-reasons.ts";
 export type { VerificationPlan, VerificationPlanProposal, VerificationCandidates } from "./o-verification-plan-schema.ts";
+
+/** Effective server order. Never rewrite the model's stored selection or the decision. */
+export function hostVerificationOrder(decision: DecisionResult, plan?: VerificationPlan) {
+  const held = decision.state === "needs-review" ? decision.reasons
+    : decision.state === "needs-information" ? decision.questions : [];
+  const safety = [...new Set(held.filter(isHostSafetyReason))];
+  const following = plan?.status === "validated-selection"
+    ? plan.selected.filter(item => !safety.includes(item.text)) : [];
+  return { safety, following };
+}
 
 /** The caller obtains origin from the private runner WeakMap, never from proposal fields. */
 export function createVerificationPlan(input: CaseInput, decision: DecisionResult, submission: {
