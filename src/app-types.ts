@@ -60,6 +60,7 @@ export interface RouteRequest {
   readonly privateGuard: () => void;
   readonly actor: string | null;
   readonly owner: string;
+  readonly sessionDeadline: number | undefined;
   readonly caseMatch: RegExpExecArray | null;
   readonly photoMatch: RegExpExecArray | null;
 }
