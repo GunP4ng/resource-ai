@@ -561,12 +561,13 @@ test("O4 source and packaged launchers reduce missing questions before review an
       const polymerQuestion = "확인된 수지 종류와 이를 확인한 자료(라벨·재질 명세 등)가 있나요?";
       const massQuestion = "확인된 질량은 몇 kg인가요?";
       const questions = (html: string): string[] => {
-        const list = html.match(/<h1>추가 정보 필요<\/h1>[\s\S]*?<ul>(.*?)<\/ul>/s);
+        assert.match(html, /<h1>추가 정보 필요<\/h1>/);
+        const list = html.match(/<section id="case-reasons">[\s\S]*?<ul>(.*?)<\/ul>/s);
         assert.ok(list, `${launcher}: expected needs-information`);
         const contents = list[1];
         assert.ok(typeof contents === "string");
-        const items = [...contents.matchAll(/<li>(.*?)<\/li>/gs)].map((item) => {
-          const question = item[1];
+        const items = [...contents.matchAll(/<li\b[^>]*>(.*?)<\/li>/gs)].map((item) => {
+          const question = item[1]?.replace(/^<strong>[^<]*<\/strong>\s*/, "");
           assert.ok(question);
           return question;
         });

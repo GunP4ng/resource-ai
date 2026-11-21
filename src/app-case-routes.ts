@@ -145,6 +145,7 @@ export async function caseRoute(services: RouteServices, context: RouteRequest):
       historical: snapshot.evaluated.revision !== revision(snapshot.input),
       execution: stored.execution ? { traceId: stored.execution.traceId, usage: stored.execution.usage ?? null } : undefined,
       ...(privateAudience && stored.modelAudit ? { modelAudit: stored.modelAudit } : {}),
+      ...(privateAudience && stored.verificationPlan ? { verificationPlan: stored.verificationPlan } : {}),
     }, audience, { notice, actions, editing, caseRegion: snapshot.input.region, publicScenarioMissing, ...(suffix === "report" ? {} : { inquiryTarget: `/cases/${id}/inquiry` }),
       ...(suffix === "report" || !editable ? {} : { answerTarget: "#answer-fields" as const }) }));
     privateGuard();

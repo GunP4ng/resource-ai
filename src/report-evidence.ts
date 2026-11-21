@@ -16,12 +16,21 @@ const reasons: Readonly<Record<string, string>> = {
   "claim-unverified": "주장의 근거가 확인되지 않았습니다", "unrelated": "사례와 근거의 관련성을 확인하지 못했습니다",
   "version-not-registered": "해당 법령 버전이 등록되지 않았습니다", "access-failed": "원문에 접근하지 못했습니다",
   "stale": "근거 갱신 확인이 필요합니다", "site-specific": "다른 현장에 한정된 근거입니다",
+  "proposal-case-mismatch": "모델 제안의 사례 식별자가 현재 사례와 다릅니다",
+  "proposal-evidence-conflict": "모델 제안의 근거가 호스트 검증 자료와 다릅니다",
+  "proposal-comparison-mismatch": "모델 제안의 비교 결과가 호스트 계산과 다릅니다",
+  "proposal-human-approval-forbidden": "모델이 현장 담당자의 승인을 대신할 수 없습니다",
 };
 export function readableReason(reason: string): string {
   let text = reason.replace("합성 보류 예시:", "합성 추가 정보 예시:");
   for (const [code, korean] of Object.entries(reasons)) text = text.replaceAll(code, korean);
   text = text.replace(/\s*\((?:legal-|waste-rule-)[^)]+\)/g, "");
+  text = text.replace("비용·탄소 비교값이 없어 검토 순서만 제시합니다.",
+    "사례별 검증된 비용·탄소 비교값이 없어 실제 추천은 검토 순서만 제시합니다.");
   return text;
+}
+export function readableReasons(items: readonly string[]): readonly string[] {
+  return [...new Set(items.filter(item => !item.startsWith("추가 답변은 필드별 JSON")).map(readableReason))];
 }
 export function evidenceSection(result: DecisionResult): string {
   return `<section id="evidence"><h2>출처와 원문 위치</h2>${result.evidence.length ? result.evidence.map((evidence, index) => {

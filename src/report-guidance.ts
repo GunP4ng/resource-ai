@@ -2,7 +2,7 @@ import type { CaseGuidance } from "./o-case-guidance.ts";
 import type { ReportPresentation } from "./report.ts";
 import type { ScenarioSensitivity } from "./o-scenario-sensitivity.ts";
 import { escapeHtml, list } from "./report-html.ts";
-import { readableReason } from "./report-evidence.ts";
+import { readableReasons } from "./report-evidence.ts";
 import { renderModelHostAudit } from "./report-model-audit.ts";
 
 type Names = Readonly<Record<string, string>>;
@@ -16,7 +16,7 @@ const stageMethods = {
 } as const;
 
 /** A scenario result never becomes an actual second recommendation or an execution permit. */
-export function guidanceConclusion(guidance: CaseGuidance, names: Names): string | undefined {
+export function guidanceScenarioConclusion(guidance: CaseGuidance, names: Names): string | undefined {
   const scenario = guidance.scenario;
   if (scenario?.status === "conditionally-optimal" && scenario.firstRouteId && scenario.hypotheticalRunnerUpRouteId) {
     const difference = scenario.differences.find(row => row.routeId === scenario.hypotheticalRunnerUpRouteId);
@@ -28,14 +28,28 @@ export function guidanceConclusion(guidance: CaseGuidance, names: Names): string
       return `가정표의 ${first}은 ${second}보다 비용 약 ${number(difference.costAdvantageKrw, 0)}원·탄소 약 ${number(difference.carbonAdvantageKgCo2e, 2)}kgCO2e가 낮거나 같은 조건부 최적안입니다(규정·허가·인수${condition} 조건).`;
     }
   }
+  return undefined;
+}
+
+export function guidanceConclusion(guidance: CaseGuidance, names: Names): string | undefined {
   const comparison = guidance.actualComparison;
   if (comparison.firstRouteId && !comparison.actualSecondAvailable) {
     return `현재 ${names[comparison.firstRouteId] ?? comparison.firstRouteId}만 추천 후보이며, 실제 2순위와 비용·탄소 우위를 비교할 근거는 미확보입니다.`;
   }
-  return comparison.actualSecondAvailable ? comparison.summary : undefined;
+  if (!comparison.firstRouteId || !comparison.secondRouteId) return undefined;
+  return `${names[comparison.firstRouteId] ?? comparison.firstRouteId}과 실제 2순위 ${names[comparison.secondRouteId] ?? comparison.secondRouteId}의 차이(2순위 − 1순위): 비용 ${comparison.costAdvantageKrw === null ? "미확보" : `${number(comparison.costAdvantageKrw, 0)}원`}, 탄소 ${comparison.carbonAdvantageKgCo2e === null ? "미확보" : `${number(comparison.carbonAdvantageKgCo2e, 2)}kgCO2e`}. 규정·허가·인수 조건은 별도 확인합니다.`;
 }
 
-export function guidanceProgress(guidance: CaseGuidance, presentation: ReportPresentation): string {
+export function guidanceProgress(guidance: CaseGuidance, presentation: ReportPresentation, names: Names): string {
+  const sharedReasons = readableReasons(guidance.actualComparison.regulatoryConditions);
+  const reasonTarget = guidance.oneFactPriority.status === "not-held" ? "#checks" : "#case-reasons";
+  const showReasons = (items: readonly string[]) => {
+    const unique = readableReasons(items);
+    return list(unique.filter(item => !sharedReasons.includes(item)))
+      + (unique.some(item => sharedReasons.includes(item)) ? `<p><a href="${reasonTarget}">이 사례의 사유와 필요한 확인 보기</a></p>` : "");
+  };
+  const output = (text: string) => text.replace(/\b(mechanical-recycling|other-recovery|energy_recovery|recycling|landfill|disposal|reuse|route-supported|unavailable)\b/gu,
+    id => names[id] ?? (id === "route-supported" ? "조건별 경로 근거 있음" : "근거 미확보"));
   let executionState: "no-model" | "recording" | "trace" | "none";
   let executionLabel: string;
   switch (presentation.mode) {
@@ -64,10 +78,22 @@ export function guidanceProgress(guidance: CaseGuidance, presentation: ReportPre
     <details><summary>단계별 생성 방식·근거·빈 단계의 사유</summary>
       <p data-model-execution="${executionState}">${executionLabel}. ${presentation.modelAudit ? "아래에 이 평가의 제안·호스트 검사 기록을 표시합니다." : "단계별 모델 기여·성공·실패 기록은 없습니다."} 설정이나 추적 식별자만으로 제공자 실행 성공을 확정하지 않습니다.</p>
       <p>모델 사용 경로에서는 제안을 받은 뒤 호스트 규칙으로 검증합니다. 아래 안내와 비용·탄소는 호스트가 정리·계산합니다.</p>
-      ${presentation.modelAudit ? renderModelHostAudit(presentation.modelAudit) : ""}
-      ${guidance.stages.map(stage => `<section data-stage-method="${stage.stage}"><h3>${stage.stage}. ${escapeHtml(stage.name)} · ${statusNames[stage.status]}</h3>
+      ${presentation.modelAudit ? renderModelHostAudit(presentation.modelAudit, sharedReasons) : ""}
+      ${guidance.stages.map(stage => `<section id="guidance-stage-${stage.stage}" data-stage-method="${stage.stage}"><h3>${stage.stage}. ${escapeHtml(stage.name)} · ${statusNames[stage.status]}</h3>
       <p>생성 방식: ${stageMethods[stage.stage]}${presentation.modelAudit ? "" : " · 단계별 모델 기록 없음"}</p>
-      ${stage.outputs.length ? list(stage.outputs) : "<p>현재 연결된 산출물이 없습니다.</p>"}${list(stage.reasons)}</section>`).join("")}</details></section>`;
+      ${stage.stage === 6 ? `<p><strong>실제 판정:</strong> ${escapeHtml(guidanceConclusion(guidance, names) ?? "추천 보류 · 필요한 사실과 근거를 확인해야 합니다.")}</p>
+        ${guidance.scenario ? `<p><strong>가정 계산:</strong> ${escapeHtml(guidanceScenarioConclusion(guidance, names) ?? "명시한 가정 범위에서도 조건부 최적성은 미확정입니다.")}</p>` : ""}
+        <p>실제 추천의 수치 우위와 가정표 안의 우위는 서로 다른 판단입니다.</p>`
+        : stage.stage === 3 ? `<p>연결된 근거 ${stage.outputs.length}건 · <a href="#evidence">출처와 원문 위치 보기</a></p>`
+          : stage.outputs.length ? list(stage.outputs.map(text => stage.stage === 2 || stage.stage === 5 ? output(text) : text))
+            : "<p>현재 연결된 산출물이 없습니다.</p>"}
+      ${stage.stage === 6 ? `${showReasons(stage.reasons.filter(reason => !guidance.actualComparison.unavailableReasons.includes(reason)))}
+        <p><a href="#guidance-stage-5">비용·탄소 비교 범위와 미확보 사유는 5단계에서 확인하세요.</a></p>`
+        : stage.stage === 5 ? `<p><strong>사례별 검증 비교의 제한:</strong></p>${showReasons(guidance.actualComparison.unavailableReasons)}
+          ${guidance.scenario?.unavailableReasons.length ? `<p><strong>가정 계산의 제한:</strong></p>${list(readableReasons(guidance.scenario.unavailableReasons))}` : ""}
+          ${showReasons(stage.reasons.filter(reason => !guidance.actualComparison.unavailableReasons.includes(reason)
+            && !guidance.scenario?.unavailableReasons.includes(reason)))}`
+          : showReasons(stage.reasons)}</section>`).join("")}</details></section>`;
 }
 
 export function guidanceStability(guidance: CaseGuidance, names: Names): string {
@@ -92,8 +118,8 @@ export function guidanceOneFact(guidance: CaseGuidance, names: Names): string {
   const value = guidance.oneFactPriority;
   if (value.status === "not-held") return "";
   const first = value.probes.find(probe => probe.id === value.priorityFactId);
-  const remaining = guidance.actualComparison.regulatoryConditions
-    .filter(reason => !reason.startsWith("추가 답변은 필드별 JSON")).map(readableReason);
+  const remaining = readableReasons(guidance.actualComparison.regulatoryConditions);
+  const limitations = readableReasons(value.limitations).filter(reason => !remaining.includes(reason));
   return `<section id="one-fact-priority"><h2>먼저 확인할 한 가지</h2>
     <p>현재 보류와 원본 입력은 유지합니다. 아래는 확인 가정 한 항목만 바꿔 기존 공개 규칙으로 계산한 반응이며 실행 허용이 아닙니다.</p>
     ${first ? `<article data-priority-fact="${escapeHtml(first.id)}"><h3>${fieldNames[first.field]}</h3>
@@ -101,18 +127,18 @@ export function guidanceOneFact(guidance: CaseGuidance, names: Names): string {
       <p><strong>${escapeHtml(first.hypothesis)}</strong></p>
       <p>확인 가정에서 추가로 검토되는 경로: ${escapeHtml([...new Set([...first.newlyRecommendedRouteIds, ...first.newlySupportedRouteIds])].map(id => names[id] ?? id).join(", "))}.</p>
       <p>실제 경로 자격·허가·인수는 별도 확인이 필요합니다. 이 값을 확인한 사실로 자동 입력하지 않습니다.</p>
-      <details><summary>그 뒤에도 확인할 사항</summary>${list(first.remainingUnknowns)}</details></article>`
+      <details><summary>그 뒤에도 확인할 사항</summary>${list(readableReasons(first.remainingUnknowns))}</details></article>`
       : `<article data-priority-unavailable="${value.status}">
         <p><strong>${value.status === "limited"
           ? "사진·유해 접촉·서버 검토 등 추가 근거가 필요한 보류를 가정값으로 없애지 않았습니다."
           : value.probes.length === 0 ? "현재 입력에서 임의로 바꿀 확인 가정을 만들지 않았습니다."
             : `검토한 단일 확인 가정 ${value.probes.length}개에서는 새로 열리는 경로가 없었습니다.`}</strong></p>
         <p>모든 가능한 확인이 무효라는 뜻은 아닙니다. 자료로 확인되지 않은 재질이나 위험 정보를 추정하지 않습니다.</p>
-        <h3>이 사례에서 먼저 확보할 자료</h3>${list(remaining)}</article>`}
-    <details><summary>확인 가정의 범위·제한</summary>${list(value.limitations)}</details>
+        <p><a href="#case-reasons">이 사례에서 확보할 자료와 보류 사유 보기</a></p></article>`}
+    <details><summary>확인 가정의 범위·제한</summary>${list(limitations)}</details>
     ${value.probes.length ? `<details><summary>검토한 다른 확인 가정과 반응</summary><ol>${value.probes.map(probe => `<li>
-      ${escapeHtml(probe.hypothesis)} · 추가 검토 경로 ${probe.openedPathCount}개 · 공개 규칙 상태 ${escapeHtml(probe.resultingState)}
-      ${probe.remainingUnknowns.length ? list(probe.remainingUnknowns) : ""}</li>`).join("")}</ol></details>` : ""}
+      ${escapeHtml(probe.hypothesis)} · 추가 검토 경로 ${probe.openedPathCount}개 · 공개 규칙 상태 ${{ compared: "조건부 비교", "needs-information": "추가 정보 필요", "needs-review": "검토 필요" }[probe.resultingState]}
+      ${probe.remainingUnknowns.length ? list(readableReasons(probe.remainingUnknowns)) : ""}</li>`).join("")}</ol></details>` : ""}
     </section>`;
 }
 
