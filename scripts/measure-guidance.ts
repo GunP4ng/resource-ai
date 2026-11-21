@@ -4,7 +4,8 @@ import { fileURLToPath } from "node:url";
 import { readFile, writeFile, mkdir } from "node:fs/promises";
 import { createHash } from "node:crypto";
 import manifest from "../data/evaluation/development.json" with { type: "json" };
-import baseline from "../data/evaluation/round3-20261121/results.json" with { type: "json" };
+import baseline from "../data/evaluation/material-expansion-20261122/results.json" with { type: "json" };
+import round3 from "../data/evaluation/round3-20261121/results.json" with { type: "json" };
 import { parseCaseInput } from "../src/input.ts";
 import { createResourceDomain } from "../src/domain.ts";
 import { createVerificationCandidates, presentAssessmentDecision } from "../src/o-verification-plan-candidates.ts";
@@ -25,13 +26,21 @@ const output = resolve(root, outputArgument);
 // An existing evidence directory is immutable; replay into a new directory.
 await mkdir(output);
 const previous = new Map(baseline.map(row => [row.caseId, row]));
+const original = new Map(round3.map(row => [row.caseId, row]));
+const allowedReasonChanges = new Set<string>([
+  "HYEOB-20261112-005", "OYS-20261110-006", "OYS-20261110-008",
+] as const);
 assert.deepEqual(manifest.cases.map(row => row.caseId).sort(), [...previous.keys()].sort());
+assert.deepEqual(manifest.cases.map(row => row.caseId).sort(), [...original.keys()].sort());
 const catalog = await readCaseResearchCatalog();
 const catalogBefore = revision(catalog);
 const rows = await Promise.all(manifest.cases.map(async item => {
   const bytes = await readFile(resolve(root, "data/evaluation", item.inputRef));
   const originalSha256 = createHash("sha256").update(bytes).digest("hex");
   assert.equal(originalSha256, item.sourceHash, item.caseId + ": original bytes");
+  const old = original.get(item.caseId);
+  assert.ok(old);
+  assert.equal(originalSha256, old.originalInputSha256, item.caseId + ": round3 source bytes");
   const raw: unknown = JSON.parse(new TextDecoder().decode(bytes));
   assert.ok(raw && typeof raw === "object" && !Array.isArray(raw));
   const parsed = parseCaseInput({ ...raw, photoRefs: [] });
@@ -42,6 +51,18 @@ const rows = await Promise.all(manifest.cases.map(async item => {
   assert.ok(before);
   const decision = await createResourceDomain(input).decide();
   assert.deepEqual(decision, before.result, item.caseId + ": complete decision");
+  assert.equal(decision.state, old.result.state, item.caseId + ": round3 status");
+  if (allowedReasonChanges.has(item.caseId)) {
+    assert.deepEqual({ ...decision, reasons: undefined }, { ...old.result, reasons: undefined },
+      item.caseId + ": round3 non-reason fields");
+    assert.ok(decision.state !== "compared" && old.result.state !== "compared");
+    assert.ok(old.result.reasons);
+    assert.deepEqual(decision.reasons, old.result.reasons.filter(reason => reason !== "확인된 질량은 몇 kg인가요?"),
+      item.caseId + ": optional mass question only");
+    assert.notDeepEqual(decision.reasons, old.result.reasons, item.caseId + ": expected reason change");
+  } else {
+    assert.deepEqual(decision, old.result, item.caseId + ": round3 decision");
+  }
   const inputBefore = revision(input), decisionBefore = revision(decision);
   const scenario = buildPublicInputScenario({ actorId: "guidance-measure", input, inputRevision: inputBefore }, catalog);
   const eligibility = publicScenarioEligibility(input);
@@ -84,7 +105,7 @@ const rows = await Promise.all(manifest.cases.map(async item => {
     hostSafetyReasons: hostVerificationOrder(decision).safety,
     verificationCandidates,
     guidance, sensitivity,
-    unchangedDecisionRef: `data/evaluation/round3-20261121/results.json#/${baseline.findIndex(row => row.caseId === item.caseId)}/result`,
+    unchangedDecisionRef: `data/evaluation/material-expansion-20261122/results.json#/${baseline.findIndex(row => row.caseId === item.caseId)}/result`,
   };
 }));
 assert.equal(rows.length, 18);
@@ -137,8 +158,8 @@ const summary = {
   inputDecisionContextCatalogPreserved: true,
   actualIncinerationFeeAndCostRemainNull: true,
   baseline: {
-    path: "data/evaluation/round3-20261121/results.json",
-    sha256: createHash("sha256").update(await readFile(resolve(root, "data/evaluation/round3-20261121/results.json"))).digest("hex"),
+    path: "data/evaluation/material-expansion-20261122/results.json",
+    sha256: createHash("sha256").update(await readFile(resolve(root, "data/evaluation/material-expansion-20261122/results.json"))).digest("hex"),
   },
   limitations: [
     "Development inputs were exposed, not an unseen evaluation or human accuracy study.",
