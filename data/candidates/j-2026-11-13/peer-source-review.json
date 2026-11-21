@@ -1,0 +1,317 @@
+{
+  "schemaVersion": 1,
+  "reviewedAt": "2026-11-13T07:28:20.727Z",
+  "baseCommit": "ceb9e48b6db3e1a16b1eb69a65a35da8482b0dc4",
+  "reviewer": "OmO AI-assisted source audit; not an independent human case label",
+  "manifests": {
+    "H": {
+      "path": "data/h-candidates/2026-11-12/manifest.json",
+      "sha256": "df62053c3db875ce13a8502d27b9b78e5b731ebfdbaf324cd3969ee8d72e9e68"
+    },
+    "O": {
+      "path": "data/candidates/oyeonseok-2026-11-10/manifest.json",
+      "sha256": "95be89c0a5eeae1d7484371d5066e3532226c66d2e1aee54239900316ea3fbd4"
+    },
+    "J": {
+      "path": "data/candidates/j-2026-11-13/manifest.json",
+      "sha256": "c1911c47f21ded15c13178c81cd4a09f1c9ab535afda2b0ed2df4211f47e4452"
+    }
+  },
+  "summary": {
+    "exposedDevelopmentCandidates": 30,
+    "actualFieldCases": 0,
+    "independentHumanLabels": 0,
+    "lockedEvaluationCases": 0,
+    "exactCrossTrackPhotoSourceMatches": 0,
+    "provisionalSourceGroups": {
+      "H": 6,
+      "O": 1,
+      "J": 10,
+      "total": 17
+    },
+    "acceptedSplit": null
+  },
+  "observations": {
+    "O": "All ten O inputs are separately authored fictional scenarios with no photo or external source URL. Each input SHA matches the O manifest; parseCaseInput succeeds and decideCase returns needs-review with all routes unknown.",
+    "H": "Five ScrapManagement uploads share one provisional cohort; H retains six provisional groups overall. Uploader identity does not establish site or batch identity.",
+    "J": "Ten distinct Commons file pages and authors, no exact H file URL. The public file-page metadata and synthetic unknown inputs have SHA-256 snapshots, while original image SHA-256 is null because image bytes were not obtained.",
+    "topicOverlap": "Broad resin/film/multilayer/label topics recur across tracks. Similar vocabulary does not prove same underlying source or independent case."
+  },
+  "recommendations": {
+    "OGroup": "oys-20261110-authoring-cohort",
+    "policy": "Keep O ten in one conservative authoring cohort for any future split until independent origin review; do not change O-owned manifest without its author. H/J groups remain provisional.",
+    "humanReview": "Two non-collector reviewers must inspect source/site identity and case labels; lead resolves disagreements and assigns 18 development/12 unseen locked after valid source and rights intake."
+  },
+  "entries": [
+    {
+      "track": "H",
+      "candidateId": "HYEOB-20261112-001",
+      "manifestGroup": "commons-clean-hdpe-drum-flakes",
+      "proposedGroup": "commons-clean-hdpe-drum-flakes",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Clean-HDPE-drum-flakes.jpg",
+      "originalImageSha256": "334ddcc1b441c63c3646aa138ad9231fe8d2bbe65348a3d5da19ae23ff247ebb",
+      "reviewStatus": "provisional-source-group"
+    },
+    {
+      "track": "H",
+      "candidateId": "HYEOB-20261112-002",
+      "manifestGroup": "commons-flakes-top-plastic",
+      "proposedGroup": "commons-flakes-top-plastic",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:FLAKES.jpg",
+      "originalImageSha256": "fa964c83777dea18b31cf2a4e66d84a00f2dcc346d89b49d65984337a7f2439d",
+      "reviewStatus": "provisional-source-group"
+    },
+    {
+      "track": "H",
+      "candidateId": "HYEOB-20261112-003",
+      "manifestGroup": "scrapmanagement-site-and-lot-review-pending",
+      "proposedGroup": "scrapmanagement-site-and-lot-review-pending",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:PP_Birdseed_Scrap.jpg",
+      "originalImageSha256": "fa8ba76a64b5902566cc881312cb1afb04051315e001d7cbb3b3b5cdbbb83c69",
+      "reviewStatus": "provisional-source-group"
+    },
+    {
+      "track": "H",
+      "candidateId": "HYEOB-20261112-004",
+      "manifestGroup": "scrapmanagement-site-and-lot-review-pending",
+      "proposedGroup": "scrapmanagement-site-and-lot-review-pending",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:HDPE_Jerry_Can_Bales.jpg",
+      "originalImageSha256": "93e3b33060e449289dfb3fb990bf59cd000303819652fd44987d781168995540",
+      "reviewStatus": "provisional-source-group"
+    },
+    {
+      "track": "H",
+      "candidateId": "HYEOB-20261112-005",
+      "manifestGroup": "scrapmanagement-site-and-lot-review-pending",
+      "proposedGroup": "scrapmanagement-site-and-lot-review-pending",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:EPE_Logs.jpg",
+      "originalImageSha256": "7985f09f08037adc55356d7e6c6e29ff0a59ced40033233d92cfaff59d91a291",
+      "reviewStatus": "provisional-source-group"
+    },
+    {
+      "track": "H",
+      "candidateId": "HYEOB-20261112-006",
+      "manifestGroup": "scrapmanagement-site-and-lot-review-pending",
+      "proposedGroup": "scrapmanagement-site-and-lot-review-pending",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:PET_Strapping_-_Opaque.jpg",
+      "originalImageSha256": "adc5c29bc08b1c86f4a439f87017ff9a55beb8000e4da27417ffc0afbb06b56b",
+      "reviewStatus": "provisional-source-group"
+    },
+    {
+      "track": "H",
+      "candidateId": "HYEOB-20261112-007",
+      "manifestGroup": "scrapmanagement-site-and-lot-review-pending",
+      "proposedGroup": "scrapmanagement-site-and-lot-review-pending",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:HDPE_Milk_Crates.jpg",
+      "originalImageSha256": "e21299ab922f3f647f728e6dec181ae87e45701a4f34a2643b02ac4fbec83f77",
+      "reviewStatus": "provisional-source-group"
+    },
+    {
+      "track": "H",
+      "candidateId": "HYEOB-20261112-008",
+      "manifestGroup": "ermell-recycling-machine-20180621",
+      "proposedGroup": "ermell-recycling-machine-20180621",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Kunststoff_Plastik_Rest_Abfall-20180621-RM-114314.jpg",
+      "originalImageSha256": null,
+      "reviewStatus": "provisional-source-group"
+    },
+    {
+      "track": "H",
+      "candidateId": "HYEOB-20261112-009",
+      "manifestGroup": "nafisathallah-styrofoam-origin-unverified",
+      "proposedGroup": "nafisathallah-styrofoam-origin-unverified",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Limbah_Styrofoam.jpg",
+      "originalImageSha256": null,
+      "reviewStatus": "provisional-source-group"
+    },
+    {
+      "track": "H",
+      "candidateId": "HYEOB-20261112-010",
+      "manifestGroup": "ka2313-japan-packaging-20231006",
+      "proposedGroup": "ka2313-japan-packaging-20231006",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Plastic_waste_20231006_175234.jpg",
+      "originalImageSha256": null,
+      "reviewStatus": "provisional-source-group"
+    },
+    {
+      "track": "O",
+      "candidateId": "OYS-20261110-001",
+      "manifestGroup": "oys-fiction-001",
+      "proposedGroup": "oys-20261110-authoring-cohort",
+      "sourceUrl": null,
+      "inputSha256": "1f1163e501b1ade17ed9207933242a51120bb15584f8e95b6e6d736fe0cd67ff",
+      "reviewStatus": "synthetic-cohort-only"
+    },
+    {
+      "track": "O",
+      "candidateId": "OYS-20261110-002",
+      "manifestGroup": "oys-fiction-002",
+      "proposedGroup": "oys-20261110-authoring-cohort",
+      "sourceUrl": null,
+      "inputSha256": "0b052aeeb9e97a93699267d68662d8c1b1efee32107f2711d7be6fab78764b2c",
+      "reviewStatus": "synthetic-cohort-only"
+    },
+    {
+      "track": "O",
+      "candidateId": "OYS-20261110-003",
+      "manifestGroup": "oys-fiction-003",
+      "proposedGroup": "oys-20261110-authoring-cohort",
+      "sourceUrl": null,
+      "inputSha256": "6c09027b9a767e917d5b3ffc45a437fd8153ff7b8eec3750ddb9f410eb4403b4",
+      "reviewStatus": "synthetic-cohort-only"
+    },
+    {
+      "track": "O",
+      "candidateId": "OYS-20261110-004",
+      "manifestGroup": "oys-fiction-004",
+      "proposedGroup": "oys-20261110-authoring-cohort",
+      "sourceUrl": null,
+      "inputSha256": "7ccbf029c826be106e753dc15997bf608b856a9e893b45497eed4ef533c04d7f",
+      "reviewStatus": "synthetic-cohort-only"
+    },
+    {
+      "track": "O",
+      "candidateId": "OYS-20261110-005",
+      "manifestGroup": "oys-fiction-005",
+      "proposedGroup": "oys-20261110-authoring-cohort",
+      "sourceUrl": null,
+      "inputSha256": "59144769d4f4936970990eda5b5a9b2732766f849db494b6c236f4b7feef3129",
+      "reviewStatus": "synthetic-cohort-only"
+    },
+    {
+      "track": "O",
+      "candidateId": "OYS-20261110-006",
+      "manifestGroup": "oys-fiction-006",
+      "proposedGroup": "oys-20261110-authoring-cohort",
+      "sourceUrl": null,
+      "inputSha256": "29c76c30e310148b0ab270ef51e2a4fee92d35aab35106560e4ac36d4947bda0",
+      "reviewStatus": "synthetic-cohort-only"
+    },
+    {
+      "track": "O",
+      "candidateId": "OYS-20261110-007",
+      "manifestGroup": "oys-fiction-007",
+      "proposedGroup": "oys-20261110-authoring-cohort",
+      "sourceUrl": null,
+      "inputSha256": "1fd9200b832cb774fe49f26df99b017f5a22b25ed19564ba5eff4b9dcc672ca8",
+      "reviewStatus": "synthetic-cohort-only"
+    },
+    {
+      "track": "O",
+      "candidateId": "OYS-20261110-008",
+      "manifestGroup": "oys-fiction-008",
+      "proposedGroup": "oys-20261110-authoring-cohort",
+      "sourceUrl": null,
+      "inputSha256": "f3833e8d39ff4b96f94c784d69889c59db17390bd2993d6f5e0883aecd842fa9",
+      "reviewStatus": "synthetic-cohort-only"
+    },
+    {
+      "track": "O",
+      "candidateId": "OYS-20261110-009",
+      "manifestGroup": "oys-fiction-009",
+      "proposedGroup": "oys-20261110-authoring-cohort",
+      "sourceUrl": null,
+      "inputSha256": "acadb919168dc522ac98cbbc8ba2b27bd6d2224f0bb4779a689f079768da17b7",
+      "reviewStatus": "synthetic-cohort-only"
+    },
+    {
+      "track": "O",
+      "candidateId": "OYS-20261110-010",
+      "manifestGroup": "oys-fiction-010",
+      "proposedGroup": "oys-20261110-authoring-cohort",
+      "sourceUrl": null,
+      "inputSha256": "e83d1f30b91e37a38e70a20963a4db2ecb13287aae67a54e10f92b3509d51d2d",
+      "reviewStatus": "synthetic-cohort-only"
+    },
+    {
+      "track": "J",
+      "candidateId": "J-20261113-001",
+      "manifestGroup": "commons-page-1968591",
+      "proposedGroup": "commons-page-1968591",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:-_Recycling_in_Germany_-_Plastic_waste_to_be_collected_-.jpg",
+      "originalImageSha256": null,
+      "reviewStatus": "source-page-checked-image-unfetched"
+    },
+    {
+      "track": "J",
+      "candidateId": "J-20261113-002",
+      "manifestGroup": "commons-page-128158385",
+      "proposedGroup": "commons-page-128158385",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Plastic_bags_recycling_bins_in_a_Sainsbury%27s.jpg",
+      "originalImageSha256": null,
+      "reviewStatus": "source-page-checked-image-unfetched"
+    },
+    {
+      "track": "J",
+      "candidateId": "J-20261113-003",
+      "manifestGroup": "commons-page-147400058",
+      "proposedGroup": "commons-page-147400058",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Plastic_waste_(bottles_and_sachets).jpg",
+      "originalImageSha256": null,
+      "reviewStatus": "source-page-checked-image-unfetched"
+    },
+    {
+      "track": "J",
+      "candidateId": "J-20261113-004",
+      "manifestGroup": "commons-page-148914436",
+      "proposedGroup": "commons-page-148914436",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Photos_from_Minh_Khai_Village_(top_to_down)_showing_front_yard_recycling,_storing_plastic_in_the_environment_and_the_street_and_European_plastic_pile_imported_for_recycling.webp",
+      "originalImageSha256": null,
+      "reviewStatus": "source-page-checked-image-unfetched"
+    },
+    {
+      "track": "J",
+      "candidateId": "J-20261113-005",
+      "manifestGroup": "commons-page-150280968",
+      "proposedGroup": "commons-page-150280968",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Plastic_waste_to_be_recycled.jpg",
+      "originalImageSha256": null,
+      "reviewStatus": "source-page-checked-image-unfetched"
+    },
+    {
+      "track": "J",
+      "candidateId": "J-20261113-006",
+      "manifestGroup": "commons-page-80288540",
+      "proposedGroup": "commons-page-80288540",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Pellets_of_reclycle_ABS.jpg",
+      "originalImageSha256": null,
+      "reviewStatus": "source-page-checked-image-unfetched"
+    },
+    {
+      "track": "J",
+      "candidateId": "J-20261113-007",
+      "manifestGroup": "commons-page-90594096",
+      "proposedGroup": "commons-page-90594096",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Aluminium_en_plastic_folie_verpakkingsmateriaal_-_Aluminium_and_plastic_foil_food_packaging_-_The_Netherlands,_May_2020.jpg",
+      "originalImageSha256": null,
+      "reviewStatus": "source-page-checked-image-unfetched"
+    },
+    {
+      "track": "J",
+      "candidateId": "J-20261113-008",
+      "manifestGroup": "commons-page-38861833",
+      "proposedGroup": "commons-page-38861833",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Waste_sorting_containers_20150310_DSC_0245.JPG",
+      "originalImageSha256": null,
+      "reviewStatus": "source-page-checked-image-unfetched"
+    },
+    {
+      "track": "J",
+      "candidateId": "J-20261113-009",
+      "manifestGroup": "commons-page-72349928",
+      "proposedGroup": "commons-page-72349928",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Plastic_cap_collection_in_Nesebar.jpg",
+      "originalImageSha256": null,
+      "reviewStatus": "source-page-checked-image-unfetched"
+    },
+    {
+      "track": "J",
+      "candidateId": "J-20261113-010",
+      "manifestGroup": "commons-page-86437430",
+      "proposedGroup": "commons-page-86437430",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Divided_plastic_waste_container.jpg",
+      "originalImageSha256": null,
+      "reviewStatus": "source-page-checked-image-unfetched"
+    }
+  ]
+}
