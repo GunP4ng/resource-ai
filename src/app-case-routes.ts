@@ -21,7 +21,7 @@ import recyclingDirectory from "../data/reference/public-recycling-candidates-20
 
 export async function caseRoute(services: RouteServices, context: RouteRequest): Promise<Response> {
   const { dependencies, caseStore, maxBodyBytes, origin, now, cancelLease } = services;
-  const { request, url, signal, guard, privateGuard, owner, actor, caseMatch, photoMatch } = context;
+  const { request, url, signal, privateGuard, owner, actor, sessionDeadline, caseMatch, photoMatch } = context;
   const preparer = dependencies.preparer;
   if (!preparer) throw new HttpFailure(503, "입력 연결을 사용할 수 없습니다.");
   const caseId = caseMatch?.[1];
@@ -133,12 +133,14 @@ export async function caseRoute(services: RouteServices, context: RouteRequest):
     const eligibility = publicScenarioEligibility(snapshot.input);
     const publicScenarioMissing = privateAudience && !publicScenario && !report?.research?.attachment
       && eligibility.status === "unavailable" ? eligibility.reasons : undefined;
-    const editable = snapshot.editUntil > now();
+    const at = now();
+    const editable = at < snapshot.editUntil && (sessionDeadline === undefined || at <= sessionDeadline);
+    const editDeadline = Math.min(snapshot.editUntil, sessionDeadline ?? Infinity);
     const optionalMass = stored.decision.state === "compared" && snapshot.input.massKg === null && editable
       ? '<p class="screen-only"><a class="primary-action secondary-action" href="#answer-fields">질량을 입력하면 비용·탄소를 계산해요</a> (선택)</p><p>견적·탄소 계수 등 근거가 있는 항목부터 계산합니다. 자료가 없으면 필요한 내용을 알려드려요.</p>' : "";
     const actions = suffix === "report" ? "" : `<p class="cluster screen-only"><a href="/cases/${id}/report">상업용 보고서</a>${actor ? `<a href="/cases/${id}/report?purpose=research">비공개 연구용 보고서</a>` : ""}<a href="/cases/${id}/input">정확한 입력 내보내기</a><a href="/cases">내 사례</a></p>`;
     const editing = suffix === "report" ? "" : `<p>버전 ${snapshot.version}</p>${editable
-      ? `<p>수정 가능 기한 (UTC): ${new Date(snapshot.editUntil).toISOString()}</p>${form(`/cases/${id}/answers`, true, snapshot.version, selection, snapshot.input)}`
+      ? `<p>수정 가능 기한 (UTC): ${new Date(editDeadline).toISOString()}</p>${form(`/cases/${id}/answers`, true, snapshot.version, selection, snapshot.input)}`
       : '<p class="notice">수정 기한이 지났습니다. 보관 중인 보고서와 입력은 확인할 수 있습니다. 다시 평가하려면 <a href="/">새 사례를 입력하세요</a>.</p>'}${photoUI(snapshot, ticket, services)}`;
     const result = response(renderReport(stored.decision, {
       ...snapshot.presentation, mode: snapshot.presentation?.mode ?? "live", review: snapshot.review,
@@ -162,7 +164,7 @@ export async function caseRoute(services: RouteServices, context: RouteRequest):
     if (request.headers.get("origin") !== origin || request.headers.get("sec-fetch-site") === "cross-site") throw new HttpFailure(403, "같은 앱에서 제출해 주세요.");
     if (!owner) throw new HttpFailure(403, "입력 화면에서 세션을 시작해 주세요.");
     const { raw, format } = await caseBody(request, dependencies.maxBodyBytes, signal);
-    guard(signal);
+    privateGuard();
     if (snapshot && snapshot.editUntil <= now()) throw new HttpFailure(sessionFailures["case-not-found"].status, sessionFailures["case-not-found"].message);
     let payload = raw, expected: number | null = null;
     if (snapshot) {
@@ -202,7 +204,7 @@ export async function caseRoute(services: RouteServices, context: RouteRequest):
     const authority = dependencies.photoExecution;
     const ticket = input.photoRefs.length ? authority?.current() : undefined;
     if (input.photoRefs.length && (input.photoRefs.length > 3 || !ticket || !snapshot || !caseStore.eligible(snapshot, input, ticket))) throw new HttpFailure(sessionFailures.provider.status, sessionFailures.provider.message);
-    const lease = caseStore.begin(owner, input.caseId, expected);
+    const lease = caseStore.begin(owner, input.caseId, expected, privateGuard);
     const cancel = () => cancelLease(lease);
     signal.addEventListener("abort", cancel, { once: true });
     try {
@@ -212,7 +214,7 @@ export async function caseRoute(services: RouteServices, context: RouteRequest):
         caseStore.stagePresentation({ mode: dependencies.presentationMode ?? "live", ...(dependencies.runtime ? { runtime: dependencies.runtime } : {}) });
         return output;
       }, ticket ?? undefined, privateGuard);
-      guard(signal);
+      privateGuard();
       const captured: unknown = structuredClone(output);
       if (Buffer.byteLength(JSON.stringify(captured), "utf8") > 524288) throw new HttpFailure(502, "검토 결과 크기 제한을 초과했습니다.");
       const parsed = parseAssessment(captured);

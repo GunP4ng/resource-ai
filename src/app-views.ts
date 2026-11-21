@@ -70,8 +70,8 @@ export interface InputView {
 export function loginPage(): string {
   return page("로그인", `<h1>로컬 운영자 로그인</h1><p>운영자가 발급한 계정으로 로그인하세요. 조직 소속이나 자료 승인을 인증하지 않습니다.</p><form method="post" action="/login"><label for="username">사용자 이름</label><input id="username" name="username" autocomplete="username" required maxlength="64"><label for="password">비밀번호</label><input id="password" name="password" type="password" autocomplete="current-password" required maxlength="1024"><button type="submit">로그인</button></form>`);
 }
-export function caseListPage(rows: string, localAuth: boolean): string {
-  return page("내 사례", `<h1>내 사례</h1>${rows ? "" : exampleStart}<p><a class="primary-action${rows ? "" : " secondary-action"}" href="/">새 사례 입력</a></p>${rows ? `<div class="table-wrap case-list" role="region" aria-label="내 사례 목록" tabindex="0"><table><thead><tr><th>사례</th><th>버전</th><th>보관 만료 (UTC)</th><th>결과</th></tr></thead><tbody>${rows}</tbody></table></div>` : "<p>저장된 사례가 없습니다.</p>"}${localAuth ? '<form method="post" action="/logout"><button class="secondary-action" type="submit">로그아웃</button></form>' : ""}`);
+export function caseListPage(rows: string, localAuth: boolean, deadlineLabel: string): string {
+  return page("내 사례", `<h1>내 사례</h1>${rows ? "" : exampleStart}<p><a class="primary-action${rows ? "" : " secondary-action"}" href="/">새 사례 입력</a></p>${rows ? `<div class="table-wrap case-list" role="region" aria-label="내 사례 목록" tabindex="0"><table><thead><tr><th>사례</th><th>버전</th><th>${escapeHtml(deadlineLabel)}</th><th>결과</th></tr></thead><tbody>${rows}</tbody></table></div>` : "<p>저장된 사례가 없습니다.</p>"}${localAuth ? '<form method="post" action="/logout"><button class="secondary-action" type="submit">로그아웃</button></form>' : ""}`);
 }
 export function inputPage(options: InputView): string {
   const { authenticated, localAuth, connected, photoEnabled, runner } = options;

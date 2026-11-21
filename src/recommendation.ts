@@ -1,6 +1,6 @@
 import type { CaseInput, DecisionResult, Estimate, RecommendationMetric, RouteAssessment, RouteRecommendation } from "./contracts.ts";
 import type { CaseAssessment, RouteReviewContext } from "./assessment.ts";
-import { isProhibitedReviewExplanation, safetyReasons } from "./o-safety-reasons.ts";
+import { isProhibitedReviewExplanation, maskExplicitHazardDenial, safetyReasons } from "./o-safety-reasons.ts";
 import { parseDecision } from "./o-decision.ts";
 import { massQuestion } from "./input.ts";
 
@@ -11,6 +11,7 @@ const executionChecks = [
   "탄소 계수의 수지·지역·기간·계산 경계와 크레딧 적용 가능성을 확인하세요.",
   "반출·계약·처리 전 현장 책임자의 별도 검토와 승인을 받으세요.",
 ] as const;
+const designatedHazard = /지정폐기물\s*(?:의심|해당(?!\s*(?:없|아님|하지\s*않))|가능)|(?:suspected|confirmed)\s+hazardous\s+waste/iu;
 
 export function executionChecksFor(assessment: CaseAssessment): readonly string[] {
   return [...new Set([...executionChecks, ...assessment.legal.reviewRequirements, ...Object.values(assessment.requiredChecks).flat(),
@@ -32,12 +33,17 @@ function publicRecyclingEvidence(assessment: CaseAssessment): readonly string[] 
 
 /** Lookup excludes unusable citations; one rejected source does not veto other routes. */
 export function recommendationBlockers(facts: CaseInput, assessment: CaseAssessment, reviews?: RouteReviewContext): readonly string[] {
+  const { description, process, contamination } = facts;
+  const maskedDescription = maskExplicitHazardDenial(description);
+  const maskedContamination = maskExplicitHazardDenial(contamination);
+  const designatedFields = [maskedDescription, maskExplicitHazardDenial(process), maskedContamination];
+  // Preserve affirmative matches across fields without letting a separate field negate a complete assertion.
+  const designatedSuspected = [...designatedFields, designatedFields.join(" ")].some(field => designatedHazard.test(field));
   return [
     ...(facts.hazardousContact === "yes" ? [safetyReasons.contactClassification] : []),
-    ...(/지정폐기물\s*(?:의심|해당(?!\s*(?:없|아님|하지\s*않))|가능)|(?:suspected|confirmed)\s+hazardous\s+waste/iu.test(
-      [facts.description, facts.process, facts.contamination].join(" ")) ? [safetyReasons.designatedSuspected] : []),
+    ...(designatedSuspected ? [safetyReasons.designatedSuspected] : []),
     ...(/유해물질\s*접촉\s*(?:있음|의심)|(?:suspected|confirmed)\s+hazardous\s+contact/iu.test(
-      [facts.description, facts.contamination].join(" ")) ? [safetyReasons.contactSuspected] : []),
+      [maskedDescription, maskedContamination].join(" ")) ? [safetyReasons.contactSuspected] : []),
     ...assessment.reviewIssues,
     ...(assessment.legal.evidence.length === 0 || assessment.legal.citations.length === 0 ? ["검증된 법령 인용 없음"] : []),
     ...(assessment.questions.every(question => question === massQuestion) && publicRecyclingEvidence(assessment).length === 0

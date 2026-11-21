@@ -43,7 +43,8 @@ export function createApp(dependencies: AppDependencies) {
   };
   requireValid(Number.isInteger(timeoutMs) && timeoutMs > 0 && timeoutMs <= 60000 && Number.isInteger(maxBodyBytes) && maxBodyBytes > 0 && maxBodyBytes <= 1048576, "invalid-http-limits");
   // Per-app in-memory sessions, one hour TTL, bounded capacity. Reports never shared by ID alone.
-  const sessions = new Map<string, { readonly created: number; readonly cases: Map<string, StoredAssessment> }>();
+  const sessionLifetimeMs = 3_600_000;
+  const sessions = new Map<string, { readonly deadline: number; readonly cases: Map<string, StoredAssessment> }>();
   const actorReports = new Map<string, { readonly created: number; readonly cases: Map<string, StoredAssessment> }>();
   const owners = new Map<string, string>();
   const secure = origin.startsWith("https:");
@@ -113,12 +114,14 @@ export function createApp(dependencies: AppDependencies) {
           guard(signal);
           if ((!actor && !normalDemo) || (actor && !/^[A-Za-z0-9_-]{1,128}$/.test(actor)) || validUntil <= now() || Number.isNaN(validUntil)) throw new HttpFailure(403, "인증이 필요합니다.");
         }
-        const privateGuard = () => {
+        const identityGuard = () => {
           guard(signal);
-          if (validUntil <= now()) throw new HttpFailure(403, "인증 유효기간이 지났습니다.");
+          const at = now();
+          if (validUntil <= at) throw new HttpFailure(403, "인증 유효기간이 지났습니다.");
           assertCurrent?.();
+          return at;
         };
-        for (const [token, session] of sessions) if (now() - session.created > 3600000) {
+        for (const [token, session] of sessions) if (now() > session.deadline) {
           sessions.delete(token);
           for (const caseId of session.cases.keys()) owners.delete(caseId);
         }
@@ -128,12 +131,23 @@ export function createApp(dependencies: AppDependencies) {
         }
         const cookie = request.headers.get("cookie")?.split(";").map((v) => v.trim()).find((v) => v.startsWith("resource_session="))?.slice("resource_session=".length);
         const session = cookie === undefined ? undefined : sessions.get(cookie);
+        const sessionDeadline = actor ? undefined : session?.deadline;
+        const privateGuard = () => {
+          const at = identityGuard();
+          if (sessionDeadline !== undefined && at > sessionDeadline) {
+            throw new HttpFailure(403, "인증 유효기간이 지났습니다.");
+          }
+        };
         const owner = actor ? `actor:${actor}` : cookie && session ? `session:${cookie}` : undefined;
         const reports = actor ? actorReports.get(actor)?.cases : session?.cases;
         if (request.method === "GET" && url.pathname === "/cases" && preparer) {
           if (!owner) throw new HttpFailure(403, "인증이 필요합니다.");
-          const rows = caseStore.list(owner).map(item => `<tr><td data-label="사례"><a href="/cases/${item.caseId}">${escapeHtml(caseStore.read(owner, item.caseId)?.input.description ?? item.caseId)}</a></td><td data-label="버전">${item.version}</td><td data-label="보관 만료 (UTC)">${escapeHtml(new Date(item.expires).toISOString())}</td><td data-label="결과"><a href="/cases/${item.caseId}/report">보고서</a></td></tr>`).join("");
-          const result = response(caseListPage(rows, !!dependencies.localAuth));
+          const deadlineLabel = actor ? "보관 만료 (UTC)" : "조회 가능 기한 (UTC)";
+          const rows = caseStore.list(owner).map(item => {
+            const deadline = Math.min(item.expires, sessionDeadline ?? Infinity);
+            return `<tr><td data-label="사례"><a href="/cases/${item.caseId}">${escapeHtml(caseStore.read(owner, item.caseId)?.input.description ?? item.caseId)}</a></td><td data-label="버전">${item.version}</td><td data-label="${deadlineLabel}">${new Date(deadline).toISOString()}</td><td data-label="결과"><a href="/cases/${item.caseId}/report">보고서</a></td></tr>`;
+          }).join("");
+          const result = response(caseListPage(rows, !!dependencies.localAuth, deadlineLabel));
           privateGuard();
           return result;
         }
@@ -149,9 +163,12 @@ export function createApp(dependencies: AppDependencies) {
           }
           if (session === undefined && sessions.size >= 1000) throw new HttpFailure(503, "현재 새 세션을 열 수 없습니다.");
           const token = cookie !== undefined && session !== undefined ? cookie : randomBytes(32).toString("hex");
-          if (session === undefined) sessions.set(token, { created: now(), cases: new Map() });
-          const homeResponse = response(inputPage({ authenticated: !!actor, localAuth: !!dependencies.localAuth, connected: !!dependencies.adapter, photoEnabled, runner: dependencies.runtime?.runner }), 200, { "set-cookie": `resource_session=${token}; HttpOnly; SameSite=Strict; Path=/; Max-Age=3600${secure ? "; Secure" : ""}` });
+          const at = now();
+          const cookieDeadline = session?.deadline ?? at + sessionLifetimeMs;
+          const maxAge = Math.max(0, Math.floor((cookieDeadline - at) / 1000));
+          const homeResponse = response(inputPage({ authenticated: !!actor, localAuth: !!dependencies.localAuth, connected: !!dependencies.adapter, photoEnabled, runner: dependencies.runtime?.runner }), 200, { "set-cookie": `resource_session=${token}; HttpOnly; SameSite=Strict; Path=/; Max-Age=${maxAge}${secure ? "; Secure" : ""}` });
           privateGuard();
+          if (session === undefined) sessions.set(token, { deadline: cookieDeadline, cases: new Map() });
           return homeResponse;
         }
         if (request.method === "GET" && url.pathname === "/reference") return response(referencePage());
@@ -193,7 +210,7 @@ export function createApp(dependencies: AppDependencies) {
             actions, researchFirst: normalDemo,
             editing: '<p class="screen-only"><a href="/demo/review">합성 위험·검토 예시</a></p>',
           }));
-          privateGuard();
+          identityGuard();
           return result;
         }
         const caseMatch = /^\/cases\/([A-Za-z0-9_-]{1,100})(?:\/(answers|report|input|inquiry|inquiry-reply))?$/.exec(url.pathname);
@@ -204,7 +221,7 @@ export function createApp(dependencies: AppDependencies) {
         if (preparer && (caseMatch || photoMatch || url.pathname === "/cases")) {
           if (!owner) throw new HttpFailure(403, "인증이 필요합니다.");
           return caseRoute({ dependencies, origin, now, caseStore, maxBodyBytes, photoEnabled, cancelLease },
-            { request, url, signal, guard, privateGuard, actor, owner, caseMatch, photoMatch });
+            { request, url, signal, guard, privateGuard, actor, owner, sessionDeadline, caseMatch, photoMatch });
         }
         if (request.method === "GET" && caseId && suffix !== "answers" && suffix !== "input" && suffix !== "inquiry-reply") {
           if (suffix === "report" && url.searchParams.get("purpose") === "research" && !actor) throw new HttpFailure(403, "연구용 보고서는 인증된 비공개 사례에서만 확인할 수 있습니다.");
@@ -225,7 +242,7 @@ export function createApp(dependencies: AppDependencies) {
           if (((reports?.size ?? 0) >= 100 || owners.size >= 100) && !caseId) throw new HttpFailure(429, "저장 가능한 사례 제한에 도달했습니다.");
           const stored = await (async () => {
             const { raw } = await caseBody(request, dependencies.maxBodyBytes, signal);
-            if (signal.aborted) throw new HttpFailure(408, "요청이 취소되었습니다.");
+            privateGuard();
             const output = caseId ? await adapter.answer(caseId, raw, signal) : await adapter.submit(raw, signal);
             if (Buffer.byteLength(JSON.stringify(output), "utf-8") > 524288) throw new HttpFailure(502, "검토 결과 크기 제한을 초과했습니다.");
             return parseAssessment(output);

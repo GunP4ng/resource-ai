@@ -8,6 +8,11 @@ export const safetyReasons = {
   contactSuspected: "유해물질 접촉 의심 입력",
 } as const;
 
+// Mask only a complete terminal clause in one field. The comma keeps adjacent text separated.
+export function maskExplicitHazardDenial(field: string | null): string {
+  return (field ?? "").replace(/(?:^|,)[\p{Zs}\t]*(?:지정폐기물[\p{Zs}\t]*(?:해당[\p{Zs}\t]*사항|가능성|의심)|유해물질[\p{Zs}\t]*접촉[\p{Zs}\t]*의심)[\p{Zs}\t]*없음\s*\.?\s*$/u, ",");
+}
+
 export function isProhibitedReviewExplanation(text: string): boolean {
   return /(?:법령|법률)상.*금지|명백히\s*금지|\bprohibited\b|\billegal\b/iu.test(text);
 }

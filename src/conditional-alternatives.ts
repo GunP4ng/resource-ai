@@ -2,6 +2,7 @@ import registryJson from "../data/sources/evidence-candidates.json" with { type:
 import type { CaseInput, ConditionalAlternative, EvidenceRecord } from "./contracts.ts";
 import { loadEvidenceRegistry, lookupLegalEvidence } from "./evidence.ts";
 import type { EvidenceLookup } from "./evidence.ts";
+import { maskExplicitHazardDenial } from "./o-safety-reasons.ts";
 import { canonical, requireValid } from "./o-validation.ts";
 
 const registry = loadEvidenceRegistry(registryJson);
@@ -30,7 +31,7 @@ export function conditionalAlternatives(facts: CaseInput, legal: EvidenceLookup)
   const evidence = new Map(legal.evidence.map(record => [record.sourceId, record]));
   const hazard = facts.hazardousContact === "yes"
     || /지정폐기물\s*(?:의심|가능)|유해물질\s*접촉\s*의심|(?:suspected|confirmed)\s+hazardous/iu.test(
-      [facts.description, facts.contamination].join(" "));
+      [facts.description, facts.contamination].map(maskExplicitHazardDenial).join(" "));
   if (!hazard && recycling.length > 0) {
     // Only explicitly reported components are hypotheses; missing resin is never guessed.
     const materials = [...new Set((facts.polymer ?? "").toUpperCase().match(/\b(?:HDPE|LDPE|PET|PP|PE)\b/gu) ?? [])];

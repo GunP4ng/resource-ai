@@ -2,6 +2,7 @@ import type { CaseInput } from "./contracts.ts";
 import { escapeHtml, page } from "./report-html.ts";
 
 const plastic = /\b(?:PET|HDPE|LDPE|PP|PE|PS|PVC|ABS)\b|플라스틱|합성수지|수지|비닐/iu;
+const reinforcedResin = /^(?:PA|PC)\b[ \t]*\([ \t]*glass[ \t]+fiber[ \t]+reinforced[ \t]*\)$/iu;
 const unknown = /^(?:미상|미확인|불명|모름|unknown)$/iu;
 const outside = [
   { label: "목재", pattern: /폐목재|목재|\bwood\b/giu },
@@ -17,12 +18,17 @@ export function unsupportedScope(input: Pick<CaseInput, "polymer" | "description
   if (reported && unknown.test(reported)) return null;
   if (!reported && /(?:재질|소재|수지)\s*(?:미상|미확인|불명|모름)|\b(?:unknown material|material unknown)\b/iu.test(input.description)) return null;
   const text = reported || input.description;
-  if (plastic.test(text)) return null;
+  if (plastic.test(text) || (reported && reinforcedResin.test(reported))) return null;
   for (const group of outside) {
     for (const match of text.matchAll(group.pattern)) {
-      const before = text.slice(Math.max(0, match.index - 12), match.index);
+      const before = text.slice(0, match.index);
       const after = text.slice(match.index + match[0].length);
-      if (/\b(?:not|no)\s*$/iu.test(before) || /^\s*(?:이|가)?\s*(?:아닌|아님|아니다|아니라)/u.test(after)) continue;
+      if (/\b(?:not|no)\s*$/iu.test(before.slice(-12)) || /^\s*(?:이|가)?\s*(?:아닌|아님|아니다|아니라)/u.test(after)) continue;
+      if (!reported && (
+        (match[0] === "종이" && /^[ \t]+라벨이[ \t]+붙은[ \t]+(?:[^,.\r\n]+[ \t]+)?용기[ \t]+파쇄품[ \t]*(?=[,.]|$)/u.test(after))
+        || (match[0] === "금속" && /하우징[ \t]+파쇄품[ \t]*,[ \t]*$/u.test(before)
+          && /^[ \t]+나사[ \t]+제거\s*\.?\s*$/u.test(after))
+      )) continue;
       return group.label;
     }
   }
