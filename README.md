@@ -1,95 +1,119 @@
 # Re:Source AI
 
-중소 제조업체 환경 담당자를 위한 **근거 기반 폐플라스틱 의사결정 지원** 설계와 구현.
-AXR AI Bootcamp Innovation Challenger 2026 Microsoft 주제를 대상으로 한다.
+산업 현장의 폐플라스틱 부산물을 입력하면, 공개 법령·자료를 근거로 재활용·처리 경로를 추천하고 비용·탄소를 비교해 주는 AI 에이전트 앱이다.
 
-**2026-11-15 목표:** 기업 부산물의 재사용·재활용·처리 경로를 법령 근거·업체 후보·비용·탄소로 비교·추천한다. 반출·계약을 승인하는 심사 시스템이 아니다. 현장 자료를 기다리지 않고 권리 확인된 공개 자료와 합성 사례를 구분해 사용한다(#42).
-추천과 실행 전 확인의 기준은 [목표·결과 기준](docs/recommendation-goal.md)을 따른다. 아래 구현·실행 기록은 해당 버전의 관찰이며, 이 문서 수정이 추천 모드 코드의 구현 완료를 뜻하지 않는다.
+AXR AI Bootcamp Innovation Challenger 2026 Microsoft 주제 "Re:Source AI - Microsoft AI 기반 산업자원 순환·재활용 에이전트 개발"의 제출물이다.
 
-**현재 상태: 로컬 사례·답변·보고서 앱과 도메인 검증이 구현되어 있다. 운영 인증·검토 자료·실제 제공자 검증은 별도 인수 대상이다.**
-O4는 신뢰된 서버 인증을 주입하면 사례 소유권과 비공개 사진 저장·미리보기·철회를 제공한다. 기본 launcher는 익명 텍스트 앱이며 사진 모델 전송을 활성화하지 않는다.
+## 푸는 문제
 
-## 추천 구조
+중소 제조업체 환경 담당자는 공정에서 나온 부산물을 "재활용할 수 있는지, 어디에 맡겨야 하는지, 비용과 탄소는 어떤지"를 직접 판단해야 한다. 근거 법령은 별표 여러 개에 흩어져 있고, 업체·단가·탄소 계수도 따로 찾아야 한다.
 
-작은 사용자 앱 → 하나의 senpi SDK 세션 → 구독 모델(기본 `chatgpt-subscription` / `gpt-6-sol`, Azure는 opt-in) + 독립 도메인 도구 → 출처·조건·불확실성이 있는 비교 보고서.
-판정·업체·비교 도구는 앱의 사례별 세션에만 주입된다. 공식 extension은 CLI용 상태 조회 도구 `resource_project_status` 1개만 등록한다. skill/MCP/Foundry 네이티브 조합을 비교한 뒤 이 구조를 택했다.
+Re:Source AI는 주제 자료가 예시로 든 흐름을 한 화면에 묶는다.
 
-`compared`는 실행 승인 대신 추천 결과다. 검증된 별표의 분류·허용 유형·R-3-3 정의·공통기준이 연결되는 경로는 `conditional`(공개 근거상 가능·조건부) 등급과 순위를 받는다. `eligible`인 현장 검토 결과와 구분하며, 공개 근거만으로 판단할 수 없는 경로는 `unknown`으로 남긴다.
-결과의 `recommendations`에는 경로별 근거 인용과 비용·탄소 계산/가정 라벨 또는 `null`·사유가 있고, `confidence`와 `preExecutionChecks`를 함께 제공한다. 허가 유효성·인수/계약·실제 견적·거리·계수 적용·현장 승인은 실행 전 확인사항이다. 유해·지정폐기물 의심, 명백한 금지 경로, 인용 검증 실패, 입력 모순은 계속 차단한다. 질량만 모르면 정성적 경로 추천을 먼저 제공하고, 질량은 선택 질문으로 받는다.
+식별·분류 → 재사용·재활용 가능성 → 규정 검토 → 활용 업종·업체 → 비용·탄소 비교 → 처리 방안
 
-## 시작
+## 핵심 기능
 
-팀원은 [docs/team-tasks.md](docs/team-tasks.md)부터 읽고 자기 담당 작업을 시작한다.
+- **경로 추천:** 수지·공정·오염 상태로 기계적 재활용 등 경로를 추천하고, 결론 한 줄과 다음 행동을 맨 위에 보여 준다.
+- **근거 인용:** 폐기물관리법 시행규칙 별표 4·4의2·4의3·5의3의 조문 위치와 원문 발췌를 붙인다. 시행본은 평가 기준일로 고른다(2026-11-11까지 290881, 11-12부터 291947).
+- **조건부 대안:** 보류된 사례에도 "분리·세척되면 원료 재활용 검토", "유해 접촉이면 분류 확인 후 처분 문의"처럼 조건별 대안과 먼저 확인할 자료를 보여 준다.
+- **안전 보류:** 유해물질 접촉·지정폐기물 의심, 입력 모순, 인용 검증 실패는 추천하지 않고 보류한다. 확인 순서에서 안전 사유가 항상 1번이다.
+- **6단계 표시:** 위 흐름의 각 단계가 이 사례에서 채워졌는지, 비었다면 왜 비었는지 보여 준다.
+- **비용·탄소 시나리오:** PET·HDPE는 질량만 넣으면 공개 계산값으로 재활용·매립·소각을 비교한다. 모르는 값이 있어도 결론이 유지되는 범위(예: 소각 단가가 0원/t 이상이면 순위 불변)를 함께 보여 준다.
+- **업체 후보와 문의서:** 공개 처분 문의처와 재활용업 허가 목록을 "인수 의사 미확인"으로 표시하고, 업체에 보낼 문의서를 A4 한 장으로 인쇄한다.
+- **질량은 선택:** 질량을 몰라도 경로 추천이 먼저 나오고, 질량은 계산용 선택 질문으로 받는다.
 
-검증 환경: Linux x64, Bun 1.4.2. senpi의 Node 요구는 >=24다.
+## 빠른 실행
+
+필요 환경: Bun 1.4.2 이상(검증: Linux x64). senpi SDK는 Node 24 이상을 요구한다.
 
 ```sh
 bun install --frozen-lockfile --ignore-scripts
+RESOURCE_MODEL_RUNNER=local bun run app
+```
+
+브라우저에서 `http://localhost:3000`을 연다. `local` 모드는 모델을 호출하지 않고 같은 판단 규칙으로 추천·보류·질문 흐름을 실행한다. 포트는 `PORT`로 바꾼다.
+
+검사:
+
+```sh
 bun run typecheck
 bun run build
 bun run smoke
+bun test ./tests
 ```
 
-smoke는 소스와 빌드된 extension을 **실제 senpi loader**로 열고, SDK에서 Azure provider와 명시적 도구 선택을 확인한다. 모델에 프롬프트를 보내지 않아 Azure 키나 유료 호출은 필요하지 않다. 생성한 임시 상태는 종료 시 삭제한다. 사용자 global senpi 설정을 사용하지 않는다.
+11/25 발표 데모 순서와 화면은 [데모 실행 대본](docs/demo-2026-11-25/README.md)에 있다.
 
-현재 도구 `resource_project_status`는 `stage=review-bound-host-comparison`, `decisionEngine=server-reviewed-inputs-required`, `azureLiveVerified=false`를 반환한다(`src/extension.ts`). 등록 진단일 뿐이며 제품 데모나 성능 결과로 제시하지 않는다. (2026-11-12 정정: 이전 문구의 `stage=scaffold`, `decisionEngine=not-implemented`는 초기 골격 값이다.)
+### 실행 모드
 
-도메인 구현을 시작할 때 `src/contracts.ts`부터 합의하고, `data/*.example.json`을 실제 데이터와 구분한다. `.env.example`에는 변수명만 있으며 실제 키를 커밋하지 않는다.
+| `RESOURCE_MODEL_RUNNER` | 동작 |
+|---|---|
+| `subscription` (기본값) | senpi 로그인(`chatgpt-subscription`)으로 구독 모델을 호출한다. 앱은 로그인 화면을 띄우지 않으며, 인증이 없으면 제출이 HTTP 503으로 끝난다. `RESOURCE_AUTH_PATH`, `RESOURCE_MODEL_ID`로 인증 파일과 모델을 지정한다. |
+| `local` | 모델 호출 없이 실행한다. 데모·QA 기본값이다. |
+| `azure` | Azure OpenAI runner를 쓴다. `.env.example`의 키·endpoint·deployment 설정이 필요하다. |
 
-## 앱의 구독 모델 runner
+모델은 제안만 한다. 판정·인용·계산은 호스트 규칙이 검증하고, 모델이 제안한 내용과 호스트가 받아들이거나 막은 내용은 단계별 기록으로 남는다.
 
-`bun run app`은 기본으로 `chatgpt-subscription` / `gpt-6-sol`을 사용한다.
-기존 senpi 로그인 `auth.json`을 SDK가 읽으며 Azure 환경변수는 필요하지 않다.
-로그인은 senpi에서 먼저 완료한다. 앱은 로그인 화면을 띄우거나 비밀값을 입력받지 않는다.
-`RESOURCE_AUTH_PATH`로 서버가 소유한 auth.json 경로를 지정할 수 있고,
-`RESOURCE_MODEL_ID`로 설치된 SDK의 모델을 선택할 수 있다.
-인증이나 모델이 없으면 제출은 HTTP 503(`not-configured`)으로 끝난다.
-구독이 설정돼 있으면 제출 시 실제 모델 요청이 발생하므로 승인된 사례만 사용한다.
+### 사례 보관(선택)
 
-`RESOURCE_MODEL_RUNNER=local bun run app`은 모델 호출 없이 질문/답변/추천/보류 흐름을 실행한다.
-`RESOURCE_MODEL_RUNNER=azure bun run app`은 기존 Azure runner를 명시적으로 선택한다.
-이때만 `.env.example`의 Azure 키·endpoint·deployment 설정이 필요하다.
-공유 운영 배포의 요청별 승인/감사·사진 동의·운영 자료 공급은 별도 인수 대상이며
-이 loopback launcher가 그 통합 완료를 의미하지 않는다.
-테스트는 합성 OAuth와 주입 HTTP/SSE만 사용하며 실제 유료 요청을 보내지 않는다.
-
-O4 인증·사진 통합 API와 제한은 [O 인수 문서](docs/o-handoff.md#o4-application-transaction-and-photo-boundary-2026-11-06)에 있다.
-PR27 사진 모델 동의는 [H 실행 범위 authority](docs/photo-execution-scope.md)의 서버 발급 ticket에 묶인다. 운영 매핑은 기본 제공하지 않으며 `photoPolicy.guardedModel` 문구만으로 사진 전송을 허용하지 않는다. 2026-11-12 정정: PR #28(`2ee1cb2`)로 구독 provider/model/account·목적에 묶인 사진 실행 경로(`SubscriptionTarget`, `src/photo-execution.ts`)가 구현됐다. 단 `bun run app` launcher는 사진 실행 authority를 주입하지 않으므로 기본값은 꺼짐이다. `RESOURCE_PRIVATE_PHOTOS=on`은 비공개 사진 저장만 켜며 모델 전송을 허용하지 않는다. 서버 통합자가 승인된 매핑으로 authority를 발급할 때만 켜진다. 실제 계정·현장 사진 실행은 인수되지 않았다.
-네이티브 입력 폼은 사진 없이 사례를 먼저 만들며, 생략된 `photoRefs`는 H의 폼 변환에서 `[]`로 정규화한다. JSON 제출은 여전히 `photoRefs` 배열을 명시해야 한다.
-데스크톱/모바일 담당자는 `bun qa-o4.ts`로 `http://localhost:3001`의 **합성 QA 전용** 앱을 실행할 수 있다.
-이 harness는 고정 가짜 인증과 worktree의 `.qa-o4-photos` 저장소를 사용하며 모델을 호출하지 않는다. 운영 배포에 사용하지 않는다.
-
-## 읽는 순서
-
-로컬 계정·SQLite 보관을 켜는 실행 경로:
+기본 앱은 익명 세션이라 재시작하면 사례가 사라진다. 로컬 계정과 SQLite 보관을 켜려면:
 
 ```sh
-bun scripts/o-account.ts create --state-dir /absolute/private/resource-state --username operator
-RESOURCE_MODEL_RUNNER=local RESOURCE_APP_AUTH=local-operator RESOURCE_STATE_DIR=/absolute/private/resource-state bun run app
+bun scripts/o-account.ts create --state-dir /absolute/path/resource-state --username operator
+RESOURCE_MODEL_RUNNER=local RESOURCE_APP_AUTH=local-operator RESOURCE_STATE_DIR=/absolute/path/resource-state bun run app
 ```
 
-비밀번호는 터미널에서 숨김 입력한다. `http://localhost:3000/login`에서 로그인하고
-`/cases`에서 사례를 복구한다. 사례 화면의 입력 내보내기는 정확한 입력과 revision ETag를
-제공한다. 자료 설치·재평가·패키지 CLI·사진 삭제 및 3분/2분 시연 절차는
-[런타임 통합 문서](docs/o-runtime-integration.md)에 있다. `bun run demo:o`의 HTML은
-핸들러 생성 산출물이며 실제 브라우저 검증이나 영상이 아니다.
+`/login`에서 로그인하면 `/cases`에서 사례를 다시 열 수 있다. 연구용 공개 시나리오 계산과 모델 검증 기록은 로그인한 연구 화면에만 보인다. 사진의 모델 전송은 기본으로 꺼져 있다. 자세한 내용은 [런타임 통합 문서](docs/o-runtime-integration.md)와 [사진 실행 범위](docs/photo-execution-scope.md)에 있다.
 
-1. [대회 근거와 영상 확인](docs/competition-evidence.md)
-2. [대안 비교·권장 아키텍처](docs/architecture.md)
-3. [senpi 실제 API·Azure 구성](docs/senpi-and-azure.md)
-4. [데이터 출처·비용/탄소 방법](docs/data-sources.md)
-5. [30건 평가·개선 기록](docs/evaluation.md)
-6. [100점 심사 매핑·발표](docs/rubric-and-demo.md)
-7. [역할·일정·작업 목록](docs/delivery-plan.md)
-8. [검증·독립 검토 결과](docs/verification.md)
+## 구조
 
-## 범위와 정직한 한계
+```text
+브라우저(입력 폼·결과·인쇄)
+  └─ 앱 서버 scripts/app.ts
+       ├─ 입력 검증·추가 질문 (src/input.ts)
+       ├─ 판정 규칙·안전 보류 (src/assessment.ts, src/recommendation.ts)
+       ├─ 법령 근거 조회 (src/evidence.ts ← data/reference/legal)
+       ├─ 업체·비용·탄소 계산 (data/reference, 공개 시나리오)
+       └─ 모델 runner: subscription | local | azure (senpi SDK 세션)
+```
 
-- 법적 폐기물 코드·유해성은 사진만으로 확정하지 않는다.
-- 지정폐기물·유해 의심, 명백한 법령상 금지, 출처 없는/검증 실패 인용, 입력 모순은 추천 차단 사유로 남긴다.
-- 허가 유효성·업체 인수/계약·실제 견적/질량/거리·탄소계수 적용 검토·현장 승인은 실행 전 확인 목록(`preExecutionChecks`)으로 표시한다. 질량 없이도 공개 근거가 있는 정성적 경로를 추천하며, 추천 화면의 선택 질문에 답하면 같은 사례를 갱신한다. 비용·탄소는 질량과 해당 견적·계수 등 계산 자료가 모두 있을 때만 산출하고, 자료가 없으면 이유를 표시한다.
-- 비용·탄소는 출처·단위·경계·가정을 확인할 수 있는 범위만 계산한다. 공개 자료 기반 계산은 시나리오 추정으로 표시하고 실제 견적·실측 감축으로 부르지 않는다. 계산 불가 항목은 사유를 남기며 다른 근거 있는 비교는 계속한다.
-- 현재 구현은 검증된 사례별 quote·계수로 계산하거나 `null`·미산정 사유를 제공한다. 검증된 인용의 약한 관련성은 낮은 확신도·실행 전 확인으로, 접촉 이력 미확인은 추가 질문으로 처리한다. 현장 확인 항목은 검토 보류 사유와 분리한다. [초기 18건 실행](data/evaluation/recommendation-mode-20261115/summary.json)의 `compared` 5 / `needs-review` 9 / `needs-information` 4에서 [후속 실구독 실행](data/evaluation/recommendation-followup-20261115/summary.json)은 7 / 4 / 7로 바뀌었다. 개발셋 결과이며 정확도·현장 승인 증거가 아니다.
-- 대회 제출 형식·최종 업로드 시각·Azure 크레딧 금액은 운영진/팀 계정 확인이 남아 있다.
-- 교육용 가상 데이터 정확도는 현장 재활용 판단의 정확도가 아니다.
-- 비공개 저장소다. 교육 영상/자막/로그인 화면·실제 키·개인정보를 업로드하지 않는다.
+설계 비교와 선택 이유는 [아키텍처 문서](docs/architecture.md)에 있다.
+
+## 평가 결과
+
+같은 18건의 노출된 개발 입력으로 측정했다. 정확도나 현장 검증 결과로 읽지 않는다.
+
+- 최종 판정 분포: 추천 8 / 추가 정보 필요 6 / 검토 필요 4. 마지막 기능 변경 뒤에도 18건 판정이 모두 같다([요약](data/evaluation/safety-priority-20261121/summary.json)).
+- 같은 입력을 일반 모델(A), 검색만 붙인 모델(B), Re:Source(C)로 비교했을 때, 필요한 확인 질문 33개 중 A 3개, B 0개, C 28개를 짚었다. 방식 이름을 가린 사후 채점이다([채점 기록](data/evaluation/rubric-followup-20261121/README.md)).
+- 유해·모순 사례 4건은 세 방식 모두 보류했고, 어느 방식도 없는 업체·가격·계수를 만들지 않았다.
+
+측정 방법은 [평가 문서](docs/evaluation.md)와 [검증 기록](docs/verification.md)에 있다.
+
+## 한계
+
+- 대상은 폐플라스틱(PP·PE·HDPE·LDPE·PET·PS·ABS·PC·PA)이다. PVC는 근거가 확인되지 않아 보류한다.
+- 전과정 탄소 계수는 미국 EPA WARM 값이다. 국내 GIR 전력·소각 계수와 KEITI 혼합플라스틱 참고값은 단위·경계를 구분해 옆에 둔다.
+- 업체 후보는 공개 목록이며 실제 인수·허가 유효성은 확인하지 않았다.
+- 사업장 폐플라스틱의 실제 소각 단가는 공개 자료가 없어 비워 두고, 이유를 화면에 표시한다.
+- 법적 폐기물 코드와 유해성은 사진만으로 확정하지 않는다.
+
+## 데이터 출처
+
+- 법령: 국가법령정보센터 폐기물관리법 시행규칙 별표 원문(`data/reference/legal`)
+- 탄소: US EPA WARM, 온실가스종합정보센터(GIR) 국가 계수, 한국환경산업기술원(KEITI) 환경성적표지 참고값
+- 가격·업체: 한국환경공단 재활용 가격, 공개 처분·재활용업 목록(`data/reference`)
+- 평가 입력은 합성·공개 자료이며 실제 현장 사례가 아니다.
+
+출처별 라이선스와 조회일은 [데이터 출처 문서](docs/data-sources.md)에 있다.
+
+## 팀
+
+| 이름 | 역할 |
+|---|---|
+| 이태용 | 팀장. 총괄·범위 조정·통합 검토 |
+| 윤정준 | 원문·법령 버전·근거 조회 |
+| 이상협 | 입력·추가 질문·판정·구독 runner 연결 |
+| 오연석 | 업체·비용·탄소·앱 화면 |
+
+작업 분담은 [팀 작업 문서](docs/team-tasks.md)에 있다.
