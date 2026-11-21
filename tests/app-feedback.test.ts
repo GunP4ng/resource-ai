@@ -7,8 +7,55 @@ import { createCaseStore } from "../src/o-case-store.ts";
 import { feedbackPath, feedbackScript } from "../src/app-feedback.ts";
 import { demo } from "../src/o-demo.ts";
 import { renderReport } from "../src/report.ts";
+import { renderInquiry } from "../src/report-inquiry.ts";
 
 const origin = "http://localhost:3000";
+test("inquiry print control invokes window.print without submitting and ignores other clicks", async () => {
+  const attributes = new Map<string, string>();
+  await new HTMLRewriter().on("[data-inquiry-print]", { element(element) {
+    for (const name of ["type", "data-inquiry-print"]) {
+      const value = element.getAttribute(name);
+      if (value !== null) attributes.set(name, value);
+    }
+  } }).transform(new Response(renderInquiry({
+    caseId: "print-case", description: "", photoRefs: [], process: null, polymer: null,
+    contamination: null, hazardousContact: "unknown", massKg: null, region: null, assessmentDate: "2026-11-20",
+  }, { state: "needs-review", caseId: "print-case", reasons: [], evidence: [] }, {}))).text();
+  const events = new Map<string, (event: { target: unknown }) => void>();
+  let prints = 0;
+  let submissions = 0;
+  class Element {
+    constructor(readonly kind: "print" | "child" | "outside" | "submit") {}
+    closest(selector: string): Element | null {
+      if (selector === 'button[type="button"][data-inquiry-print]') {
+        return (this.kind === "print" || this.kind === "child") && attributes.get("type") === "button"
+          && attributes.has("data-inquiry-print") ? new Element("print") : null;
+      }
+      assert.equal(selector, "[data-inquiry-sheet]");
+      return this.kind === "print" ? this : null;
+    }
+    click() {
+      events.get("click")?.({ target: this });
+      if (this.kind === "print" && attributes.get("type") !== "button") submissions++;
+    }
+  }
+  runInNewContext(feedbackScript, {
+    Element,
+    document: { querySelectorAll: () => [] },
+    window: {
+      print() { prints++; },
+      addEventListener(name: string, listener: (event: { target: unknown }) => void) { events.set(name, listener); },
+    },
+  });
+  new Element("print").click();
+  new Element("child").click();
+  new Element("outside").click();
+  new Element("submit").click();
+  events.get("click")?.({ target: null });
+  assert.equal(prints, 2);
+  assert.equal(submissions, 0);
+});
+
 test("beforeprint reveals actual decision sections and afterprint restores disclosure state", async () => {
   const fixture = await demo("normal");
   assert.ok(fixture);

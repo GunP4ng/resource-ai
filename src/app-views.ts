@@ -2,6 +2,7 @@ import type { CaseInput } from "./contracts.ts";
 import { escapeHtml, page } from "./report-html.ts";
 import { HttpFailure } from "./app-http.ts";
 
+const exampleStart = '<p class="cluster screen-only"><a class="primary-action" data-example-start href="/demo/normal">예시로 시작</a><span>합성 사례 · 외부 모델 호출 없음</span></p>';
 const textFields = [
   ["description", "폐자원 설명"], ["process", "발생 공정"], ["polymer", "수지"],
   ["contamination", "오염 상태"], ["region", "발생 지역"], ["assessmentDate", "평가 기준일"],
@@ -70,15 +71,15 @@ export function loginPage(): string {
   return page("로그인", `<h1>로컬 운영자 로그인</h1><p>운영자가 발급한 계정으로 로그인하세요. 조직 소속이나 자료 승인을 인증하지 않습니다.</p><form method="post" action="/login"><label for="username">사용자 이름</label><input id="username" name="username" autocomplete="username" required maxlength="64"><label for="password">비밀번호</label><input id="password" name="password" type="password" autocomplete="current-password" required maxlength="1024"><button type="submit">로그인</button></form>`);
 }
 export function caseListPage(rows: string, localAuth: boolean): string {
-  return page("내 사례", `<h1>내 사례</h1><p><a class="primary-action" href="/">새 사례 입력</a></p>${rows ? `<div class="table-wrap case-list" role="region" aria-label="내 사례 목록" tabindex="0"><table><thead><tr><th>사례</th><th>버전</th><th>보관 만료 (UTC)</th><th>결과</th></tr></thead><tbody>${rows}</tbody></table></div>` : "<p>저장된 사례가 없습니다.</p>"}${localAuth ? '<form method="post" action="/logout"><button class="secondary-action" type="submit">로그아웃</button></form>' : ""}`);
+  return page("내 사례", `<h1>내 사례</h1>${rows ? "" : exampleStart}<p><a class="primary-action${rows ? "" : " secondary-action"}" href="/">새 사례 입력</a></p>${rows ? `<div class="table-wrap case-list" role="region" aria-label="내 사례 목록" tabindex="0"><table><thead><tr><th>사례</th><th>버전</th><th>보관 만료 (UTC)</th><th>결과</th></tr></thead><tbody>${rows}</tbody></table></div>` : "<p>저장된 사례가 없습니다.</p>"}${localAuth ? '<form method="post" action="/logout"><button class="secondary-action" type="submit">로그아웃</button></form>' : ""}`);
 }
 export function inputPage(options: InputView): string {
   const { authenticated, localAuth, connected, photoEnabled, runner } = options;
   const runnerLabel = runner ? runners[runner] : "미제공";
-  const purpose = "<p>공정에서 나온 폐기물·부산물의 재사용·재활용·처리 대안을 비교합니다. 재질과 오염 상태를 입력하면 조건별 대안, 공개 근거, 비용·탄소 자료와 다음 확인할 일을 보여 줍니다.</p><p>정보가 부족하거나 위험이 의심되면 실행을 보류하고, 어떤 조건을 확인해야 다음 대안을 검토할 수 있는지 안내합니다.</p>";
-  if (authenticated && localAuth) return page("사례 입력", `<h1>폐자원 조건부 검토</h1>${purpose}<p class="notice">로그인한 담당자 · 사례 보관 최대 1시간 · 검토 방식 ${runnerLabel} · 실행 성공은 평가 후 확인</p><p>입력은 미검토 자료입니다. 로그인은 자료나 법적 승인을 뜻하지 않습니다.</p><p><a href="/cases">내 사례·복구</a></p>${form("/cases")}<p>사진: ${photoEnabled ? "비공개 저장 전용" : "저장 비활성"}</p><p><a href="/demo/normal">합성 비교 데모</a></p>`);
+  const purpose = "<p>공정에서 나온 폐플라스틱의 재사용·재활용·처리 대안을 비교합니다. 재질과 오염 상태를 입력하면 조건별 대안, 공개 근거, 비용·탄소 자료와 다음 확인할 일을 보여 줍니다.</p><p>정보가 부족하거나 위험이 의심되면 실행을 보류하고, 어떤 조건을 확인해야 다음 대안을 검토할 수 있는지 안내합니다.</p>";
+  if (authenticated && localAuth) return page("사례 입력", `<h1>폐자원 조건부 검토</h1>${exampleStart}${purpose}<p class="notice">로그인한 담당자 · 사례 보관 최대 1시간 · 검토 방식 ${runnerLabel} · 실행 성공은 평가 후 확인</p><p>입력은 미검토 자료입니다. 로그인은 자료나 법적 승인을 뜻하지 않습니다.</p><p><a href="/cases">내 사례·복구</a></p>${form("/cases")}<p>사진: ${photoEnabled ? "비공개 저장 전용" : "저장 비활성"}</p><p><a href="/demo/normal">합성 비교 데모</a></p>`);
   return page("사례 입력", `<h1>폐자원 조건부 검토</h1>
-          ${purpose}<p class="notice">${connected ? "입력을 받아 검토할 준비가 됐습니다. 제출 후 결과를 확인하세요." : "사례 검토 연결을 준비 중입니다. 지금 제출하면 준비 상태를 안내합니다."}</p>
+          ${exampleStart}${purpose}<p class="notice">${connected ? "입력을 받아 검토할 준비가 됐습니다. 제출 후 결과를 확인하세요." : "사례 검토 연결을 준비 중입니다. 지금 제출하면 준비 상태를 안내합니다."}</p>
           <p>실제 자료와 합성 데모를 구분합니다. 설명·사진만으로 법적 코드나 처리 허가를 확정하지 않습니다.</p>
           <p>${authenticated ? "서버 인증 사용자" : "익명 임시 세션 · 재시작하면 사례를 복구할 수 없습니다."}${runner ? ` 구성된 실행기 ${runnerLabel} · 실행 성공은 평가 후 확인하세요.` : ""}</p>
           <p><a href="/cases">내 사례·복구</a></p>

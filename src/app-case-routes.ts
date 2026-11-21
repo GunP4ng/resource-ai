@@ -8,6 +8,10 @@ import { form, nativeAnswer } from "./app-views.ts";
 import { photoUI, photoRoute } from "./app-photo-routes.ts";
 import { readCaseResearchCatalog } from "./o-case-research.ts";
 import { buildPublicInputScenario } from "./o-input-public-scenario.ts";
+import { unsupportedScope, unsupportedScopePage } from "./o-supported-scope.ts";
+import { buildCaseGuidance } from "./o-case-guidance.ts";
+import { renderInquiry } from "./report-inquiry.ts";
+import recyclingDirectory from "../data/reference/public-recycling-candidates-20261121.json" with { type: "json" };
 
 export async function caseRoute(services: RouteServices, context: RouteRequest): Promise<Response> {
   const { dependencies, caseStore, maxBodyBytes, origin, now, cancelLease } = services;
@@ -30,6 +34,17 @@ export async function caseRoute(services: RouteServices, context: RouteRequest):
     return result;
   }
   if (request.method === "GET" && snapshot && caseMatch && suffix !== "answers") {
+    const outside = unsupportedScope(snapshot.input);
+    if (outside) { privateGuard(); return response(unsupportedScopePage(outside, snapshot.input.caseId), 422); }
+    if (suffix === "inquiry") {
+      const result = response(renderInquiry(snapshot.input, snapshot.assessment.decision, {
+        historical: snapshot.permissionChanged || snapshot.evaluated.revision !== revision(snapshot.input),
+        permissionChanged: snapshot.permissionChanged,
+        recipientName: url.searchParams.get("recipient") ?? undefined,
+      }));
+      privateGuard();
+      return result;
+    }
     const ticket = dependencies.photoExecution?.current() ?? null;
     const stored = snapshot.assessment;
     const notice = snapshot.permissionChanged ? '<p id="permission-change-warning" class="notice">사진 권한이 변경되었습니다. 이전 보고서는 과거 평가입니다. 이미 전송된 사진을 회수하지 않습니다. 사진 없이 다시 평가할 수 있습니다.</p>' : "";
@@ -38,8 +53,13 @@ export async function caseRoute(services: RouteServices, context: RouteRequest):
     const publicScenario = privateAudience && !report?.research && snapshot.evaluated.revision === revision(snapshot.input)
       ? buildPublicInputScenario({ actorId: actor, input: snapshot.input, inputRevision: snapshot.evaluated.revision },
         await readCaseResearchCatalog()) : null;
+    const guidance = privateAudience && !snapshot.permissionChanged && snapshot.evaluated.revision === revision(snapshot.input)
+      ? await buildCaseGuidance(snapshot.input, stored.decision, {
+        publicScenario: publicScenario ?? undefined, research: report?.research?.attachment,
+        publicDirectoryCount: recyclingDirectory.rows.length,
+      }) : null;
     const audience = privateAudience
-      ? { audience: "authenticated-research", research: report?.research ?? null, publicScenario } as const
+      ? { audience: "authenticated-research", research: report?.research ?? null, publicScenario, guidance } as const
       : { audience: "commercial" } as const;
     const editable = snapshot.editUntil > now();
     const optionalMass = stored.decision.state === "compared" && snapshot.input.massKg === null && editable
@@ -52,7 +72,8 @@ export async function caseRoute(services: RouteServices, context: RouteRequest):
       ...snapshot.presentation, mode: snapshot.presentation?.mode ?? "live", review: snapshot.review,
       historical: snapshot.evaluated.revision !== revision(snapshot.input),
       execution: stored.execution ? { traceId: stored.execution.traceId, usage: stored.execution.usage ?? null } : undefined,
-    }, audience, { notice, actions, editing, ...(suffix === "report" || !editable ? {} : { answerTarget: "#answer-fields" as const }) }));
+    }, audience, { notice, actions, editing, ...(suffix === "report" ? {} : { inquiryTarget: `/cases/${id}/inquiry` }),
+      ...(suffix === "report" || !editable ? {} : { answerTarget: "#answer-fields" as const }) }));
     privateGuard();
     return result;
   }
@@ -99,6 +120,8 @@ export async function caseRoute(services: RouteServices, context: RouteRequest):
       } else payload = rest["answerMode"] === "fields" ? nativeAnswer(rest) : rest;
     }
     const input = snapshot ? preparer.prepareAnswer(snapshot.input, payload) : preparer.prepareSubmit(raw, request.headers.get("content-type")?.startsWith("application/x-www-form-urlencoded") ? "form" : "json");
+    const outside = unsupportedScope(input);
+    if (outside) { privateGuard(); return response(unsupportedScopePage(outside, snapshot?.input.caseId), 422); }
     const authority = dependencies.photoExecution;
     const ticket = input.photoRefs.length ? authority?.current() : undefined;
     if (input.photoRefs.length && (input.photoRefs.length > 3 || !ticket || !snapshot || !caseStore.eligible(snapshot, input, ticket))) throw new HttpFailure(sessionFailures.provider.status, sessionFailures.provider.message);

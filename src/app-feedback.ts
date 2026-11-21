@@ -15,6 +15,11 @@ export const feedbackScript = `"use strict";
     for (const detail of openedForPrint) detail.open = false;
     openedForPrint.clear();
   });
+  window.addEventListener("click", event => {
+    if (!(event.target instanceof Element)) return;
+    const button = event.target.closest('button[type="button"][data-inquiry-print]');
+    if (button && button.closest("[data-inquiry-sheet]")) window.print();
+  });
   const pending = new WeakSet();
   const forms = [...document.querySelectorAll('form[method="post"]')];
   const reset = form => {
