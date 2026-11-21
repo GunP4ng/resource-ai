@@ -5,6 +5,26 @@ import { isUnknownCaseText } from "./o-validation.ts";
 export type MaterialFamily = "metal" | "wood" | "paper" | "packaging";
 export type MaterialStream = "ferrous" | "nonferrous" | "wood-byproduct" | "wood-packaging" | "paper" | "carton";
 
+const denialTerms = "(?:도료|도장|페인트|방부(?:처리|제)?|접착(?:제)?|오일|기름|유류|유해물질|이물질|코팅|비닐|테이프|플라스틱|복합층|복합재|라미네이트|알루미늄|PET|HDPE|LDPE|PP|PE|PS|PVC|ABS)";
+const materialDenial = new RegExp(`(?:^|[,;.\\n])\\s*${denialTerms}(?:\\s*[·ㆍ/,]\\s*${denialTerms})*\\s*(?:처리|접촉|오염|사용|잔류)?\\s*(?:이|가)?\\s*(?:없음|없습니다|없다|하지\\s*않음|아님)(?=\\s*(?:[,;.\\n]|$))`, "giu");
+
+/** Like maskExplicitHazardDenial, mask complete clauses in one field, never adjoining assertions. */
+function maskMaterialDenials(value: string | null): string {
+  return (value ?? "").normalize("NFKC").replace(materialDenial, ",")
+    .replace(/(?:^|[,;.\n])\s*(?:no|without)\s+(?:paint|preservatives?|oil|adhesives?)(?=\s*(?:[,;.\n]|$))/giu, ",");
+}
+
+/** Reported absence only. Unrecognized or affirmative remainder cannot establish clean context. */
+export function isDeclaredCleanMaterial(value: string | null, family: MaterialFamily): boolean {
+  const original = (value ?? "").normalize("NFKC");
+  const masked = maskMaterialDenials(original);
+  return masked !== original && masked.split(/[,;.\n]/u).every(clause => {
+    const text = clause.replace(/\s+/gu, "");
+    return text === "" || /^(?:(?:건조하고)?깨끗(?:함)?|청정|무오염|clean|(?:단일재질로)?분리보관)$/iu.test(text)
+      || (family === "wood" && /^(?:무처리|미처리)(?:원목|목재)상태$/u.test(text));
+  });
+}
+
 const materialAliases = {
   PP: ["pp", "폴리프로필렌", "polypropylene"],
   PE: ["pe", "폴리에틸렌", "polyethylene"],
@@ -106,7 +126,8 @@ export function materialStream(input: CaseInput): MaterialStream | null {
   if (material === null) return null;
   if (["paper", "cardboard", "paper-packaging", "uncoated-paper"].includes(material)) {
     return (material === "uncoated-paper" || /무코팅|비코팅|\buncoated\b/iu.test(input.description))
-      && !reported.some(value => /복합|라미네이트|알루미늄|비닐|플라스틱|\b(?:PET|HDPE|LDPE|PP|PE|PS|PVC|ABS)\b/iu.test(value)) ? "paper" : null;
+      && !reported.some(value => /코팅|테이프|복합|라미네이트|알루미늄|비닐|플라스틱|\b(?:coated|PET|HDPE|LDPE|PP|PE|PS|PVC|ABS)\b/iu.test(
+        maskMaterialDenials(value).replace(/무코팅|비코팅|\buncoated\b/giu, ""))) ? "paper" : null;
   }
   if (material === "beverage-carton") {
     return /우유|음료|식품/u.test(input.process ?? "")
@@ -126,11 +147,9 @@ export function materialStream(input: CaseInput): MaterialStream | null {
 export function materialHazardReasons(input: CaseInput): readonly string[] {
   if (materialFamily(input) === null) return [];
   const risk = [input.polymer, input.description, input.process, input.contamination].some(value => {
-    const text = (value ?? "")
-      .replace(/(?:도료|도장|페인트|방부(?:처리|제)?|접착제|오일|기름|유류|유해물질)(?:\s*[·ㆍ/,]\s*(?:도료|도장|페인트|방부(?:처리|제)?|접착제|오일|기름|유류|유해물질))*\s*(?:처리|접촉|오염|사용|잔류)?\s*(?:이|가)?\s*(?:없음|없습니다|없다|하지\s*않음|아님)/gu, "")
-      .replace(/\b(?:no|without)\s+(?:paint|preservatives?|oil|adhesives?)\b/giu, "")
+    const text = maskMaterialDenials(value)
       .replace(/\b(?:unpainted|untreated|oil-free)\b/giu, "");
-    return /도료|도장|페인트|방부|접착제|오일|기름|유류|크레오소트|할로겐|\b(?:paint(?:ed)?|preservative|oil(?:y)?|treated|adhesive|creosote)\b/iu.test(text);
+    return /도료|도장|페인트|방부|접착|오일|기름|유류|크레오소트|할로겐|\b(?:paint(?:ed)?|preservative|oil(?:y)?|treated|adhesive|creosote)\b/iu.test(text);
   });
   return risk ? [safetyReasons.materialTreatment] : [];
 }
