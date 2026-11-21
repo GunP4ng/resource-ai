@@ -11,10 +11,17 @@ import { revision } from "../src/o-validation.ts";
 import { readCaseResearchCatalog } from "../src/o-case-research.ts";
 import { buildPublicInputScenario } from "../src/o-input-public-scenario.ts";
 import { buildCaseGuidance } from "../src/o-case-guidance.ts";
+import { buildScenarioSensitivity } from "../src/o-scenario-sensitivity.ts";
 import { unsupportedScope } from "../src/o-supported-scope.ts";
 
 const root = fileURLToPath(new URL("..", import.meta.url));
-const output = resolve(root, "data/evaluation/round4-20261121");
+const args = process.argv.slice(2);
+const outputArgument = args[1];
+assert.ok(args.length === 2 && args[0] === "--out" && typeof outputArgument === "string" && outputArgument.trim(),
+  "usage: bun scripts/measure-guidance.ts --out NEW_DIRECTORY");
+const output = resolve(root, outputArgument);
+// An existing evidence directory is immutable; replay into a new directory.
+await mkdir(output);
 const previous = new Map(baseline.map(row => [row.caseId, row]));
 assert.deepEqual(manifest.cases.map(row => row.caseId).sort(), [...previous.keys()].sort());
 const catalog = await readCaseResearchCatalog();
@@ -34,11 +41,12 @@ const rows = await Promise.all(manifest.cases.map(async item => {
   const decision = await createResourceDomain(input).decide();
   assert.deepEqual(decision, before.result, item.caseId + ": complete decision");
   const inputBefore = revision(input), decisionBefore = revision(decision);
-  const scenario = buildPublicInputScenario({ actorId: "round4-measure", input, inputRevision: inputBefore }, catalog);
+  const scenario = buildPublicInputScenario({ actorId: "guidance-measure", input, inputRevision: inputBefore }, catalog);
   const scenarioBefore = revision(scenario);
   const guidance = await buildCaseGuidance(input, decision, {
     publicScenario: scenario ?? undefined, publicDirectoryCount: 4,
   });
+  const sensitivity = scenario && guidance.scenario ? buildScenarioSensitivity(scenario, guidance.scenario) : null;
   assert.equal(revision(input), inputBefore);
   assert.equal(revision(decision), decisionBefore);
   assert.equal(revision(scenario), scenarioBefore);
@@ -59,7 +67,12 @@ const rows = await Promise.all(manifest.cases.map(async item => {
     actualSecondAvailable: actualSecond,
     firstFact: guidance.oneFactPriority.priorityFactId,
     probeCount: guidance.oneFactPriority.probes.length,
-    guidance,
+    noPriorityStatus: guidance.oneFactPriority.status,
+    noPriorityFacts: decision.state !== "compared" && guidance.oneFactPriority.priorityFactId === null
+      ? guidance.actualComparison.regulatoryConditions.filter(reason => !reason.startsWith("추가 답변은 필드별 JSON")) : [],
+    sensitivitySamples: sensitivity?.samples.length ?? 0,
+    sensitivityRetained: sensitivity?.samples.filter(sample => sample.retained).length ?? 0,
+    guidance, sensitivity,
     unchangedDecisionRef: `data/evaluation/round3-20261121/results.json#/${baseline.findIndex(row => row.caseId === item.caseId)}/result`,
   };
 }));
@@ -67,6 +80,7 @@ assert.equal(rows.length, 18);
 assert.equal(revision(catalog), catalogBefore);
 const implementation = await Promise.all([
   "src/o-case-guidance.ts", "src/o-scenario-guidance.ts", "src/o-supported-scope.ts",
+  "src/o-calculation-variant.ts", "src/o-scenario-sensitivity.ts", "src/o-inquiry-reply.ts", "src/report-inquiry-reply.ts",
   "src/app-case-routes.ts", "src/app.ts", "src/app-views.ts", "src/app-feedback.ts",
   "src/report.ts", "src/report-guidance.ts", "src/report-inquiry.ts",
   "src/report-research.ts", "src/report-styles.ts",
@@ -85,6 +99,14 @@ const summary = {
   actualSeconds: rows.filter(row => row.actualSecondAvailable).length,
   heldCasesWithOneFactPriority: rows.filter(row => row.firstFact !== null).length,
   hypotheticalOneFactProbes: rows.reduce((sum, row) => sum + row.probeCount, 0),
+  heldWithoutPriorityWithRequiredFacts: rows.filter(row => row.noPriorityFacts.length > 0).length,
+  sensitivity: {
+    cases: rows.filter(row => row.sensitivitySamples > 0).length,
+    samples: rows.reduce((sum, row) => sum + row.sensitivitySamples, 0),
+    retained: rows.reduce((sum, row) => sum + row.sensitivityRetained, 0),
+    priceMultipliers: [0.8, 1, 1.2], allocationValues: [0.6, 0.8, 1],
+    interpretation: "Finite model samples; y is a model allocation, not measured substitution. No interval/extrapolation guarantee.",
+  },
   inputDecisionContextCatalogPreserved: true,
   actualIncinerationFeeAndCostRemainNull: true,
   baseline: {
@@ -99,8 +121,7 @@ const summary = {
   ],
   implementation,
 };
-await mkdir(output, { recursive: true });
 await writeFile(resolve(output, "results.json"), JSON.stringify(rows, null, 2) + "\n");
 await writeFile(resolve(output, "summary.json"), JSON.stringify(summary, null, 2) + "\n");
-await writeFile(resolve(output, "compact.json"), JSON.stringify(rows.map(({ guidance: _g, ...row }) => row), null, 2) + "\n");
+await writeFile(resolve(output, "compact.json"), JSON.stringify(rows.map(({ guidance: _g, sensitivity: _s, ...row }) => row), null, 2) + "\n");
 console.log(JSON.stringify(summary));

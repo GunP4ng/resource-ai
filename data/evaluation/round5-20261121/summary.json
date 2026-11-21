@@ -1,0 +1,120 @@
+{
+  "scope": "Same 18 exposed original inputs; text-only as prior baseline; deterministic existing rules and engine; zero model/provider calls",
+  "cases": 18,
+  "originalHashesVerified": 18,
+  "completeDecisionsUnchanged": 18,
+  "states": {
+    "compared": 8,
+    "needs-information": 6,
+    "needs-review": 4
+  },
+  "stateChanges": 0,
+  "automaticPublicScenarios": 7,
+  "conditionalOptima": 6,
+  "actualSeconds": 0,
+  "heldCasesWithOneFactPriority": 3,
+  "hypotheticalOneFactProbes": 17,
+  "heldWithoutPriorityWithRequiredFacts": 7,
+  "sensitivity": {
+    "cases": 6,
+    "samples": 54,
+    "retained": 54,
+    "priceMultipliers": [
+      0.8,
+      1,
+      1.2
+    ],
+    "allocationValues": [
+      0.6,
+      0.8,
+      1
+    ],
+    "interpretation": "Finite model samples; y is a model allocation, not measured substitution. No interval/extrapolation guarantee."
+  },
+  "inputDecisionContextCatalogPreserved": true,
+  "actualIncinerationFeeAndCostRemainNull": true,
+  "baseline": {
+    "path": "data/evaluation/round3-20261121/results.json",
+    "sha256": "0421dc4de047e9db2d505b928df5452d023c835f663abc3062e247796ed14e56"
+  },
+  "limitations": [
+    "Development inputs were exposed, not an unseen evaluation or human accuracy study.",
+    "Hypothetical route openings are not strict eligibility, facility acceptance or execution approval.",
+    "No actual rank2 is invented from the fully quantified scenario comparator.",
+    "Conditional optimum holds only for the modeled three routes, fixed other assumptions and stated fee bound."
+  ],
+  "implementation": [
+    {
+      "path": "src/o-case-guidance.ts",
+      "sha256": "4a72ee0460225d90dd297c780148408fd38066886276ae1cd4f1e3c9538f4c3f"
+    },
+    {
+      "path": "src/o-scenario-guidance.ts",
+      "sha256": "1b984c847accf4f660e8e4bd3337e9a13a718e940a1f750525ed7dbf1720bf96"
+    },
+    {
+      "path": "src/o-supported-scope.ts",
+      "sha256": "7eef83902606d9f8486143277d7558accc071f0174c2f23d3ef5459a88c46b31"
+    },
+    {
+      "path": "src/o-calculation-variant.ts",
+      "sha256": "a15136b15a13bd53297e59ead2f51c81044ae47bf9bbb2c02bb1c3c3b33a9d64"
+    },
+    {
+      "path": "src/o-scenario-sensitivity.ts",
+      "sha256": "0bab58b9d118072fda7a3109a88786164deaa259d933623aa94ee0be4af88a94"
+    },
+    {
+      "path": "src/o-inquiry-reply.ts",
+      "sha256": "3d3d873b8e778b2319beb6e1b56ecc3d80c4dbd7be54eef97316f0dc52897509"
+    },
+    {
+      "path": "src/report-inquiry-reply.ts",
+      "sha256": "f03179afe5466603714b7f86b2fa6f9f86f943a60a6bd899d79667e0caec073f"
+    },
+    {
+      "path": "src/app-case-routes.ts",
+      "sha256": "4a9783b22cbea1e7bd20325c62f72f9b89f811dc87e28fb6729f2e58368133cc"
+    },
+    {
+      "path": "src/app.ts",
+      "sha256": "1df63458e1604e445c1d08881ee511923cd65f4bdda070d19720a6062ac8a2d4"
+    },
+    {
+      "path": "src/app-views.ts",
+      "sha256": "292b5e1e983a4f8289145463260227838fcd849029c4ef4043e06af8b5922767"
+    },
+    {
+      "path": "src/app-feedback.ts",
+      "sha256": "806108410bc3c7f9d9ce8851c9210bf913e9f1c6f81fe15f144677ad253d0bbf"
+    },
+    {
+      "path": "src/report.ts",
+      "sha256": "de53d84cfe461d5103dc6116305f3a915a41d2135653dbc4c0a5ac7bc722aec2"
+    },
+    {
+      "path": "src/report-guidance.ts",
+      "sha256": "8b2dad89cd84783b95245a50ce7a5166ea4998d0eefead9ff25941dbf8225c98"
+    },
+    {
+      "path": "src/report-inquiry.ts",
+      "sha256": "82c0d7d48ff30687dba6fbfedb3091e15d511d133879465cefdf7e9b4972da35"
+    },
+    {
+      "path": "src/report-research.ts",
+      "sha256": "d8f4643f4d2aca3f7a3a964d8398b04ac91e7a495cc89ebee11190ebc043644f"
+    },
+    {
+      "path": "src/report-styles.ts",
+      "sha256": "c96f0ed897fdd69b8078b94209735cfe9c20c8a7d0f0b8d234cf61b6c063ee06"
+    },
+    {
+      "path": "scripts/measure-guidance.ts",
+      "sha256": "5b3158669b829bdb4fa230ca2c09aac58f25eb49a266bed3d420f92c928cbddb"
+    },
+    {
+      "path": "data/reference/domestic-scenario-context-20261121.json",
+      "sha256": "8beb81a06248aafe9f117807111d82f8bbd7e7da8e70f2526e9c747f48ed66c3"
+    }
+  ]
+}
