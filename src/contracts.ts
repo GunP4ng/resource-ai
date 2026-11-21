@@ -2,6 +2,10 @@
  * Design contracts only. Runtime parsing and domain operations are team work.
  * null means unknown, never zero. Units are encoded in property names.
  */
+/** One case is a batch, capped at 1,000 metric tonnes; split larger inventory by batch.
+ * This is an application scope limit, not a facility's capacity or a legal transport limit. */
+export const MAX_CASE_MASS_KG = 1_000_000;
+
 export interface CaseInput {
   readonly caseId: string;
   readonly description: string;

@@ -3,6 +3,7 @@ import type { CaseAssessment, RouteReviewContext } from "./assessment.ts";
 import { isProhibitedReviewExplanation, maskExplicitHazardDenial, safetyReasons } from "./o-safety-reasons.ts";
 import { parseDecision } from "./o-decision.ts";
 import { massQuestion } from "./input.ts";
+import { materialFamily, materialHazardReasons } from "./material-context.ts";
 
 const executionChecks = [
   "현행 허가의 유효기간·허가 범위와 해당 수지·오염 상태의 처리 가능 여부를 관할기관·업체에 확인하세요.",
@@ -26,6 +27,16 @@ export function executionChecksFor(assessment: CaseAssessment): readonly string[
 
 function publicRecyclingEvidence(assessment: CaseAssessment): readonly string[] {
   const citations = assessment.legal.citations;
+  const materialCode = citations.find(citation => citation.kind === "waste-code"
+    && /-(?:metal|wood|paper)-/.test(citation.sourceId));
+  if (materialCode) {
+    const group = materialCode.sourceId.replace(/-annex4-code$/, "");
+    const wood = group.includes("-wood-");
+    const required = ["-annex4-code", wood ? "-annex4-2-r3-4" : "-annex4-2-r3-3", "-annex4-3-types", "-annex5-3-common",
+      ...(wood ? ["-annex5-3-r3-4"] : /-metal-iron|-paper-/.test(group) ? ["-annex5-3-material"] : [])];
+    return required.every(suffix => citations.some(citation => citation.sourceId === group + suffix))
+      ? citations.filter(citation => required.some(suffix => citation.sourceId === group + suffix)).map(citation => citation.sourceId) : [];
+  }
   const required = ["-annex4-code", "-annex4-2-r3-3", "-annex4-3-types", "-annex5-3-common"] as const;
   if (!required.every(suffix => citations.some(citation => citation.sourceId.endsWith(suffix)))) return [];
   return citations.filter(citation => required.some(suffix => citation.sourceId.endsWith(suffix))).map(citation => citation.sourceId);
@@ -40,6 +51,7 @@ export function recommendationBlockers(facts: CaseInput, assessment: CaseAssessm
   // Preserve affirmative matches across fields without letting a separate field negate a complete assertion.
   const designatedSuspected = [...designatedFields, designatedFields.join(" ")].some(field => designatedHazard.test(field));
   return [
+    ...materialHazardReasons(facts),
     ...(facts.hazardousContact === "yes" ? [safetyReasons.contactClassification] : []),
     ...(designatedSuspected ? [safetyReasons.designatedSuspected] : []),
     ...(/유해물질\s*접촉\s*(?:있음|의심)|(?:suspected|confirmed)\s+hazardous\s+contact/iu.test(
@@ -79,10 +91,16 @@ export function recommend(facts: CaseInput, assessment: CaseAssessment,
   compared?: Extract<DecisionResult, { state: "compared" }>): Extract<DecisionResult, { state: "compared" }> {
   const scenarios = compared?.scenarios ?? [];
   const publicEvidence = publicRecyclingEvidence(assessment);
+  const family = materialFamily(facts);
+  const materialCode = family ? assessment.legal.citations.find(citation => citation.kind === "waste-code")
+    ?.claim.match(/\b\d{2}-\d{2}-\d{2}\b/u)?.[0] : undefined;
+  const materialLabel = family === "wood" ? "폐목재" : family === "metal" ? "폐금속" : "폐종이·포장재";
   const routes: readonly RouteAssessment[] = assessment.routes.map(route => {
     if (route.eligibility.state === "eligible") return route;
     return { ...route, eligibility: route.route === "mechanical-recycling" && publicEvidence.length > 0
-      ? { state: "conditional", evidenceIds: publicEvidence, conditions: ["공개 근거상 가능(조건부): 51-03-01의 R-3-3 원료물질 제조 유형 후보"] }
+      ? { state: "conditional", evidenceIds: publicEvidence, conditions: [
+        materialCode ? `공개 근거상 가능(조건부): ${materialCode}의 ${family === "wood" ? "R-3-4" : "R-3-3"} 원료물질 제조 유형 후보`
+          : "공개 근거상 가능(조건부): 51-03-01의 R-3-3 원료물질 제조 유형 후보"] }
       : { state: "unknown", missingFacts: ["이 경로의 용도·처리 방식에 맞는 개별 공개 근거가 부족합니다."] } };
   });
   const priority = ["mechanical-recycling", "reuse", "other-recovery", "disposal"] as const;
@@ -92,7 +110,8 @@ export function recommend(facts: CaseInput, assessment: CaseAssessment,
     const scenario = scenarios.find(item => item.routeId === route.routeId);
     return [{ routeId: route.routeId, rank: priority.indexOf(kind) + 1,
       grade: route.eligibility.state === "conditional" ? "public-conditional" : "reviewed",
-      basis: "공개 법령의 폐합성수지류 분류·허용 유형·R-3-3 정의·공통기준을 연결한 원료물질 제조 후보입니다. 실제 발생 공정을 처리 공정으로 간주하지 않으며 비용·탄소 우월성을 뜻하지 않습니다.",
+      basis: family ? `공개 법령의 ${materialLabel} 분류·${family === "wood" ? "R-3-4" : "R-3-3"} 유형·기준을 연결한 원료화 검토 후보입니다. ${family === "wood" ? "사전 분석·확인과 원료·제품 규격" : "이물질·유해성·품질 기준"} 및 실제 허가·인수 조건을 확인해야 합니다. 발생 공정을 처리 공정으로 간주하거나 비용·탄소 우월성을 확정하지 않습니다.`
+        : "공개 법령의 폐합성수지류 분류·허용 유형·R-3-3 정의·공통기준을 연결한 원료물질 제조 후보입니다. 실제 발생 공정을 처리 공정으로 간주하지 않으며 비용·탄소 우월성을 뜻하지 않습니다.",
       legalCitations: assessment.legal.citations.filter(citation => publicEvidence.includes(citation.sourceId))
         .map(({ sourceId, locator, claim }) => ({ sourceId, locator, claim })),
       cost: metric(scenario?.netCost, "KRW", facts.massKg === null), carbon: metric(scenario?.netEmissions, "kgCO2e", facts.massKg === null) }];
@@ -108,7 +127,8 @@ export function recommend(facts: CaseInput, assessment: CaseAssessment,
         ? ["검증된 공개 인용과 이 사례의 관련성이 약해 확신도를 낮췄습니다. 개별 적용 여부는 추가 확인이 필요합니다."] : []),
       ...(scenarios.length ? ["검증된 자료의 계산값에도 적용 조건이 있습니다."] : ["비용·탄소 비교값이 없어 검토 순서만 제시합니다."]),
     ] },
-    preExecutionChecks: executionChecksFor(assessment),
+    preExecutionChecks: family ? executionChecksFor(assessment).map(check => check.replaceAll("수지", "재질·품목"))
+      : executionChecksFor(assessment),
     limitations: [...(compared?.limitations ?? []), "추천 후보, 실행 전 확인 필요. 실행·반출·계약의 승인 결과가 아닙니다.",
       "추천 순위는 검토 순서입니다. 검증되지 않은 수치·폐기물 코드·업체 허가를 추정하지 않습니다."],
   } satisfies Extract<DecisionResult, { state: "compared" }>;

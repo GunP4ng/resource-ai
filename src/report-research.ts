@@ -8,6 +8,7 @@ const routeNames = { recycling: "재활용 시나리오", landfill: "매립 시�
 export { routeNames as publicScenarioNames };
 const missingNames: Readonly<Record<string, string>> = {
   missing_mass: "질량 미확보", "missing:f_inc": "소각 처리비 미확보",
+  arithmetic_overflow: "수치 계산 범위 초과로 미산정 · 질량과 단위를 확인해 주세요",
   "missing:PP.price": "PP 가격 미확보", "missing:PP.y": "PP 수율 미확보",
 };
 function missingReason(reasons: readonly string[]): string {

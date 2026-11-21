@@ -79,7 +79,7 @@ export function createResourceDomain(input: CaseInput, resources: DomainResource
       const hold = (...reasons: readonly string[]): DecisionResult => ({ state: "needs-review", caseId: facts.caseId,
         evidence: fallback.evidence,
         conditionalAlternatives: fallback.state === "compared" ? [] : fallback.conditionalAlternatives,
-        reasons: [...new Set([...reasons, ...assessment.questions])], preExecutionChecks: executionChecksFor(recommendationAssessment) });
+        reasons: [...new Set([...reasons, ...assessment.questions.filter(question => question !== massQuestion)])], preExecutionChecks: executionChecksFor(recommendationAssessment) });
       let result: DecisionResult = fallback;
       try {
         if (assessment.reviewIssues.length > 0) {

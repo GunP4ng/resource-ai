@@ -3,15 +3,16 @@ import { Value } from "typebox/value";
 import type { CaseInput, DecisionResult, EvidenceRecord, ResourceDomain, RouteAssessment } from "./contracts.ts";
 import { lookupLegalEvidence, pendingLegalSources } from "./evidence.ts";
 import type { EvidenceLookup, PendingLegalLookup } from "./evidence.ts";
-import { collectMissingQuestions, parseCaseInput } from "./input.ts";
+import { collectMissingQuestions, massQuestion, parseCaseInput, resinQuestion } from "./input.ts";
 import type { InputIssue } from "./input.ts";
 import { assertPhotoObservations, photoObservationQuestions } from "./photo-observations.ts";
 import type { PhotoObservations } from "./photo-observations.ts";
 import { parseDecision } from "./o-decision.ts";
-import { canonical, DocumentSchema, EvidenceSchema, requireValid, revision, RouteKindSchema, strings, text, unique as uniqueIds, ValidationError } from "./o-validation.ts";
+import { canonical, DocumentSchema, EvidenceSchema, isUnknownCaseText, requireValid, revision, RouteKindSchema, strings, text, unique as uniqueIds, ValidationError } from "./o-validation.ts";
 import type { EvidenceContext } from "./o-validation.ts";
 import { conditionalAlternatives } from "./conditional-alternatives.ts";
 import { safetyReasons } from "./o-safety-reasons.ts";
+import { materialFamily, materialHazardReasons, materialQuestions, materialStream } from "./material-context.ts";
 
 const ReviewSchema = Type.Object({
   caseId: text, caseRevision: text, route: RouteKindSchema,
@@ -72,6 +73,7 @@ const routeChecks: Readonly<Record<RouteAssessment["route"], string>> = {
 };
 const routeKinds = ["reuse", "mechanical-recycling", "other-recovery", "disposal"] as const;
 const unique = (values: readonly string[]): readonly string[] => [...new Set(values)];
+const mixtureQuestion = "혼합·다층 또는 라벨 불일치가 보고되었습니다. 층별·구성 수지의 재질 명세, 라벨 확인 자료와 수지별 분리 가능 여부를 확인할 수 있나요?";
 
 /** Ask about explicitly reported ambiguity; never classify material from image appearance. */
 function contextQuestions(facts: CaseInput): readonly string[] {
@@ -81,9 +83,9 @@ function contextQuestions(facts: CaseInput): readonly string[] {
     .replace(/\b(?:not|non)[ -]*(?:mixed|multilayer|blended)\b/giu, "");
   const pairs = reported.matchAll(/\b(PET|HDPE|LDPE|PP|PS|PVC|ABS|PE)\s*[\/+]\s*(PET|HDPE|LDPE|PP|PS|PVC|ABS|PE)\b/giu);
   const multiple = [...pairs].some(pair => pair[1]!.toUpperCase() !== pair[2]!.toUpperCase());
-  if (multiple || /혼합|다층|복합|블렌드|\b(?:mixed|multilayer|blend)\b/iu.test(reported)
+  if (multiple || (materialFamily(facts) === null && materialStream(facts) !== "carton" && /혼합|다층|복합|블렌드|\b(?:mixed|multilayer|blend)\b/iu.test(reported))
     || /불일치|상충|일치하지|label\s*(?:conflict|mismatch)/iu.test(reported)) {
-    questions.push("혼합·다층 또는 라벨 불일치가 보고되었습니다. 층별·구성 수지의 재질 명세, 라벨 확인 자료와 수지별 분리 가능 여부를 확인할 수 있나요?");
+    questions.push(mixtureQuestion);
   }
   // A populated answer such as "washed, previous contents unknown" is not a resolved fact.
   // Ask for records without changing hazardousContact or declaring a hazardous waste code.
@@ -110,12 +112,16 @@ export function assessCase(input: CaseInput, options: AssessmentOptions = {}, re
   }
   const facts = parsed.value;
   if (photoObservations !== undefined) assertPhotoObservations(facts, photoObservations);
-  const questions = unique([...collectMissingQuestions(facts), ...contextQuestions(facts),
+  const context = contextQuestions(facts);
+  const missing = collectMissingQuestions(facts).filter(question =>
+    question !== resinQuestion || !context.includes(mixtureQuestion));
+  const questions = unique([...missing, ...context, ...materialQuestions(facts),
     ...(photoObservations === undefined ? [] : photoObservationQuestions(facts, photoObservations))]);
   // J returns references to its registry records. Do not expose mutable registry aliases.
   const legal = structuredClone(lookupLegalEvidence(facts, undefined, { intendedUse }));
   const pendingLegal = structuredClone(pendingLegalSources(facts));
   const reviewReasons = unique([
+    ...materialHazardReasons(facts),
     ...(facts.hazardousContact === "yes"
       ? [safetyReasons.contactReported] : []),
     ...legal.reviewRequirements,
@@ -156,7 +162,7 @@ export function assessCase(input: CaseInput, options: AssessmentOptions = {}, re
     const review = reviews?.reviews.find((item) => item.route === route);
     if (review === undefined || reviews === undefined) return hold();
     // Rejected citations do not invalidate other applicable sources or route reviews.
-    if (questions.length || facts.hazardousContact !== "no" || !legal.evidence.length) return hold("case-context-unresolved");
+    if (questions.length || facts.hazardousContact !== "no" || materialHazardReasons(facts).length || !legal.evidence.length) return hold("case-context-unresolved");
     try {
       requireValid(review.caseId === facts.caseId && review.caseRevision === revision(facts), "case-revision-mismatch");
       uniqueIds(review.legalEvidence.map((record) => record.sourceId));
@@ -187,7 +193,7 @@ export function assessCase(input: CaseInput, options: AssessmentOptions = {}, re
     }
   });
   const candidates: CaseAssessment["candidates"] = {
-    resins: facts.polymer?.trim() ? [{ value: facts.polymer, basis: "reported-input" }] : [],
+    resins: facts.polymer !== null && !isUnknownCaseText(facts.polymer) ? [{ value: facts.polymer, basis: "reported-input" }] : [],
     wasteCodes: legal.citations.filter((citation) => citation.kind === "waste-code").flatMap((citation) => {
       const record = legal.evidence.find((item) => item.sourceId === citation.sourceId);
       if (!record) return [];
@@ -256,6 +262,6 @@ export function decideCase(input: CaseInput, proposal?: unknown, options: Assess
       ...assessment.routes.flatMap((route) => route.eligibility.state === "unknown" ? route.eligibility.missingFacts
         : route.eligibility.state === "ineligible" ? route.eligibility.reasons : []),
       "현장 담당자의 검토와 승인 전에는 반출·계약·처리를 실행할 수 없습니다.",
-    ]),
+    ]).filter(reason => reason !== massQuestion),
   };
 }

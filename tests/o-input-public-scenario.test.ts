@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import type { CaseInput } from "../src/contracts.ts";
 import { readCaseResearchCatalog } from "../src/o-case-research.ts";
-import { buildPublicInputScenario } from "../src/o-input-public-scenario.ts";
+import { buildPublicInputScenario, publicScenarioEligibility } from "../src/o-input-public-scenario.ts";
 import { revision } from "../src/o-validation.ts";
 import type { PublicCalculationResult } from "../src/o-public-calculation-schema.ts";
 
@@ -85,9 +85,25 @@ test("unsupported or mixed polymers and missing nonpositive or nonfinite masses 
   for (const polymer of [null, "", "unknown", "PP", "PET/HDPE", "PET mixed", "PET+PP"]) {
     assert.equal(buildPublicInputScenario(target({ ...input, polymer }), data), null);
   }
-  for (const massKg of [null, 0, -1, NaN, Infinity, -Infinity]) {
+  for (const massKg of [null, 0, -1, NaN, Infinity, -Infinity, 1000001, 1e306]) {
     assert.equal(buildPublicInputScenario(target({ ...input, massKg }), data), null);
   }
   assert.throws(() => buildPublicInputScenario({ ...target(input), inputRevision: "a".repeat(64) }, data));
   assert.throws(() => buildPublicInputScenario({ ...target(input), actorId: "" }, data));
+});
+
+test("#111 public calculations use the same explicit PET and HDPE aliases as the decision", async () => {
+  const data = await catalog;
+  for (const [polymer, material] of [
+    ["PET(폴리에틸렌테레프탈레이트)", "PET"],
+    ["Polyethylene terephthalate", "PET"], ["ＰＥＴ", "PET"],
+    ["HDPE(고밀도 폴리에틸렌)", "HDPE"], ["High-density polyethylene", "HDPE"],
+  ] as const) {
+    const facts = { ...input, polymer };
+    assert.deepEqual(publicScenarioEligibility(facts), { status: "available", material, massKg: 24 });
+    const result = buildPublicInputScenario(target(facts), data);
+    assert.ok(result);
+    assert.equal(result.material, material);
+    assert.equal(result.binding.inputRevision, revision(facts));
+  }
 });

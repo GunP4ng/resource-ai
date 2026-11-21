@@ -1,10 +1,11 @@
 import type { CaseInput } from "./contracts.ts";
+import { MAX_CASE_MASS_KG } from "./contracts.ts";
 import { escapeHtml, page } from "./report-html.ts";
 import { caseFormTextLimits, HttpFailure } from "./app-http.ts";
 
 const exampleStart = '<p class="cluster screen-only"><a class="primary-action" data-example-start href="/demo/normal">예시로 시작</a><span>합성 사례 · 외부 모델 호출 없음</span></p>';
 const textFields = [
-  ["description", "폐자원 설명"], ["process", "발생 공정"], ["polymer", "수지"],
+  ["description", "폐자원 설명"], ["process", "발생 공정"], ["polymer", "재질·수지"],
   ["contamination", "오염 상태"], ["region", "발생 지역"], ["assessmentDate", "평가 기준일"],
 ] as const;
 export function nativeAnswer(raw: Readonly<Record<string, unknown>>): Readonly<Record<string, unknown>> {
@@ -30,28 +31,32 @@ export function nativeAnswer(raw: Readonly<Record<string, unknown>>): Readonly<R
   if (Object.keys(patch).length === 0) throw new HttpFailure(400, "수정할 사례 필드를 입력하세요.");
   return patch;
 }
-function fields(input?: CaseInput, editing = false): string {
+function fields(input?: CaseInput, editing = false, draft?: Readonly<Record<string, unknown>>): string {
   const prefix = editing ? "field_" : "";
-  const massField = `<label for="${prefix}massKg">질량 (kg, 0보다 큰 숫자, 미상은 공란)</label><input id="${prefix}massKg" name="${prefix}massKg" type="number" min="0" step="any" value="${input?.massKg ?? ""}">`;
+  const supplied = (field: string, fallback: string): string => {
+    const value = draft?.[prefix + field];
+    return typeof value === "string" ? value : fallback;
+  };
+  const massField = `<label for="${prefix}massKg">질량 (kg, 0 초과 ~ ${MAX_CASE_MASS_KG.toLocaleString("ko-KR")} 이하, 미상은 공란)</label><input id="${prefix}massKg" name="${prefix}massKg" type="number" min="0" max="${MAX_CASE_MASS_KG}" step="any" value="${escapeHtml(supplied("massKg", String(input?.massKg ?? "")))}"><p>한 사례는 최대 ${MAX_CASE_MASS_KG / 1000}톤의 배치입니다. 더 큰 물량은 배치별로 나누고 kg 단위를 확인해 주세요.</p>`;
   const text = textFields.map(([field, label]) => {
     const id = prefix + field;
-    const value = input?.[field] ?? "";
+    const value = supplied(field, input?.[field] ?? "");
     return `<label for="${id}">${label}${field !== "description" && field !== "assessmentDate" ? " (미상은 공란)" : ""}</label>
       ${field === "description" ? `<textarea id="${id}" name="${id}" required maxlength="${caseFormTextLimits.description}">${escapeHtml(value)}</textarea>` : `<input id="${id}" name="${id}" ${field === "assessmentDate" ? 'type="date" required' : `maxlength="${caseFormTextLimits[field]}"`} value="${escapeHtml(value)}">`}`;
   });
   const hazardous = `<label for="${prefix}hazardousContact">유해물질 접촉</label><select id="${prefix}hazardousContact" name="${prefix}hazardousContact">
-     ${([["unknown", "미상"], ["yes", "있음"], ["no", "없음"]] as const).map(([value, label]) => `<option value="${value}" ${(input?.hazardousContact ?? "unknown") === value ? "selected" : ""}>${label}</option>`).join("")}</select>`;
+     ${([["unknown", "미상"], ["yes", "있음"], ["no", "없음"]] as const).map(([value, label]) => `<option value="${value}" ${supplied("hazardousContact", input?.hazardousContact ?? "unknown") === value ? "selected" : ""}>${label}</option>`).join("")}</select>`;
   if (!editing) return text.slice(0, 4).join("") + hazardous + massField + text.slice(4).join("");
   const remaining = text.slice(1, 4).join("") + hazardous + text.slice(4, 5).join("") + text[0] + text[5];
   const massOnly = input?.massKg === null && input.hazardousContact === "no"
     && [input.process, input.polymer, input.contamination, input.region].every(value => value !== null && value.trim() !== "");
   return massOnly ? massField + remaining : remaining + massField;
 }
-export function form(action: string, answers = false, version?: number, selection = "", input?: CaseInput): string {
+export function form(action: string, answers = false, version?: number, selection = "", input?: CaseInput, draft?: Readonly<Record<string, unknown>>): string {
   const versionField = version === undefined ? "" : `<input type="hidden" name="baseVersion" value="${version}">`;
-  if (!answers) return `<form method="post" action="${escapeHtml(action)}">${fields()}<p>사진은 사례를 만든 후 별도로 업로드하세요.</p><button type="submit">사례 제출</button></form>`;
+  if (!answers) return `<form method="post" action="${escapeHtml(action)}">${fields(undefined, false, draft)}<p>사진은 사례를 만든 후 별도로 업로드하세요.</p><button type="submit">사례 제출</button></form>`;
   const native = input ? `<h2 id="answer-fields" tabindex="-1">답변·사례 수정</h2><p>현재 입력을 표시합니다. 바꿀 항목을 수정하세요. 공란은 미상이며 질량 단위는 kg입니다. 그대로 제출해도 실제 입력값으로 다시 평가합니다.</p>
-    <form method="post" action="${escapeHtml(action)}">${versionField}<input type="hidden" name="answerMode" value="fields">${fields(input, true)}${selection}
+    <form method="post" action="${escapeHtml(action)}">${versionField}<input type="hidden" name="answerMode" value="fields">${fields(input, true, draft)}${selection}
       <button type="submit">자료 반영해 다시 평가하기</button></form>` : "";
   return `${native}<details><summary>고급 JSON으로 답변·수정하기</summary><form method="post" action="${escapeHtml(action)}">${versionField}
     <label for="answers">사례 필드 답변·수정 (JSON 객체)</label><p id="answers-help">수정할 필드만 입력하세요. 생략한 필드는 유지됩니다. 허용되는 필드의 null은 미상이며 숫자에는 따옴표를 붙이지 않습니다. caseId와 판정·승인은 수정할 수 없습니다.</p>
@@ -76,7 +81,7 @@ export function caseListPage(rows: string, localAuth: boolean, deadlineLabel: st
 export function inputPage(options: InputView): string {
   const { authenticated, localAuth, connected, photoEnabled, runner } = options;
   const runnerLabel = runner ? runners[runner] : "미제공";
-  const purpose = "<p>공정에서 나온 폐플라스틱의 재사용·재활용·처리 대안을 비교합니다. 재질과 오염 상태를 입력하면 조건별 대안, 공개 근거, 비용·탄소 자료와 다음 확인할 일을 보여 줍니다.</p><p>정보가 부족하거나 위험이 의심되면 실행을 보류하고, 어떤 조건을 확인해야 다음 대안을 검토할 수 있는지 안내합니다.</p>";
+  const purpose = "<p>공정에서 나온 폐플라스틱·금속 스크랩·폐목재·종이 및 복합 포장재의 재사용·재활용·처리 대안을 검토합니다. 재질과 오염 상태를 입력하면 조건별 대안, 공개 근거와 다음 확인할 일을 보여 줍니다.</p><p>정보가 부족하거나 위험이 의심되면 실행을 보류하고, 어떤 조건을 확인해야 다음 대안을 검토할 수 있는지 안내합니다.</p>";
   if (authenticated && localAuth) return page("사례 입력", `<h1>폐자원 조건부 검토</h1>${exampleStart}${purpose}<p class="notice">로그인한 담당자 · 사례 보관 최대 1시간 · 검토 방식 ${runnerLabel} · 실행 성공은 평가 후 확인</p><p>입력은 미검토 자료입니다. 로그인은 자료나 법적 승인을 뜻하지 않습니다.</p><p><a href="/cases">내 사례·복구</a></p>${form("/cases")}<p>사진: ${photoEnabled ? "비공개 저장 전용" : "저장 비활성"}</p><p><a href="/demo/normal">합성 비교 데모</a></p>`);
   return page("사례 입력", `<h1>폐자원 조건부 검토</h1>
           ${exampleStart}${purpose}<p class="notice">${connected ? "입력을 받아 검토할 준비가 됐습니다. 제출 후 결과를 확인하세요." : "사례 검토 연결을 준비 중입니다. 지금 제출하면 준비 상태를 안내합니다."}</p>

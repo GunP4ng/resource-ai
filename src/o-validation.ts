@@ -9,6 +9,12 @@ export class ValidationError extends Error {
 export function requireValid(condition: boolean, reason: string): asserts condition {
   if (!condition) throw new ValidationError(reason);
 }
+/** Whole input fields require an exact answer; an identified status clause may include explanatory text. */
+export function isUnknownCaseText(value: string | null | undefined, scope: "field" | "clause" = "field"): boolean {
+  const normalized = (value ?? "").normalize("NFKC").replace(/\s+/gu, "");
+  const unknown = /미상|미확인|불명|모름|모른다|알수없음|알수없다|알수없습니다|unknown/iu.exec(normalized);
+  return normalized === "" || (scope === "clause" ? unknown !== null : unknown?.[0] === normalized);
+}
 export const text = Type.String({ minLength: 1, pattern: "\\S" });
 export const strings = Type.Array(text);
 export const nullableText = Type.Union([text, Type.Null()]);

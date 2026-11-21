@@ -828,6 +828,798 @@
         "식품용기 재생원료의 적용범위·시설·품질·식약처 인정 증빙 미확인: 적합 판정 보류."
       ],
       "legalFamily": "waste-rule"
+    },
+    {
+      "sourceId": "legal-291947-metal-iron-annex4-code",
+      "category": "law",
+      "title": "폐기물관리법 시행규칙 별표 4 metal/iron 발췌",
+      "publisher": "국가법령정보센터",
+      "url": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400799&bylClsCd=110201",
+      "downloadUrl": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400799&bylClsCd=110201",
+      "retrievedAt": "2026-11-21T11:37:49Z",
+      "datasetVersion": "lsiSeq=291947; 시행 2026-11-12; 별표 개정 2025-12-30",
+      "sourceDate": "2025-12-30",
+      "effectiveFrom": "2026-11-12",
+      "effectiveTo": null,
+      "sha256": "1e6be061f1993734449cbb8ef1f7b6251cfc3a045fc0ff334e208cc60910d6b4",
+      "license": "저작권법 제7조 제1호 비보호저작물 (법령·별표 원문)",
+      "licenseVerified": true,
+      "access": "bundled",
+      "localPath": "data/sources/snapshots/legal-291947-metal-iron-annex4-code.txt",
+      "derivedFrom": "cbfff5b2561b1ed566142de2d6549c02f86265ba510a987a74e3585a757624b3",
+      "legalFamily": "waste-rule",
+      "verifiedFields": [
+        "선택 인용 원문",
+        "현행 연결 원본 해시 일치"
+      ],
+      "missing": [
+        "실제 사례 적합성·허가·인수 및 시험증빙 미확인"
+      ]
+    },
+    {
+      "sourceId": "legal-291947-metal-iron-annex4-2-r3-3",
+      "category": "law",
+      "title": "폐기물관리법 시행규칙 별표 4-2 metal/iron 발췌",
+      "publisher": "국가법령정보센터",
+      "url": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400831&bylClsCd=110201",
+      "downloadUrl": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400831&bylClsCd=110201",
+      "retrievedAt": "2026-11-21T11:37:49Z",
+      "datasetVersion": "lsiSeq=291947; 시행 2026-11-12; 별표 개정 2025-12-30",
+      "sourceDate": "2025-12-30",
+      "effectiveFrom": "2026-11-12",
+      "effectiveTo": null,
+      "sha256": "32abd3c2990fd1080fab8bee37ed642990f466ff5d5f55b5dda4bb21832c9866",
+      "license": "저작권법 제7조 제1호 비보호저작물 (법령·별표 원문)",
+      "licenseVerified": true,
+      "access": "bundled",
+      "localPath": "data/sources/snapshots/legal-291947-metal-iron-annex4-2-r3-3.txt",
+      "derivedFrom": "72f755c69cb86f9ba3f068fbed755178308071822d6a4a5805197dadc1b792f3",
+      "legalFamily": "waste-rule",
+      "verifiedFields": [
+        "선택 인용 원문",
+        "현행 연결 원본 해시 일치"
+      ],
+      "missing": [
+        "실제 사례 적합성·허가·인수 및 시험증빙 미확인"
+      ]
+    },
+    {
+      "sourceId": "legal-291947-metal-iron-annex4-3-types",
+      "category": "law",
+      "title": "폐기물관리법 시행규칙 별표 4-3 metal/iron 발췌",
+      "publisher": "국가법령정보센터",
+      "url": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400843&bylClsCd=110201",
+      "downloadUrl": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400843&bylClsCd=110201",
+      "retrievedAt": "2026-11-21T11:37:49Z",
+      "datasetVersion": "lsiSeq=291947; 시행 2026-11-12; 별표 개정 2025-12-30",
+      "sourceDate": "2025-12-30",
+      "effectiveFrom": "2026-11-12",
+      "effectiveTo": null,
+      "sha256": "f00a2eb7a68d71135f3642ad495407f6bf5eb56eb33befe928fc8d7a0a08d587",
+      "license": "저작권법 제7조 제1호 비보호저작물 (법령·별표 원문)",
+      "licenseVerified": true,
+      "access": "bundled",
+      "localPath": "data/sources/snapshots/legal-291947-metal-iron-annex4-3-types.txt",
+      "derivedFrom": "34983e831af31bfdfd0e9e350fdbe435dd0a942364e23ec2e27bbac4a7b6ac48",
+      "legalFamily": "waste-rule",
+      "verifiedFields": [
+        "선택 인용 원문",
+        "현행 연결 원본 해시 일치",
+        "별표4의3 행 화면 대조"
+      ],
+      "missing": [
+        "실제 사례 적합성·허가·인수 및 시험증빙 미확인"
+      ]
+    },
+    {
+      "sourceId": "legal-291947-metal-iron-annex5-3-common",
+      "category": "law",
+      "title": "폐기물관리법 시행규칙 별표 5-3 metal/iron 발췌",
+      "publisher": "국가법령정보센터",
+      "url": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400985&bylClsCd=110201",
+      "downloadUrl": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400985&bylClsCd=110201",
+      "retrievedAt": "2026-11-21T11:37:49Z",
+      "datasetVersion": "lsiSeq=291947; 시행 2026-11-12; 별표 개정 2025-12-30",
+      "sourceDate": "2025-12-30",
+      "effectiveFrom": "2026-11-12",
+      "effectiveTo": null,
+      "sha256": "9401218bceb11e1da76d7a3f8195c07373190be9af0da8249036ff62e2ac4cb4",
+      "license": "저작권법 제7조 제1호 비보호저작물 (법령·별표 원문)",
+      "licenseVerified": true,
+      "access": "bundled",
+      "localPath": "data/sources/snapshots/legal-291947-metal-iron-annex5-3-common.txt",
+      "derivedFrom": "c2960243df802adf97262a33bc79902940abc41cb393e519a3d5a1bead1926ef",
+      "legalFamily": "waste-rule",
+      "verifiedFields": [
+        "선택 인용 원문",
+        "현행 연결 원본 해시 일치"
+      ],
+      "missing": [
+        "실제 사례 적합성·허가·인수 및 시험증빙 미확인"
+      ]
+    },
+    {
+      "sourceId": "legal-291947-metal-iron-annex5-3-material",
+      "category": "law",
+      "title": "폐기물관리법 시행규칙 별표 5-3 metal/iron 발췌",
+      "publisher": "국가법령정보센터",
+      "url": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400985&bylClsCd=110201",
+      "downloadUrl": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400985&bylClsCd=110201",
+      "retrievedAt": "2026-11-21T11:37:49Z",
+      "datasetVersion": "lsiSeq=291947; 시행 2026-11-12; 별표 개정 2025-12-30",
+      "sourceDate": "2025-12-30",
+      "effectiveFrom": "2026-11-12",
+      "effectiveTo": null,
+      "sha256": "282c6bfb2d465b84b54df719080a058d935d14b0527a1bf0d9403a114cf65f59",
+      "license": "저작권법 제7조 제1호 비보호저작물 (법령·별표 원문)",
+      "licenseVerified": true,
+      "access": "bundled",
+      "localPath": "data/sources/snapshots/legal-291947-metal-iron-annex5-3-material.txt",
+      "derivedFrom": "c2960243df802adf97262a33bc79902940abc41cb393e519a3d5a1bead1926ef",
+      "legalFamily": "waste-rule",
+      "verifiedFields": [
+        "선택 인용 원문",
+        "현행 연결 원본 해시 일치"
+      ],
+      "missing": [
+        "실제 사례 적합성·허가·인수 및 시험증빙 미확인"
+      ]
+    },
+    {
+      "sourceId": "legal-291947-metal-nonferrous-annex4-code",
+      "category": "law",
+      "title": "폐기물관리법 시행규칙 별표 4 metal/nonferrous 발췌",
+      "publisher": "국가법령정보센터",
+      "url": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400799&bylClsCd=110201",
+      "downloadUrl": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400799&bylClsCd=110201",
+      "retrievedAt": "2026-11-21T11:37:49Z",
+      "datasetVersion": "lsiSeq=291947; 시행 2026-11-12; 별표 개정 2025-12-30",
+      "sourceDate": "2025-12-30",
+      "effectiveFrom": "2026-11-12",
+      "effectiveTo": null,
+      "sha256": "8a53d62c31c52df1ad762bee466daa7ea9dcb6025656c5f6d7f7011046469ba3",
+      "license": "저작권법 제7조 제1호 비보호저작물 (법령·별표 원문)",
+      "licenseVerified": true,
+      "access": "bundled",
+      "localPath": "data/sources/snapshots/legal-291947-metal-nonferrous-annex4-code.txt",
+      "derivedFrom": "cbfff5b2561b1ed566142de2d6549c02f86265ba510a987a74e3585a757624b3",
+      "legalFamily": "waste-rule",
+      "verifiedFields": [
+        "선택 인용 원문",
+        "현행 연결 원본 해시 일치"
+      ],
+      "missing": [
+        "실제 사례 적합성·허가·인수 및 시험증빙 미확인"
+      ]
+    },
+    {
+      "sourceId": "legal-291947-metal-nonferrous-annex4-2-r3-3",
+      "category": "law",
+      "title": "폐기물관리법 시행규칙 별표 4-2 metal/nonferrous 발췌",
+      "publisher": "국가법령정보센터",
+      "url": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400831&bylClsCd=110201",
+      "downloadUrl": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400831&bylClsCd=110201",
+      "retrievedAt": "2026-11-21T11:37:49Z",
+      "datasetVersion": "lsiSeq=291947; 시행 2026-11-12; 별표 개정 2025-12-30",
+      "sourceDate": "2025-12-30",
+      "effectiveFrom": "2026-11-12",
+      "effectiveTo": null,
+      "sha256": "32abd3c2990fd1080fab8bee37ed642990f466ff5d5f55b5dda4bb21832c9866",
+      "license": "저작권법 제7조 제1호 비보호저작물 (법령·별표 원문)",
+      "licenseVerified": true,
+      "access": "bundled",
+      "localPath": "data/sources/snapshots/legal-291947-metal-nonferrous-annex4-2-r3-3.txt",
+      "derivedFrom": "72f755c69cb86f9ba3f068fbed755178308071822d6a4a5805197dadc1b792f3",
+      "legalFamily": "waste-rule",
+      "verifiedFields": [
+        "선택 인용 원문",
+        "현행 연결 원본 해시 일치"
+      ],
+      "missing": [
+        "실제 사례 적합성·허가·인수 및 시험증빙 미확인"
+      ]
+    },
+    {
+      "sourceId": "legal-291947-metal-nonferrous-annex4-3-types",
+      "category": "law",
+      "title": "폐기물관리법 시행규칙 별표 4-3 metal/nonferrous 발췌",
+      "publisher": "국가법령정보센터",
+      "url": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400843&bylClsCd=110201",
+      "downloadUrl": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400843&bylClsCd=110201",
+      "retrievedAt": "2026-11-21T11:37:49Z",
+      "datasetVersion": "lsiSeq=291947; 시행 2026-11-12; 별표 개정 2025-12-30",
+      "sourceDate": "2025-12-30",
+      "effectiveFrom": "2026-11-12",
+      "effectiveTo": null,
+      "sha256": "21bd529bde151f3f12bc6df4cef95e4302470183c15346a448bd02186b3ad088",
+      "license": "저작권법 제7조 제1호 비보호저작물 (법령·별표 원문)",
+      "licenseVerified": true,
+      "access": "bundled",
+      "localPath": "data/sources/snapshots/legal-291947-metal-nonferrous-annex4-3-types.txt",
+      "derivedFrom": "34983e831af31bfdfd0e9e350fdbe435dd0a942364e23ec2e27bbac4a7b6ac48",
+      "legalFamily": "waste-rule",
+      "verifiedFields": [
+        "선택 인용 원문",
+        "현행 연결 원본 해시 일치",
+        "별표4의3 행 화면 대조"
+      ],
+      "missing": [
+        "실제 사례 적합성·허가·인수 및 시험증빙 미확인"
+      ]
+    },
+    {
+      "sourceId": "legal-291947-metal-nonferrous-annex5-3-common",
+      "category": "law",
+      "title": "폐기물관리법 시행규칙 별표 5-3 metal/nonferrous 발췌",
+      "publisher": "국가법령정보센터",
+      "url": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400985&bylClsCd=110201",
+      "downloadUrl": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400985&bylClsCd=110201",
+      "retrievedAt": "2026-11-21T11:37:49Z",
+      "datasetVersion": "lsiSeq=291947; 시행 2026-11-12; 별표 개정 2025-12-30",
+      "sourceDate": "2025-12-30",
+      "effectiveFrom": "2026-11-12",
+      "effectiveTo": null,
+      "sha256": "9401218bceb11e1da76d7a3f8195c07373190be9af0da8249036ff62e2ac4cb4",
+      "license": "저작권법 제7조 제1호 비보호저작물 (법령·별표 원문)",
+      "licenseVerified": true,
+      "access": "bundled",
+      "localPath": "data/sources/snapshots/legal-291947-metal-nonferrous-annex5-3-common.txt",
+      "derivedFrom": "c2960243df802adf97262a33bc79902940abc41cb393e519a3d5a1bead1926ef",
+      "legalFamily": "waste-rule",
+      "verifiedFields": [
+        "선택 인용 원문",
+        "현행 연결 원본 해시 일치"
+      ],
+      "missing": [
+        "실제 사례 적합성·허가·인수 및 시험증빙 미확인"
+      ]
+    },
+    {
+      "sourceId": "legal-291947-wood-raw-byproduct-annex4-code",
+      "category": "law",
+      "title": "폐기물관리법 시행규칙 별표 4 wood/raw-byproduct 발췌",
+      "publisher": "국가법령정보센터",
+      "url": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400799&bylClsCd=110201",
+      "downloadUrl": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400799&bylClsCd=110201",
+      "retrievedAt": "2026-11-21T11:37:49Z",
+      "datasetVersion": "lsiSeq=291947; 시행 2026-11-12; 별표 개정 2025-12-30",
+      "sourceDate": "2025-12-30",
+      "effectiveFrom": "2026-11-12",
+      "effectiveTo": null,
+      "sha256": "d06a37b72f85fc4bd470dd1fe7471bffbf27dff2aa93ad7fdcd309648e73ba8a",
+      "license": "저작권법 제7조 제1호 비보호저작물 (법령·별표 원문)",
+      "licenseVerified": true,
+      "access": "bundled",
+      "localPath": "data/sources/snapshots/legal-291947-wood-raw-byproduct-annex4-code.txt",
+      "derivedFrom": "cbfff5b2561b1ed566142de2d6549c02f86265ba510a987a74e3585a757624b3",
+      "legalFamily": "waste-rule",
+      "verifiedFields": [
+        "선택 인용 원문",
+        "현행 연결 원본 해시 일치"
+      ],
+      "missing": [
+        "실제 사례 적합성·허가·인수 및 시험증빙 미확인"
+      ]
+    },
+    {
+      "sourceId": "legal-291947-wood-raw-byproduct-annex4-2-r3-4",
+      "category": "law",
+      "title": "폐기물관리법 시행규칙 별표 4-2 wood/raw-byproduct 발췌",
+      "publisher": "국가법령정보센터",
+      "url": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400831&bylClsCd=110201",
+      "downloadUrl": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400831&bylClsCd=110201",
+      "retrievedAt": "2026-11-21T11:37:49Z",
+      "datasetVersion": "lsiSeq=291947; 시행 2026-11-12; 별표 개정 2025-12-30",
+      "sourceDate": "2025-12-30",
+      "effectiveFrom": "2026-11-12",
+      "effectiveTo": null,
+      "sha256": "58231d7897a45ce23408a7dec2690b7448522810a4a9fbc36dc4945e4001f3a8",
+      "license": "저작권법 제7조 제1호 비보호저작물 (법령·별표 원문)",
+      "licenseVerified": true,
+      "access": "bundled",
+      "localPath": "data/sources/snapshots/legal-291947-wood-raw-byproduct-annex4-2-r3-4.txt",
+      "derivedFrom": "72f755c69cb86f9ba3f068fbed755178308071822d6a4a5805197dadc1b792f3",
+      "legalFamily": "waste-rule",
+      "verifiedFields": [
+        "선택 인용 원문",
+        "현행 연결 원본 해시 일치"
+      ],
+      "missing": [
+        "실제 사례 적합성·허가·인수 및 시험증빙 미확인"
+      ]
+    },
+    {
+      "sourceId": "legal-291947-wood-raw-byproduct-annex4-3-types",
+      "category": "law",
+      "title": "폐기물관리법 시행규칙 별표 4-3 wood/raw-byproduct 발췌",
+      "publisher": "국가법령정보센터",
+      "url": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400843&bylClsCd=110201",
+      "downloadUrl": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400843&bylClsCd=110201",
+      "retrievedAt": "2026-11-21T11:37:49Z",
+      "datasetVersion": "lsiSeq=291947; 시행 2026-11-12; 별표 개정 2025-12-30",
+      "sourceDate": "2025-12-30",
+      "effectiveFrom": "2026-11-12",
+      "effectiveTo": null,
+      "sha256": "79fd261ad6a0087e81387fabdfb5f19aae9aa41fde01ac0c23471b11259e940e",
+      "license": "저작권법 제7조 제1호 비보호저작물 (법령·별표 원문)",
+      "licenseVerified": true,
+      "access": "bundled",
+      "localPath": "data/sources/snapshots/legal-291947-wood-raw-byproduct-annex4-3-types.txt",
+      "derivedFrom": "34983e831af31bfdfd0e9e350fdbe435dd0a942364e23ec2e27bbac4a7b6ac48",
+      "legalFamily": "waste-rule",
+      "verifiedFields": [
+        "선택 인용 원문",
+        "현행 연결 원본 해시 일치",
+        "별표4의3 행 화면 대조"
+      ],
+      "missing": [
+        "실제 사례 적합성·허가·인수 및 시험증빙 미확인"
+      ]
+    },
+    {
+      "sourceId": "legal-291947-wood-raw-byproduct-annex5-3-common",
+      "category": "law",
+      "title": "폐기물관리법 시행규칙 별표 5-3 wood/raw-byproduct 발췌",
+      "publisher": "국가법령정보센터",
+      "url": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400985&bylClsCd=110201",
+      "downloadUrl": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400985&bylClsCd=110201",
+      "retrievedAt": "2026-11-21T11:37:49Z",
+      "datasetVersion": "lsiSeq=291947; 시행 2026-11-12; 별표 개정 2025-12-30",
+      "sourceDate": "2025-12-30",
+      "effectiveFrom": "2026-11-12",
+      "effectiveTo": null,
+      "sha256": "9401218bceb11e1da76d7a3f8195c07373190be9af0da8249036ff62e2ac4cb4",
+      "license": "저작권법 제7조 제1호 비보호저작물 (법령·별표 원문)",
+      "licenseVerified": true,
+      "access": "bundled",
+      "localPath": "data/sources/snapshots/legal-291947-wood-raw-byproduct-annex5-3-common.txt",
+      "derivedFrom": "c2960243df802adf97262a33bc79902940abc41cb393e519a3d5a1bead1926ef",
+      "legalFamily": "waste-rule",
+      "verifiedFields": [
+        "선택 인용 원문",
+        "현행 연결 원본 해시 일치"
+      ],
+      "missing": [
+        "실제 사례 적합성·허가·인수 및 시험증빙 미확인"
+      ]
+    },
+    {
+      "sourceId": "legal-291947-wood-raw-byproduct-annex5-3-r3-4",
+      "category": "law",
+      "title": "폐기물관리법 시행규칙 별표 5-3 wood/raw-byproduct 발췌",
+      "publisher": "국가법령정보센터",
+      "url": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400985&bylClsCd=110201",
+      "downloadUrl": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400985&bylClsCd=110201",
+      "retrievedAt": "2026-11-21T11:37:49Z",
+      "datasetVersion": "lsiSeq=291947; 시행 2026-11-12; 별표 개정 2025-12-30",
+      "sourceDate": "2025-12-30",
+      "effectiveFrom": "2026-11-12",
+      "effectiveTo": null,
+      "sha256": "25f4977ef2d7dcc1d524400da59c8c02d914897c4dd0df1dae45490731dabe8c",
+      "license": "저작권법 제7조 제1호 비보호저작물 (법령·별표 원문)",
+      "licenseVerified": true,
+      "access": "bundled",
+      "localPath": "data/sources/snapshots/legal-291947-wood-raw-byproduct-annex5-3-r3-4.txt",
+      "derivedFrom": "c2960243df802adf97262a33bc79902940abc41cb393e519a3d5a1bead1926ef",
+      "legalFamily": "waste-rule",
+      "verifiedFields": [
+        "선택 인용 원문",
+        "현행 연결 원본 해시 일치"
+      ],
+      "missing": [
+        "실제 사례 적합성·허가·인수 및 시험증빙 미확인"
+      ]
+    },
+    {
+      "sourceId": "legal-291947-wood-raw-listed-annex4-code",
+      "category": "law",
+      "title": "폐기물관리법 시행규칙 별표 4 wood/raw-listed 발췌",
+      "publisher": "국가법령정보센터",
+      "url": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400799&bylClsCd=110201",
+      "downloadUrl": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400799&bylClsCd=110201",
+      "retrievedAt": "2026-11-21T11:37:49Z",
+      "datasetVersion": "lsiSeq=291947; 시행 2026-11-12; 별표 개정 2025-12-30",
+      "sourceDate": "2025-12-30",
+      "effectiveFrom": "2026-11-12",
+      "effectiveTo": null,
+      "sha256": "bd0e7c805acf0e03be7022a9fe1290a0c86600592fa153f6bb5c86de3aafaa72",
+      "license": "저작권법 제7조 제1호 비보호저작물 (법령·별표 원문)",
+      "licenseVerified": true,
+      "access": "bundled",
+      "localPath": "data/sources/snapshots/legal-291947-wood-raw-listed-annex4-code.txt",
+      "derivedFrom": "cbfff5b2561b1ed566142de2d6549c02f86265ba510a987a74e3585a757624b3",
+      "legalFamily": "waste-rule",
+      "verifiedFields": [
+        "선택 인용 원문",
+        "현행 연결 원본 해시 일치"
+      ],
+      "missing": [
+        "실제 사례 적합성·허가·인수 및 시험증빙 미확인"
+      ]
+    },
+    {
+      "sourceId": "legal-291947-wood-raw-listed-annex4-2-r3-4",
+      "category": "law",
+      "title": "폐기물관리법 시행규칙 별표 4-2 wood/raw-listed 발췌",
+      "publisher": "국가법령정보센터",
+      "url": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400831&bylClsCd=110201",
+      "downloadUrl": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400831&bylClsCd=110201",
+      "retrievedAt": "2026-11-21T11:37:49Z",
+      "datasetVersion": "lsiSeq=291947; 시행 2026-11-12; 별표 개정 2025-12-30",
+      "sourceDate": "2025-12-30",
+      "effectiveFrom": "2026-11-12",
+      "effectiveTo": null,
+      "sha256": "58231d7897a45ce23408a7dec2690b7448522810a4a9fbc36dc4945e4001f3a8",
+      "license": "저작권법 제7조 제1호 비보호저작물 (법령·별표 원문)",
+      "licenseVerified": true,
+      "access": "bundled",
+      "localPath": "data/sources/snapshots/legal-291947-wood-raw-listed-annex4-2-r3-4.txt",
+      "derivedFrom": "72f755c69cb86f9ba3f068fbed755178308071822d6a4a5805197dadc1b792f3",
+      "legalFamily": "waste-rule",
+      "verifiedFields": [
+        "선택 인용 원문",
+        "현행 연결 원본 해시 일치"
+      ],
+      "missing": [
+        "실제 사례 적합성·허가·인수 및 시험증빙 미확인"
+      ]
+    },
+    {
+      "sourceId": "legal-291947-wood-raw-listed-annex4-3-types",
+      "category": "law",
+      "title": "폐기물관리법 시행규칙 별표 4-3 wood/raw-listed 발췌",
+      "publisher": "국가법령정보센터",
+      "url": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400843&bylClsCd=110201",
+      "downloadUrl": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400843&bylClsCd=110201",
+      "retrievedAt": "2026-11-21T11:37:49Z",
+      "datasetVersion": "lsiSeq=291947; 시행 2026-11-12; 별표 개정 2025-12-30",
+      "sourceDate": "2025-12-30",
+      "effectiveFrom": "2026-11-12",
+      "effectiveTo": null,
+      "sha256": "9fe6f84992ffe1e3077a799c63eb477cc49be1c9b0bd9093fef94341533a6ecf",
+      "license": "저작권법 제7조 제1호 비보호저작물 (법령·별표 원문)",
+      "licenseVerified": true,
+      "access": "bundled",
+      "localPath": "data/sources/snapshots/legal-291947-wood-raw-listed-annex4-3-types.txt",
+      "derivedFrom": "34983e831af31bfdfd0e9e350fdbe435dd0a942364e23ec2e27bbac4a7b6ac48",
+      "legalFamily": "waste-rule",
+      "verifiedFields": [
+        "선택 인용 원문",
+        "현행 연결 원본 해시 일치",
+        "별표4의3 행 화면 대조"
+      ],
+      "missing": [
+        "실제 사례 적합성·허가·인수 및 시험증빙 미확인"
+      ]
+    },
+    {
+      "sourceId": "legal-291947-wood-raw-listed-annex5-3-common",
+      "category": "law",
+      "title": "폐기물관리법 시행규칙 별표 5-3 wood/raw-listed 발췌",
+      "publisher": "국가법령정보센터",
+      "url": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400985&bylClsCd=110201",
+      "downloadUrl": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400985&bylClsCd=110201",
+      "retrievedAt": "2026-11-21T11:37:49Z",
+      "datasetVersion": "lsiSeq=291947; 시행 2026-11-12; 별표 개정 2025-12-30",
+      "sourceDate": "2025-12-30",
+      "effectiveFrom": "2026-11-12",
+      "effectiveTo": null,
+      "sha256": "9401218bceb11e1da76d7a3f8195c07373190be9af0da8249036ff62e2ac4cb4",
+      "license": "저작권법 제7조 제1호 비보호저작물 (법령·별표 원문)",
+      "licenseVerified": true,
+      "access": "bundled",
+      "localPath": "data/sources/snapshots/legal-291947-wood-raw-listed-annex5-3-common.txt",
+      "derivedFrom": "c2960243df802adf97262a33bc79902940abc41cb393e519a3d5a1bead1926ef",
+      "legalFamily": "waste-rule",
+      "verifiedFields": [
+        "선택 인용 원문",
+        "현행 연결 원본 해시 일치"
+      ],
+      "missing": [
+        "실제 사례 적합성·허가·인수 및 시험증빙 미확인"
+      ]
+    },
+    {
+      "sourceId": "legal-291947-wood-raw-listed-annex5-3-r3-4",
+      "category": "law",
+      "title": "폐기물관리법 시행규칙 별표 5-3 wood/raw-listed 발췌",
+      "publisher": "국가법령정보센터",
+      "url": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400985&bylClsCd=110201",
+      "downloadUrl": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400985&bylClsCd=110201",
+      "retrievedAt": "2026-11-21T11:37:49Z",
+      "datasetVersion": "lsiSeq=291947; 시행 2026-11-12; 별표 개정 2025-12-30",
+      "sourceDate": "2025-12-30",
+      "effectiveFrom": "2026-11-12",
+      "effectiveTo": null,
+      "sha256": "25f4977ef2d7dcc1d524400da59c8c02d914897c4dd0df1dae45490731dabe8c",
+      "license": "저작권법 제7조 제1호 비보호저작물 (법령·별표 원문)",
+      "licenseVerified": true,
+      "access": "bundled",
+      "localPath": "data/sources/snapshots/legal-291947-wood-raw-listed-annex5-3-r3-4.txt",
+      "derivedFrom": "c2960243df802adf97262a33bc79902940abc41cb393e519a3d5a1bead1926ef",
+      "legalFamily": "waste-rule",
+      "verifiedFields": [
+        "선택 인용 원문",
+        "현행 연결 원본 해시 일치"
+      ],
+      "missing": [
+        "실제 사례 적합성·허가·인수 및 시험증빙 미확인"
+      ]
+    },
+    {
+      "sourceId": "legal-291947-paper-ordinary-annex4-code",
+      "category": "law",
+      "title": "폐기물관리법 시행규칙 별표 4 paper/ordinary 발췌",
+      "publisher": "국가법령정보센터",
+      "url": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400799&bylClsCd=110201",
+      "downloadUrl": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400799&bylClsCd=110201",
+      "retrievedAt": "2026-11-21T11:37:49Z",
+      "datasetVersion": "lsiSeq=291947; 시행 2026-11-12; 별표 개정 2025-12-30",
+      "sourceDate": "2025-12-30",
+      "effectiveFrom": "2026-11-12",
+      "effectiveTo": null,
+      "sha256": "2936a109ffe4169502cc2a332bb0b346ed23e8699b1693fae09fcbfba5097ada",
+      "license": "저작권법 제7조 제1호 비보호저작물 (법령·별표 원문)",
+      "licenseVerified": true,
+      "access": "bundled",
+      "localPath": "data/sources/snapshots/legal-291947-paper-ordinary-annex4-code.txt",
+      "derivedFrom": "cbfff5b2561b1ed566142de2d6549c02f86265ba510a987a74e3585a757624b3",
+      "legalFamily": "waste-rule",
+      "verifiedFields": [
+        "선택 인용 원문",
+        "별표4의3 행 화면 대조",
+        "현행 연결 원본 해시 일치"
+      ],
+      "missing": [
+        "실제 사례 적합성·허가·인수 및 시험증빙 미확인"
+      ]
+    },
+    {
+      "sourceId": "legal-291947-paper-ordinary-annex4-2-r3-3",
+      "category": "law",
+      "title": "폐기물관리법 시행규칙 별표 4-2 paper/ordinary 발췌",
+      "publisher": "국가법령정보센터",
+      "url": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400831&bylClsCd=110201",
+      "downloadUrl": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400831&bylClsCd=110201",
+      "retrievedAt": "2026-11-21T11:37:49Z",
+      "datasetVersion": "lsiSeq=291947; 시행 2026-11-12; 별표 개정 2025-12-30",
+      "sourceDate": "2025-12-30",
+      "effectiveFrom": "2026-11-12",
+      "effectiveTo": null,
+      "sha256": "32abd3c2990fd1080fab8bee37ed642990f466ff5d5f55b5dda4bb21832c9866",
+      "license": "저작권법 제7조 제1호 비보호저작물 (법령·별표 원문)",
+      "licenseVerified": true,
+      "access": "bundled",
+      "localPath": "data/sources/snapshots/legal-291947-paper-ordinary-annex4-2-r3-3.txt",
+      "derivedFrom": "72f755c69cb86f9ba3f068fbed755178308071822d6a4a5805197dadc1b792f3",
+      "legalFamily": "waste-rule",
+      "verifiedFields": [
+        "선택 인용 원문",
+        "별표4의3 행 화면 대조",
+        "현행 연결 원본 해시 일치"
+      ],
+      "missing": [
+        "실제 사례 적합성·허가·인수 및 시험증빙 미확인"
+      ]
+    },
+    {
+      "sourceId": "legal-291947-paper-ordinary-annex4-3-types",
+      "category": "law",
+      "title": "폐기물관리법 시행규칙 별표 4-3 paper/ordinary 발췌",
+      "publisher": "국가법령정보센터",
+      "url": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400843&bylClsCd=110201",
+      "downloadUrl": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400843&bylClsCd=110201",
+      "retrievedAt": "2026-11-21T11:37:49Z",
+      "datasetVersion": "lsiSeq=291947; 시행 2026-11-12; 별표 개정 2025-12-30",
+      "sourceDate": "2025-12-30",
+      "effectiveFrom": "2026-11-12",
+      "effectiveTo": null,
+      "sha256": "73df8fe8fdc8b821a00bf13d9ee0902bf17c1df58156eed2c07d69a9da328f71",
+      "license": "저작권법 제7조 제1호 비보호저작물 (법령·별표 원문)",
+      "licenseVerified": true,
+      "access": "bundled",
+      "localPath": "data/sources/snapshots/legal-291947-paper-ordinary-annex4-3-types.txt",
+      "derivedFrom": "34983e831af31bfdfd0e9e350fdbe435dd0a942364e23ec2e27bbac4a7b6ac48",
+      "legalFamily": "waste-rule",
+      "verifiedFields": [
+        "선택 인용 원문",
+        "별표4의3 행 화면 대조",
+        "현행 연결 원본 해시 일치"
+      ],
+      "missing": [
+        "실제 사례 적합성·허가·인수 및 시험증빙 미확인"
+      ]
+    },
+    {
+      "sourceId": "legal-291947-paper-ordinary-annex5-3-common",
+      "category": "law",
+      "title": "폐기물관리법 시행규칙 별표 5-3 paper/ordinary 발췌",
+      "publisher": "국가법령정보센터",
+      "url": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400985&bylClsCd=110201",
+      "downloadUrl": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400985&bylClsCd=110201",
+      "retrievedAt": "2026-11-21T11:37:49Z",
+      "datasetVersion": "lsiSeq=291947; 시행 2026-11-12; 별표 개정 2025-12-30",
+      "sourceDate": "2025-12-30",
+      "effectiveFrom": "2026-11-12",
+      "effectiveTo": null,
+      "sha256": "9401218bceb11e1da76d7a3f8195c07373190be9af0da8249036ff62e2ac4cb4",
+      "license": "저작권법 제7조 제1호 비보호저작물 (법령·별표 원문)",
+      "licenseVerified": true,
+      "access": "bundled",
+      "localPath": "data/sources/snapshots/legal-291947-paper-ordinary-annex5-3-common.txt",
+      "derivedFrom": "c2960243df802adf97262a33bc79902940abc41cb393e519a3d5a1bead1926ef",
+      "legalFamily": "waste-rule",
+      "verifiedFields": [
+        "선택 인용 원문",
+        "별표4의3 행 화면 대조",
+        "현행 연결 원본 해시 일치"
+      ],
+      "missing": [
+        "실제 사례 적합성·허가·인수 및 시험증빙 미확인"
+      ]
+    },
+    {
+      "sourceId": "legal-291947-paper-ordinary-annex5-3-material",
+      "category": "law",
+      "title": "폐기물관리법 시행규칙 별표 5-3 paper/ordinary 발췌",
+      "publisher": "국가법령정보센터",
+      "url": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400985&bylClsCd=110201",
+      "downloadUrl": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400985&bylClsCd=110201",
+      "retrievedAt": "2026-11-21T11:37:49Z",
+      "datasetVersion": "lsiSeq=291947; 시행 2026-11-12; 별표 개정 2025-12-30",
+      "sourceDate": "2025-12-30",
+      "effectiveFrom": "2026-11-12",
+      "effectiveTo": null,
+      "sha256": "282c6bfb2d465b84b54df719080a058d935d14b0527a1bf0d9403a114cf65f59",
+      "license": "저작권법 제7조 제1호 비보호저작물 (법령·별표 원문)",
+      "licenseVerified": true,
+      "access": "bundled",
+      "localPath": "data/sources/snapshots/legal-291947-paper-ordinary-annex5-3-material.txt",
+      "derivedFrom": "c2960243df802adf97262a33bc79902940abc41cb393e519a3d5a1bead1926ef",
+      "legalFamily": "waste-rule",
+      "verifiedFields": [
+        "선택 인용 원문",
+        "별표4의3 행 화면 대조",
+        "현행 연결 원본 해시 일치"
+      ],
+      "missing": [
+        "실제 사례 적합성·허가·인수 및 시험증빙 미확인"
+      ]
+    },
+    {
+      "sourceId": "legal-packaging-20261121-paper-carton-annex4-code",
+      "category": "law",
+      "title": "별표4 제2호51-28-01, PDF10쪽 (추가 법령 발췌)",
+      "publisher": "국가법령정보센터",
+      "url": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400799&bylClsCd=110201",
+      "downloadUrl": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400799&bylClsCd=110201",
+      "retrievedAt": "2026-11-21T11:58:01Z",
+      "datasetVersion": "lsiSeq=291947 (2026-11-12 시행본; 선택 별표 개정 표기 2025-12-30)",
+      "sourceDate": "2025-12-30",
+      "effectiveFrom": "2026-11-12",
+      "effectiveTo": null,
+      "sha256": "81311938689d1477388b1103af70738c0e4be71da1c23b9307e7ba71e718d1f2",
+      "license": "저작권법 제7조 제1호 비보호저작물 (법령·별표 원문)",
+      "licenseVerified": true,
+      "access": "bundled",
+      "localPath": "data/sources/snapshots/legal-packaging-20261121-paper-carton-annex4-code.txt",
+      "derivedFrom": "cbfff5b2561b1ed566142de2d6549c02f86265ba510a987a74e3585a757624b3",
+      "legalFamily": "waste-rule",
+      "verifiedFields": [
+        "직접 수신 원본과 인용 대조",
+        "최종 스냅샷 바이트 해시"
+      ],
+      "missing": [
+        "실제 사례 적합성·품질시험·인수 확인 아님"
+      ]
+    },
+    {
+      "sourceId": "legal-packaging-20261121-paper-carton-annex4-2-r3-3",
+      "category": "law",
+      "title": "별표4의2 제2호가목3), PDF1쪽 (추가 법령 발췌)",
+      "publisher": "국가법령정보센터",
+      "url": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400831&bylClsCd=110201",
+      "downloadUrl": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400831&bylClsCd=110201",
+      "retrievedAt": "2026-11-21T11:58:01Z",
+      "datasetVersion": "lsiSeq=291947 (2026-11-12 시행본; 선택 별표 개정 표기 2025-12-30)",
+      "sourceDate": "2025-12-30",
+      "effectiveFrom": "2026-11-12",
+      "effectiveTo": null,
+      "sha256": "b2636b5416b3ebdb6b3f9c3e9b260f3ddd18544eabe1d6239d8189a115b3fa29",
+      "license": "저작권법 제7조 제1호 비보호저작물 (법령·별표 원문)",
+      "licenseVerified": true,
+      "access": "bundled",
+      "localPath": "data/sources/snapshots/legal-packaging-20261121-paper-carton-annex4-2-r3-3.txt",
+      "derivedFrom": "72f755c69cb86f9ba3f068fbed755178308071822d6a4a5805197dadc1b792f3",
+      "legalFamily": "waste-rule",
+      "verifiedFields": [
+        "직접 수신 원본과 인용 대조",
+        "최종 스냅샷 바이트 해시"
+      ],
+      "missing": [
+        "실제 사례 적합성·품질시험·인수 확인 아님"
+      ]
+    },
+    {
+      "sourceId": "legal-packaging-20261121-paper-carton-annex4-3-types",
+      "category": "law",
+      "title": "별표4의3 제2호51-28-01, PDF20쪽 (추가 법령 발췌)",
+      "publisher": "국가법령정보센터",
+      "url": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400843&bylClsCd=110201",
+      "downloadUrl": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400843&bylClsCd=110201",
+      "retrievedAt": "2026-11-21T11:58:01Z",
+      "datasetVersion": "lsiSeq=291947 (2026-11-12 시행본; 선택 별표 개정 표기 2025-12-30)",
+      "sourceDate": "2025-12-30",
+      "effectiveFrom": "2026-11-12",
+      "effectiveTo": null,
+      "sha256": "ba910fd158c24231b8b0a95ed81790037ced1aa117ee2a176088a105172c100b",
+      "license": "저작권법 제7조 제1호 비보호저작물 (법령·별표 원문)",
+      "licenseVerified": true,
+      "access": "bundled",
+      "localPath": "data/sources/snapshots/legal-packaging-20261121-paper-carton-annex4-3-types.txt",
+      "derivedFrom": "34983e831af31bfdfd0e9e350fdbe435dd0a942364e23ec2e27bbac4a7b6ac48",
+      "legalFamily": "waste-rule",
+      "verifiedFields": [
+        "직접 수신 원본과 인용 대조",
+        "최종 스냅샷 바이트 해시"
+      ],
+      "missing": [
+        "실제 사례 적합성·품질시험·인수 확인 아님"
+      ]
+    },
+    {
+      "sourceId": "legal-packaging-20261121-paper-carton-annex5-3-common",
+      "category": "law",
+      "title": "별표5의3 제1호가~마, PDF1쪽 (추가 법령 발췌)",
+      "publisher": "국가법령정보센터",
+      "url": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400985&bylClsCd=110201",
+      "downloadUrl": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400985&bylClsCd=110201",
+      "retrievedAt": "2026-11-21T11:58:01Z",
+      "datasetVersion": "lsiSeq=291947 (2026-11-12 시행본; 선택 별표 개정 표기 2025-12-30)",
+      "sourceDate": "2025-12-30",
+      "effectiveFrom": "2026-11-12",
+      "effectiveTo": null,
+      "sha256": "82abebae48e28abb5bb7e4619706405ee56394bbacf81505b84292be65b55720",
+      "license": "저작권법 제7조 제1호 비보호저작물 (법령·별표 원문)",
+      "licenseVerified": true,
+      "access": "bundled",
+      "localPath": "data/sources/snapshots/legal-packaging-20261121-paper-carton-annex5-3-common.txt",
+      "derivedFrom": "c2960243df802adf97262a33bc79902940abc41cb393e519a3d5a1bead1926ef",
+      "legalFamily": "waste-rule",
+      "verifiedFields": [
+        "직접 수신 원본과 인용 대조",
+        "최종 스냅샷 바이트 해시"
+      ],
+      "missing": [
+        "실제 사례 적합성·품질시험·인수 확인 아님"
+      ]
+    },
+    {
+      "sourceId": "legal-packaging-20261121-paper-carton-annex5-3-material",
+      "category": "law",
+      "title": "별표5의3 제2호나목1)다)(1), PDF6~7쪽 (추가 법령 발췌)",
+      "publisher": "국가법령정보센터",
+      "url": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400985&bylClsCd=110201",
+      "downloadUrl": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400985&bylClsCd=110201",
+      "retrievedAt": "2026-11-21T11:58:01Z",
+      "datasetVersion": "lsiSeq=291947 (2026-11-12 시행본; 선택 별표 개정 표기 2025-12-30)",
+      "sourceDate": "2025-12-30",
+      "effectiveFrom": "2026-11-12",
+      "effectiveTo": null,
+      "sha256": "96e7dc0e9f8581e4297db79249f1eeb695c4e4f0b776395ff2ce4315ef902911",
+      "license": "저작권법 제7조 제1호 비보호저작물 (법령·별표 원문)",
+      "licenseVerified": true,
+      "access": "bundled",
+      "localPath": "data/sources/snapshots/legal-packaging-20261121-paper-carton-annex5-3-material.txt",
+      "derivedFrom": "c2960243df802adf97262a33bc79902940abc41cb393e519a3d5a1bead1926ef",
+      "legalFamily": "waste-rule",
+      "verifiedFields": [
+        "직접 수신 원본과 인용 대조",
+        "최종 스냅샷 바이트 해시"
+      ],
+      "missing": [
+        "실제 사례 적합성·품질시험·인수 확인 아님"
+      ]
     }
   ]
 }

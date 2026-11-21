@@ -6,6 +6,28 @@ import { route as assessment, documents } from "../src/o-synthetic-evidence.ts";
 import { createComparisonCalculator, calculateRouteCost } from "../src/cost.ts";
 import { bindSynthetic, carbonFixture, calculationFixture, treatment, transport, sales } from "../src/o-synthetic.ts";
 import { createResourceDomain } from "../src/domain.ts";
+test("unpriced recommendations expose the fee authority and notice without changing actual costs", async () => {
+  const input = { caseId: "fee-reference", description: "깨끗한 철 스크랩", photoRefs: [],
+    process: "사업장일반폐기물 금속 절단", polymer: "고철", contamination: "없음",
+    hazardousContact: "no" as const, massKg: 1000, region: "대전", assessmentDate: "2026-11-22" };
+  const result = await createResourceDomain(input).decide();
+  assert.ok(result.state === "compared");
+  const before = structuredClone(result);
+  const html = renderReport(result, { mode: "offline" });
+  const links: string[] = [];
+  let quotes = 0;
+  await new HTMLRewriter()
+    .on("#fee-delegation a", { element(element) { links.push((element.getAttribute("href") ?? "").replaceAll("&amp;", "&")); } })
+    .on("#fee-delegation blockquote[cite]", { element() { quotes++; } })
+    .transform(new Response(html)).text();
+  assert.equal(quotes, 1);
+  assert.deepEqual(links, [
+    "https://www.law.go.kr/LSW/ordinInfoP.do?ordinSeq=2165959",
+    "https://www.daejeon.go.kr/drh/drhGosiView.do?conifmenddt=2025-12-31&conifmstdt=2025-01-01&gosigbn=N&menuSeq=1907&pageIndex=1&sno=53083&title=",
+  ]);
+  assert.equal(result.recommendations?.[0]?.cost.value, null);
+  assert.deepEqual(result, before);
+});
 test("held alternatives stay informational and precede source and next-action sections", async () => {
   const decision = await createResourceDomain({ caseId: "held-alternatives", description: "합성 유해 접촉 사례",
     photoRefs: [], process: "사출", polymer: "HDPE", contamination: "용제 잔류 의심",

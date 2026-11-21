@@ -75,6 +75,31 @@ async function exported(app: ReturnType<typeof fixture>, path: string, cookie: s
   return result.json();
 }
 
+for (const [material, base] of [
+  ["plastic", { description: "QA 재현", process: "사출", polymer: "PP", contamination: "없음",
+    hazardousContact: "no", massKg: "", region: "울산", assessmentDate: "2026-11-25" }],
+  ["metal", { description: "깨끗한 철 스크랩", process: "사업장일반폐기물 금속 절단", polymer: "고철", contamination: "없음",
+    hazardousContact: "no", massKg: "", region: "울산", assessmentDate: "2026-11-25" }],
+] as const) {
+  for (const field of ["process", "polymer", "region"] as const) {
+    for (const value of ["", "미상", "모름", "알 수 없음", "unknown"]) {
+      test(`#107 ${material} native ${field}=${JSON.stringify(value)} asks the same question as blank`, async t => {
+        const app = fixture(t);
+        const { cookie } = await app.home();
+        const blankPath = await created(await app.create(cookie, { ...base, [field]: "" }));
+        const path = await created(await app.create(cookie, { ...base, [field]: value }));
+        const blank = await readable(await app.get(blankPath, cookie));
+        const html = await readable(await app.get(path, cookie));
+        assert.match(html, /<h1>추가 정보 필요<\/h1>/);
+        const reasons = (text: string) => text.match(/<section id="case-reasons">([\s\S]*?)<\/section>/)?.[1];
+        assert.ok(reasons(blank));
+        assert.equal(reasons(html), reasons(blank));
+        assert.equal((await exported(app, path, cookie))[field], value === "" ? null : value);
+      });
+    }
+  }
+}
+
 for (const [field, question] of [
   ["process", "폐플라스틱이 발생한 공정 또는 발생원은 무엇인가요?"],
   ["region", "폐플라스틱이 발생한 지역은 어디인가요?"],
@@ -117,6 +142,34 @@ for (const [field, question] of [
     }
   });
 }
+
+for (const [polymer, process, description] of [
+  ["고무", "사출", "QA 재현"],
+  ["폐섬유", "사출", "QA 재현"],
+  ["오니", "폐수처리", "폐수처리 오니"],
+] as const) {
+  test(`#108 ${polymer} is outside the four supported groups before evaluation`, async t => {
+    const app = fixture(t);
+    const { cookie } = await app.home();
+    const result = await app.create(cookie, { polymer, process, description, massKg: "" });
+    assert.equal(result.status, 422);
+    const html = await result.text();
+    assert.match(html, /지원 범위 밖 · 판정 없음/);
+    assert.ok(html.includes("폐플라스틱·금속 스크랩·폐목재·포장재(종이·복합 포함)"));
+    assert.equal(app.evaluations(), 0);
+    assert.deepEqual(app.store.list(ownerFor(cookie)), []);
+  });
+}
+
+test("#108 aluminum enters the supported engine and asks about its origin", async t => {
+  const app = fixture(t);
+  const { cookie } = await app.home();
+  const path = await created(await app.create(cookie, { description: "QA 재현", polymer: "알루미늄", massKg: "" }));
+  const html = await readable(await app.get(path, cookie));
+  assert.match(html, /<h1>추가 정보 필요<\/h1>/);
+  assert.ok(html.includes("사업장일반폐기물"));
+  assert.doesNotMatch(html, /data-out-of-scope/);
+});
 
 for (const description of ["   ", ""]) {
   test(`case list labels a stored description of ${JSON.stringify(description)} with its case ID`, async t => {
@@ -359,14 +412,22 @@ for (const [polymer, description, material] of [
   ["", "종이 라벨이 붙은 판재", "종이"], ["", "금속 나사 제거", "금속"],
   ["", "하우징 파쇄품, 금속 나사 제거 예정", "금속"],
   ["금속", "하우징 파쇄품, 금속 나사 제거", "금속"],
-] as const) test(`native scope rejects ${polymer || description} as ${material}`, async t => {
+] as const) test(`native scope preserves the reported ${material} input for ${polymer || description}`, async t => {
   const app = fixture(t);
   const { cookie } = await app.home();
   const result = await app.create(cookie, { polymer, description });
-  assert.equal(result.status, 422);
-  assert.ok((await result.text()).includes(`입력에 ${material} 재질`));
-  assert.deepEqual(app.store.list(ownerFor(cookie)), []);
-  assert.equal(app.evaluations(), 0);
+  if (material === "유리") {
+    assert.equal(result.status, 422);
+    assert.ok((await result.text()).includes(`입력에 ${material} 재질`));
+    assert.deepEqual(app.store.list(ownerFor(cookie)), []);
+    assert.equal(app.evaluations(), 0);
+  } else {
+    const path = await created(result);
+    const input = await exported(app, path, cookie);
+    assert.deepEqual([input.polymer, input.description], [polymer || null, description]);
+    assert.equal(app.evaluations(), 1);
+    assert.doesNotMatch(await readable(await app.get(path, cookie)), /data-out-of-scope/);
+  }
 });
 
 test("rejected native material edit preserves the entire snapshot and skips evaluation", async t => {

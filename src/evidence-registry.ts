@@ -6,6 +6,8 @@ import type { EvidenceCandidate, SearchIssue } from "./evidence.ts";
 import { sourceManifest } from "./sources.ts";
 
 const RegistryEntrySchema = Type.Object({
+  materialFamily: Type.Optional(Type.Union([Type.Literal("metal"), Type.Literal("wood"), Type.Literal("paper"), Type.Literal("packaging")])),
+  materialStream: Type.Optional(Type.Union([Type.Literal("ferrous"), Type.Literal("nonferrous"), Type.Literal("wood-byproduct"), Type.Literal("wood-packaging"), Type.Literal("paper"), Type.Literal("carton")])),
   sourceId: Type.String(),
   kind: Type.Union([Type.Literal("waste-code"), Type.Literal("recycling-type"), Type.Literal("annex"), Type.Literal("other")]),
   claim: Type.String({ minLength: 1 }),
@@ -78,6 +80,8 @@ export function loadEvidenceRegistry(entries: readonly unknown[]): { readonly ca
       }
     }
     candidates.push({
+      ...(entry.materialFamily === undefined ? {} : { materialFamily: entry.materialFamily }),
+      ...(entry.materialStream === undefined ? {} : { materialStream: entry.materialStream }),
       record: { sourceId: source.sourceId, title: source.title, publisher: source.publisher, url: source.url,
         locator: entry.locator, retrievedAt: source.retrievedAt, effectiveFrom: source.effectiveFrom,
         effectiveTo: source.effectiveTo, datasetVersion: source.datasetVersion, sha256: entry.sha256,

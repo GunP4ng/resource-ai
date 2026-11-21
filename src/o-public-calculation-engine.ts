@@ -31,15 +31,25 @@ export function buildPublicCalculations(verified: VerifiedPublicDataset) {
       const costMissing = [...(m === null ? ["missing_mass"] : []), ...needed.filter(id => value(id) === null).map(id => `missing:${id}`)];
       const carbonIds = (recycling ? ["recycling", "landfill"] : [route_id]).map(r => `warm.${c.material}.${r}`);
       const carbonMissing = [...(m === null ? ["missing_mass"] : []), ...carbonIds.filter(id => value(id) === null).map(id => `missing:${id}`)];
-      const components = costMissing.length || m === null || a === null || b === null ? null : {
+      let components = costMissing.length || m === null || a === null || b === null ? null : {
         collection: m * v("c"), transport: (recycling ? m * v("d1") + b * v("d2") : m * v("d0")) * v("r"),
         sorting: recycling ? m * v("s") : 0, treatment: recycling ? b * v("f") + a * v("f_rec") : m * v(incineration ? "f_inc" : "f") };
-      const revenue = components === null || a === null || (recycling && p === null) ? null : recycling ? a * v(`${c.material}.price`) : 0;
-      const cost = components === null || revenue === null ? null : Object.values(components).reduce((sum, n) => sum + n, 0) - revenue;
-      const carbon = carbonMissing.length || m === null || a === null || b === null ? null :
+      let revenue = components === null || a === null || (recycling && p === null) ? null : recycling ? a * v(`${c.material}.price`) : 0;
+      let cost = components === null || revenue === null ? null : Object.values(components).reduce((sum, n) => sum + n, 0) - revenue;
+      let carbon = carbonMissing.length || m === null || a === null || b === null ? null :
         (recycling ? a * v(`warm.${c.material}.recycling`) + b * v(`warm.${c.material}.landfill`) : m * v(`warm.${c.material}.${route_id}`)) * 1000 / 0.90718474;
-      const saving = cost === null || baselineCost === null ? null : baselineCost - cost;
-      const difference = carbon === null || baselineCarbon === null ? null : baselineCarbon - carbon;
+      let saving = cost === null || baselineCost === null ? null : baselineCost - cost;
+      let difference = carbon === null || baselineCarbon === null ? null : baselineCarbon - carbon;
+      let perTonneCost = !m || cost === null ? null : cost / m;
+      let perTonneCarbon = !m || carbon === null ? null : carbon / m;
+      if ([...Object.values(components ?? {}), revenue, cost, saving, perTonneCost].some(n => n !== null && !Number.isFinite(n))) {
+        components = null; revenue = null; cost = null; saving = null; perTonneCost = null;
+        costMissing.push("arithmetic_overflow");
+      }
+      if ([carbon, difference, perTonneCarbon].some(n => n !== null && !Number.isFinite(n))) {
+        carbon = null; difference = null; perTonneCarbon = null;
+        carbonMissing.push("arithmetic_overflow");
+      }
       const shared = { case_id: c.case_id, route_id, model_version: model, scenario_type: "synthetic", label, calculation_label: label,
         facility_eligibility: "unverified_assumption", commercial_ready: false, carbon_boundary_id: boundary, embedded_transport: true } as const;
       routes.push({ ...shared, steps: recycling ? ["collection", "sorting", "resin_recycling", "residue_landfill"] : ["collection", route_id],
@@ -51,7 +61,7 @@ export function buildPublicCalculations(verified: VerifiedPublicDataset) {
         baseline_id: `${c.case_id}:landfill:${model}`, cost_saving_krw: saving, scenario_carbon_difference_kgco2e: difference,
         transport_diagnostic_kgco2e: null, transport_diagnostic_reason: "not_included_in_this_model", rights_status: "unconfirmed_for_WARM_and_Wonju_fee",
         availability: { cost: cost === null ? "unavailable" : "available", carbon: carbon === null ? "unavailable" : "available" }, missing_inputs: { cost: costMissing, carbon: carbonMissing },
-        per_tonne: { cost_krw: !m || cost === null ? null : cost / m, carbon_kgco2e: !m || carbon === null ? null : carbon / m },
+        per_tonne: { cost_krw: perTonneCost, carbon_kgco2e: perTonneCarbon },
         rounding: { internal: "unrounded", KRW_display: 0, kgCO2e_display: 2, mode: "half_away_from_zero" },
         display: { net_cost_krw: display(cost, 0), net_carbon_kgco2e: display(carbon, 2), cost_saving_krw: display(saving, 0), scenario_carbon_difference_kgco2e: display(difference, 2) } });
     }

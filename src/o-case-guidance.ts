@@ -1,12 +1,12 @@
 import type { CaseInput, DecisionResult, RouteAssessment } from "./contracts.ts";
 import { createResourceDomain } from "./domain.ts";
-import { isMissingProcessOrRegion } from "./input.ts";
 import type { CaseResearchAttachment } from "./o-case-research-schema.ts";
 import type { PublicInputScenario } from "./o-input-public-scenario.ts";
 import { buildScenarioGuidance } from "./o-scenario-guidance.ts";
 import type { ScenarioGuidance } from "./o-scenario-guidance.ts";
-import { revision, requireValid } from "./o-validation.ts";
+import { isUnknownCaseText, revision, requireValid } from "./o-validation.ts";
 import type { PhotoObservations } from "./photo-observations.ts";
+import { canonicalMaterial } from "./material-context.ts";
 
 export interface GuidanceComparison {
   readonly firstRouteId: string | null;
@@ -225,7 +225,7 @@ function caseGuidanceContent(input: CaseInput, decision: DecisionResult, options
   const limitations: string[] = ["단계 상태는 현재 출력의 충족도입니다. 사실·법률 적합성·허가·인수·승인을 확정하지 않습니다."];
   const bindingMatches = context !== undefined && context.binding.caseId === input.caseId
     && context.binding.inputRevision === inputRevision && context.binding.assessmentDate === input.assessmentDate;
-  const material = input.polymer?.trim().toUpperCase();
+  const material = canonicalMaterial(input.polymer);
   const canUseNumbers = decision.state === "compared" && input.hazardousContact === "no"
     && (material === "PET" || material === "HDPE") && input.massKg !== null && input.massKg > 0;
   let scenario: ScenarioGuidance | null = null;
@@ -242,18 +242,19 @@ function caseGuidanceContent(input: CaseInput, decision: DecisionResult, options
   const directoryCount = (options.research?.processors.rows.length ?? 0) + (options.publicDirectoryCount ?? 0);
   const actualScenarios = decision.state === "compared" ? decision.scenarios : [];
   const identificationGaps = [
-    ...(!input.polymer?.trim() ? ["수지 확인 자료가 없습니다."] : []),
-    ...(isMissingProcessOrRegion(input.process) ? ["발생 공정이 미확보입니다."] : []),
+    ...(isUnknownCaseText(input.polymer) ? ["재질 확인 자료가 없습니다."] : []),
+    ...(isUnknownCaseText(input.process) ? ["발생 공정이 미확보입니다."] : []),
+    ...(isUnknownCaseText(input.region) ? ["발생 지역이 미확보입니다."] : []),
     ...(!input.contamination?.trim() ? ["오염 상태가 미확보입니다."] : []),
     ...(input.hazardousContact !== "no" ? ["접촉·유해성 분류 확인이 남았습니다."] : []),
     ...(held ? unresolved(decision) : []),
   ];
   const stages: readonly GuidanceStage[] = [
     { stage: 1, name: "폐기물·부산물 식별 및 분류",
-      status: input.polymer?.trim() ? identificationGaps.length ? "partial" : "available" : "missing",
+      status: !isUnknownCaseText(input.polymer) ? identificationGaps.length ? "partial" : "available" : "missing",
       outputs: [
-        input.polymer ? `신고 수지: ${input.polymer}` : "신고 수지 미확보",
-        `발생 공정: ${input.process ?? "미확보"}`, `오염 상태: ${input.contamination ?? "미확보"}`,
+        !isUnknownCaseText(input.polymer) ? `신고 재질: ${input.polymer}` : "신고 재질 미확보",
+        `발생 공정: ${isUnknownCaseText(input.process) ? "미확보" : input.process}`, `오염 상태: ${input.contamination ?? "미확보"}`,
         `유해 접촉 신고: ${input.hazardousContact}`,
         `질량: ${input.massKg === null ? "미입력(정성 검토에는 선택)" : `${input.massKg} kg`}`,
         `발생 지역: ${input.region ?? "미확보"}`, `평가 기준일: ${input.assessmentDate}`,
