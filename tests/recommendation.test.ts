@@ -50,6 +50,27 @@ test("presentation-day facts still use the effective legal edition after collect
   ]);
 });
 
+for (const polymer of ["PS", "ABS", "PC", "PA"] as const) {
+  for (const [date, edition] of [["2026-11-10", "290881"], ["2026-11-25", "291947"]] as const) {
+    test(`${polymer} unsoiled injection scrap receives conditional ${edition} public-law citations`, async () => {
+      const input = { ...syntheticCase, polymer, assessmentDate: date };
+      const result = await createResourceDomain(input).decide();
+      assert.equal(result.state, "compared");
+      if (result.state !== "compared") throw new Error(JSON.stringify(result));
+      assert.equal(result.recommendations?.[0]?.routeId, "mechanical-recycling");
+      assert.equal(result.recommendations?.[0]?.grade, "public-conditional");
+      assert.deepEqual(result.recommendations?.[0]?.legalCitations.map(citation => citation.sourceId).sort(), [
+        `legal-${edition}-annex4-2-r3-3`, `legal-${edition}-annex4-3-types`,
+        `legal-${edition}-annex4-code`, `legal-${edition}-annex5-3-common`,
+      ]);
+      for (const citation of lookupLegalEvidence(input).citations
+        .filter(item => item.sourceId.startsWith(`legal-${edition}`))) {
+        assert.ok(citation.originalSha256 && citation.quote && citation.locator);
+      }
+    });
+  }
+}
+
 test("a rejected citation and unverified metadata do not veto the remaining cited recommendation", () => {
   const current = assessCase(syntheticCase);
   const assessment = { ...current, legal: { ...current.legal,
@@ -117,7 +138,7 @@ for (const [name, patch] of [
   ["oil-contaminated material", { contamination: "폐유 혼합" }],
   ["negated process", { process: "사출 아님" }],
 ] as const) {
-  for (const date of ["2026-11-10", "2026-11-13"] as const) {
+  for (const date of ["2026-11-10", "2026-11-13", "2026-11-25"] as const) {
     test(`${name} cannot borrow a plastics citation on ${date}`, async () => {
       const input = { ...syntheticCase, ...patch, assessmentDate: date };
       const evidence = lookupLegalEvidence(input, undefined, { includeWeakContext: true });
