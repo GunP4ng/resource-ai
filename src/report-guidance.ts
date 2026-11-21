@@ -120,6 +120,13 @@ export function guidanceOneFact(guidance: CaseGuidance, names: Names): string {
   const first = value.probes.find(probe => probe.id === value.priorityFactId);
   const remaining = readableReasons(guidance.actualComparison.regulatoryConditions);
   const limitations = readableReasons(value.limitations).filter(reason => !remaining.includes(reason));
+  const unknowns = (items: readonly string[]) => {
+    const unique = readableReasons(items);
+    return unique.length ? `<ul>${unique.map(reason => {
+      const shared = remaining.indexOf(reason);
+      return `<li>${shared < 0 ? escapeHtml(reason) : `<a href="#case-reason-${shared + 1}">위 보류 사유 ${shared + 1} 확인</a>`}</li>`;
+    }).join("")}</ul>` : "";
+  };
   return `<section id="one-fact-priority"><h2>먼저 확인할 한 가지</h2>
     <p>현재 보류와 원본 입력은 유지합니다. 아래는 확인 가정 한 항목만 바꿔 기존 공개 규칙으로 계산한 반응이며 실행 허용이 아닙니다.</p>
     ${first ? `<article data-priority-fact="${escapeHtml(first.id)}"><h3>${fieldNames[first.field]}</h3>
@@ -127,7 +134,7 @@ export function guidanceOneFact(guidance: CaseGuidance, names: Names): string {
       <p><strong>${escapeHtml(first.hypothesis)}</strong></p>
       <p>확인 가정에서 추가로 검토되는 경로: ${escapeHtml([...new Set([...first.newlyRecommendedRouteIds, ...first.newlySupportedRouteIds])].map(id => names[id] ?? id).join(", "))}.</p>
       <p>실제 경로 자격·허가·인수는 별도 확인이 필요합니다. 이 값을 확인한 사실로 자동 입력하지 않습니다.</p>
-      <details><summary>그 뒤에도 확인할 사항</summary>${list(readableReasons(first.remainingUnknowns))}</details></article>`
+      <details><summary>그 뒤에도 확인할 사항</summary>${unknowns(first.remainingUnknowns)}</details></article>`
       : `<article data-priority-unavailable="${value.status}">
         <p><strong>${value.status === "limited"
           ? "사진·유해 접촉·서버 검토 등 추가 근거가 필요한 보류를 가정값으로 없애지 않았습니다."
@@ -138,7 +145,7 @@ export function guidanceOneFact(guidance: CaseGuidance, names: Names): string {
     <details><summary>확인 가정의 범위·제한</summary>${list(limitations)}</details>
     ${value.probes.length ? `<details><summary>검토한 다른 확인 가정과 반응</summary><ol>${value.probes.map(probe => `<li>
       ${escapeHtml(probe.hypothesis)} · 추가 검토 경로 ${probe.openedPathCount}개 · 공개 규칙 상태 ${{ compared: "조건부 비교", "needs-information": "추가 정보 필요", "needs-review": "검토 필요" }[probe.resultingState]}
-      ${probe.remainingUnknowns.length ? list(readableReasons(probe.remainingUnknowns)) : ""}</li>`).join("")}</ol></details>` : ""}
+      ${unknowns(probe.remainingUnknowns)}</li>`).join("")}</ol></details>` : ""}
     </section>`;
 }
 
