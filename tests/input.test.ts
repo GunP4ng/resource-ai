@@ -200,6 +200,25 @@ describe("missing information questions", () => {
     expect(collectMissingQuestions(parsed.value)).toHaveLength(4);
   });
 
+  for (const [field, known, question] of [
+    ["process", "사출", "폐플라스틱이 발생한 공정 또는 발생원은 무엇인가요?"],
+    ["region", "울산", "폐플라스틱이 발생한 지역은 어디인가요?"],
+  ] as const) {
+    for (const [value, expected] of [
+      [null, [question]], ["", [question]], [" \t", [question]],
+      ["미상", [question]], [" 미상 ", [question]],
+      [known, []], ["미상 공정", []], ["미상동", []], ["unknown", []],
+    ] as const) {
+      test(`collects questions for ${field} = ${JSON.stringify(value)} without rewriting input`, () => {
+        const raw = Object.freeze({ ...knownInput, [field]: value, photoRefs: [] });
+        const parsed = parseCaseInput(raw);
+        if (!parsed.ok) throw new Error("synthetic input should parse");
+        expect(collectMissingQuestions(parsed.value)).toEqual(expected);
+        expect(parsed.value).toEqual(raw);
+      });
+    }
+  }
+
   test("does not infer chemistry or safety from description or photo references", () => {
     const raw = {
       ...exampleInput,

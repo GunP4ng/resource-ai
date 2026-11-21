@@ -41,8 +41,8 @@ function fixture(t: TestContext, requestControls: Pick<AppDependencies, "actorFo
   const post = (path: string, cookie: string, values: Record<string, string>) =>
     app(new Request(origin + path, { method: "POST", headers: { cookie, origin }, body: new URLSearchParams(values) }));
   const create = (cookie: string, patch: Record<string, string> = {}) => post("/cases", cookie, { ...fields, ...patch });
-  const edit = (path: string, cookie: string, field: "description" | "polymer", value: string) => post(path + "/answers", cookie,
-    { baseVersion: "1", answerMode: "fields", [`field_${field}`]: value });
+  const edit = (path: string, cookie: string, field: "description" | "polymer" | "process" | "region", value: string, version = 1) =>
+    post(path + "/answers", cookie, { baseVersion: String(version), answerMode: "fields", [`field_${field}`]: value });
   const home = async (cookie = "") => {
     const result = await get("/", cookie);
     assert.equal(result.status, 200);
@@ -73,6 +73,77 @@ async function exported(app: ReturnType<typeof fixture>, path: string, cookie: s
   const result = await app.get(path + "/input", cookie);
   assert.equal(result.status, 200);
   return result.json();
+}
+
+for (const [field, question] of [
+  ["process", "폐플라스틱이 발생한 공정 또는 발생원은 무엇인가요?"],
+  ["region", "폐플라스틱이 발생한 지역은 어디인가요?"],
+] as const) {
+  test(`native ${field} corrections keep the detail and report waiting for the missing fact`, async t => {
+    const app = fixture(t);
+    const { cookie } = await app.home();
+    const path = await created(await app.create(cookie, { [field]: "" }));
+    const views = [
+      [path, "누락된 사례 정보를 확인해 답변란에 입력하세요."],
+      [path + "/report", "아래 보류 사유에서 누락된 정보를 확인하고 필요한 자료를 준비하세요."],
+    ] as const;
+    async function assertMissing(raw: string | null) {
+      assert.equal((await exported(app, path, cookie))[field], raw);
+      for (const [view, action] of views) {
+        const html = await readable(await app.get(view, cookie));
+        assert.equal(html.match(/<h1>([^<]*)<\/h1>/)?.[1], "추가 정보 필요", view);
+        assert.ok(html.match(/<section id="case-reasons">([\s\S]*?)<\/section>/)?.[1]?.includes(question), view);
+        assert.match(html, /<li data-guidance-stage="1" data-state="partial">/, view);
+        assert.ok(html.includes(`<p id="next-action"><strong>다음 행동:</strong> ${action}</p>`), view);
+        if (field === "process") {
+          const stage = html.match(/<section id="guidance-stage-1">([\s\S]*?)<\/section>/)?.[1];
+          assert.ok(stage?.includes("<li>발생 공정이 미확보입니다.</li>"), view);
+        }
+      }
+    }
+
+    await assertMissing(null);
+    const corrections = ["미상", " 미상 ", ""];
+    for (const [index, value] of corrections.entries()) {
+      assert.equal(await created(await app.edit(path, cookie, field, value, index + 1)), path);
+      await assertMissing(value === "" ? null : value);
+    }
+    assert.equal(await created(await app.edit(path, cookie, field, fields[field], corrections.length + 1)), path);
+    assert.equal((await exported(app, path, cookie))[field], fields[field]);
+    for (const [view] of views) {
+      const html = await readable(await app.get(view, cookie));
+      assert.equal(html.match(/<h1>([^<]*)<\/h1>/)?.[1], "기계적 재활용 추천", view);
+      assert.match(html, /<li data-guidance-stage="1" data-state="available">/, view);
+    }
+  });
+}
+
+for (const description of ["   ", ""]) {
+  test(`case list labels a stored description of ${JSON.stringify(description)} with its case ID`, async t => {
+    const app = fixture(t);
+    const { cookie } = await app.home();
+    const path = await created(await app.create(cookie));
+    const edit = description === ""
+      ? await app.fetch(new Request(origin + path + "/answers", {
+        method: "POST", headers: { cookie, origin, "content-type": "application/json" },
+        body: JSON.stringify({ baseVersion: 1, patch: { description } }),
+      }))
+      : await app.edit(path, cookie, "description", description);
+    assert.equal(await created(edit), path);
+
+    async function assertLinks(expected: string) {
+      const html = await readable(await app.get("/cases", cookie));
+      const anchors = [...html.matchAll(/<a href="([^"]+)">([\s\S]*?)<\/a>/g)];
+      assert.deepEqual(anchors.filter(([, href]) => href === path).map(([, , label]) => label), [expected]);
+      assert.deepEqual(anchors.filter(([, href]) => href === path + "/report").map(([, , label]) => label), ["보고서"]);
+    }
+    assert.equal((await exported(app, path, cookie)).description, description);
+    await assertLinks(caseId(path));
+    const restored = "  복구 <사례>  ";
+    assert.equal(await created(await app.edit(path, cookie, "description", restored, 2)), path);
+    assert.equal((await exported(app, path, cookie)).description, restored);
+    await assertLinks("  복구 &lt;사례&gt;  ");
+  });
 }
 
 test("refresh at 55 minutes reuses the token for its remaining five minutes", async t => {
