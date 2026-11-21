@@ -1,6 +1,6 @@
 import type { CaseInput } from "./contracts.ts";
 import { escapeHtml, page } from "./report-html.ts";
-import { HttpFailure } from "./app-http.ts";
+import { caseFormTextLimits, HttpFailure } from "./app-http.ts";
 
 const exampleStart = '<p class="cluster screen-only"><a class="primary-action" data-example-start href="/demo/normal">예시로 시작</a><span>합성 사례 · 외부 모델 호출 없음</span></p>';
 const textFields = [
@@ -37,7 +37,7 @@ function fields(input?: CaseInput, editing = false): string {
     const id = prefix + field;
     const value = input?.[field] ?? "";
     return `<label for="${id}">${label}${field !== "description" && field !== "assessmentDate" ? " (미상은 공란)" : ""}</label>
-      ${field === "description" ? `<textarea id="${id}" name="${id}" required maxlength="10000">${escapeHtml(value)}</textarea>` : `<input id="${id}" name="${id}" ${field === "assessmentDate" ? 'type="date" required' : 'maxlength="500"'} value="${escapeHtml(value)}">`}`;
+      ${field === "description" ? `<textarea id="${id}" name="${id}" required maxlength="${caseFormTextLimits.description}">${escapeHtml(value)}</textarea>` : `<input id="${id}" name="${id}" ${field === "assessmentDate" ? 'type="date" required' : `maxlength="${caseFormTextLimits[field]}"`} value="${escapeHtml(value)}">`}`;
   });
   const hazardous = `<label for="${prefix}hazardousContact">유해물질 접촉</label><select id="${prefix}hazardousContact" name="${prefix}hazardousContact">
      ${([["unknown", "미상"], ["yes", "있음"], ["no", "없음"]] as const).map(([value, label]) => `<option value="${value}" ${(input?.hazardousContact ?? "unknown") === value ? "selected" : ""}>${label}</option>`).join("")}</select>`;
@@ -56,7 +56,7 @@ export function form(action: string, answers = false, version?: number, selectio
   return `${native}<details><summary>고급 JSON으로 답변·수정하기</summary><form method="post" action="${escapeHtml(action)}">${versionField}
     <label for="answers">사례 필드 답변·수정 (JSON 객체)</label><p id="answers-help">수정할 필드만 입력하세요. 생략한 필드는 유지됩니다. 허용되는 필드의 null은 미상이며 숫자에는 따옴표를 붙이지 않습니다. caseId와 판정·승인은 수정할 수 없습니다.</p>
     <p>입력 예시 (자동 입력되지 않음): <code>{"polymer":"PP","massKg":100}</code></p>
-    <textarea id="answers" name="answers" aria-describedby="answers-help" required maxlength="10000"></textarea>${selection}<button type="submit">사례 필드 수정 제출</button></form></details>`;
+    <textarea id="answers" name="answers" aria-describedby="answers-help" required maxlength="${caseFormTextLimits.answers}"></textarea>${selection}<button type="submit">사례 필드 수정 제출</button></form></details>`;
 }
 
 const runners = { local: "로컬", subscription: "구독 경로 모델 실행", azure: "Azure 연결", unspecified: "미지정" } as const;

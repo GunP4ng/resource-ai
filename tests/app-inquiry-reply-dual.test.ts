@@ -131,13 +131,53 @@ test("native dual form retains blank versus zero and an unused optional company 
     form.set("second_companyName", "업체 B");
     const response = await submit();
     let zero = "", blank = "";
+    const provenance: string[] = [];
+    let headings = "";
     await new HTMLRewriter().on("input[name=amount_f_inc]", { element(element) { zero = element.getAttribute("value") ?? ""; } })
       .on("input[name=second_amount_f_inc]", { element(element) { blank = element.getAttribute("value") ?? ""; } })
+      .on("[data-reply-provenance]", { element(element) { provenance.push(element.getAttribute("data-reply-provenance") ?? ""); } })
+      .on("thead", { text(chunk) { headings += chunk.text; } })
       .transform(response.clone()).text();
     assert.equal(zero, "0"); assert.equal(blank, "");
+    assert.deepEqual(provenance, ["1"]);
+    assert.match(headings, /업체 B.*회신 금액 없음 · 기준 모델값/);
     const dual = await readRows(response);
     assert.equal(dual[0]?.cells.length, 5);
-    assert.equal(dual.find(item => item.route === "energy_recovery")?.cells[3], "미확보");
+    assert.deepEqual(dual.find(item => item.route === "energy_recovery")?.cells.slice(3), ["미확보", "미산정"]);
+    const recycling = env.context.calculations.results.find(item => item.route_id === "recycling");
+    assert.ok(recycling?.display.net_cost_krw);
+    assert.deepEqual(dual.find(item => item.route === "recycling")?.cells.slice(3),
+      [recycling.display.net_cost_krw, "기준과 동일"]);
+
+    form.set("second_amount_f_rec", "0");
+    const explicitZero = await submit();
+    const explicitHtml = await explicitZero.clone().text();
+    assert.match(explicitHtml, /data-reply-provenance="2"/);
+    assert.match(explicitHtml, /name="second_amount_f_rec" min="0" step="any" value="0"/);
+    assert.doesNotMatch(explicitHtml, /회신 금액 없음 · 기준 모델값/);
+    const variant = buildCalculationVariant(env.context, [{ inputId: "f_rec", value: 0 }], "HTTP test hypothesis");
+    for (const row of await readRows(explicitZero)) {
+      const expected = variant.calculations.results.find(item => item.route_id === row.route);
+      const baseline = env.context.calculations.results.find(item => item.route_id === row.route);
+      assert.ok(expected && baseline);
+      assert.equal(row.cells[3], expected.display.net_cost_krw ?? "미확보");
+      if (expected.net_cost_krw === null || baseline.net_cost_krw === null) {
+        assert.match(row.cells[4] ?? "", /^미산정/);
+      } else {
+        assert.equal(row.cells[4], (expected.net_cost_krw - baseline.net_cost_krw).toLocaleString("ko-KR", { maximumFractionDigits: 0 }));
+      }
+    }
+
+    form.set("amount_f_inc", "");
+    const reversed = await submit();
+    const reversedHtml = await reversed.clone().text();
+    assert.match(reversedHtml, /업체 A[^<]*회신 금액 없음 · 기준 모델값/);
+    assert.doesNotMatch(reversedHtml, /data-reply-provenance="1"/);
+    const reversedRows = await readRows(reversed);
+    assert.deepEqual(reversedRows.find(item => item.route === "recycling")?.cells.slice(1, 3),
+      [recycling.display.net_cost_krw, "기준과 동일"]);
+    form.set("second_amount_f_rec", "");
+    assert.deepEqual(await readRows(await submit()), []);
     env.readOnly();
   } finally { env.dispose(); }
 });

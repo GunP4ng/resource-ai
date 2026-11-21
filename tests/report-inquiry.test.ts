@@ -52,37 +52,70 @@ test("inquiry reports current fields and leaves processor answers for the recipi
     back: "/cases/inquiry-current-42",
   });
   assert.doesNotMatch(html, /PRIVATE_PHOTO_SENTINEL|PRIVATE_DECISION_SENTINEL/);
+  assert.deepEqual(await textAt(html, "[data-inquiry-appendix], [data-inquiry-full-input]"), []);
   assert.match((await textAt(html, "[data-inquiry-recipient]")).join(""), /수신자가 작성하는 공란/);
 });
 
-test("hostile and long current fields are escaped excerpts with an intact full input reference", async () => {
+test("long reported fields have bounded excerpts and full escaped originals in the labelled print appendix", async () => {
   const hostile = '<img src=x onerror="alert(1)">\'&' + "긴😀\n".repeat(5000) + "OMITTED_TAIL";
   const long: CaseInput = {
     ...input, caseId: 'id/<script>"&', description: hostile, process: hostile,
     polymer: hostile, contamination: hostile, region: hostile, hazardousContact: "yes",
   };
   const original = JSON.stringify(long);
-  const html = renderInquiry(long, decision, { recipientName: hostile });
-  const markup = { images: 0, scripts: 0, links: [] as string[] };
+  const html = renderInquiry(long, decision, { recipientName: hostile, replyTarget: "/cases/private/inquiry-reply" });
+  const markup = { images: 0, scripts: 0, links: [] as string[], screenLinks: [] as string[], back: "" };
   await new HTMLRewriter()
     .on("img", { element() { markup.images++; } })
     .on("script", { element() { markup.scripts++; } })
-    .on("[data-inquiry-full-input] a", { element(element) { markup.links.push(element.getAttribute("href") ?? ""); } })
+    .on("[data-inquiry-sheet] a", { element(element) { markup.links.push(element.getAttribute("href") ?? ""); } })
+    .on("nav.screen-only a, p.screen-only a", { element(element) {
+      const href = element.getAttribute("href") ?? "";
+      markup.screenLinks.push(href);
+      if (!element.hasAttribute("data-inquiry-reply-link")) markup.back = href;
+    } })
     .transform(new Response(html)).text();
   assert.equal(markup.images, 0);
   assert.equal(markup.scripts, 1);
-  assert.deepEqual(markup.links, ["/cases/" + encodeURIComponent(long.caseId)]);
+  assert.deepEqual(markup.links, markup.screenLinks);
+  assert.equal(markup.back, "/cases/" + encodeURIComponent(long.caseId));
   const fields = await textAt(html, ".inquiry-fields dd");
   for (const index of [2, 3, 4, 6, 7]) {
-    assert.match(fields[index] ?? "", /\[발췌\]$/);
+    assert.match(fields[index] ?? "", /\[발췌\] 이 항목의 전체 신고 내용은 별지에 있습니다$/);
     assert.ok((fields[index] ?? "").length < 200, "visible fields remain bounded even with hostile text");
+    assert.doesNotMatch(fields[index] ?? "", /OMITTED_TAIL/);
   }
   assert.match(html, /&lt;img src=x onerror=&quot;/);
-  assert.doesNotMatch(html, /OMITTED_TAIL|\uFFFD/);
+  assert.doesNotMatch(html, /\uFFFD|PRIVATE_PHOTO_SENTINEL|PRIVATE_DECISION_SENTINEL/);
   assert.match((await textAt(html, "[data-inquiry-contact]")).join(""), /있음 \(yes\)/);
-  assert.match((await textAt(html, "[data-inquiry-full-input]")).join(""), /발췌.*전체 입력 참조/s);
+  assert.match((await textAt(html, "[data-inquiry-full-input]")).join(""), /이 항목의 전체 신고 내용은 별지에 있습니다/);
+  assert.deepEqual(await textAt(html, "[data-inquiry-appendix] dt"), [
+    "수지 (신고)", "발생 공정 (신고)", "오염 상태 (신고)", "발생 지역 (신고)", "설명 (신고)",
+  ]);
+  const full = await textAt(html, "[data-inquiry-appendix] dd");
+  assert.equal(full.length, 5);
+  for (const field of full) {
+    assert.ok(field.endsWith("긴😀\n".repeat(5000) + "OMITTED_TAIL"), "all original lines reach the appendix");
+  }
+  const appendix = (await textAt(html, "[data-inquiry-appendix] > p")).join("");
+  assert.match(appendix, /사례 ID/);
+  assert.match(appendix, /평가 기준일.*2026-11-20/);
   assert.match((await textAt(html, "[data-inquiry-recipient]")).join(""), /허가 증빙 아님/);
   assert.equal(JSON.stringify(long), original);
+});
+
+test("the appendix includes only fields exceeding their normalized code-point excerpt limit", async () => {
+  const exact = { ...input, description: "😀".repeat(72), process: "가".repeat(32) };
+  const short = renderInquiry(exact, decision, { recipientName: "수".repeat(33) });
+  assert.deepEqual(await textAt(short, "[data-inquiry-appendix], [data-inquiry-full-input]"), []);
+  for (const [field, value, label] of [
+    ["description", "😀".repeat(71) + "\n\n  끝", "설명 (신고)"],
+    ["process", "가".repeat(33), "발생 공정 (신고)"],
+  ] as const) {
+    const long = renderInquiry({ ...exact, [field]: value }, decision, {});
+    assert.deepEqual(await textAt(long, "[data-inquiry-appendix] dt"), [label]);
+    assert.deepEqual(await textAt(long, "[data-inquiry-appendix] dd"), [value]);
+  }
 });
 
 test("null and blank reported fields remain unknown without inferred data", async () => {

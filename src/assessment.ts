@@ -87,7 +87,8 @@ function contextQuestions(facts: CaseInput): readonly string[] {
   }
   // A populated answer such as "washed, previous contents unknown" is not a resolved fact.
   // Ask for records without changing hazardousContact or declaring a hazardous waste code.
-  if (/미확인|불명|모름|알\s*수\s*없|확인(?:되지|하지)\s*않|\b(?:unknown|unconfirmed|uncertain)\b/iu.test(facts.contamination ?? "")) {
+  if (facts.contamination?.trim() === "미상"
+    || /미확인|불명|모름|알\s*수\s*없|확인(?:되지|하지)\s*않|\b(?:unknown|unconfirmed|uncertain)\b/iu.test(facts.contamination ?? "")) {
     questions.push(safetyReasons.contaminationUnknown);
   }
   return questions;

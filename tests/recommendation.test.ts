@@ -7,6 +7,7 @@ import { renderReport } from "../src/report.ts";
 import { lookupLegalEvidence } from "../src/evidence.ts";
 import { assessCase } from "../src/assessment.ts";
 import { recommend, recommendationBlockers } from "../src/recommendation.ts";
+import { safetyReasons } from "../src/o-safety-reasons.ts";
 import h008 from "../data/h-candidates/2026-11-12/inputs/HYEOB-20261112-008.json" with { type: "json" };
 
 test("complete safe facts produce a public-law conditional recommendation without field resources", async () => {
@@ -161,6 +162,35 @@ for (const patch of [
     assert.ok(result.questions.some(question => /접촉|이전 내용물/u.test(question)));
   });
 }
+
+for (const massKg of [100, null]) {
+  test(`exact and padded 미상 ask the same contamination question as 모름 with mass ${massKg}`, async () => {
+    const input = { ...syntheticCase, assessmentDate: "2026-11-25", massKg };
+    const control = await createResourceDomain({ ...input, contamination: "모름" }).decide();
+    assert.equal(control.state, "needs-information");
+    assert.ok(control.questions.includes(safetyReasons.contaminationUnknown));
+    for (const contamination of ["미상", " 미상 "]) {
+      const result = await createResourceDomain({ ...input, contamination }).decide();
+      assert.equal(result.state, "needs-information", contamination);
+      assert.deepEqual(result.questions, control.questions);
+    }
+  });
+}
+
+test("blank contamination, resolved prose and unsupported dates keep their own decision behavior", async () => {
+  const input = { ...syntheticCase, assessmentDate: "2026-11-25", massKg: 100 };
+  const blank = await createResourceDomain({ ...input, contamination: null }).decide();
+  assert.equal(blank.state, "needs-information");
+  assert.ok(blank.questions.some(question => question.includes("오염")));
+  assert.ok(!blank.questions.includes(safetyReasons.contaminationUnknown));
+  const resolved = await createResourceDomain({ ...input, contamination: "없음" }).decide();
+  assert.equal(resolved.state, "compared");
+  const prose = assessCase({ ...input, contamination: "초기 기록은 미상. 오염 없음 확인." });
+  assert.ok(!prose.questions.includes(safetyReasons.contaminationUnknown));
+  const unsupported = await createResourceDomain({ ...input, contamination: "미상", assessmentDate: "2026-09-30" }).decide();
+  assert.equal(unsupported.state, "needs-review");
+  assert.deepEqual(unsupported.conditionalAlternatives, []);
+});
 
 test("hazard holds expose only blocking reasons and put field requirements in execution checks", async () => {
   const result = await createResourceDomain({ ...syntheticCase, hazardousContact: "yes" }).decide();
