@@ -44,7 +44,7 @@ const stateLabels = {
 export function renderInquiry(
   input: CaseInput,
   decision: DecisionResult,
-  options: { readonly historical?: boolean; readonly permissionChanged?: boolean; readonly recipientName?: string },
+  options: { readonly historical?: boolean; readonly permissionChanged?: boolean; readonly recipientName?: string; readonly replyTarget?: string },
 ): string {
   const casePath = `/cases/${encodeURIComponent(input.caseId)}`;
   const historical = options.historical === true;
@@ -67,6 +67,7 @@ export function renderInquiry(
       <a href="${escapeHtml(casePath)}">사례로 돌아가기</a>
       <button type="button" data-inquiry-print>문의서 인쇄</button>
     </nav>
+    ${options.replyTarget ? `<p class="screen-only"><a data-inquiry-reply-link href="${escapeHtml(options.replyTarget)}">업체 회신을 입력해 저장 없이 가정 비교</a></p>` : ""}
     <h1>처리업체 문의서</h1>
     <p>현재 신고 입력에 대한 확인 요청입니다. 허가·반입 수락·가격·시설 적합성은 확인되지 않았습니다.</p>
     <p class="state held" data-inquiry-status>${status}</p>

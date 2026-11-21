@@ -196,7 +196,7 @@ export function createApp(dependencies: AppDependencies) {
           privateGuard();
           return result;
         }
-        const caseMatch = /^\/cases\/([A-Za-z0-9_-]{1,100})(?:\/(answers|report|input|inquiry))?$/.exec(url.pathname);
+        const caseMatch = /^\/cases\/([A-Za-z0-9_-]{1,100})(?:\/(answers|report|input|inquiry|inquiry-reply))?$/.exec(url.pathname);
         const caseId = caseMatch?.[1];
         const suffix = caseMatch?.[2];
         if (caseId) recovery = `<p>실패한 시도는 이전 저장 결과와 다릅니다. <a href="/cases/${caseId}">이 사례의 마지막 저장 결과 확인</a> · <a href="/cases">내 사례</a></p>`;
@@ -206,7 +206,7 @@ export function createApp(dependencies: AppDependencies) {
           return caseRoute({ dependencies, origin, now, caseStore, maxBodyBytes, photoEnabled, cancelLease },
             { request, url, signal, guard, privateGuard, actor, owner, caseMatch, photoMatch });
         }
-        if (request.method === "GET" && caseId && suffix !== "answers" && suffix !== "input") {
+        if (request.method === "GET" && caseId && suffix !== "answers" && suffix !== "input" && suffix !== "inquiry-reply") {
           if (suffix === "report" && url.searchParams.get("purpose") === "research" && !actor) throw new HttpFailure(403, "연구용 보고서는 인증된 비공개 사례에서만 확인할 수 있습니다.");
           const stored = reports?.get(caseId);
           if (stored === undefined) throw new HttpFailure(404, "사례를 찾을 수 없습니다.");

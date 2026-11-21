@@ -47,13 +47,15 @@ research calculation numbers.
 
 ## Original 18 measurement
 
-Run from the repository root:
+Original invocation at commit `3f9083e`, from the repository root:
 
 ```sh
 bun scripts/measure-guidance.ts
 ```
 
 Results: `data/evaluation/round4-20261121/`.
+The current replay command requires `--out NEW_DIRECTORY` and refuses to overwrite
+an existing evidence directory. Keep these historical results intact.
 Unchanged decision payloads use the preserved baseline's hash and JSON pointers
 instead of duplicating the previous full records.
 

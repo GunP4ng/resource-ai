@@ -110,7 +110,15 @@ export function researchCalculations(research: CaseResearchReport): string {
     <p>연구 표시 자료 SHA-256 ${escapeHtml(research.artifactSha256)} · 평가 입력 결합 ${escapeHtml(attachment.binding.inputRevision)}</p>
     </details></section>`;
 }
-export function researchDirectory(research: CaseResearchReport, inquiryTarget?: string): string {
+function regionComparison(region: string | null | undefined, address: string): string {
+  const province = /^(?:대한민국\s+)?([가-힣]+?(?:특별자치도|특별자치시|특별시|광역시|도))/u;
+  const reported = region?.trim().match(province)?.[1] ?? null;
+  const listed = address.trim().match(province)?.[1] ?? null;
+  const state = reported === null || listed === null ? "unknown" : reported === listed ? "same" : "different";
+  const labels = { unknown: "비교 불가", same: "일치", different: "불일치" } as const;
+  return `<p data-region-comparison="${state}">시·도 표기 ${labels[state]} · 사례 ${escapeHtml(reported ?? "전체 표기 미확인")} / 명부 ${escapeHtml(listed ?? "전체 표기 미확인")}. 주소 표기만 비교하며 운송 거리·영업권역·인수 적합성은 판단하지 않습니다.</p>`;
+}
+export function researchDirectory(research: CaseResearchReport, inquiryTarget?: string, caseRegion?: string | null): string {
   const directory = research.attachment.processors;
   return `<section id="directory"><h2>처분 문의 후보</h2>
     <p>기계적 재활용 시설 근거 없음. 다음은 처분 상담을 위한 명부 행이며 허가·인수를 검증한 시설 목록이 아닙니다. 복수 등재 행은 독립 시설 수가 아닙니다. 같은 회사의 행을 합치지 않았습니다.</p>
@@ -119,14 +127,15 @@ export function researchDirectory(research: CaseResearchReport, inquiryTarget?: 
     ${directory.rows.map(row => `<section data-directory-row="${row.listing.rowNumber}"><h3>${escapeHtml(row.listing.name)} · 명부 ${row.listing.rowNumber}행</h3>
       <p>${escapeHtml(row.listing.description)} · 명부 기준일 ${escapeHtml(row.listing.sourceDate)} · ${escapeHtml(row.listing.district)}</p>
       <p>명부상 사무실 ${escapeHtml(row.listing.officeAddress)} · 영업권역 ${escapeHtml(row.listing.serviceArea || "미확인")}</p>
+      ${regionComparison(caseRegion, row.listing.officeAddress)}
       <p>허가 미확인 · 인수 미확인 · 사례 폐기물 코드 미확인 · 시설 위치·거리 미확인</p>
       <details><summary>명부 행 출처 확인하기</summary><p>출처 ${escapeHtml(row.listing.sourceId)} · 행 SHA-256 ${escapeHtml(row.rowSha256)}</p></details></section>`).join("")}
     ${list(directory.missing)}<details><summary>명부 선택·제외 내역 확인하기</summary>
     ${list(directory.excludedRows.map(row => `${row.rowNumber}행: ${row.reason === "municipal-collection-only" ? "생활폐기물 수집운반 전용" : "명시된 영업권역과 사례 지역 불일치"}`))}
     <p>정제 명부 SHA-256 ${escapeHtml(directory.datasetSha256)} · 원본 SHA-256 ${escapeHtml(directory.source.derivedFrom)} · manifest ${escapeHtml(directory.sourceManifestSha256)}</p></details></section>
-    ${publicRecyclingDirectory(inquiryTarget)}`;
+    ${publicRecyclingDirectory(inquiryTarget, caseRegion)}`;
 }
-export function publicRecyclingDirectory(inquiryTarget?: string): string {
+export function publicRecyclingDirectory(inquiryTarget?: string, caseRegion?: string | null): string {
   return `<section id="recycling-directory"><h2>${escapeHtml(recyclingDirectory.label)}</h2>
     ${originalLink(recyclingDirectory.source.url, recyclingDirectory.source.title)}
     <p>명부 기준일 ${escapeHtml(recyclingDirectory.source.sourceDate)} · 조회 ${escapeHtml(recyclingDirectory.source.retrievedAt)}
@@ -135,6 +144,7 @@ export function publicRecyclingDirectory(inquiryTarget?: string): string {
     ${recyclingDirectory.rows.map(row => `<section data-recycling-directory-row="${row.rowNumber}"><h3>${escapeHtml(row.name)} · 원본 명부 ${row.rowNumber}행</h3>
       <p>업종 ${escapeHtml(row.activity)} · 대상폐기물 ${escapeHtml(row.wasteScope)}</p>
       <p>명부상 소재지 ${escapeHtml(row.address)} · 행 기준일 ${escapeHtml(row.sourceDate)}</p>
+      ${regionComparison(caseRegion, row.address)}
       <p data-permit-listed>허가 공개자료 확인 · ${escapeHtml(row.sourceDate)} 기준 명부 등재</p>
       <p data-acceptance-unverified><strong>인수 의사 미확인</strong></p>
       <p>현재 허가 유효성·영업 미확인 · 사례 지역·운송·수지·오염 조건 적합성 미확인</p>
