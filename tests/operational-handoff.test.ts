@@ -122,7 +122,7 @@ test("audit cancellation bounds ignored-signal suppliers and blocks late release
   await hooks.record(event("start")); await hooks.authorizeDispatch(request(), signal());
   const controller = new AbortController(), finished = hooks.record(event("finish"), controller.signal);
   await entered.promise; controller.abort(); await assert.rejects(finished, /interrupted/);
-  assert.equal(f.recovery.length, 1); release.resolve(); await new Promise(resolve => setTimeout(resolve, 0));
+  assert.equal(f.recovery.length, 1); release.resolve(); await hooks.settled("synthetic-run");
   assert.equal(f.released.length, 0); assert.equal(f.reconciled.length, 0);
   await assert.rejects(hooks.authorizeDispatch(request(), signal()));
 });

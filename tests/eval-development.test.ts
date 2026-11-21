@@ -204,7 +204,8 @@ test("an opted-in repeated-failure limit stops dispatch after preserving both fa
   } finally { await f.close(); }
 });
 
-test("timed out provider calls are retained for all arms without retries", async () => {
+// Three sequential 5s request deadlines plus SDK startup exceed the default 5s test budget.
+test("timed out provider calls are retained for all arms without retries", { timeout: 30000 }, async () => {
   const f = await fixture();
   let calls = 0;
   try {

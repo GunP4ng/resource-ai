@@ -266,11 +266,22 @@ test("subscription HTTP deadline/cancellation abort the transport and retain an 
     for (const mode of ["timeout", "cancelled"] as const) {
       let now = 0, aborted = false, sent = 0;
       const timers = new Map<() => void, number>();
-      const clock: OperationalClock = { now: () => now, schedule(callback, delay) { timers.set(callback, now + delay); return () => { timers.delete(callback); }; } };
-      const entered = Promise.withResolvers<void>(), events: OperationalAudit[] = [], controller = new AbortController();
+      const entered = Promise.withResolvers<void>(), finished = Promise.withResolvers<void>(), drained = Promise.withResolvers<void>();
+      const events: OperationalAudit[] = [], controller = new AbortController();
+      const clock: OperationalClock = { now: () => now, schedule(callback, delay) {
+        timers.set(callback, now + delay);
+        return () => {
+          timers.delete(callback);
+          if (events.at(-1)?.phase === "finish" && timers.size === 0) drained.resolve();
+        };
+      } };
       const app = createOperationalApp({ origin, timeoutMs: 1000, clock, actorForRequest: async () => "owner", operations: {
         provider: "subscription", enabled: true, timeoutMs: 1000, maxTurns: 1, maxOutputTokens: 128, configuration: async () => f.config,
-        authorizeDispatch: async () => ({ approvalId: "synthetic", expiresAt: Date.now() + 60000 }), record: async event => { events.push(event); },
+        authorizeDispatch: async () => ({ approvalId: "synthetic", expiresAt: Date.now() + 60000 }),
+        record: async event => {
+          events.push(event);
+          if (event.phase === "finish") { finished.resolve(); if (timers.size === 0) drained.resolve(); }
+        },
         transport: async (_url, init) => { sent++; return new Promise<Response>((_resolve, reject) => {
           init?.signal?.addEventListener("abort", () => { aborted = true; reject(new Error("synthetic interruption")); }, { once: true }); entered.resolve();
         }); },
@@ -283,7 +294,7 @@ test("subscription HTTP deadline/cancellation abort the transport and retain an 
         else { now = 900; for (const [callback, at] of timers) if (at <= now) { timers.delete(callback); callback(); } }
         assert.equal((await pending).status, mode === "timeout" ? 504 : 408);
         // Parent cancellation may resolve HTTP before the bounded final audit continuation.
-        await new Promise(resolve => setTimeout(resolve, 0));
+        await finished.promise; await drained.promise;
         assert.equal(aborted, true); assert.equal(sent, 1);
         assert.equal(events.at(-1)?.phase, "finish"); assert.equal(events.at(-1)?.outcome, mode);
         assert.equal(events.at(-1)?.usage, null); assert.equal(events.at(-1)?.requests[0]?.transportStarted, true);

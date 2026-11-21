@@ -417,14 +417,16 @@ test("operational errors reach the existing O4 mapping for authentication, rate-
     finally { app.dispose(); }
   }
   for (const kind of ["timeout", "cancelled"] as const) {
-    const f = fixture(), controller = new AbortController();
-    const app = createOperationalApp({ origin, operations: { ...f.options, timeoutMs: 30, configuration: async () => new Promise<null>(() => {}) } });
+    const f = fixture(), controller = new AbortController(), configured = Promise.withResolvers<void>();
+    const app = createOperationalApp({ origin, operations: { ...f.options, timeoutMs: 30,
+      configuration: async () => { configured.resolve(); return new Promise<null>(() => {}); } } });
     try {
       const b = await browser(app), result = b.post("/cases", submission, controller.signal);
-      if (kind === "cancelled") setTimeout(() => controller.abort(), 5);
+      await configured.promise;
+      if (kind === "cancelled") controller.abort();
       assert.equal((await result).status, kind === "timeout" ? 504 : 408);
       // H's bounded runner completes its terminal audit after the outer HTTP abort resolves.
-      await new Promise((resolve) => setTimeout(resolve, 35));
+      await app.settled();
       assert.equal(f.records.at(-1)?.outcome, kind); assert.equal(f.calls(), 0);
     } finally { app.dispose(); }
   }
