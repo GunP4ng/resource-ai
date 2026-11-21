@@ -190,7 +190,12 @@ export function createApp(dependencies: AppDependencies) {
             if (url.searchParams.get("purpose") === "research" && !actor) throw new HttpFailure(403, "연구 계산은 인증된 사용자만 확인할 수 있습니다.");
             actions = '<nav class="cluster screen-only" aria-label="공개 시나리오 계산"><a href="/demo/normal?purpose=research">PET 비용·탄소</a><a href="/demo/normal?purpose=research&amp;material=HDPE">HDPE 비용·탄소</a><a href="/demo/normal?purpose=commercial">상업용 합성 데모</a></nav>';
             if (actor && url.searchParams.get("purpose") !== "commercial") {
-              const sourceCaseId = url.searchParams.get("material") === "HDPE" ? "OYS-20261110-002" : "OYS-20261110-001";
+              const material = url.searchParams.get("material")?.trim().toUpperCase();
+              if (material !== undefined && material !== "PET" && material !== "HDPE") {
+                recovery = actions;
+                throw new HttpFailure(400, "이 재질은 공개 연구 계산 예시가 없습니다(현재 PET·HDPE)");
+              }
+              const sourceCaseId = material === "HDPE" ? "OYS-20261110-002" : "OYS-20261110-001";
               const catalog = await readCaseResearchCatalog();
               const source = catalog.calculations.data.cases.find(item => item.case_id === sourceCaseId);
               if (!source) throw new HttpFailure(503, "공개 시나리오 원본을 찾을 수 없습니다.");
