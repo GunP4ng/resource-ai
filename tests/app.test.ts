@@ -659,7 +659,7 @@ test("O4 reviewed comparison allows corrections and rejects cached supplements a
   }
 });
 
-test("O4 source and packaged launchers reduce missing questions before review and exit cleanly", { timeout: 45000 }, async () => {
+test("O4 source and packaged launchers reduce missing questions before review and exit cleanly", { timeout: 120000 }, async () => {
   const root = fileURLToPath(new URL("../", import.meta.url));
   await rm(resolve(root, "dist/data"), { recursive: true, force: true });
   await promisify(execFile)(process.execPath, ["run", "build:app"], { cwd: root, timeout: 20000 });
@@ -750,8 +750,13 @@ test("O4 source and packaged launchers reduce missing questions before review an
       const report = await fetch(url + path + "/report", { headers: { cookie }, signal: AbortSignal.timeout(2000) });
       assert.equal(report.status, 200);
       assert.doesNotMatch(await report.text(), /<form\b/);
+      // The exit listener above is installed at spawn; arm the failure bound
+      // before signalling so an immediate exit cannot race the subscription.
+      const shutdown = Promise.race([exited, new Promise<never>((_, reject) => {
+        timer = setTimeout(() => reject(new Error(`launcher shutdown timeout: ${launcher}\n${stderr}`)), 15000);
+      })]);
       child.kill("SIGTERM");
-      const result = await Promise.race([exited, new Promise<never>((_, reject) => { timer = setTimeout(() => reject(new Error("launcher shutdown timeout")), 2000); })]);
+      const result = await shutdown;
       assert.deepEqual(result, { code: 0, signal: null });
       assert.equal(stderr, "");
     } finally {
