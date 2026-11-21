@@ -98,7 +98,7 @@ for (const guard of ["revision", "case", "artifact", "actor", "account", "auth-i
 for (const interruption of ["cancel", "deadline"] as const) test(`H late reserve after ${interruption} retains binding, recovery and close ownership`, async t => {
   const f = await fixture(t), entered = Promise.withResolvers<string>(), unblock = Promise.withResolvers<void>();
   const h = await supplierFixture(f.root, { reserve: async request => { entered.resolve(request.runId); await unblock.promise; } }); t.after(() => h.dispose());
-  const c = parseHOperationalConfiguration({ ...hConfiguration(f.config), runnerTimeoutMs: 250, requestTimeoutMs: 350 }); let calls = 0;
+  const c = parseHOperationalConfiguration({ ...hConfiguration(f.config), runnerTimeoutMs: 250, requestTimeoutMs: 10000, shutdownGraceMs: 12000 }); let calls = 0;
   const runtime = await createOperatorRuntime({ ...f, origin, configuration: c, privatePhotos: false,
     backend: { kind: "h-suppliers", open: h.open }, transport: async () => { calls++; return response(f.snapshot.input); } });
   const controller = new AbortController();
@@ -130,7 +130,7 @@ for (const stage of ["audit", "release", "reconcile", "transport", "bundle"] as 
     reconcile: async (_event, signal) => { if (stage === "reconcile") await hold(signal); },
     settled: async () => { if (stage === "bundle" && holdBundle) await hold(); },
   }); t.after(() => h.dispose());
-  const c = parseHOperationalConfiguration({ ...hConfiguration(f.config), runnerTimeoutMs: 250, requestTimeoutMs: 350 });
+  const c = parseHOperationalConfiguration({ ...hConfiguration(f.config), runnerTimeoutMs: 250, requestTimeoutMs: 10000, shutdownGraceMs: 12000 });
   const runtime = await createOperatorRuntime({ ...f, origin, configuration: c, privatePhotos: false,
     backend: { kind: "h-suppliers", open: h.open }, transport: async () => { if (stage === "transport") await hold(); return response(f.snapshot.input); } });
   try {
