@@ -101,3 +101,50 @@ test("#121 and #122 incomplete denials and contradictory list items never declar
   assert.ok(paper);
   assert.notEqual((await createResourceDomain({ ...paper, polymer: "골판지 (PP 코팅)" }).decide()).state, "compared");
 });
+
+for (const oil of ["절삭유", "윤활유", "작동유", "유압유", "그리스", "기름", "유분", "오일", "유류"]) {
+  test(`#126 ${oil} affirmation survives denials in every field and either order`, async () => {
+    for (const { input } of cases.filter(item => item.issue === 121)) {
+      const denied = { ...input, contamination: `${oil} 없음` };
+      assert.equal((await createResourceDomain(denied).decide()).state, "compared", `${input.caseId}: explicit absence`);
+      for (const field of ["description", "process", "contamination"] as const) {
+        for (const value of [`${denied[field]}, ${oil} 다량 부착`, `${oil} 다량 부착, ${denied[field]}`]) {
+          const facts = { ...denied, [field]: value };
+          const original = structuredClone(facts);
+          const result = await createResourceDomain(facts).decide();
+          assert.equal(result.state, "needs-review", `${input.caseId}: ${field}: ${value}`);
+          assert.ok(result.reasons.includes(safetyReasons.materialTreatment));
+          assert.deepEqual(facts, original);
+        }
+      }
+    }
+  });
+}
+
+test("#126 lead cutting-oil description remains held through the native route", async () => {
+  const origin = "http://localhost:3000";
+  const app = createResourceApp({ origin });
+  const fields = { polymer: "구리", process: "사업장일반폐기물, 기계 가공 공정에서 나온 구리 절삭 스크랩",
+    contamination: "없음", description: "합성 구리 스크랩, 절삭유 다량 부착",
+    hazardousContact: "no", massKg: "180", region: "경기", assessmentDate: "2026-11-15" };
+  try {
+    const home = await app.fetch(new Request(origin));
+    const cookie = home.headers.get("set-cookie")?.split(";")[0];
+    assert.ok(cookie);
+    const created = await app.fetch(new Request(origin + "/cases", { method: "POST",
+      headers: { origin, cookie, "content-type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams(fields) }));
+    assert.equal(created.status, 303);
+    const path = created.headers.get("location");
+    assert.ok(path);
+    const detail = await app.fetch(new Request(origin + path, { headers: { cookie } }));
+    assert.equal(detail.status, 200);
+    const html = await detail.text();
+    assert.equal(html.match(/<h1>([^<]*)<\/h1>/)?.[1], "검토 필요");
+    assert.ok(html.includes(safetyReasons.materialTreatment));
+    const saved: unknown = await (await app.fetch(new Request(origin + path + "/input", { headers: { cookie } }))).json();
+    assert.ok(saved && typeof saved === "object" && "description" in saved && "contamination" in saved);
+    assert.equal(saved.description, fields.description);
+    assert.equal(saved.contamination, fields.contamination);
+  } finally { await app.close(); }
+});

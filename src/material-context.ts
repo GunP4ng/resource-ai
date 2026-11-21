@@ -5,8 +5,10 @@ import { isUnknownCaseText } from "./o-validation.ts";
 export type MaterialFamily = "metal" | "wood" | "paper" | "packaging";
 export type MaterialStream = "ferrous" | "nonferrous" | "wood-byproduct" | "wood-packaging" | "paper" | "carton";
 
-const denialTerms = "(?:도료|도장|페인트|방부(?:처리|제)?|접착(?:제)?|오일|기름|유류|유해물질|이물질|코팅|비닐|테이프|플라스틱|복합층|복합재|라미네이트|알루미늄|PET|HDPE|LDPE|PP|PE|PS|PVC|ABS)";
+const oilTerms = "(?:오일|기름|유류|절삭유|윤활유|작동유|유압유|그리스|유분)";
+const denialTerms = `(?:도료|도장|페인트|방부(?:처리|제)?|접착(?:제)?|${oilTerms}|유해물질|이물질|코팅|비닐|테이프|플라스틱|복합층|복합재|라미네이트|알루미늄|PET|HDPE|LDPE|PP|PE|PS|PVC|ABS)`;
 const materialDenial = new RegExp(`(?:^|[,;.\\n])\\s*${denialTerms}(?:\\s*[·ㆍ/,]\\s*${denialTerms})*\\s*(?:처리|접촉|오염|사용|잔류)?\\s*(?:이|가)?\\s*(?:없음|없습니다|없다|하지\\s*않음|아님)(?=\\s*(?:[,;.\\n]|$))`, "giu");
+const materialHazard = new RegExp(`도료|도장|페인트|방부|접착|${oilTerms}|크레오소트|할로겐|\\b(?:paint(?:ed)?|preservative|oil(?:y)?|treated|adhesive|creosote)\\b`, "iu");
 
 /** Like maskExplicitHazardDenial, mask complete clauses in one field, never adjoining assertions. */
 function maskMaterialDenials(value: string | null): string {
@@ -149,7 +151,7 @@ export function materialHazardReasons(input: CaseInput): readonly string[] {
   const risk = [input.polymer, input.description, input.process, input.contamination].some(value => {
     const text = maskMaterialDenials(value)
       .replace(/\b(?:unpainted|untreated|oil-free)\b/giu, "");
-    return /도료|도장|페인트|방부|접착|오일|기름|유류|크레오소트|할로겐|\b(?:paint(?:ed)?|preservative|oil(?:y)?|treated|adhesive|creosote)\b/iu.test(text);
+    return materialHazard.test(text);
   });
   return risk ? [safetyReasons.materialTreatment] : [];
 }
