@@ -1,0 +1,154 @@
+{
+  "scope": "Same 18 exposed original inputs; text-only as prior baseline; deterministic existing rules and engine; zero model/provider calls",
+  "cases": 18,
+  "originalHashesVerified": 18,
+  "completeDecisionsUnchanged": 18,
+  "states": {
+    "compared": 8,
+    "needs-information": 6,
+    "needs-review": 4
+  },
+  "stateChanges": 0,
+  "automaticPublicScenarios": 7,
+  "conditionalOptima": 6,
+  "actualSeconds": 0,
+  "recommendedWithoutPublicScenarioWithReasons": 2,
+  "computedPriceCrossovers": 18,
+  "heldCasesWithOneFactPriority": 3,
+  "hypotheticalOneFactProbes": 17,
+  "heldWithoutPriorityWithRequiredFacts": 7,
+  "sensitivity": {
+    "cases": 6,
+    "samples": 54,
+    "retained": 54,
+    "priceMultipliers": [
+      0.8,
+      1,
+      1.2
+    ],
+    "allocationValues": [
+      0.6,
+      0.8,
+      1
+    ],
+    "interpretation": "Finite model samples; y is a model allocation, not measured substitution. No interval/extrapolation guarantee."
+  },
+  "inputDecisionContextCatalogPreserved": true,
+  "actualIncinerationFeeAndCostRemainNull": true,
+  "baseline": {
+    "path": "data/evaluation/round3-20261121/results.json",
+    "sha256": "0421dc4de047e9db2d505b928df5452d023c835f663abc3062e247796ed14e56"
+  },
+  "limitations": [
+    "Development inputs were exposed, not an unseen evaluation or human accuracy study.",
+    "Hypothetical route openings are not strict eligibility, facility acceptance or execution approval.",
+    "No actual rank2 is invented from the fully quantified scenario comparator.",
+    "Conditional optimum holds only for the modeled three routes, fixed other assumptions and stated fee bound."
+  ],
+  "implementation": [
+    {
+      "path": "src/o-case-guidance.ts",
+      "sha256": "4a72ee0460225d90dd297c780148408fd38066886276ae1cd4f1e3c9538f4c3f"
+    },
+    {
+      "path": "src/o-scenario-guidance.ts",
+      "sha256": "1b984c847accf4f660e8e4bd3337e9a13a718e940a1f750525ed7dbf1720bf96"
+    },
+    {
+      "path": "src/o-supported-scope.ts",
+      "sha256": "7eef83902606d9f8486143277d7558accc071f0174c2f23d3ef5459a88c46b31"
+    },
+    {
+      "path": "src/o-input-public-scenario.ts",
+      "sha256": "ca05902f7364ed008c468820934122ba4dbe748724d5296bebaea6b85c96144f"
+    },
+    {
+      "path": "src/o-calculation-variant.ts",
+      "sha256": "a15136b15a13bd53297e59ead2f51c81044ae47bf9bbb2c02bb1c3c3b33a9d64"
+    },
+    {
+      "path": "src/o-scenario-sensitivity.ts",
+      "sha256": "0a25c20d49bcd91ccc64ca3c1f32e86eeaf44bfa1452a900a013ebaa228a1ddc"
+    },
+    {
+      "path": "src/o-inquiry-reply.ts",
+      "sha256": "f7b114767f1828333844d580d47da04cfb77df35fb561e1988fd1410f33fb84b"
+    },
+    {
+      "path": "src/report-inquiry-reply.ts",
+      "sha256": "54b8be201266a693174ced2991514e450d3a98fa31637d9d5fcb9dcb47aa387f"
+    },
+    {
+      "path": "src/app-case-routes.ts",
+      "sha256": "bdc6cb94c09df5cb43fcc1ad853797881d90cff449cdd5135d92c1fd3fde5257"
+    },
+    {
+      "path": "src/app.ts",
+      "sha256": "1df63458e1604e445c1d08881ee511923cd65f4bdda070d19720a6062ac8a2d4"
+    },
+    {
+      "path": "src/app-views.ts",
+      "sha256": "292b5e1e983a4f8289145463260227838fcd849029c4ef4043e06af8b5922767"
+    },
+    {
+      "path": "src/app-feedback.ts",
+      "sha256": "806108410bc3c7f9d9ce8851c9210bf913e9f1c6f81fe15f144677ad253d0bbf"
+    },
+    {
+      "path": "src/report.ts",
+      "sha256": "e2579872c14a8e8c4fc349bf7ad46849a3598b8c03293f3971db890e6922d63d"
+    },
+    {
+      "path": "src/report-guidance.ts",
+      "sha256": "47f99c8ddad7fab46a2a7afe016521e617c3a1f262bb275e36e7da449cacd78f"
+    },
+    {
+      "path": "src/report-inquiry.ts",
+      "sha256": "82c0d7d48ff30687dba6fbfedb3091e15d511d133879465cefdf7e9b4972da35"
+    },
+    {
+      "path": "src/report-model-audit.ts",
+      "sha256": "c9b5f3887f2e4699000bcf2926dca90420d1da92c7d7e64713d2fba711604454"
+    },
+    {
+      "path": "src/o-model-audit.ts",
+      "sha256": "0ac36ba384be9bc70492e3c3dd4ae14cb865dba9e8c3dc351ff4a94cf9bab463"
+    },
+    {
+      "path": "src/o-model-audit-schema.ts",
+      "sha256": "962e5e4560f7826270d8c0171e656db96497a7d732a640825b2307fd9b65a8dc"
+    },
+    {
+      "path": "src/domain.ts",
+      "sha256": "845de4d547bbc86306d785a4b10eebcc2e4358ac5430a7c285f49bb9cc7840b7"
+    },
+    {
+      "path": "src/session.ts",
+      "sha256": "87c6cd7bddc4eb3debadc9d981f1ae9333651908c7887a0b5bd295160959f127"
+    },
+    {
+      "path": "src/app-types.ts",
+      "sha256": "593994671e5335a6dadf19e1b29ae9a41d86d05dfbbb2f9093788a203b31d379"
+    },
+    {
+      "path": "src/o-case-record-validation.ts",
+      "sha256": "e763fdce47781224b7de6a5808dc2326786b4a2f92284d6536f0553d9efe5f32"
+    },
+    {
+      "path": "src/report-research.ts",
+      "sha256": "d8f4643f4d2aca3f7a3a964d8398b04ac91e7a495cc89ebee11190ebc043644f"
+    },
+    {
+      "path": "src/report-styles.ts",
+      "sha256": "c8ba5a011291fec3b51265be7cfa23e0773028dee64c82daf8cae06ae1729ccb"
+    },
+    {
+      "path": "scripts/measure-guidance.ts",
+      "sha256": "3de65ca4bcbe00d614eb92ca37248178b136b63f6ceb236aa6379b4038964d03"
+    },
+    {
+      "path": "data/reference/domestic-scenario-context-20261121.json",
+      "sha256": "8beb81a06248aafe9f117807111d82f8bbd7e7da8e70f2526e9c747f48ed66c3"
+    }
+  ]
+}
