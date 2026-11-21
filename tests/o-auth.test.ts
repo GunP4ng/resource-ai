@@ -79,6 +79,25 @@ describe("local operator authentication with real Argon2 and private SQLite", ()
     two.identity.assertCurrent();
   });
 
+  test("six consecutive correct passwords never exhaust the account failure limit", async () => {
+    const { auth } = await fixture();
+    const { actorId } = await auth.create("operator", password);
+    for (let i = 0; i < 6; i++) {
+      expect((await auth.login("operator", password, signal())).identity.actorId).toBe(actorId);
+    }
+  });
+
+  test("a correct password after four failures resets the next five-failure window", async () => {
+    const { auth } = await fixture();
+    await auth.create("operator", password);
+    for (let i = 0; i < 4; i++)
+      await expect(auth.login("operator", otherPassword, signal())).rejects.toMatchObject({ code: "denied" });
+    expect((await auth.login("operator", password, signal())).identity.actorId).toBeString();
+    for (let i = 0; i < LOCAL_AUTH_LIMITS.attempts; i++)
+      await expect(auth.login("operator", otherPassword, signal())).rejects.toMatchObject({ code: "denied" });
+    await expect(auth.login("operator", password, signal())).rejects.toMatchObject({ code: "throttled" });
+  });
+
   test("wall clock rollback across in-process reopen preserves native login and current identity", async () => {
     const { root, db } = await fixture();
     const auth = createLocalAuth(db, { origin });
@@ -146,7 +165,7 @@ describe("local operator authentication with real Argon2 and private SQLite", ()
     expect((await expired.login("operator", password, signal())).identity.actorId).toBeString();
     advance(LOCAL_AUTH_LIMITS.windowMs);
     await expect(expired.login("unknown", password, signal())).rejects.toMatchObject({ code: "denied" });
-    expect(reopened.database.query<{ n: number }, []>("SELECT count(*) AS n FROM login_limits").get()?.n).toBe(3);
+    expect(reopened.database.query<{ n: number }, []>("SELECT count(*) AS n FROM login_limits").get()?.n).toBe(2);
   });
 
   for (const action of ["disable", "reset", "abort", "guard"] as const) {

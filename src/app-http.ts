@@ -165,7 +165,8 @@ export const redirect = (path: string) => response("", 303, { location: path });
 export function errorResponse(error: unknown, recovery: string, dependencies: AppDependencies): Response {
   if (error instanceof LocalAuthError) {
     const status = { denied: 403, throttled: 429, unavailable: 503, cancelled: 408 }[error.code];
-    return response(page("인증 상태", `<h1>요청을 완료하지 못했습니다</h1><p role="alert">인증 또는 계정 상태를 확인해 주세요.</p><p><a href="/login">로그인</a></p>${recovery}`), status);
+    const message = error.code === "throttled" ? "잠시 후 다시 시도해 주세요." : "인증 또는 계정 상태를 확인해 주세요.";
+    return response(page("인증 상태", `<h1>요청을 완료하지 못했습니다</h1><p role="alert">${message}</p><p><a href="/login">로그인</a></p>${recovery}`), status);
   }
   if (error instanceof RuntimeStorageError || error instanceof ResourceUnavailableError) return response(page("저장·자료 상태", `<h1>검토 시도 실패</h1><p role="alert">저장소 또는 사례 자료를 사용할 수 없습니다. 이전 저장 결과를 확인해 주세요.</p>${recovery}`), 503);
   if (error instanceof CaseConflict && error.message === "capacity") return response(page("실행 상태", `<p role="alert">${escapeHtml(sessionFailures.capacity.message)}</p>${recovery}`), sessionFailures.capacity.status);
