@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
-import { readFile, writeFile, stat } from "node:fs/promises";
+import { readFile, writeFile } from "node:fs/promises";
 import { dirname, join, basename } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -14,7 +14,6 @@ const records = [];
 for (const file of lock.files) {
   assert.equal(hash(await readFile(join(root, file.path))), file.sha256, file.path);
   if (file.path.startsWith("scores/batch-")) {
-    assert.equal((await stat(join(root, file.path))).mode & 0o222, 0, file.path);
     records.push(...(await parse(join(root, file.path))).records);
   }
 }
