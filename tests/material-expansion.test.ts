@@ -111,11 +111,13 @@ test("unknown treatment history in any factual field overrides an untreated mate
   for (const field of ["description", "process", "contamination"] as const) {
     for (const status of ["미상", "미확인", "불명", "모름", "알 수 없음", "unknown"]) {
       for (const qualifier of ["무처리 여부", "처리 이력"]) {
-        const input = { ...wood, [field]: `${wood[field]}; ${qualifier} ${status}` };
-        const domain = createResourceDomain(input);
-        assert.equal((await domain.decide()).state, "needs-information", `${field}: ${qualifier} ${status}`);
-        assert.equal(domain.assess().legal.citations.some(item => item.kind === "waste-code"), false);
-        assert.ok(domain.assess().questions.some(question => question.includes("처리 이력")));
+        for (const clause of [status, `${status} 상태`, `현재 ${status} 상태`, `${status} (담당자 확인 예정)`]) {
+          const input: CaseInput = { ...wood, [field]: `${wood[field]}; ${qualifier} ${clause}` };
+          const domain = createResourceDomain(input);
+          assert.equal((await domain.decide()).state, "needs-information", `${field}: ${qualifier} ${clause}`);
+          assert.equal(domain.assess().legal.citations.some(item => item.kind === "waste-code"), false);
+          assert.ok(domain.assess().questions.some(question => question.includes("처리 이력")));
+        }
       }
     }
   }
@@ -138,6 +140,7 @@ test("reviewed paint, unknown history and process coating regressions stay held 
     for (const [polymer, description, process, heading] of [
       ["무처리 원목", "페인트 잔류 있음", "사업장일반폐기물 원목 제재", "검토 필요"],
       ["무처리 원목", "무처리 여부 알 수 없음", "사업장일반폐기물 원목 제재", "추가 정보 필요"],
+      ["무처리 원목", "무처리 여부 미확인 상태", "사업장일반폐기물 원목 제재", "추가 정보 필요"],
       ["골판지", "무코팅 골판지", "사업장일반폐기물 PP 코팅 포장재 사용", "추가 정보 필요"],
     ]) {
       assert.ok(polymer && description && process && heading);

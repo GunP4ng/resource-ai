@@ -100,7 +100,7 @@ export function materialStream(input: CaseInput): MaterialStream | null {
   if (reported.some(value =>
     /(?:무처리|미처리|무코팅|비코팅)[^,.;\n]{0,12}(?:아님|아닌)|\bnot\s+(?:untreated|uncoated)\b/iu.test(value)
     || [...value.matchAll(/(?:무처리|미처리|무코팅|비코팅|처리\s*이력|코팅\s*이력|treatment\s+history|coating\s+history)\s*(?:여부|이력|유무)?\s*(?:은|는|이|가)?\s*[:：]?\s*([^,.;\n]+)/giu)]
-      .some(match => isUnknownCaseText(match[1])))) return null;
+      .some(match => isUnknownCaseText(match[1], "clause")))) return null;
   if (/건설폐기물|분진|슬러지|오니|배터리|축전지|폐전선|전자제품|광재/iu.test([input.process, input.description].join(" "))) return null;
   const material = canonicalMaterial(input.polymer);
   if (material === null) return null;
