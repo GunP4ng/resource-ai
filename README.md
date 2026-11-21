@@ -84,7 +84,7 @@ RESOURCE_MODEL_RUNNER=local RESOURCE_APP_AUTH=local-operator RESOURCE_STATE_DIR=
 
 같은 18건의 노출된 개발 입력으로 측정했다. 정확도나 현장 검증 결과로 읽지 않는다.
 
-- 재질 확장 후에도 18건의 판정 상태는 추천 8 / 추가 정보 필요 6 / 검토 필요 4로 유지됐다. 4건은 선택 질량 질문 분리·재질 확인 질문 추가로 사유만 달라졌다([입력·판정 해시와 변화 기록](data/evaluation/material-expansion-20261122/summary.json)).
+- 재질 확장 후에도 18건의 판정 상태는 추천 8 / 추가 정보 필요 6 / 검토 필요 4로 유지됐다. 3건은 선택 질량 질문을 보류 원인에서 분리해 사유만 달라졌다([입력·판정 해시와 변화 기록](data/evaluation/material-expansion-20261122/summary.json)).
 - 같은 입력을 일반 모델(A), 검색만 붙인 모델(B), Re:Source(C)로 비교했을 때, 필요한 확인 질문 33개 중 A 3개, B 0개, C 28개를 짚었다. 방식 이름을 가린 사후 채점이다([채점 기록](data/evaluation/rubric-followup-20261121/README.md)).
 - 유해·모순 사례 4건은 세 방식 모두 보류했고, 어느 방식도 없는 업체·가격·계수를 만들지 않았다.
 

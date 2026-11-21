@@ -76,7 +76,7 @@ test("unknown material families ask for composition and origin without borrowing
 test("material hazards remain held even when a different field denies contact", async () => {
   const wood = cases.find(item => item.input.caseId === "synthetic-raw-wood")?.input;
   assert.ok(wood);
-  for (const contamination of ["도료 있음", "방부처리 의심", "오일 접촉 미확인", "기름 오염", "painted wood"]) {
+  for (const contamination of ["도료 있음", "페인트 잔류 있음", "페인트 오염 의심", "방부처리 의심", "오일 접촉 미확인", "기름 오염", "painted wood"]) {
     const decision = await createResourceDomain({ ...wood, description: "유해물질 없음", contamination }).decide();
     assert.equal(decision.state, "needs-review");
     assert.ok(hostVerificationOrder(decision).safety.some(reason => reason.includes("도료")));
@@ -85,6 +85,9 @@ test("material hazards remain held even when a different field denies contact", 
   const reviewed = createResourceDomain(describedRisk, syntheticReviewed(describedRisk));
   assert.equal(reviewed.assess().routes.some(route => route.eligibility.state === "eligible"), false);
   assert.equal((await reviewed.decide()).state, "needs-review");
+  for (const description of ["페인트 없음", "페인트 잔류 없음", "no paint"]) {
+    assert.equal((await createResourceDomain({ ...wood, description }).decide()).state, "compared");
+  }
 });
 
 test("negated clean histories and reported coating do not open a clean material route", async () => {
@@ -100,6 +103,61 @@ test("negated clean histories and reported coating do not open a clean material 
     assert.equal(lookupLegalEvidence(changed).citations.some(item => item.kind === "waste-code"), false);
     assert.notEqual((await createResourceDomain(changed).decide()).state, "compared");
   }
+});
+
+test("unknown treatment history in any factual field overrides an untreated material label", async () => {
+  const wood = cases.find(item => item.input.caseId === "synthetic-raw-wood")?.input;
+  assert.ok(wood);
+  for (const field of ["description", "process", "contamination"] as const) {
+    for (const status of ["미상", "미확인", "불명", "모름", "알 수 없음", "unknown"]) {
+      for (const qualifier of ["무처리 여부", "처리 이력"]) {
+        const input = { ...wood, [field]: `${wood[field]}; ${qualifier} ${status}` };
+        const domain = createResourceDomain(input);
+        assert.equal((await domain.decide()).state, "needs-information", `${field}: ${qualifier} ${status}`);
+        assert.equal(domain.assess().legal.citations.some(item => item.kind === "waste-code"), false);
+        assert.ok(domain.assess().questions.some(question => question.includes("처리 이력")));
+      }
+    }
+  }
+});
+
+test("reported paper coating cannot be hidden by a clean field or canonical name", async () => {
+  const paper = cases.find(item => item.input.caseId === "synthetic-paper")?.input;
+  assert.ok(paper);
+  for (const field of ["description", "process", "contamination"] as const) {
+    const input: CaseInput = { ...paper, [field]: `${paper[field]}; PP 코팅 있음` };
+    assert.equal((await createResourceDomain(input).decide()).state, "needs-information", field);
+    assert.equal(lookupLegalEvidence(input).citations.some(item => item.kind === "waste-code"), false);
+  }
+});
+
+test("reviewed paint, unknown history and process coating regressions stay held through native submission", async () => {
+  const origin = "http://localhost:3000";
+  const app = createResourceApp({ origin, actorForRequest: async () => "material-review" });
+  try {
+    for (const [polymer, description, process, heading] of [
+      ["무처리 원목", "페인트 잔류 있음", "사업장일반폐기물 원목 제재", "검토 필요"],
+      ["무처리 원목", "무처리 여부 알 수 없음", "사업장일반폐기물 원목 제재", "추가 정보 필요"],
+      ["골판지", "무코팅 골판지", "사업장일반폐기물 PP 코팅 포장재 사용", "추가 정보 필요"],
+    ]) {
+      assert.ok(polymer && description && process && heading);
+      const response = await app.fetch(new Request(origin + "/cases", { method: "POST",
+        headers: { origin, "content-type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({ polymer, description, process, contamination: "없음",
+          hazardousContact: "no", massKg: "1000", region: "울산", assessmentDate: "2026-11-25" }) }));
+      assert.equal(response.status, 303);
+      const path = response.headers.get("location");
+      assert.ok(path);
+      const detail = await app.fetch(new Request(origin + path));
+      assert.equal(detail.status, 200);
+      assert.ok((await detail.text()).includes(`<h1>${heading}</h1>`));
+      const exported = await app.fetch(new Request(origin + path + "/input"));
+      const saved: unknown = await exported.json();
+      assert.ok(saved && typeof saved === "object" && "description" in saved && "process" in saved);
+      assert.equal(saved.description, description);
+      assert.equal(saved.process, process);
+    }
+  } finally { await app.close(); }
 });
 
 test("new material cases and unknown packaging pass the real app boundary and preserve reported input", async () => {

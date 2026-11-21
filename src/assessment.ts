@@ -3,7 +3,7 @@ import { Value } from "typebox/value";
 import type { CaseInput, DecisionResult, EvidenceRecord, ResourceDomain, RouteAssessment } from "./contracts.ts";
 import { lookupLegalEvidence, pendingLegalSources } from "./evidence.ts";
 import type { EvidenceLookup, PendingLegalLookup } from "./evidence.ts";
-import { collectMissingQuestions, parseCaseInput } from "./input.ts";
+import { collectMissingQuestions, massQuestion, parseCaseInput, resinQuestion } from "./input.ts";
 import type { InputIssue } from "./input.ts";
 import { assertPhotoObservations, photoObservationQuestions } from "./photo-observations.ts";
 import type { PhotoObservations } from "./photo-observations.ts";
@@ -73,6 +73,7 @@ const routeChecks: Readonly<Record<RouteAssessment["route"], string>> = {
 };
 const routeKinds = ["reuse", "mechanical-recycling", "other-recovery", "disposal"] as const;
 const unique = (values: readonly string[]): readonly string[] => [...new Set(values)];
+const mixtureQuestion = "혼합·다층 또는 라벨 불일치가 보고되었습니다. 층별·구성 수지의 재질 명세, 라벨 확인 자료와 수지별 분리 가능 여부를 확인할 수 있나요?";
 
 /** Ask about explicitly reported ambiguity; never classify material from image appearance. */
 function contextQuestions(facts: CaseInput): readonly string[] {
@@ -84,7 +85,7 @@ function contextQuestions(facts: CaseInput): readonly string[] {
   const multiple = [...pairs].some(pair => pair[1]!.toUpperCase() !== pair[2]!.toUpperCase());
   if (multiple || (materialFamily(facts) === null && materialStream(facts) !== "carton" && /혼합|다층|복합|블렌드|\b(?:mixed|multilayer|blend)\b/iu.test(reported))
     || /불일치|상충|일치하지|label\s*(?:conflict|mismatch)/iu.test(reported)) {
-    questions.push("혼합·다층 또는 라벨 불일치가 보고되었습니다. 층별·구성 수지의 재질 명세, 라벨 확인 자료와 수지별 분리 가능 여부를 확인할 수 있나요?");
+    questions.push(mixtureQuestion);
   }
   // A populated answer such as "washed, previous contents unknown" is not a resolved fact.
   // Ask for records without changing hazardousContact or declaring a hazardous waste code.
@@ -111,7 +112,10 @@ export function assessCase(input: CaseInput, options: AssessmentOptions = {}, re
   }
   const facts = parsed.value;
   if (photoObservations !== undefined) assertPhotoObservations(facts, photoObservations);
-  const questions = unique([...collectMissingQuestions(facts), ...contextQuestions(facts), ...materialQuestions(facts),
+  const context = contextQuestions(facts);
+  const missing = collectMissingQuestions(facts).filter(question =>
+    question !== resinQuestion || !context.includes(mixtureQuestion));
+  const questions = unique([...missing, ...context, ...materialQuestions(facts),
     ...(photoObservations === undefined ? [] : photoObservationQuestions(facts, photoObservations))]);
   // J returns references to its registry records. Do not expose mutable registry aliases.
   const legal = structuredClone(lookupLegalEvidence(facts, undefined, { intendedUse }));
@@ -258,6 +262,6 @@ export function decideCase(input: CaseInput, proposal?: unknown, options: Assess
       ...assessment.routes.flatMap((route) => route.eligibility.state === "unknown" ? route.eligibility.missingFacts
         : route.eligibility.state === "ineligible" ? route.eligibility.reasons : []),
       "현장 담당자의 검토와 승인 전에는 반출·계약·처리를 실행할 수 없습니다.",
-    ]),
+    ]).filter(reason => reason !== massQuestion),
   };
 }

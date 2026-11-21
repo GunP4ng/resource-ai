@@ -12,9 +12,9 @@ const input: CaseInput = { caseId: "synthetic-111", description: "사출 스크�
   assessmentDate: "2026-11-25", photoRefs: [] };
 
 for (const [bare, aliases] of [
-  ["PP", ["PP", "pp", "폴리프로필렌", "PP(폴리프로필렌)", "PP (폴리프로필렌)", "폴리프로필렌(PP)", "Polypropylene", "ＰＰ"]],
-  ["PET", ["PET", "PET(폴리에틸렌테레프탈레이트)", "polyethylene terephthalate"]],
-  ["HDPE", ["HDPE", "HDPE(고밀도 폴리에틸렌)", "high density polyethylene"]],
+  ["PP", ["pp", "폴리프로필렌", "PP(폴리프로필렌)", "PP (폴리프로필렌)", "폴리프로필렌(PP)", "Polypropylene", "ＰＰ", "단일 PP (다층 아님)", "PP non-mixed"]],
+  ["PET", ["PET(폴리에틸렌테레프탈레이트)", "polyethylene terephthalate"]],
+  ["HDPE", ["HDPE(고밀도 폴리에틸렌)", "high density polyethylene"]],
 ] as const) {
   for (const polymer of aliases) test(`#111 ${polymer} has the same conditional recommendation as ${bare}`, async () => {
     const facts = { ...input, polymer };

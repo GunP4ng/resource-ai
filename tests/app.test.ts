@@ -417,7 +417,7 @@ test("O4 native corrections refresh missing questions and remain usable after re
     await new HTMLRewriter()
       .on("main > #case-reasons li", { text(chunk) { visibleQuestions.push(chunk.text); } })
       .on("details #case-reasons li", { text(chunk) { hiddenQuestions.push(chunk.text); } })
-      .on('main > p > a[href="#answer-fields"]', { element(element) { answerLinks.push(element.getAttribute("href")); } })
+      .on('main > p > a.primary-action:not(.secondary-action)[href="#answer-fields"]', { element(element) { answerLinks.push(element.getAttribute("href")); } })
       .on('details a[href="#answer-fields"]', { element(element) { hiddenAnswerLinks.push(element.getAttribute("href")); } })
       .transform(new Response(before)).text();
     assert.match(visibleQuestions.join(""), /수지/);

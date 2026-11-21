@@ -15,21 +15,8 @@
     "needs-information": 6,
     "needs-review": 4
   },
-  "fullDecisionChanges": 4,
+  "fullDecisionChanges": 3,
   "changes": [
-    {
-      "caseId": "HYEOB-20261112-003",
-      "fields": [
-        "reasons"
-      ],
-      "before": [
-        "혼합·다층 또는 라벨 불일치가 보고되었습니다. 층별·구성 수지의 재질 명세, 라벨 확인 자료와 수지별 분리 가능 여부를 확인할 수 있나요?"
-      ],
-      "after": [
-        "혼합·다층 또는 라벨 불일치가 보고되었습니다. 층별·구성 수지의 재질 명세, 라벨 확인 자료와 수지별 분리 가능 여부를 확인할 수 있나요?",
-        "확인된 수지 종류와 이를 확인한 자료(라벨·재질 명세 등)가 있나요?"
-      ]
-    },
     {
       "caseId": "HYEOB-20261112-005",
       "fields": [
@@ -43,7 +30,6 @@
       ],
       "after": [
         "혼합·다층 또는 라벨 불일치가 보고되었습니다. 층별·구성 수지의 재질 명세, 라벨 확인 자료와 수지별 분리 가능 여부를 확인할 수 있나요?",
-        "확인된 수지 종류와 이를 확인한 자료(라벨·재질 명세 등)가 있나요?",
         "유해물질과 접촉했는지 확인할 수 있나요?",
         "폐플라스틱이 발생한 지역은 어디인가요?"
       ]
@@ -102,7 +88,7 @@
       "caseId": "HYEOB-20261112-003",
       "inputSha256": "e99456505b42ee03d6b8f1e87771791750e1262a43047db72c613e85504a5b07",
       "beforeDecisionSha256": "e173d4962ac03b06dfc5023283b8b5938a6b1fc7eb201620caf8166a34cefc84",
-      "afterDecisionSha256": "86868b8265efdafff13a38412d9825dea0bdc3da2b7653dc3126461e0aaafbe6",
+      "afterDecisionSha256": "e173d4962ac03b06dfc5023283b8b5938a6b1fc7eb201620caf8166a34cefc84",
       "state": "needs-review"
     },
     {
@@ -116,7 +102,7 @@
       "caseId": "HYEOB-20261112-005",
       "inputSha256": "41f6f74e6551b3aae5449a1a0d11d2d1a37b7291974f9a1bc70618023de404fd",
       "beforeDecisionSha256": "aaeb7919a5c9dc8aebb88449238efa1cd90db6b58648cd38bac877e27c00ad8c",
-      "afterDecisionSha256": "015d3c5df17dbef355cc9b228042f9dd9ff719b15d4c962d238d84872560a710",
+      "afterDecisionSha256": "d49fa9b4b389c8ada37b9b6bdaa7bb63d980db78330298cf730e7265959417af",
       "state": "needs-review"
     },
     {
@@ -214,6 +200,6 @@
   "limitations": [
     "Exposed development cases, not an independent accuracy or field validation set.",
     "Text-only replay; no model/provider calls.",
-    "Reason changes implement optional mass separation (#109) and explicit material clarification (#111)."
+    "The three reason-only changes remove optional mass from mandatory holds (#109). Existing specific mixture questions remain without a redundant generic question."
   ]
 }

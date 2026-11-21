@@ -6,7 +6,7 @@ import { createResourceDomain } from "../src/domain.ts";
 import type { ComparisonInput } from "../src/contracts.ts";
 import type { CalculationContext } from "../src/o-calculation.ts";
 import type { AssessmentOptions, CaseAssessment } from "../src/assessment.ts";
-import { collectMissingQuestions, parseCaseInput } from "../src/input.ts";
+import { collectMissingQuestions, massQuestion, parseCaseInput } from "../src/input.ts";
 import { lookupLegalEvidence, pendingLegalSources } from "../src/evidence.ts";
 import { syntheticCase, syntheticReviewed } from "./h-fixtures.ts";
 import { documents } from "../src/o-synthetic-evidence.ts";
@@ -157,7 +157,10 @@ test("food-container use adds unresolved requirements without overwriting the pr
 
 test("arbitrary resin names and blank context stay valid input but do not gain references", () => {
   const result = assessCase(fixture({ polymer: "사용자가 확인한 임의 수지", process: "  " }));
-  assert.equal(result.questions.length, 1);
+  // #111 asks for an unrecognized name as well as the missing process.
+  assert.equal(result.questions.length, 2);
+  assert.ok(result.questions.some(question => question.includes("공정")));
+  assert.ok(result.questions.some(question => question.includes("수지 종류")));
   assert.deepEqual(codeReferences(result), []);
   assertHeld(result);
 });
@@ -294,9 +297,12 @@ test("counterfactual alternative evidence cannot mutate the host registered trus
 
 test("known risk and evidence failures take precedence without discarding missing questions", () => {
   for (const patch of [{ hazardousContact: "yes" }, { assessmentDate: "2026-09-30" }, { process: "사출 아님" }] as const) {
-    const result = decideCase(fixture({ massKg: null, ...patch }));
+    const result = decideCase(fixture({ massKg: null, region: null, ...patch }));
     assert.equal(result.state, "needs-review");
-    if (result.state === "needs-review") assert.ok(result.reasons.some((reason) => reason.includes("kg")));
+    if (result.state === "needs-review") {
+      assert.ok(result.reasons.some((reason) => reason.includes("지역")));
+      assert.equal(result.reasons.includes(massQuestion), false);
+    }
   }
 });
 
@@ -443,10 +449,12 @@ test("malformed review documents remain a boundary error before missing case inf
     assert.equal(result.state, "needs-review");
     if (result.state === "needs-review") {
       assert.ok(result.reasons.some((reason) => reason.includes("invalid-documents")));
-      assert.ok(result.reasons.some((reason) => reason.includes("kg")));
+      // #109 keeps optional mass outside mandatory hold reasons, including this boundary error.
+      assert.equal(result.reasons.includes(massQuestion), false);
     }
   }
   assert.equal(decideCase(missing).state, "needs-information");
+  assert.equal(missing.massKg, null);
 });
 
 test("a conflicting review for another route cannot be hidden by an eligible comparison", async () => {

@@ -5,6 +5,7 @@ import { canonicalMaterial, materialFamily } from "./material-context.ts";
 import { isUnknownCaseText } from "./o-validation.ts";
 
 export const massQuestion = "확인된 질량은 몇 kg인가요?";
+export const resinQuestion = "확인된 수지 종류와 이를 확인한 자료(라벨·재질 명세 등)가 있나요?";
 
 export interface InputIssue {
   readonly field: keyof CaseInput | "$";
@@ -108,7 +109,7 @@ export function collectMissingQuestions(input: CaseInput): readonly string[] {
   const missingText = (value: string | null): boolean => value === null || value.trim() === "";
   const material = materialFamily(input);
   if (isUnknownCaseText(input.process)) questions.push(material ? "폐자원이 발생한 공정 또는 발생원은 무엇인가요?" : "폐플라스틱이 발생한 공정 또는 발생원은 무엇인가요?");
-  if (isUnknownCaseText(input.polymer) || canonicalMaterial(input.polymer) === null) questions.push(material ? "확인된 재질·품목과 이를 확인한 자료(재질 명세·발생 이력 등)가 있나요?" : "확인된 수지 종류와 이를 확인한 자료(라벨·재질 명세 등)가 있나요?");
+  if (isUnknownCaseText(input.polymer) || canonicalMaterial(input.polymer) === null) questions.push(material ? "확인된 재질·품목과 이를 확인한 자료(재질 명세·발생 이력 등)가 있나요?" : resinQuestion);
   if (missingText(input.contamination)) questions.push("오염이나 이물질이 있나요? 확인된 상태를 알려 주세요.");
   if (input.hazardousContact === "unknown") questions.push(safetyReasons.contactUnknown);
   if (input.massKg === null) questions.push(massQuestion);

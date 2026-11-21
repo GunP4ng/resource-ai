@@ -46,6 +46,9 @@ export function canonicalMaterial(value: string | null | undefined): string | nu
   };
   const direct = exact(key);
   if (direct !== null) return direct;
+  const single = /^(?:단일)?(.+?)(?:\(다층아님\)|non-?mixed)$/u.exec(key);
+  const singleResin = single ? exact(single[1] ?? "") : null;
+  if (singleResin !== null && /^[A-Z]+$/u.test(singleResin)) return singleResin;
   const pair = /^([^()]+)\(([^()]+)\)$/u.exec(key);
   if (!pair) return null;
   const outer = exact(pair[1] ?? "");
@@ -90,16 +93,20 @@ export function materialFamily(input: Pick<CaseInput, "polymer" | "description">
 
 export function materialStream(input: CaseInput): MaterialStream | null {
   if (isUnknownCaseText(input.polymer)) return null;
+  const reported = [input.polymer, input.description, input.process, input.contamination]
+    .map(value => (value ?? "").normalize("NFKC"));
   if (!/사업장\s*일반|industrial general/iu.test(input.process ?? "")
     || /아님|아니|않|\b(?:not|no)\b/iu.test(input.process ?? "")) return null;
-  if ([input.polymer, input.description, input.process, input.contamination].some(value =>
-    /(?:무처리|미처리|무코팅|비코팅)[^,.;\n]{0,12}(?:아님|아닌|미확인|불명|모름)|\bnot\s+(?:untreated|uncoated)\b/iu.test(value ?? ""))) return null;
+  if (reported.some(value =>
+    /(?:무처리|미처리|무코팅|비코팅)[^,.;\n]{0,12}(?:아님|아닌)|\bnot\s+(?:untreated|uncoated)\b/iu.test(value)
+    || [...value.matchAll(/(?:무처리|미처리|무코팅|비코팅|처리\s*이력|코팅\s*이력|treatment\s+history|coating\s+history)\s*(?:여부|이력|유무)?\s*(?:은|는|이|가)?\s*[:：]?\s*([^,.;\n]+)/giu)]
+      .some(match => isUnknownCaseText(match[1])))) return null;
   if (/건설폐기물|분진|슬러지|오니|배터리|축전지|폐전선|전자제품|광재/iu.test([input.process, input.description].join(" "))) return null;
   const material = canonicalMaterial(input.polymer);
   if (material === null) return null;
   if (["paper", "cardboard", "paper-packaging", "uncoated-paper"].includes(material)) {
     return (material === "uncoated-paper" || /무코팅|비코팅|\buncoated\b/iu.test(input.description))
-      && !/복합|라미네이트|알루미늄|비닐|플라스틱|\b(?:PET|HDPE|LDPE|PP|PE|PS|PVC|ABS)\b/iu.test([material, input.description].join(" ")) ? "paper" : null;
+      && !reported.some(value => /복합|라미네이트|알루미늄|비닐|플라스틱|\b(?:PET|HDPE|LDPE|PP|PE|PS|PVC|ABS)\b/iu.test(value)) ? "paper" : null;
   }
   if (material === "beverage-carton") {
     return /우유|음료|식품/u.test(input.process ?? "")
@@ -120,10 +127,10 @@ export function materialHazardReasons(input: CaseInput): readonly string[] {
   if (materialFamily(input) === null) return [];
   const risk = [input.polymer, input.description, input.process, input.contamination].some(value => {
     const text = (value ?? "")
-      .replace(/(?:도료|도장|방부(?:처리|제)?|접착제|오일|기름|유류|유해물질)(?:\s*[·ㆍ/,]\s*(?:도료|도장|방부(?:처리|제)?|접착제|오일|기름|유류|유해물질))*\s*(?:처리|접촉|오염|사용)?\s*(?:이|가)?\s*(?:없음|없습니다|없다|하지\s*않음|아님)/gu, "")
+      .replace(/(?:도료|도장|페인트|방부(?:처리|제)?|접착제|오일|기름|유류|유해물질)(?:\s*[·ㆍ/,]\s*(?:도료|도장|페인트|방부(?:처리|제)?|접착제|오일|기름|유류|유해물질))*\s*(?:처리|접촉|오염|사용|잔류)?\s*(?:이|가)?\s*(?:없음|없습니다|없다|하지\s*않음|아님)/gu, "")
       .replace(/\b(?:no|without)\s+(?:paint|preservatives?|oil|adhesives?)\b/giu, "")
       .replace(/\b(?:unpainted|untreated|oil-free)\b/giu, "");
-    return /도료|도장|방부|접착제|오일|기름|유류|크레오소트|할로겐|\b(?:paint(?:ed)?|preservative|oil(?:y)?|treated|adhesive|creosote)\b/iu.test(text);
+    return /도료|도장|페인트|방부|접착제|오일|기름|유류|크레오소트|할로겐|\b(?:paint(?:ed)?|preservative|oil(?:y)?|treated|adhesive|creosote)\b/iu.test(text);
   });
   return risk ? [safetyReasons.materialTreatment] : [];
 }

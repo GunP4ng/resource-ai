@@ -4,7 +4,6 @@ import { buildCalculationVariant, CalculationVariantError } from "../src/o-calcu
 import { buildCaseResearchAttachment, readCaseResearchCatalog } from "../src/o-case-research.ts";
 import { buildPublicInputScenario } from "../src/o-input-public-scenario.ts";
 import { revision } from "../src/o-validation.ts";
-import { Invalid } from "../src/o-public-calculation-validation.ts";
 
 const catalog = readCaseResearchCatalog();
 for (const sourceCaseId of ["OYS-20261110-001", "OYS-20261110-002"] as const) {
@@ -50,7 +49,7 @@ for (const sourceCaseId of ["OYS-20261110-001", "OYS-20261110-002"] as const) {
   });
 }
 
-test("variant boundary rejects unknown IDs, duplicate overrides and nonfinite values; engine rejects overflow", async () => {
+test("variant boundary rejects invalid inputs while arithmetic overflow is unavailable under #112", async () => {
   const data = await catalog, source = data.calculations.data.cases[0];
   assert.ok(source);
   const context = buildCaseResearchAttachment({ actorId: "variant-owner", input: source.original,
@@ -62,7 +61,16 @@ test("variant boundary rejects unknown IDs, duplicate overrides and nonfinite va
     [{ inputId: "f_inc", value: NaN }],
   ]) assert.throws(() => buildCalculationVariant(context, overrides, "가정"), CalculationVariantError);
   assert.throws(() => buildCalculationVariant(context, [], " "), CalculationVariantError);
-  assert.throws(() => buildCalculationVariant(context, [
+  const overflow = buildCalculationVariant(context, [
     { inputId: "r", value: Number.MAX_VALUE }, { inputId: "d0", value: Number.MAX_VALUE }],
-    "과도한 가정"), (error: unknown) => error instanceof Invalid && error.code === "E_FINITE");
+    "과도한 가정");
+  for (const row of overflow.calculations.results) {
+    assert.equal(row.net_cost_krw, null);
+    assert.equal(row.cost_saving_krw, null);
+    assert.equal(row.availability.cost, "unavailable");
+    assert.ok(row.missing_inputs.cost.includes("arithmetic_overflow") || row.missing_inputs.cost.includes("missing:f_inc"));
+    const original = context.calculations.results.find(item => item.route_id === row.route_id);
+    assert.ok(original);
+    assert.equal(row.net_carbon_kgco2e, original.net_carbon_kgco2e);
+  }
 });
