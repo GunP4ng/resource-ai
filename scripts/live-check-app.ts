@@ -7,6 +7,7 @@ import { createLocalAuth } from "../src/o-auth.ts";
 import { createResourceDomain } from "../src/domain.ts";
 import { canonical } from "../src/o-validation.ts";
 import { renderReport } from "../src/report.ts";
+import { buildPublicCaseProgress } from "../src/o-case-guidance.ts";
 import { syntheticCase, syntheticReviewed } from "./live-check-fixtures.ts";
 import { boundedResponse } from "./live-check-wire.ts";
 import { checkedSubscriptionConfiguration, type SubscriptionRoute } from "../src/subscription-configuration.ts";
@@ -124,7 +125,8 @@ export async function checkApp(options: { readonly authPath?: string; readonly t
         const report = await request(path + "/report");
         active.reportVerified = report.status === 200 && await report.text() === renderReport(expected, {
           mode: "synthetic", review: snapshot.review, historical: false,
-          execution: execution ? { traceId: execution.traceId, usage: execution.usage ?? null } : undefined });
+          execution: execution ? { traceId: execution.traceId, usage: execution.usage ?? null } : undefined },
+        { audience: "commercial" }, { progress: buildPublicCaseProgress(snapshot.input, expected) });
         const expectedState = massKg === null ? "needs-information" : "compared";
         const validComparison = decision.state !== "compared" || decision.humanApproval === "pending"
           && (decision.recommendations?.length ?? 0) > 0 && decision.preExecutionChecks !== undefined
