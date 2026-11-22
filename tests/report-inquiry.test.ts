@@ -49,7 +49,7 @@ test("inquiry reports current fields and leaves processor answers for the recipi
     .on('[aria-label="문의서 메뉴"] a', { element(element) { structure.back = element.getAttribute("href") ?? ""; } })
     .transform(new Response(html)).text();
   assert.deepEqual(structure, {
-    sheets: 1, replies: 1, photos: 0, forms: 0, scripts: ["/app-feedback.js"],
+    sheets: 1, replies: 1, photos: 0, forms: 0, scripts: ["/app-theme.js", "/app-feedback.js"],
     back: "/cases/inquiry-current-42",
   });
   assert.doesNotMatch(html, /PRIVATE_PHOTO_SENTINEL|PRIVATE_DECISION_SENTINEL/);
@@ -65,10 +65,10 @@ test("long reported fields have bounded excerpts and full escaped originals in t
   };
   const original = JSON.stringify(long);
   const html = renderInquiry(long, decision, { recipientName: hostile, replyTarget: "/cases/private/inquiry-reply" });
-  const markup = { images: 0, scripts: 0, links: [] as string[], screenLinks: [] as string[], back: "" };
+  const markup = { images: 0, scripts: [] as string[], links: [] as string[], screenLinks: [] as string[], back: "" };
   await new HTMLRewriter()
     .on("img", { element() { markup.images++; } })
-    .on("script", { element() { markup.scripts++; } })
+    .on("script", { element(element) { markup.scripts.push(element.getAttribute("src") ?? "inline"); } })
     .on("[data-inquiry-sheet] a", { element(element) { markup.links.push(element.getAttribute("href") ?? ""); } })
     .on("nav.screen-only a, p.screen-only a", { element(element) {
       const href = element.getAttribute("href") ?? "";
@@ -77,7 +77,7 @@ test("long reported fields have bounded excerpts and full escaped originals in t
     } })
     .transform(new Response(html)).text();
   assert.equal(markup.images, 0);
-  assert.equal(markup.scripts, 1);
+  assert.deepEqual(markup.scripts, ["/app-theme.js", "/app-feedback.js"]);
   assert.deepEqual(markup.links, markup.screenLinks);
   assert.equal(markup.back, "/cases/" + encodeURIComponent(long.caseId));
   const fields = await textAt(html, ".inquiry-fields dd");
