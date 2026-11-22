@@ -300,23 +300,23 @@ test("default authenticated demo binds PET and HDPE decisions to source inputs w
         if (route) rows.set(route, rows.get(route) + chunk.text);
       } }).transform(new Response(html)).text();
       assert.equal(rows.size, 3);
-      assert.ok(rows.get("recycling")?.includes(`${cost} KRW`));
-      assert.ok(rows.get("recycling")?.includes(`${carbon} kgCO2e`));
-      assert.ok(rows.get("landfill")?.includes(`${landfillCost} KRW`));
-      assert.ok(rows.get("landfill")?.includes(`${landfillCarbon} kgCO2e`));
-      assert.ok(rows.get("energy_recovery")?.includes(`${recoveryCarbon} kgCO2e`));
+      assert.ok(rows.get("recycling")?.includes(`${cost} 원`));
+      assert.ok(rows.get("recycling")?.includes(`${carbon} kg CO₂ 환산`));
+      assert.ok(rows.get("landfill")?.includes(`${landfillCost} 원`));
+      assert.ok(rows.get("landfill")?.includes(`${landfillCarbon} kg CO₂ 환산`));
+      assert.ok(rows.get("energy_recovery")?.includes(`${recoveryCarbon} kg CO₂ 환산`));
       assert.ok(rows.get("energy_recovery")?.includes("소각 처리비 없음"));
       assert.equal((html.match(/data-directory-row=/g) ?? []).length, 8);
       assert.equal((html.match(/data-recycling-directory-row=/g) ?? []).length, 4);
       assert.ok(html.indexOf('id="research-calculations"') < html.indexOf('id="recommendation-heading"'));
-      assert.doesNotMatch(html, /240,000 KRW/);
+      assert.doesNotMatch(html, /240,000 원/u);
       assert.match(html, /공개 자료 기반 계산값\(관측값 아님\)/);
       assert.match(html, /미국 기본 조건의 WARM/);
       assert.match(html, /합성 시나리오 입력입니다\. 견적은 업체에서 받으세요/);
       assert.doesNotMatch(html, /실행 성공 확인됨|Azure 호출 성공/);
     }
     const commercial = await (await app(new Request(origin + "/demo/normal?purpose=commercial&material=HDPE"))).text();
-    assert.match(commercial, /240,000 KRW/);
+    assert.match(commercial, /240,000 원/u);
     assert.doesNotMatch(commercial, /data-research-result|data-directory-row|data-recycling-directory-row|WARM|Wonju|-5493|-13867|demo-operator/);
   } finally { app.dispose(); await app.settled(); }
 });
@@ -360,7 +360,7 @@ test("anonymous demo remains public but research query cannot grant an audience"
       const normal = await app(new Request(origin + "/demo/normal"));
       assert.equal(normal.status, 200);
       const html = await normal.text();
-      assert.match(html, /240,000 KRW/);
+      assert.match(html, /240,000 원/u);
       assert.doesNotMatch(html, /data-research-result|data-directory-row|data-recycling-directory-row|WARM|Wonju|-13867|-5493/);
       for (const material of ["PET", "HDPE"]) {
         const response = await app(new Request(origin + `/demo/normal?purpose=research&material=${material}`));

@@ -56,7 +56,7 @@ test("metric cards preserve a supplied actual zero and hide all research numbers
     assert.equal(values.length, 3);
     if (audience === "authenticated-research") {
       assert.equal(values[0], "0 원");
-      assert.equal(values[1], "12,345.67 kgCO2e");
+      assert.equal(values[1], "12,345.67 kg CO₂ 환산");
     } else {
       assert.ok(values.every(value => !/\d/u.test(value)));
     }
@@ -75,13 +75,18 @@ test("reference-price card requires the same bound context and never substitutes
     assert.ok(publicScenario);
     const guidance = await buildCaseGuidance(evaluatedInput, decision, { publicScenario });
     for (const inputRevision of [guidance.inputRevision, "f".repeat(64)]) {
-      let price = "";
+      let price = "", details = "";
       const context = { audience: "authenticated-research", research: null, publicScenario,
         guidance: { ...guidance, inputRevision } } as const;
       await new HTMLRewriter().on('[data-result-metric="price"] .metric-value', {
         text(chunk) { price += chunk.text; },
-      }).transform(new Response(renderReport(decision, { mode: "offline" }, context))).text();
-      if (polymer === "PET" && inputRevision === guidance.inputRevision) assert.equal(price, "616.8 KRW/kg");
+      }).on('[data-result-metric="price"] p:not(.metric-value)', { text(chunk) { details += chunk.text; } })
+        .transform(new Response(renderReport(decision, { mode: "offline" }, context))).text();
+      if (polymer === "PET" && inputRevision === guidance.inputRevision) {
+        assert.equal(price, "616.8 원/kg");
+        assert.match(details, /조사 10월 10일 · 공표 10월 26일/u);
+        assert.doesNotMatch(details, /survey|published|unverified/u);
+      }
       else assert.doesNotMatch(price, /\d/u);
     }
   }

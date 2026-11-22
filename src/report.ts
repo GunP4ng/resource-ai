@@ -10,6 +10,7 @@ import { resultConclusion, resultMetrics, guidanceScenarioConclusion, guidancePr
 import { buildScenarioSensitivity } from "./o-scenario-sensitivity.ts";
 import { escapeHtml, list, page, reportFooter } from "./report-html.ts";
 import { koreanSourceDate } from "./report-date.ts";
+import { displayLawTitle, displayLocator, displayUnit } from "./report-copy.ts";
 import { evidenceSection, rawReasons, readableReason, readableReasons } from "./report-evidence.ts";
 import { massQuestion } from "./input.ts";
 import { isHostSafetyReason, safetyReasons } from "./o-safety-reasons.ts";
@@ -67,7 +68,7 @@ function recommendationSummary(result: Extract<DecisionResult, { state: "compare
     const route = result.routes.find(route => route.routeId === item.routeId);
     const amount = (metric: typeof item.cost | typeof item.carbon) => metric.value === null
       ? `미산정 · ${escapeHtml(metric.reasons.map(readableReason).join("; "))}`
-      : `${escapeHtml(metric.value.toLocaleString("ko-KR", { maximumFractionDigits: metric.unit === "KRW" ? 0 : 2 }))} ${metric.unit} · ${metric.label === "assumption" ? "가정 포함 계산값" : "계산값"}${list(readableReasons(metric.reasons))}`;
+      : `${escapeHtml(metric.value.toLocaleString("ko-KR", { maximumFractionDigits: metric.unit === "KRW" ? 0 : 2 }))} ${escapeHtml(displayUnit(metric.unit))} · ${metric.label === "assumption" ? "가정 포함 계산값" : "계산값"}${list(readableReasons(metric.reasons))}`;
     return `<li><h3>${item.rank}순위 · ${escapeHtml(route ? names[route.route] : item.routeId)}</h3>
       <p><strong>${item.grade === "public-conditional" ? "공개 근거상 가능(조건부)" : "사례 자료 검토됨 · 실행은 승인 후"}</strong></p>
       <p>${escapeHtml(item.basis)}</p><p>비용: ${amount(item.cost)}</p><p>탄소: ${amount(item.carbon)}</p>
@@ -119,7 +120,7 @@ function executionMetadata(presentation: ReportPresentation, calculation: {
   return `<p>사례 계산: ${calculation.verified ? "판정 상세의 계산표 참조" : "없음"}. ${calculation.publicModel ? "가정 계산은 위 공개 비교표에 있습니다." : "연결된 공개 가정 계산은 없습니다."}</p>
     <p class="print-only">계산 버전 ${escapeHtml(presentation.calculationVersion ?? "미기록")} · 출처 버전 ${escapeHtml(presentation.sourceVersion ?? "미기록")}</p>
     ${calculation.publicModel ? `<p class="print-only">공개 가정 계산 버전 ${escapeHtml(calculation.publicModel)} · 준비 데이터 ${escapeHtml(calculation.publicSource ?? "미확보")}</p>` : ""}
-    ${runtime ? `<p>평가 당시: ${identities[runtime.identity]} · ${runtime.storage === "sqlite" ? "SQLite 보관" : "임시 보관"}${runners[runtime.runner] ? ` · 검토 방식 ${runners[runtime.runner]} (설정값)` : ""}</p>` : "<p>평가 당시 설정 기록 없음</p>"}
+    ${runtime ? `<p>평가 당시: ${identities[runtime.identity]} · ${runtime.storage === "sqlite" ? "저장소 보관" : "임시 보관"}${runners[runtime.runner] ? ` · 검토 방식 ${runners[runtime.runner]} (설정값)` : ""}</p>` : "<p>평가 당시 설정 기록 없음</p>"}
     ${execution}<p>사용량은 청구·비용 증빙이 아닙니다. 사진 실행 여부는 설정이나 실행 식별자로 확인할 수 없습니다.</p>`;
 }
 export function renderReport(result: DecisionResult, presentation: ReportPresentation, context: ReportContext = { audience: "commercial" }, view: ReportView = {}): string {
@@ -197,7 +198,7 @@ export function renderReport(result: DecisionResult, presentation: ReportPresent
     ${resultMetrics(result, context)}
     ${commercialSummary ? `<details class="result-disclosure"><summary>요약 근거와 계산 상태</summary>${data}
       ${heldReasons.length ? `<p><a href="#case-reasons">보류 사유와 필요한 확인 ${heldReasons.length}개</a> · 전체 사유는 아래에 있습니다.</p>` : ""}
-      <div class="commercial-summary-cards"><div id="summary-evidence"><h2>근거 위치</h2>${result.evidence.length ? `<ul>${result.evidence.slice(0, 3).map((item, index) => `<li><a href="#evidence-${index + 1}">[${index + 1}] ${escapeHtml(item.title)} · ${escapeHtml(item.locator)}</a></li>`).join("")}</ul>` : "<p>연결된 근거 없음</p>"}
+      <div class="commercial-summary-cards"><div id="summary-evidence"><h2>근거 위치</h2>${result.evidence.length ? `<ul>${result.evidence.slice(0, 3).map((item, index) => `<li><a href="#evidence-${index + 1}">[${index + 1}] ${escapeHtml(displayLawTitle(item.title))} · ${escapeHtml(displayLocator(item.locator))}</a></li>`).join("")}</ul>` : "<p>연결된 근거 없음</p>"}
       <p><a href="#evidence">전체 ${result.evidence.length}개 출처와 원문 위치 보기</a></p></div>
       <div id="summary-unavailable"><h2>빈 값과 계산 상태</h2>${list(unavailable)}<p><a href="#decision-detail">미산정 사유와 계산 조건 보기</a></p></div></div>
       <p><a href="#checks">실행 전 확인 ${checks.length ? `${checks.length}개 전체` : "안내"} 보기</a> · 모든 항목을 확인하고 현장 담당자 승인을 받으세요.</p>

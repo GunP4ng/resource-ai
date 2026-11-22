@@ -58,7 +58,7 @@ test("adapter absent: visible input, real 503, health readiness, allowlisted dem
   assert.ok((await unavailable.text()).includes("H1/H4"));
   const health = await app(new Request(`${origin}/health`));
   assert.deepEqual(await health.json(), { app: "ready", backend: "unavailable", azure: "not-verified" });
-  for (const [path, content] of [["/demo/normal", "240,000 KRW"], ["/demo/held", "추가 정보 필요"], ["/demo/review", "검토 필요"], ["/reference", "허가 확인 필요"]]) {
+  for (const [path, content] of [["/demo/normal", "240,000 원"], ["/demo/held", "추가 정보 필요"], ["/demo/review", "검토 필요"], ["/reference", "허가 확인 필요"]]) {
     const result = await app(new Request(`${origin}${path}`));
     assert.equal(result.status, 200);
     assert.ok((await result.text()).includes(content ?? "missing"));
@@ -509,7 +509,7 @@ test("optional mass answer updates the same recommended case with supported cost
     assert.deepEqual(hiddenMassLinks, []);
     assert.deepEqual(order, ["next-action", "mass-link", "result-context"]);
     assert.match(before, /질량을 몰라 비용을 계산하지 않았어요/);
-    assert.doesNotMatch(before, /240,000 KRW|45 kgCO2e/);
+    assert.doesNotMatch(before, /240,000 원|45 kg CO₂ 환산/u);
     const answer = new URLSearchParams({
       answerMode: "fields", baseVersion: "1", photoSelection: "explicit",
       field_description: nativeFields.description, field_process: "사출", field_polymer: "PP",
@@ -520,8 +520,8 @@ test("optional mass answer updates the same recommended case with supported cost
     assert.equal(response.status, 303);
     assert.equal(response.headers.get("location"), path);
     const after = await ownedPage(app.fetch, cookie, path);
-    assert.match(after, /240,000 KRW/);
-    assert.match(after, /45 kgCO2e/);
+    assert.match(after, /240,000 원/u);
+    assert.match(after, /45 kg CO₂ 환산/u);
     assert.match(after, /name="baseVersion" value="2"/);
     assert.doesNotMatch(after, /질량을 입력하고 비용·탄소 계산하기/);
   } finally { app.dispose(); await app.close(); }

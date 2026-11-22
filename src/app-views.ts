@@ -69,10 +69,10 @@ export function form(action: string, answers = false, version?: number, selectio
   const native = input ? `<h2 id="answer-fields" tabindex="-1">답변·사례 수정</h2><p>현재 입력이 채워져 있습니다. 바꿀 항목만 고치고 제출하세요. 빈칸은 미상, 질량은 kg입니다.</p>
     <form method="post" action="${escapeHtml(action)}">${versionField}<input type="hidden" name="answerMode" value="fields">${fields(input, draft)}${selection}
       <button type="submit">다시 평가하기</button></form>` : "";
-  return `${native}<details><summary>JSON으로 수정하기 (고급)</summary><form method="post" action="${escapeHtml(action)}">${versionField}
-    <label for="answers">수정 내용 (JSON 객체)</label><p id="answers-help">바꿀 필드만 적으세요. 생략한 필드는 그대로 두고, null은 미상으로 처리합니다. 숫자는 따옴표 없이 씁니다. caseId와 판정·승인 필드는 고정입니다.</p>
+  return `${native}<details><summary>텍스트로 수정하기 (고급)</summary><form method="post" action="${escapeHtml(action)}">${versionField}
+    <label for="answers">수정 내용 (JSON 형식)</label><p id="answers-help">바꿀 항목만 적으세요. 생략한 항목은 그대로 둡니다. 값을 미상으로 바꾸려면 <code>null</code>을 쓰세요. 숫자는 따옴표 없이 씁니다. 사례 번호와 판정·승인은 바꿀 수 없습니다.</p>
     <p>입력 예시: <code>{"polymer":"PP","massKg":100}</code></p>
-    <textarea id="answers" name="answers" aria-describedby="answers-help" required maxlength="${caseFormTextLimits.answers}"></textarea>${selection}<button type="submit">JSON 수정 제출</button></form></details>`;
+    <textarea id="answers" name="answers" aria-describedby="answers-help" required maxlength="${caseFormTextLimits.answers}"></textarea>${selection}<button type="submit">수정 내용 제출</button></form></details>`;
 }
 
 export interface InputView {

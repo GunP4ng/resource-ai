@@ -42,6 +42,7 @@ for (const state of ["compared", "needs-review", "needs-information"] as const) 
     const before: DecisionResult = structuredClone(result);
     let summaries = 0, conclusion = "", action = "", unavailable = "", evidenceIndex = "";
     const locations: string[] = [], targets: string[] = [], ids: string[] = [], evidenceText = new Map<string, string>();
+    const evidenceTitles: string[] = [];
     await new HTMLRewriter()
       .on("main > #commercial-summary", { element() { summaries++; } })
       .on("#commercial-summary #decision-summary", { text(chunk) { conclusion += chunk.text; } })
@@ -51,6 +52,10 @@ for (const state of ["compared", "needs-review", "needs-information"] as const) 
       .on('#summary-evidence li a[href^="#"]', { element(el) { targets.push((el.getAttribute("href") ?? "").slice(1)); } })
       .on("#summary-evidence > p > a", { element(el) { evidenceIndex = el.getAttribute("href") ?? ""; } })
       .on("[id]", { element(el) { ids.push(el.getAttribute("id") ?? ""); } })
+      .on("#evidence > section > h3", {
+        element() { evidenceTitles.push(""); },
+        text(chunk) { evidenceTitles[evidenceTitles.length - 1] += chunk.text; },
+      })
       .on('#evidence > section', { element(el) {
         const id = el.getAttribute("id") ?? "";
         evidenceText.set(id, "");
@@ -65,7 +70,9 @@ for (const state of ["compared", "needs-review", "needs-information"] as const) 
     assert.match(unavailable, /비용/);
     assert.match(unavailable, /탄소/);
     assert.match(unavailable, state === "compared" ? /미산정/ : /실행 보류로 비교하지 않음/);
-    assert.deepEqual(locations, result.evidence.slice(0, 3).map((item, index) => `[${index + 1}] ${item.title} · ${item.locator}`));
+    assert.deepEqual(locations, result.evidence.slice(0, 3).map((item, index) =>
+      `${evidenceTitles[index]?.replace(/ · 원문 열기$/u, "")} · ${item.locator}`));
+    if (state === "compared") assert.ok(locations.some(location => location.includes("비철금속 스크랩")));
     assert.deepEqual(targets, result.evidence.slice(0, 3).map((_, index) => `evidence-${index + 1}`));
     assert.equal(evidenceIndex, "#evidence");
     for (const [index, target] of targets.entries()) {

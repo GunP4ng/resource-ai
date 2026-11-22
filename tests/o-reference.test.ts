@@ -35,7 +35,7 @@ test("native reference route shows exactly three national purchase statistics wi
     [1, "PDF 물리 16쪽 / 인쇄 12쪽 · 2026.10 행, 전국 열"],
     [2, "PDF 물리 18쪽 / 인쇄 14쪽 · 2026.10 행, 전국 열"],
   ] as const) assert.ok(rows[index]?.[2]?.includes(locator), locator);
-  for (const field of ["기준월 2026년 10월", "조사 기준일 2026년 10월 10일", "공표일 2026년 10월 26일", "조회일 2026년 11월 22일", "전국", "VAT 포함", "물류비 제외", "NOT A QUOTE",
+  for (const field of ["기준월 2026년 10월", "조사 기준일 2026년 10월 10일", "공표일 2026년 10월 26일", "조회일 2026년 11월 22일", "전국", "VAT 포함", "물류비 제외", "실제 견적이 아닙니다",
     "52df7721b44db3f3053bc2fc9f4bdd32f01e3ef8a59dcacee79f88d4bac9c1e0",
     "562bf85c2f9a2047649b52d9875da462fdb2ca14be36e21cfd1950ff976dfeb3"]) {
     assert.ok(section.includes(field), field);
@@ -54,7 +54,7 @@ test("verified purchase-price scope stays separate from unchanged plastics VAT a
   assert.match(verified, /중간가공업체의 고철 스크랩\(경량 B급\) 매입 가격/);
   assert.match(verified, /중간가공업체의 미압축 고지 매입 가격/);
   assert.doesNotMatch(verified, /VAT·물류 미확인|참고 매각가격/);
-  assert.match(html, /<h2>참고 매각가격<\/h2><p>참고가격 · VAT·물류 별도 확인<\/p>/);
+  assert.match(html, /<h2>참고 매각가격<\/h2><p>참고가격 · 부가세·물류 별도 확인<\/p>/);
   assert.match(html, /136개 가격 · 공란은 미발표/);
   assert.match(html, /압축-PE\(잡색\)/);
 });

@@ -58,6 +58,18 @@ for (const sourceCaseId of ["OYS-20261110-001", "OYS-20261110-002", "OYS-2026111
       .transform(new Response(html)).text();
     assert.ok(provenanceText.includes(attachment.calculations.cases[0].material_mapping_assumption), "original assumption remains in research provenance");
     for (const limitation of attachment.calculations.limitations) assert.ok(provenanceText.includes(limitation), "original limitation remains in research provenance");
+    for (const input of attachment.calculations.inputs) {
+      let original = "";
+      let open = false;
+      await new HTMLRewriter().on(`[data-research-input="${input.input_id}"] details`, {
+        element(element) { open ||= element.hasAttribute("open"); },
+        text(chunk) { original += chunk.text; },
+      }).transform(new Response(html)).text();
+      assert.equal(open, false, "dense original inputs stay collapsed");
+      for (const field of [input.input_id, input.unit, input.assumption_reason ?? input.transform, input.period, input.geography, input.tax_basis]) {
+        assert.ok(original.includes(field), `original input provenance preserved: ${input.input_id}`);
+      }
+    }
     assert.match(html, /2026-11-10/);
     if (sourceCaseId.endsWith("003")) assert.match(html, /질량 없음/);
     if (sourceCaseId.endsWith("002")) assert.match(html, /generic PE/);
@@ -82,9 +94,9 @@ test("renderer uses stored display strings and keeps real zero separate from nul
   // When the renderer consumes that server-only value object.
   const html = renderReport({ state: "needs-information", caseId: input.caseId, questions: ["확인"], evidence: [] }, { mode: "offline" }, { audience: "authenticated-research", research });
   // Then it does no recalculation or re-rounding of the supplied result display.
-  assert.match(html, /<dt>순비용<\/dt><dd>0 KRW<\/dd>/);
-  assert.match(html, /8765\.43 kgCO2e/);
-  assert.doesNotMatch(html, /-13867 KRW|-27\.51 kgCO2e/);
+  assert.match(html, /<dt>순비용<\/dt><dd>0 원<\/dd>/);
+  assert.match(html, /8765\.43 kg CO₂ 환산/);
+  assert.doesNotMatch(html, /-13867 원|-27\.51 kg CO₂ 환산/);
 });
 
 test("legal quote and PDF page require the exact registered source, SHA and law version", async () => {
