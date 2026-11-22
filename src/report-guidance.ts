@@ -31,9 +31,9 @@ function stageStrip(stages: readonly Pick<GuidanceStage, "stage" | "status">[]):
 export function resultConclusion(result: DecisionResult): string {
   switch (result.state) {
     case "needs-information":
-      return '<p class="state question">추가 정보 필요 · 실행 보류</p><h1>추가 정보 필요</h1><p id="decision-summary">입력 정보가 부족하므로 아래 질문에 답하면 처리 경로를 검토합니다.</p>';
+      return '<p class="state question">추가 정보 필요 · 실행 보류</p><h1>추가 정보 필요</h1><p id="decision-summary">정보가 부족해요. 아래 질문에 답하면 처리 경로를 검토합니다.</p>';
     case "needs-review":
-      return '<p class="state held">검토 필요 · 실행 보류</p><h1>검토 필요</h1><p id="decision-summary">확인할 조건이 남아 처리·반출·계약을 보류합니다.</p>';
+      return '<p class="state held">검토 필요 · 실행 보류</p><h1>검토 필요</h1><p id="decision-summary">확인할 것이 남아 있어 처리·반출·계약을 보류합니다.</p>';
     case "compared": {
       const recommendation = result.recommendations?.find(item => item.rank === 1);
       const route = result.routes.find(item => item.routeId === recommendation?.routeId);
@@ -66,13 +66,13 @@ export function resultMetrics(result: DecisionResult, context: ReportContext): s
     <p>${row.value == null ? result.state === "compared" ? row.missing : "검토가 보류돼 아직 비교할 수 없어요. 아래 질문과 보류 사유를 먼저 확인해 주세요." : "실제 2순위 − 1순위 · 양수이면 1순위가 낮습니다."}</p>
     <a href="${row.value == null ? result.state === "compared" ? "#decision-detail" : "#case-reasons" : "#guidance-stage-5"}">${row.value == null ? "필요한 자료 보기" : "비교 조건 보기"}</a></article>`).join("")}
     <article data-result-metric="price"><h2>참고 매각가격</h2><p class="metric-value">${reference?.source_value != null && source && href ? `${number(reference.source_value, 3)} <span>${escapeHtml(displayUnit(reference.source_unit ?? reference.unit))}</span>` : "참고 단가 없음"}</p>
-    ${reference?.source_value != null && source && href ? `<p>${escapeHtml(material ?? "")} · ${escapeHtml(reference.geography)} · ${escapeHtml(displaySourcePeriod(reference.period))}<br>공개 참고값 · 사례 견적은 업체에 확인하세요.</p><details><summary>가격 출처와 적용 범위</summary><a href="${href}" rel="noreferrer">${escapeHtml(source.title)}</a><p>${escapeHtml(displayLocator(source.locator))} · ${escapeHtml(reference.quality_grade === "compressed_mixed_colour" ? "혼합 색상 압축품" : reference.quality_grade)} · 부가세 ${escapeHtml(reference.tax_basis === "unverified" ? "확인 필요" : reference.tax_basis)}</p></details>` : '<p>이 사례에 표시할 공개 단가가 없어요. 실제 매각가는 재질과 등급을 알려 주고 업체에 문의해 주세요.</p><a href="#decision-detail">산정 조건 보기</a>'}</article></section>`;
+    ${reference?.source_value != null && source && href ? `<p>${escapeHtml(material ?? "")} · ${escapeHtml(reference.geography)} · ${escapeHtml(displaySourcePeriod(reference.period))}<br>공개 참고값 · 사례 견적은 업체에 확인하세요.</p><details><summary>가격 출처와 적용 범위</summary><a href="${href}" rel="noreferrer">${escapeHtml(source.title)}</a><p>${escapeHtml(displayLocator(source.locator))} · ${escapeHtml(reference.quality_grade === "compressed_mixed_colour" ? "혼합 색상 압축품" : reference.quality_grade)} · 부가세 ${escapeHtml(reference.tax_basis === "unverified" ? "확인 필요" : reference.tax_basis)}</p></details>` : '<p>이 사례에 표시할 공개 단가가 없어요. 실제 매각가는 재질과 등급을 알려 주고 업체에 문의해 주세요.</p><a href="#decision-detail">가격 기준 보기</a>'}</article></section>`;
 }
 
 export function publicCaseProgress(stages: readonly Pick<GuidanceStage, "stage" | "name" | "status" | "reasons">[] = ([1, 2, 3, 4, 5, 6] as const).map(stage => ({ stage, name: stageNames[stage - 1] ?? "", status: "missing", reasons: ["단계별 자료를 연결하면 진행 상태를 확인할 수 있습니다."] }))): string {
   return `<section id="case-progress" data-progress-audience="public"><h2>검토 단계</h2>
     ${stageStrip(stages)}
-    <details><summary>단계별 상태와 빠진 자료</summary><p>단계마다 산출물이 얼마나 채워졌는지 보여 줍니다. 현장 확인·허가·인수·실행 승인은 따로 받으세요. 연구용 가정 계산은 넣지 않았습니다.</p>${stages.map(stage => `<section id="guidance-stage-${stage.stage}">
+    <details><summary>단계별 상태와 빠진 자료 보기</summary><p>단계마다 산출물이 얼마나 채워졌는지 보여 줍니다. 현장 확인·허가·인수·실행 승인은 따로 받으세요. 연구용 가정 계산은 넣지 않았습니다.</p>${stages.map(stage => `<section id="guidance-stage-${stage.stage}">
       <h3>${stage.stage}. ${escapeHtml(stage.name)} · ${statusNames[stage.status]}</h3>${list(readableReasons(stage.reasons))}</section>`).join("")}</details></section>`;
 }
 
@@ -134,10 +134,10 @@ export function guidanceProgress(guidance: CaseGuidance, presentation: ReportPre
   }
   return `<section id="case-progress"><h2>검토 단계</h2>
     ${stageStrip(guidance.stages)}
-    <details><summary>단계별 생성 방식·근거·빈 단계 사유</summary>
+    <details><summary>단계별 근거와 빠진 자료 보기</summary>
       <p>공식 주제자료 3쪽의 예시 흐름에 맞춘 산출물 채움 상태입니다. 현장 확인·허가·승인은 따로 받으세요.</p>
       <p data-model-execution="${executionState}">${executionLabel}. ${presentation.modelAudit ? "아래에 모델 제안과 앱 검사 기록이 있습니다." : "단계별 모델 기록은 없습니다."} 설정이나 추적 식별자만으로는 제공자 실행 성공을 판단할 수 없습니다.</p>
-      <p>모델 제안은 앱 규칙으로 검증합니다. 안내와 비용·탄소는 앱이 계산합니다.</p>
+      <p>AI가 낸 제안은 앱 규칙으로 다시 확인합니다. 안내와 비용·탄소는 앱이 계산합니다.</p>
       ${presentation.modelAudit ? renderModelHostAudit(presentation.modelAudit, sharedReasons) : ""}
       ${guidance.stages.map(stage => `<section id="guidance-stage-${stage.stage}" data-stage-method="${stage.stage}"><h3>${stage.stage}. ${escapeHtml(stage.name)} · ${statusNames[stage.status]}</h3>
       <p>생성 방식: ${stageMethods[stage.stage]}${presentation.modelAudit ? "" : " · 단계별 모델 기록 없음"}</p>

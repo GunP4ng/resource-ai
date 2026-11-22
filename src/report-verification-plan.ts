@@ -22,7 +22,7 @@ export function renderVerificationPlan(plan: VerificationPlan | undefined, decis
   const isModel = plan !== undefined && plan.origin !== "runner-output";
   return `<section id="verification-plan" data-plan-status="${plan?.status ?? "host-only"}" data-plan-origin="${plan?.origin ?? "host-only"}">
     <h2>${safety.length ? "안전 우선 확인 순서" : isModel ? "모델이 제안한 확인 순서" : "실행기가 제안한 확인 순서"}</h2>
-    ${safety.length ? '<p data-host-safety-priority><strong>안전 사유를 1번에 둠</strong> · 보류 판정의 안전 사유는 모델 제안과 관계없이 항상 1번입니다.</p>' : ""}
+    ${safety.length ? '<p data-host-safety-priority><strong>안전 확인이 항상 먼저입니다.</strong> AI가 제안한 순서와 관계없이 안전 사유를 1번에 둡니다.</p>' : ""}
     ${plan?.status === "validated-selection" ? `<p>${isModel ? "모델이 앱이 제공한 항목 중에서 순서를 골랐습니다." : "모델 출처 기록이 없는 실행기 제안입니다."}
       앱은 선택한 항목이 이 사례에 제공한 범위 안에 있는지 검사했습니다. 순서는 현장 판단으로 조정하세요.</p>` : ""}
     ${plan?.status === "rejected" ? `<p>모델·실행기 제안을 거부했습니다. ${plan.rejectionReason ? rejection[plan.rejectionReason] : "검증에 실패했습니다."}</p>` : ""}

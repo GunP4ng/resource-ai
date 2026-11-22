@@ -9,16 +9,21 @@ export const intakeStyles = `
   }
   main:has(.intake-form) { max-width: var(--intake-measure); }
   .intake-landing {
-    min-height: calc(100dvh - var(--s48));
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    gap: var(--s32);
-    margin: 0;
-    padding-block: var(--s48);
+    gap: var(--s24);
+    max-width: 960px;
+    margin: 0 auto;
+    padding-block: var(--s48) var(--s32);
     text-align: center;
   }
+  .intake-lead { margin: 0; max-width: 34em; font-size: 18px; line-height: 1.7; color: var(--muted); }
+  .intake-steps { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: var(--s16); width: 100%; margin: var(--s16) 0 0; padding: 0; list-style: none; counter-reset: intake-step; text-align: start; }
+  .intake-steps li { counter-increment: intake-step; display: grid; grid-template-columns: auto minmax(0,1fr); gap: var(--s8) var(--s12); align-items: center; margin: 0; padding: var(--s20); background: var(--surface); border: var(--border) solid var(--line); border-radius: var(--radius); }
+  .intake-steps li::before { content: counter(intake-step); display: grid; place-items: center; inline-size: var(--s32); block-size: var(--s32); border-radius: 999px; background: var(--selection); color: var(--focus); font-weight: 700; }
+  .intake-steps strong { font-size: 18px; }
+  .intake-steps span { grid-column: 1/-1; color: var(--muted); line-height: 1.6; }
   .intake-landing h1 {
     color: var(--action);
     font-size: var(--intake-display);
@@ -81,7 +86,10 @@ export const intakeStyles = `
 }
 @media screen and (max-width:600px) {
   .intake-landing h1 { font-size: var(--h2); letter-spacing: 0; }
-  .intake-landing { gap: var(--s24); }
+  .intake-landing { gap: var(--s20); padding-block: var(--s32) var(--s24); }
+  .intake-landing .primary-action { width: 100%; }
+  .intake-steps { grid-template-columns: minmax(0,1fr); gap: var(--s12); }
+  .intake-steps li { padding: var(--s16); }
   .intake-heading { font-size: var(--h2); }
   .intake-section-title { font-size: var(--h3); }
   .intake-fields { gap: var(--s32); }

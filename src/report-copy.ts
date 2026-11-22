@@ -45,6 +45,7 @@ export function displayLawTitle(value: string): string {
 
 /** Exact host wording only. Keep raw identity and escape the display text. */
 const reasonCopy: Readonly<Record<string, string>> = {
+  "경로별 판단에 필요한 공개 법령 인용 부족": "처리 경로를 판단할 법령 근거가 아직 부족합니다.",
   "정보 부족·검토 예시는 작성된 고정 fixture이며 H1/H3 또는 모델의 판정이 아닙니다.": "정보 부족·검토 화면은 미리 만든 예시입니다. 모델이 새로 판정한 결과가 아닙니다.",
   "실제 허가·견적·배출계수와 H1/H4·Azure 통합은 미연결입니다.": "이 예시에는 실제 허가·견적·배출계수나 외부 서비스가 연결되지 않았습니다.",
   "사용자가 신고한 미검증 업체 회신 금액을 동일한 모델 단위로 가정했습니다. 실제 승인·업체 사실·확정 견적이 아닙니다.": "사용자가 신고한 업체 회신 금액을 같은 모델 단위로 넣어 가정 계산했습니다. 업체가 확인한 견적이 아니므로 확정 견적은 업체에서 받으세요.",

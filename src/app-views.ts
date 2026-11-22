@@ -129,8 +129,14 @@ export function inputPage(options: InputView, correction?: InputCorrection): str
   const scopeCorrection = correction && "material" in correction ? correction : undefined;
   const landing = correction ? "" : `<section class="intake-landing" data-intake-landing aria-labelledby="intake-heading">
       <h1 id="intake-heading">폐자원 처리 방향을 함께 검토해요</h1>
+      <p class="intake-lead">공장에서 나온 폐플라스틱·금속 스크랩·폐목재·포장재를 적으면, 법령 근거와 함께 처리 방법을 추천해요.</p>
       ${options.connected ? "" : '<p class="notice" data-intake-connection-notice role="status">지금은 검토에 연결할 수 없습니다.</p>'}
       <a class="primary-action" href="#case-intake" data-intake-start>폐자원 검토 시작</a>
+      <ol class="intake-steps" aria-label="이용 순서">
+        <li><strong>정보 입력</strong><span>재질, 발생 공정, 오염 상태를 아는 만큼 적어요.</span></li>
+        <li><strong>근거와 함께 추천</strong><span>처리 방법과 법령 원문 위치, 다음 할 일을 보여 줘요.</span></li>
+        <li><strong>위험하면 멈춤</strong><span>유해물질이 의심되면 추천을 멈추고 확인할 것을 알려 줘요.</span></li>
+      </ol>
     </section>`;
   return page("사례 입력", `${landing}
     <section class="intake-panel" id="case-intake" data-intake-panel aria-label="새 사례 입력" tabindex="-1"${scopeCorrection ? " data-out-of-scope" : ""}>

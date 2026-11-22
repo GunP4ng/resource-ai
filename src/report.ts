@@ -193,7 +193,7 @@ export function renderReport(result: DecisionResult, presentation: ReportPresent
     ${presentation.historical ? '<p class="notice">과거 평가입니다. 입력이 바뀌었으니 다시 평가해 주세요.</p>' : ""}
     <p id="next-action"><strong>다음 할 일:</strong> ${escapeHtml(nextAction)}</p>
     <p class="result-actions screen-only"><a class="primary-action" href="${answerAction ?? (result.state === "compared" ? "#checks" : "#case-reasons")}">${answerAction ? result.state === "needs-information" ? "답변 수정" : "항목 확인·수정" : result.state === "compared" ? "실행 전 확인하기" : "보류 사유 확인하기"}</a>${result.state === "compared" && view.answerTarget ? ` <a class="mobile-edit-shortcut" href="${view.answerTarget}">입력 수정하기</a>` : ""}${view.caseReturnTarget ? ` <a href="${escapeHtml(view.caseReturnTarget)}">사례로 돌아가기</a>` : ""}</p>
-    <p class="result-classification screen-only">폐기물 분류: 확인된 분류 코드 없음</p></header>
+    <p class="result-classification screen-only">폐기물 분류 코드: 아직 확인되지 않음</p></header>
     ${progress ? `<div class="screen-only">${progress}</div>` : ""}
     ${resultMetrics(result, context)}
     ${commercialSummary ? `<details class="result-disclosure"><summary>요약 근거와 계산 상태</summary>${data}
@@ -238,7 +238,7 @@ export function renderReport(result: DecisionResult, presentation: ReportPresent
     <div class="result-followup">
     ${directories && result.state !== "compared" ? '<p class="notice">보류 사유를 먼저 확인하세요. 아래 문의서는 업체에 확인 질문을 보내는 용도이며 인수·반출·처리 승인은 아닙니다.</p>' : ""}
     ${directories ? `<details class="result-disclosure" id="result-processors"><summary class="screen-only">업체 후보와 문의 조건</summary>${directories}</details>` : '<p class="screen-only"><a href="#decision-detail">처리 경로와 업체 근거 보기</a></p>'}
-    <div class="result-report-actions screen-only">${view.actions ?? ""}
+    <div class="result-report-actions screen-only"><h2>보고서·내보내기</h2>${view.actions ?? ""}
     ${view.inquiryTarget ? `<p><a class="primary-action secondary-action" href="${escapeHtml(view.inquiryTarget)}">업체 문의서 1장 만들기</a></p>` : ""}</div></div>
     <details class="result-disclosure" id="result-sources"><summary class="screen-only">출처와 원문 위치 ${result.evidence.length}개</summary>${evidenceSection(result)}</details>
     <details class="result-disclosure" id="result-checks"><summary class="screen-only">실행 전 확인사항${checks.length ? ` ${checks.length}개` : ""}</summary><section id="checks"><h2>실행 전 확인사항</h2>${checks.length ? `<h3>지금 할 ${Math.min(3, checks.length)}개</h3>
