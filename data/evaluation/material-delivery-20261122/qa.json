@@ -1,0 +1,142 @@
+{
+  "baseCommit": "24578438ceb49ad651d8a664d9c88d970782ca8f",
+  "runner": "local",
+  "applicationModelCalls": 0,
+  "inquiries": [
+    {
+      "material": "metal",
+      "heading": "기계적 재활용 추천",
+      "pages": 1,
+      "pdf": "metal-inquiry.pdf",
+      "processorStage": "미확보",
+      "processorReason": "공개 업체 목록은 문의 후보입니다. 현재 허가 범위·공정·지역 적합성·실제 인수 의사를 별도로 확인해야 합니다.",
+      "actualPriceAndCarbon": "미산정",
+      "rawInputs": "Preselected synthetic metal/wood inputs, no inferred grade or price."
+    },
+    {
+      "material": "wood",
+      "heading": "기계적 재활용 추천",
+      "pages": 1,
+      "pdf": "wood-inquiry.pdf",
+      "processorStage": "미확보",
+      "processorReason": "공개 업체 목록은 문의 후보입니다. 현재 허가 범위·공정·지역 적합성·실제 인수 의사를 별도로 확인해야 합니다.",
+      "actualPriceAndCarbon": "미산정",
+      "rawInputs": "Preselected synthetic metal/wood inputs, no inferred grade or price."
+    }
+  ],
+  "publicDirectory": {
+    "listedEntries": 31,
+    "verifiedCandidates": 0,
+    "limits": "Public listing; current permit scope, case suitability and acceptance unverified. No treating directory as accepted processors."
+  },
+  "screens": {
+    "hazard": [
+      {
+        "width": 1440,
+        "theme": "light",
+        "heading": "검토 필요",
+        "detected": "입력에서 감지한 표현: 납. 해당 물질·처리 이력의 확인 자료가 필요합니다.",
+        "overflow": 0
+      },
+      {
+        "width": 1440,
+        "theme": "dark",
+        "heading": "검토 필요",
+        "detected": "입력에서 감지한 표현: 납. 해당 물질·처리 이력의 확인 자료가 필요합니다.",
+        "overflow": 0
+      },
+      {
+        "width": 390,
+        "theme": "light",
+        "heading": "검토 필요",
+        "detected": "입력에서 감지한 표현: 납. 해당 물질·처리 이력의 확인 자료가 필요합니다.",
+        "overflow": 0
+      },
+      {
+        "width": 390,
+        "theme": "dark",
+        "heading": "검토 필요",
+        "detected": "입력에서 감지한 표현: 납. 해당 물질·처리 이력의 확인 자료가 필요합니다.",
+        "overflow": 0
+      }
+    ],
+    "referencePrices": [
+      {
+        "width": 1440,
+        "theme": "light",
+        "rows": [
+          "철스크랩 · 경량 B급 · 스크랩 상태의 고철346.1 원/kg중간가공업체의 고철 스크랩(경량 B급) 매입 가격 (VAT 포함)PDF 물리 60쪽 / 인쇄 56쪽 · 2026.10 행, 전국 열품질·거래 정의: PDF 물리 59쪽 / 인쇄 55쪽CSV 24행 (철스크랩, 지역별 값만 수록)",
+          "폐신문지 · 상･중･하 중 중품 · 건조･선별된 상태125.8 원/kg중간가공업체의 미압축 고지 매입 가격 (VAT 포함)PDF 물리 16쪽 / 인쇄 12쪽 · 2026.10 행, 전국 열품질·거래 정의: PDF 물리 15쪽 / 인쇄 11쪽CSV 2행 (신문지, 지역별 값만 수록)",
+          "폐골판지 · 상･중･하 중 중품 · 라이너 형태 고지93.5 원/kg중간가공업체의 미압축 고지 매입 가격 (VAT 포함)PDF 물리 18쪽 / 인쇄 14쪽 · 2026.10 행, 전국 열품질·거래 정의: PDF 물리 17쪽 / 인쇄 13쪽CSV 3행 (골판지, 지역별 값만 수록)"
+        ],
+        "excluded": [
+          "구리 스크랩: 적용 가격 미확보 · 이 26품목 조사에 전용 가격 행이 없어 적용 가격 미확보. 별도 비철 물가·LME 인용값과 동일시하지 않습니다.",
+          "폐목재: 적용 가격 미확보 · 이 26품목 조사에 전용 가격 행이 없어 적용 가격 미확보.",
+          "종이팩·복합 포장재: 적용 가격 미확보 · 폐신문지·폐골판지와 동일 등급으로 볼 근거가 없어 적용 가격 미확보."
+        ],
+        "overflow": 0
+      },
+      {
+        "width": 1440,
+        "theme": "dark",
+        "rows": [
+          "철스크랩 · 경량 B급 · 스크랩 상태의 고철346.1 원/kg중간가공업체의 고철 스크랩(경량 B급) 매입 가격 (VAT 포함)PDF 물리 60쪽 / 인쇄 56쪽 · 2026.10 행, 전국 열품질·거래 정의: PDF 물리 59쪽 / 인쇄 55쪽CSV 24행 (철스크랩, 지역별 값만 수록)",
+          "폐신문지 · 상･중･하 중 중품 · 건조･선별된 상태125.8 원/kg중간가공업체의 미압축 고지 매입 가격 (VAT 포함)PDF 물리 16쪽 / 인쇄 12쪽 · 2026.10 행, 전국 열품질·거래 정의: PDF 물리 15쪽 / 인쇄 11쪽CSV 2행 (신문지, 지역별 값만 수록)",
+          "폐골판지 · 상･중･하 중 중품 · 라이너 형태 고지93.5 원/kg중간가공업체의 미압축 고지 매입 가격 (VAT 포함)PDF 물리 18쪽 / 인쇄 14쪽 · 2026.10 행, 전국 열품질·거래 정의: PDF 물리 17쪽 / 인쇄 13쪽CSV 3행 (골판지, 지역별 값만 수록)"
+        ],
+        "excluded": [
+          "구리 스크랩: 적용 가격 미확보 · 이 26품목 조사에 전용 가격 행이 없어 적용 가격 미확보. 별도 비철 물가·LME 인용값과 동일시하지 않습니다.",
+          "폐목재: 적용 가격 미확보 · 이 26품목 조사에 전용 가격 행이 없어 적용 가격 미확보.",
+          "종이팩·복합 포장재: 적용 가격 미확보 · 폐신문지·폐골판지와 동일 등급으로 볼 근거가 없어 적용 가격 미확보."
+        ],
+        "overflow": 0
+      },
+      {
+        "width": 390,
+        "theme": "light",
+        "rows": [
+          "철스크랩 · 경량 B급 · 스크랩 상태의 고철346.1 원/kg중간가공업체의 고철 스크랩(경량 B급) 매입 가격 (VAT 포함)PDF 물리 60쪽 / 인쇄 56쪽 · 2026.10 행, 전국 열품질·거래 정의: PDF 물리 59쪽 / 인쇄 55쪽CSV 24행 (철스크랩, 지역별 값만 수록)",
+          "폐신문지 · 상･중･하 중 중품 · 건조･선별된 상태125.8 원/kg중간가공업체의 미압축 고지 매입 가격 (VAT 포함)PDF 물리 16쪽 / 인쇄 12쪽 · 2026.10 행, 전국 열품질·거래 정의: PDF 물리 15쪽 / 인쇄 11쪽CSV 2행 (신문지, 지역별 값만 수록)",
+          "폐골판지 · 상･중･하 중 중품 · 라이너 형태 고지93.5 원/kg중간가공업체의 미압축 고지 매입 가격 (VAT 포함)PDF 물리 18쪽 / 인쇄 14쪽 · 2026.10 행, 전국 열품질·거래 정의: PDF 물리 17쪽 / 인쇄 13쪽CSV 3행 (골판지, 지역별 값만 수록)"
+        ],
+        "excluded": [
+          "구리 스크랩: 적용 가격 미확보 · 이 26품목 조사에 전용 가격 행이 없어 적용 가격 미확보. 별도 비철 물가·LME 인용값과 동일시하지 않습니다.",
+          "폐목재: 적용 가격 미확보 · 이 26품목 조사에 전용 가격 행이 없어 적용 가격 미확보.",
+          "종이팩·복합 포장재: 적용 가격 미확보 · 폐신문지·폐골판지와 동일 등급으로 볼 근거가 없어 적용 가격 미확보."
+        ],
+        "overflow": 0
+      },
+      {
+        "width": 390,
+        "theme": "dark",
+        "rows": [
+          "철스크랩 · 경량 B급 · 스크랩 상태의 고철346.1 원/kg중간가공업체의 고철 스크랩(경량 B급) 매입 가격 (VAT 포함)PDF 물리 60쪽 / 인쇄 56쪽 · 2026.10 행, 전국 열품질·거래 정의: PDF 물리 59쪽 / 인쇄 55쪽CSV 24행 (철스크랩, 지역별 값만 수록)",
+          "폐신문지 · 상･중･하 중 중품 · 건조･선별된 상태125.8 원/kg중간가공업체의 미압축 고지 매입 가격 (VAT 포함)PDF 물리 16쪽 / 인쇄 12쪽 · 2026.10 행, 전국 열품질·거래 정의: PDF 물리 15쪽 / 인쇄 11쪽CSV 2행 (신문지, 지역별 값만 수록)",
+          "폐골판지 · 상･중･하 중 중품 · 라이너 형태 고지93.5 원/kg중간가공업체의 미압축 고지 매입 가격 (VAT 포함)PDF 물리 18쪽 / 인쇄 14쪽 · 2026.10 행, 전국 열품질·거래 정의: PDF 물리 17쪽 / 인쇄 13쪽CSV 3행 (골판지, 지역별 값만 수록)"
+        ],
+        "excluded": [
+          "구리 스크랩: 적용 가격 미확보 · 이 26품목 조사에 전용 가격 행이 없어 적용 가격 미확보. 별도 비철 물가·LME 인용값과 동일시하지 않습니다.",
+          "폐목재: 적용 가격 미확보 · 이 26품목 조사에 전용 가격 행이 없어 적용 가격 미확보.",
+          "종이팩·복합 포장재: 적용 가격 미확보 · 폐신문지·폐골판지와 동일 등급으로 볼 근거가 없어 적용 가격 미확보."
+        ],
+        "overflow": 0
+      }
+    ]
+  },
+  "verification": {
+    "fullTestsPassed": 1768,
+    "fullTestsFailed": 0,
+    "types": "passed",
+    "builds": "passed",
+    "smoke": "SCAFFOLD_ONLY; no Azure request",
+    "original18CompleteDecisionsUnchanged": 18,
+    "original18StateChanges": 0,
+    "materialSafetyPassed": 131,
+    "materialSafetyTotal": 131
+  },
+  "limits": [
+    "Browser QA used the app feature worktree before lead merge; final presentation/video will capture merged main.",
+    "Inquiry PDFs were rendered and visually inspected as single A4 pages.",
+    "These are synthetic regression and local QA observations, not field accuracy."
+  ]
+}

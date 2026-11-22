@@ -1,0 +1,186 @@
+{
+  "main": "24578438ceb49ad651d8a664d9c88d970782ca8f",
+  "runner": "subscription",
+  "provider": "chatgpt-subscription",
+  "model": "gpt-6-sol",
+  "selectedAccount": "sanghyeob",
+  "credentialSlot": "login-4",
+  "scenarioCount": 3,
+  "providerRequests": 6,
+  "http200": 6,
+  "retries": 0,
+  "flows": [
+    {
+      "scenario": "metal-normal",
+      "state": "compared",
+      "origin": "host-decision-reference",
+      "validation": "validation-passed",
+      "independentContribution": "not-established",
+      "passedChecks": [
+        "syntax",
+        "case-binding",
+        "evidence",
+        "comparison"
+      ],
+      "hostReasons": [],
+      "traceId": "chatgpt-subscription:801fed36-bd4b-4236-ab15-b110381842c9",
+      "reportedTokens": 10297,
+      "inputBinding": true,
+      "decisionBinding": true,
+      "stages": [
+        {
+          "stage": 1,
+          "status": "absent",
+          "proposedItems": 0,
+          "hostItems": 0
+        },
+        {
+          "stage": 2,
+          "status": "validation-passed",
+          "proposedItems": 4,
+          "hostItems": 4
+        },
+        {
+          "stage": 3,
+          "status": "validation-passed",
+          "proposedItems": 5,
+          "hostItems": 5
+        },
+        {
+          "stage": 4,
+          "status": "absent",
+          "proposedItems": 0,
+          "hostItems": 0
+        },
+        {
+          "stage": 5,
+          "status": "absent",
+          "proposedItems": 0,
+          "hostItems": 0
+        },
+        {
+          "stage": 6,
+          "status": "validation-passed",
+          "proposedItems": 2,
+          "hostItems": 2
+        }
+      ]
+    },
+    {
+      "scenario": "hazard-hold",
+      "state": "needs-review",
+      "origin": "host-decision-reference",
+      "validation": "not-evaluated",
+      "independentContribution": "not-established",
+      "passedChecks": [],
+      "hostReasons": [
+        "도료·방부제·접착제·오일 등 처리·접촉 가능성이 보고되었습니다. 성분·SDS·잔류량·유해성 분류를 검토하기 전에는 재활용 추천을 보류합니다."
+      ],
+      "traceId": "chatgpt-subscription:d20da03b-7c42-4f02-8972-27574a292c3b",
+      "reportedTokens": 10131,
+      "inputBinding": true,
+      "decisionBinding": true,
+      "stages": [
+        {
+          "stage": 1,
+          "status": "absent",
+          "proposedItems": 0,
+          "hostItems": 0
+        },
+        {
+          "stage": 2,
+          "status": "not-evaluated",
+          "proposedItems": 1,
+          "hostItems": 1
+        },
+        {
+          "stage": 3,
+          "status": "not-evaluated",
+          "proposedItems": 5,
+          "hostItems": 5
+        },
+        {
+          "stage": 4,
+          "status": "absent",
+          "proposedItems": 0,
+          "hostItems": 0
+        },
+        {
+          "stage": 5,
+          "status": "absent",
+          "proposedItems": 0,
+          "hostItems": 0
+        },
+        {
+          "stage": 6,
+          "status": "not-evaluated",
+          "proposedItems": 1,
+          "hostItems": 1
+        }
+      ]
+    },
+    {
+      "scenario": "wood-normal",
+      "state": "compared",
+      "origin": "host-decision-reference",
+      "validation": "validation-passed",
+      "independentContribution": "not-established",
+      "passedChecks": [
+        "syntax",
+        "case-binding",
+        "evidence",
+        "comparison"
+      ],
+      "hostReasons": [],
+      "traceId": "chatgpt-subscription:388b04fd-e6f0-4a3b-8c87-6c7075d9c159",
+      "reportedTokens": 12465,
+      "inputBinding": true,
+      "decisionBinding": true,
+      "stages": [
+        {
+          "stage": 1,
+          "status": "absent",
+          "proposedItems": 0,
+          "hostItems": 0
+        },
+        {
+          "stage": 2,
+          "status": "validation-passed",
+          "proposedItems": 4,
+          "hostItems": 4
+        },
+        {
+          "stage": 3,
+          "status": "validation-passed",
+          "proposedItems": 6,
+          "hostItems": 6
+        },
+        {
+          "stage": 4,
+          "status": "absent",
+          "proposedItems": 0,
+          "hostItems": 0
+        },
+        {
+          "stage": 5,
+          "status": "absent",
+          "proposedItems": 0,
+          "hostItems": 0
+        },
+        {
+          "stage": 6,
+          "status": "validation-passed",
+          "proposedItems": 2,
+          "hostItems": 2
+        }
+      ]
+    }
+  ],
+  "limits": [
+    "Three preselected synthetic cases with real subscription execution; not field accuracy or savings.",
+    "All outputs selected host-issued decision references; independent model contribution is not established.",
+    "The hazardous case remains needs-review through the early host guard; proposal validation is not-evaluated, not an invented rejection.",
+    "Tokens are reported usage, not billing. No Azure execution or image inference.",
+    "No credentials, cookies or private operator account records are included."
+  ]
+}

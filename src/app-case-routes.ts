@@ -155,6 +155,7 @@ export async function caseRoute(services: RouteServices, context: RouteRequest):
       ...(privateAudience && stored.modelAudit ? { modelAudit: stored.modelAudit } : {}),
       ...(privateAudience && stored.verificationPlan ? { verificationPlan: stored.verificationPlan } : {}),
     }, audience, { notice, actions, editing, answerPrompt: suffix === "report" ? "" : optionalMass,
+      ...(snapshot.evaluated.revision === revision(snapshot.input) ? { evaluatedInput: snapshot.input } : {}),
       ...(!guidance && !snapshot.permissionChanged && snapshot.evaluated.revision === revision(snapshot.input)
         ? { progress: buildPublicCaseProgress(snapshot.input, stored.decision) } : {}),
       caseRegion: snapshot.input.region, publicScenarioMissing, ...(suffix === "report" ? {} : { inquiryTarget: `/cases/${id}/inquiry` }),

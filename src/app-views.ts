@@ -5,7 +5,7 @@ import { caseFormTextLimits, HttpFailure } from "./app-http.ts";
 
 const exampleStart = '<p class="cluster screen-only"><a class="primary-action" data-example-start href="/demo/normal">예시로 시작</a><span>합성 사례 · 외부 모델 호출 없음</span></p>';
 const textFields = [
-  ["description", "폐자원 설명"], ["process", "발생 공정"], ["polymer", "재질·수지"],
+  ["description", "폐자원 설명"], ["process", "발생 공정"], ["polymer", "재질·품목"],
   ["contamination", "오염 상태"], ["region", "발생 지역"], ["assessmentDate", "평가 기준일"],
 ] as const;
 export function nativeAnswer(raw: Readonly<Record<string, unknown>>): Readonly<Record<string, unknown>> {

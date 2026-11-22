@@ -37,7 +37,7 @@ function excerpt(value: string | null, limit = 32) {
   };
 }
 
-const contactLabels = { yes: "있음 (yes)", no: "없음 (no)", unknown: "미상 (unknown)" } as const;
+const contactLabels = { yes: "있음", no: "없음", unknown: "미상" } as const;
 const stateLabels = {
   "needs-information": "추가 정보 필요 · 실행 보류",
   "needs-review": "검토 필요 · 실행 보류",
@@ -64,7 +64,7 @@ export function renderInquiry(
   const fields = [
     ["사례 ID", { text: caseId, omitted: null }],
     ["평가 기준일", { text: assessmentDate, omitted: null }],
-    ["수지 (신고)", excerpt(input.polymer)],
+    ["재질·품목 (신고)", excerpt(input.polymer)],
     ["발생 공정 (신고)", excerpt(input.process)],
     ["오염 상태 (신고)", excerpt(input.contamination)],
     ["질량 (신고)", { text: input.massKg === null ? "미상 · 계량값 확인 필요" : `${escapeHtml(String(input.massKg))} kg`, omitted: null }],

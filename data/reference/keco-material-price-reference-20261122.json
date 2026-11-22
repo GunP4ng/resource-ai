@@ -1,0 +1,86 @@
+{
+  "publisher": "한국환경공단",
+  "title": "재활용가능자원 가격조사",
+  "surveyMonth": "2026-10",
+  "referenceDate": "2026-10-10",
+  "publicationDate": "2026-10-26",
+  "lookupDate": "2026-11-22",
+  "region": "전국 (제주 조사 제외)",
+  "unit": "원/kg",
+  "vat": "VAT 포함",
+  "logistics": "물류비 제외",
+  "pdf": {
+    "url": "https://www.re.or.kr/info/listCirPricePage.do?toSn=142",
+    "downloadUrl": "https://www.re.or.kr/comm/fileDownloadInfo.do",
+    "downloadMethod": "POST",
+    "downloadBody": "sn=142&type=CirPrice",
+    "sha256": "52df7721b44db3f3053bc2fc9f4bdd32f01e3ef8a59dcacee79f88d4bac9c1e0",
+    "methodLocator": "PDF 물리 7쪽 / 인쇄 3쪽",
+    "methodQuote": "원/kg, 부가가치세(VAT) 포함, 물류비 제외된 가격",
+    "transactionLocator": "PDF 물리 70쪽 / 인쇄 66쪽",
+    "transactionQuote": "다만, 폐신문지·폐골판지·철스크랩은 매입 가격으로 조사"
+  },
+  "csv": {
+    "url": "https://www.data.go.kr/data/3076421/fileData.do",
+    "localPath": "data/reference/keco-price-2026-10.csv",
+    "sha256": "562bf85c2f9a2047649b52d9875da462fdb2ca14be36e21cfd1950ff976dfeb3",
+    "rowConvention": "헤더 포함 행 번호",
+    "limitation": "CSV에는 지역별 값만 있고 전국 열이 없습니다. 전국 값은 PDF의 공표값이며 지역 값으로 재계산하지 않습니다."
+  },
+  "license": {
+    "name": "공공누리 제1유형: 출처표시",
+    "url": "https://www.kogl.or.kr/info/licenseType1.do",
+    "sourceUrl": "https://www.data.go.kr/data/3076421/fileData.do",
+    "quote": "공공저작물 : 출처표시 (제 1유형)",
+    "scope": "공공데이터포털 데이터 이용허락. PDF 내 제3자 인용자료 전체에 확대하지 않습니다."
+  },
+  "items": [
+    {
+      "material": "철스크랩",
+      "grade": "경량 B급",
+      "qualityState": "스크랩 상태의 고철",
+      "priceKrwPerKg": 346.1,
+      "transactionQuote": "중간가공업체의 고철 스크랩(경량 B급) 매입 가격 (VAT 포함)",
+      "definitionLocator": "PDF 물리 59쪽 / 인쇄 55쪽",
+      "valueLocator": "PDF 물리 60쪽 / 인쇄 56쪽 · 2026.10 행, 전국 열",
+      "nationalCellQuote": "2026.10\n346.1",
+      "csvLine": 24,
+      "csvLabel": "철스크랩"
+    },
+    {
+      "material": "폐신문지",
+      "grade": "상･중･하 중 중품",
+      "qualityState": "건조･선별된 상태",
+      "priceKrwPerKg": 125.8,
+      "transactionQuote": "중간가공업체의 미압축 고지 매입 가격 (VAT 포함)",
+      "definitionLocator": "PDF 물리 15쪽 / 인쇄 11쪽",
+      "valueLocator": "PDF 물리 16쪽 / 인쇄 12쪽 · 2026.10 행, 전국 열",
+      "nationalCellQuote": "2026.10\n125.8",
+      "csvLine": 2,
+      "csvLabel": "신문지"
+    },
+    {
+      "material": "폐골판지",
+      "grade": "상･중･하 중 중품",
+      "qualityState": "라이너 형태 고지",
+      "priceKrwPerKg": 93.5,
+      "transactionQuote": "중간가공업체의 미압축 고지 매입 가격 (VAT 포함)",
+      "definitionLocator": "PDF 물리 17쪽 / 인쇄 13쪽",
+      "valueLocator": "PDF 물리 18쪽 / 인쇄 14쪽 · 2026.10 행, 전국 열",
+      "nationalCellQuote": "2026.10\n93.5",
+      "csvLine": 3,
+      "csvLabel": "골판지"
+    }
+  ],
+  "limits": [
+    "품목·등급이 한정된 참고 통계이며 실제 견적이 아닙니다 (NOT A QUOTE).",
+    "업체별 실제 가격은 다를 수 있으며 사용자 사례의 재질·등급·오염 상태·인수 가능성을 확인한 자료가 아닙니다.",
+    "사용자 사례에 등급·가격을 적용하지 않습니다. 질량을 곱한 매각대금·처리비·수수료·이익·탄소·순위 계산에 사용하지 않습니다.",
+    "전국 평균에는 미공표 지역의 조사값도 포함됩니다. 미공표는 0원이 아니며 전국 값으로 지역 공란을 채우지 않습니다."
+  ],
+  "excluded": [
+    { "material": "구리 스크랩", "priceKrwPerKg": null, "reason": "이 26품목 조사에 전용 가격 행이 없어 적용 가격 미확보. 별도 비철 물가·LME 인용값과 동일시하지 않습니다." },
+    { "material": "폐목재", "priceKrwPerKg": null, "reason": "이 26품목 조사에 전용 가격 행이 없어 적용 가격 미확보." },
+    { "material": "종이팩·복합 포장재", "priceKrwPerKg": null, "reason": "폐신문지·폐골판지와 동일 등급으로 볼 근거가 없어 적용 가격 미확보." }
+  ]
+}

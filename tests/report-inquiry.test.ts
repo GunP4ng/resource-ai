@@ -31,7 +31,8 @@ test("inquiry reports current fields and leaves processor answers for the recipi
     input.caseId, input.assessmentDate, input.polymer, input.process,
     input.contamination, "123.5 kg", input.region, input.description,
   ]);
-  assert.match((await textAt(html, "[data-inquiry-contact]")).join(""), /미상 \(unknown\)/);
+  assert.match((await textAt(html, "[data-inquiry-contact]")).join(""), /미상/);
+  assert.doesNotMatch((await textAt(html, "[data-inquiry-contact]")).join(""), /\bunknown\b/);
   const questions = await textAt(html, "[data-inquiry-question]");
   assert.equal(questions.length, 4);
   assert.ok(questions.every(question => question.endsWith("?") || question.endsWith("주세요.")),
@@ -87,10 +88,10 @@ test("long reported fields have bounded excerpts and full escaped originals in t
   }
   assert.match(html, /&lt;img src=x onerror=&quot;/);
   assert.doesNotMatch(html, /\uFFFD|PRIVATE_PHOTO_SENTINEL|PRIVATE_DECISION_SENTINEL/);
-  assert.match((await textAt(html, "[data-inquiry-contact]")).join(""), /있음 \(yes\)/);
+  assert.match((await textAt(html, "[data-inquiry-contact]")).join(""), /있음/);
   assert.match((await textAt(html, "[data-inquiry-full-input]")).join(""), /이 항목의 전체 신고 내용은 별지에 있습니다/);
   assert.deepEqual(await textAt(html, "[data-inquiry-appendix] dt"), [
-    "수지 (신고)", "발생 공정 (신고)", "오염 상태 (신고)", "발생 지역 (신고)", "설명 (신고)",
+    "재질·품목 (신고)", "발생 공정 (신고)", "오염 상태 (신고)", "발생 지역 (신고)", "설명 (신고)",
   ]);
   const full = await textAt(html, "[data-inquiry-appendix] dd");
   assert.equal(full.length, 5);
@@ -126,7 +127,7 @@ test("null and blank reported fields remain unknown without inferred data", asyn
   assert.deepEqual(await textAt(html, ".inquiry-fields dd"), [
     input.caseId, input.assessmentDate, "미상", "미상", "미상", "미상 · 계량값 확인 필요", "미상", "미상",
   ]);
-  assert.match((await textAt(html, "[data-inquiry-contact]")).join(""), /없음 \(no\)/);
+  assert.match((await textAt(html, "[data-inquiry-contact]")).join(""), /없음/);
 });
 
 for (const result of [

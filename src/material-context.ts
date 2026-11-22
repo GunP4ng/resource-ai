@@ -156,7 +156,7 @@ export function materialStream(input: CaseInput): MaterialStream | null {
 }
 
 /** Keep affirmative risk in each field even when another field denies contact. */
-export function materialHazardReasons(input: CaseInput): readonly string[] {
+export function materialHazardTerms(input: CaseInput): readonly string[] {
   if (materialFamily(input) === null) return [];
   const fields = [input.polymer, input.description, input.process, input.contamination];
   const unplated = fields.map(value => unplatedFields.has((value ?? "").normalize("NFKC").trim()));
@@ -164,8 +164,13 @@ export function materialHazardReasons(input: CaseInput): readonly string[] {
   // Retain the original hazard scan when any independent coating signal remains.
   const withoutUnplated = masked.map((value, index) => unplated[index] ? "" : value);
   const hazardFields = withoutUnplated.some(value => coatingSignal.test(value)) ? masked : withoutUnplated;
-  const risk = hazardFields.some(value => materialHazard.test(value.replace(/\b(?:unpainted|untreated|oil-free)\b/giu, "")));
-  return risk ? [safetyReasons.materialTreatment] : [];
+  return [...new Set(hazardFields.flatMap(value =>
+    [...value.replace(/\b(?:unpainted|untreated|oil-free)\b/giu, "")
+      .matchAll(new RegExp(materialHazard.source, "giu"))].map(match => match[0])))];
+}
+
+export function materialHazardReasons(input: CaseInput): readonly string[] {
+  return materialHazardTerms(input).length ? [safetyReasons.materialTreatment] : [];
 }
 
 export function materialQuestions(input: CaseInput): readonly string[] {

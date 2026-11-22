@@ -1,0 +1,1546 @@
+[
+  {
+    "scenario": "metal-normal",
+    "input": {
+      "caseId": "ced1973f-b6c6-49ea-876e-0029e89fdfdb",
+      "description": "동관 절단 공정의 구리 오프컷",
+      "photoRefs": [],
+      "process": "사업장일반폐기물 동관 절단 가공 공정",
+      "polymer": "구리",
+      "contamination": "없음",
+      "hazardousContact": "no",
+      "massKg": 100,
+      "region": "경기",
+      "assessmentDate": "2026-11-22"
+    },
+    "assessment": {
+      "decision": {
+        "state": "compared",
+        "caseId": "ced1973f-b6c6-49ea-876e-0029e89fdfdb",
+        "processors": [],
+        "scenarios": [],
+        "evidence": [
+          {
+            "sourceId": "waste-rule-2026-11-12",
+            "title": "폐기물관리법 시행규칙",
+            "publisher": "국가법령정보센터",
+            "url": "https://www.law.go.kr/LSW/lsInfoR.do?lsiSeq=291947&efYd=20261112",
+            "locator": "제4조의2 제1항",
+            "retrievedAt": "2026-11-13T10:25:00Z",
+            "effectiveFrom": "2026-11-12",
+            "effectiveTo": null,
+            "datasetVersion": "lsiSeq=291947",
+            "sha256": "ffda6c1dad0c53dcdc1db86543e768c346dbbecdea2d2a0d2fc649aca565e529",
+            "license": "저작권법 제7조 제1호 비보호저작물 (법령 본문)",
+            "licenseVerified": true
+          },
+          {
+            "sourceId": "legal-291947-metal-nonferrous-annex4-code",
+            "title": "폐기물관리법 시행규칙 별표 4 metal/nonferrous 발췌",
+            "publisher": "국가법령정보센터",
+            "url": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400799&bylClsCd=110201",
+            "locator": "별표4 제2호 51-29-02, PDF 11쪽",
+            "retrievedAt": "2026-11-21T11:37:49Z",
+            "effectiveFrom": "2026-11-12",
+            "effectiveTo": null,
+            "datasetVersion": "lsiSeq=291947; 시행 2026-11-12; 별표 개정 2025-12-30",
+            "sha256": "8a53d62c31c52df1ad762bee466daa7ea9dcb6025656c5f6d7f7011046469ba3",
+            "license": "저작권법 제7조 제1호 비보호저작물 (법령·별표 원문)",
+            "licenseVerified": true
+          },
+          {
+            "sourceId": "legal-291947-metal-nonferrous-annex4-2-r3-3",
+            "title": "폐기물관리법 시행규칙 별표 4-2 metal/nonferrous 발췌",
+            "publisher": "국가법령정보센터",
+            "url": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400831&bylClsCd=110201",
+            "locator": "별표4의2 제2호가목3), PDF 1쪽",
+            "retrievedAt": "2026-11-21T11:37:49Z",
+            "effectiveFrom": "2026-11-12",
+            "effectiveTo": null,
+            "datasetVersion": "lsiSeq=291947; 시행 2026-11-12; 별표 개정 2025-12-30",
+            "sha256": "32abd3c2990fd1080fab8bee37ed642990f466ff5d5f55b5dda4bb21832c9866",
+            "license": "저작권법 제7조 제1호 비보호저작물 (법령·별표 원문)",
+            "licenseVerified": true
+          },
+          {
+            "sourceId": "legal-291947-metal-nonferrous-annex4-3-types",
+            "title": "폐기물관리법 시행규칙 별표 4-3 metal/nonferrous 발췌",
+            "publisher": "국가법령정보센터",
+            "url": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400843&bylClsCd=110201",
+            "locator": "별표4의3 제2호 51-29-02, PDF 20쪽",
+            "retrievedAt": "2026-11-21T11:37:49Z",
+            "effectiveFrom": "2026-11-12",
+            "effectiveTo": null,
+            "datasetVersion": "lsiSeq=291947; 시행 2026-11-12; 별표 개정 2025-12-30",
+            "sha256": "21bd529bde151f3f12bc6df4cef95e4302470183c15346a448bd02186b3ad088",
+            "license": "저작권법 제7조 제1호 비보호저작물 (법령·별표 원문)",
+            "licenseVerified": true
+          },
+          {
+            "sourceId": "legal-291947-metal-nonferrous-annex5-3-common",
+            "title": "폐기물관리법 시행규칙 별표 5-3 metal/nonferrous 발췌",
+            "publisher": "국가법령정보센터",
+            "url": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400985&bylClsCd=110201",
+            "locator": "별표5의3 제1호가~마, PDF 1쪽",
+            "retrievedAt": "2026-11-21T11:37:49Z",
+            "effectiveFrom": "2026-11-12",
+            "effectiveTo": null,
+            "datasetVersion": "lsiSeq=291947; 시행 2026-11-12; 별표 개정 2025-12-30",
+            "sha256": "9401218bceb11e1da76d7a3f8195c07373190be9af0da8249036ff62e2ac4cb4",
+            "license": "저작권법 제7조 제1호 비보호저작물 (법령·별표 원문)",
+            "licenseVerified": true
+          }
+        ],
+        "humanApproval": "pending",
+        "limitations": [
+          "추천 후보, 실행 전 확인 필요. 실행·반출·계약의 승인 결과가 아닙니다.",
+          "추천 순위는 검토 순서입니다. 검증되지 않은 수치·폐기물 코드·업체 허가를 추정하지 않습니다."
+        ],
+        "routes": [
+          {
+            "routeId": "reuse",
+            "route": "reuse",
+            "eligibility": {
+              "state": "unknown",
+              "missingFacts": [
+                "이 경로의 용도·처리 방식에 맞는 개별 공개 근거가 부족합니다."
+              ]
+            }
+          },
+          {
+            "routeId": "mechanical-recycling",
+            "route": "mechanical-recycling",
+            "eligibility": {
+              "state": "conditional",
+              "evidenceIds": [
+                "legal-291947-metal-nonferrous-annex4-code",
+                "legal-291947-metal-nonferrous-annex4-2-r3-3",
+                "legal-291947-metal-nonferrous-annex4-3-types",
+                "legal-291947-metal-nonferrous-annex5-3-common"
+              ],
+              "conditions": [
+                "공개 근거상 가능(조건부): 51-29-02의 R-3-3 원료물질 제조 유형 후보"
+              ]
+            }
+          },
+          {
+            "routeId": "other-recovery",
+            "route": "other-recovery",
+            "eligibility": {
+              "state": "unknown",
+              "missingFacts": [
+                "이 경로의 용도·처리 방식에 맞는 개별 공개 근거가 부족합니다."
+              ]
+            }
+          },
+          {
+            "routeId": "disposal",
+            "route": "disposal",
+            "eligibility": {
+              "state": "unknown",
+              "missingFacts": [
+                "이 경로의 용도·처리 방식에 맞는 개별 공개 근거가 부족합니다."
+              ]
+            }
+          }
+        ],
+        "recommendations": [
+          {
+            "routeId": "mechanical-recycling",
+            "rank": 1,
+            "grade": "public-conditional",
+            "basis": "공개 법령의 폐금속 분류·R-3-3 유형·기준을 연결한 원료화 검토 후보입니다. 이물질·유해성·품질 기준 및 실제 허가·인수 조건을 확인해야 합니다. 발생 공정을 처리 공정으로 간주하거나 비용·탄소 우월성을 확정하지 않습니다.",
+            "legalCitations": [
+              {
+                "sourceId": "legal-291947-metal-nonferrous-annex4-code",
+                "locator": "별표4 제2호 51-29-02, PDF 11쪽",
+                "claim": "51-29-02 분류 문구 확인. 실제 사례 분류는 별도 검토한다."
+              },
+              {
+                "sourceId": "legal-291947-metal-nonferrous-annex4-2-r3-3",
+                "locator": "별표4의2 제2호가목3), PDF 1쪽",
+                "claim": "R-3-3 종이·금속 등 원료물질 제조 유형이다."
+              },
+              {
+                "sourceId": "legal-291947-metal-nonferrous-annex4-3-types",
+                "locator": "별표4의3 제2호 51-29-02, PDF 20쪽",
+                "claim": "51-29-02 행의 유형과 사전 분석·확인 열을 대조했다."
+              },
+              {
+                "sourceId": "legal-291947-metal-nonferrous-annex5-3-common",
+                "locator": "별표5의3 제1호가~마, PDF 1쪽",
+                "claim": "공통기준, 다른 법령 기준 및 포장재 추가 의무를 검토해야 한다."
+              }
+            ],
+            "cost": {
+              "value": null,
+              "unit": "KRW",
+              "label": "unavailable",
+              "reasons": [
+                "사례별 검증된 견적·운송·처리 비용 자료 없음"
+              ]
+            },
+            "carbon": {
+              "value": null,
+              "unit": "kgCO2e",
+              "label": "unavailable",
+              "reasons": [
+                "동일 계산 경계의 활동량·적용 가능한 탄소 계수 없음"
+              ]
+            }
+          }
+        ],
+        "confidence": {
+          "level": "low",
+          "reasons": [
+            "입력은 신고된 정보이며 현장 조건의 충족이나 법적 적합성을 확정하지 않았습니다.",
+            "비용·탄소 비교값이 없어 검토 순서만 제시합니다."
+          ]
+        },
+        "preExecutionChecks": [
+          "현행 허가의 유효기간·허가 범위와 해당 재질·품목·오염 상태의 처리 가능 여부를 관할기관·업체에 확인하세요.",
+          "업체의 실제 인수 의사·계약 조건을 확인하세요.",
+          "실측 질량·수율·운송 거리와 실제 견적·세금·운송 조건을 확인하세요.",
+          "탄소 계수의 재질·품목·지역·기간·계산 경계와 크레딧 적용 가능성을 확인하세요.",
+          "반출·계약·처리 전 현장 책임자의 별도 검토와 승인을 받으세요.",
+          "일반 조문은 코드·처리경로 적합성의 개별 근거가 아니다.",
+          "실제 비철금속과 사업장일반폐기물 분류 및 구체적 발생원 코드를 확인한다.",
+          "기름·도료·유해 접촉·혼합 여부가 unknown이면 안전 검토를 유지한다.",
+          "고철 2% 조항의 비철 적용은 이 자료에서 확정하지 않았다.",
+          "해당 원료·제품 품질 기준을 별도로 확인한다.",
+          "strict 법적 적합성은 실제 사례 검토 전 unknown이다.",
+          "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+          "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+          "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+          "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다."
+        ]
+      },
+      "execution": {
+        "traceId": "chatgpt-subscription:801fed36-bd4b-4236-ab15-b110381842c9",
+        "usage": "{\"provider\":\"chatgpt-subscription\",\"modelId\":\"gpt-6-sol\",\"input\":10009,\"output\":288,\"cacheRead\":0,\"cacheWrite\":0,\"total\":10297,\"imageCount\":0,\"imageSha256\":[]}"
+      },
+      "modelAudit": {
+        "version": 1,
+        "caseId": "ced1973f-b6c6-49ea-876e-0029e89fdfdb",
+        "inputRevision": "1d09871bf9799f024148a05d578fefda9553383ad04586856354554b438083bf",
+        "decisionRevision": "cfdc888970d0aa053a96e88728e38c4a5a91c0213674edaf1d5c57c88b0ed38e",
+        "origin": "host-decision-reference",
+        "syntax": "valid",
+        "independentContribution": "not-established",
+        "validation": {
+          "status": "validation-passed",
+          "passedChecks": [
+            "syntax",
+            "case-binding",
+            "evidence",
+            "comparison"
+          ],
+          "failedCheck": null,
+          "reasons": [],
+          "reasonsTruncated": false
+        },
+        "stages": [
+          {
+            "stage": 1,
+            "proposed": {
+              "items": [],
+              "totalItems": 0
+            },
+            "hostSelected": {
+              "items": [],
+              "totalItems": 0
+            },
+            "status": "absent",
+            "reason": "not-in-proposal-contract"
+          },
+          {
+            "stage": 2,
+            "proposed": {
+              "items": [
+                {
+                  "kind": "route",
+                  "routeId": {
+                    "hostId": "reuse",
+                    "sha256": "40212409706364ac8455eee31195fe61a6fd22466f03c4536d4b5a8568d09d51"
+                  },
+                  "route": "reuse",
+                  "eligibility": "unknown"
+                },
+                {
+                  "kind": "route",
+                  "routeId": {
+                    "hostId": "mechanical-recycling",
+                    "sha256": "5ee1af80c82798294fedf0abadc3cb7a7ce48f91482be5ca33ecc77e9b4a913d"
+                  },
+                  "route": "mechanical-recycling",
+                  "eligibility": "conditional"
+                },
+                {
+                  "kind": "route",
+                  "routeId": {
+                    "hostId": "other-recovery",
+                    "sha256": "bc42348656a2d4683a95654a955adcce878ae5f6f99ad96f5e807b971c1f5c83"
+                  },
+                  "route": "other-recovery",
+                  "eligibility": "unknown"
+                },
+                {
+                  "kind": "route",
+                  "routeId": {
+                    "hostId": "disposal",
+                    "sha256": "5c99076f49f3782d4a0e0a083f4de29d5b779deaafc6550d23206f96db846db2"
+                  },
+                  "route": "disposal",
+                  "eligibility": "unknown"
+                }
+              ],
+              "totalItems": 4
+            },
+            "hostSelected": {
+              "items": [
+                {
+                  "kind": "route",
+                  "routeId": {
+                    "hostId": "reuse",
+                    "sha256": "40212409706364ac8455eee31195fe61a6fd22466f03c4536d4b5a8568d09d51"
+                  },
+                  "route": "reuse",
+                  "eligibility": "unknown"
+                },
+                {
+                  "kind": "route",
+                  "routeId": {
+                    "hostId": "mechanical-recycling",
+                    "sha256": "5ee1af80c82798294fedf0abadc3cb7a7ce48f91482be5ca33ecc77e9b4a913d"
+                  },
+                  "route": "mechanical-recycling",
+                  "eligibility": "conditional"
+                },
+                {
+                  "kind": "route",
+                  "routeId": {
+                    "hostId": "other-recovery",
+                    "sha256": "bc42348656a2d4683a95654a955adcce878ae5f6f99ad96f5e807b971c1f5c83"
+                  },
+                  "route": "other-recovery",
+                  "eligibility": "unknown"
+                },
+                {
+                  "kind": "route",
+                  "routeId": {
+                    "hostId": "disposal",
+                    "sha256": "5c99076f49f3782d4a0e0a083f4de29d5b779deaafc6550d23206f96db846db2"
+                  },
+                  "route": "disposal",
+                  "eligibility": "unknown"
+                }
+              ],
+              "totalItems": 4
+            },
+            "status": "validation-passed",
+            "reason": "field-check-passed"
+          },
+          {
+            "stage": 3,
+            "proposed": {
+              "items": [
+                {
+                  "kind": "evidence",
+                  "sourceId": {
+                    "hostId": "waste-rule-2026-11-12",
+                    "sha256": "379c9938f7af7b5ef7a9a153099484576a000acbbf2fca3f672780f3da8439b9"
+                  },
+                  "recordSha256": "d485502ddd695596ab6f5d79ed0e5c313a442e5f38e68042059c4b7e84ac6200"
+                },
+                {
+                  "kind": "evidence",
+                  "sourceId": {
+                    "hostId": "legal-291947-metal-nonferrous-annex4-code",
+                    "sha256": "53718dcdd54692286e44dcdd3ffcec2821e165ce645f8af5517206df7609b77a"
+                  },
+                  "recordSha256": "fc6be4e00306e0cd5d614faf1bdb9a60256925a3f9d0ba2cd3bad76e15a86be3"
+                },
+                {
+                  "kind": "evidence",
+                  "sourceId": {
+                    "hostId": "legal-291947-metal-nonferrous-annex4-2-r3-3",
+                    "sha256": "f3a166d4bbf429c1b9859e64e479c0f958517c152a621897df42373b1aaee7fb"
+                  },
+                  "recordSha256": "ed3559b1538eef05254e6fa632c3eaea29ec49dd4585c791fc845adbb406887f"
+                },
+                {
+                  "kind": "evidence",
+                  "sourceId": {
+                    "hostId": "legal-291947-metal-nonferrous-annex4-3-types",
+                    "sha256": "bc36bb614658ccbc02f02fc309fe6bfec08d772e75f8a8049b2c31078e5f740f"
+                  },
+                  "recordSha256": "190dff8c8e72805cfa227873215ac8ecc3dde0b91cf74e3abc1b8ab62886de56"
+                },
+                {
+                  "kind": "evidence",
+                  "sourceId": {
+                    "hostId": "legal-291947-metal-nonferrous-annex5-3-common",
+                    "sha256": "8c78f879af0fac84dcb4c27f65aa717458c2692fc6a8d8b08ed960953f5a6ce2"
+                  },
+                  "recordSha256": "ac61f15371b8cb2346580834adab24bf0a79e6b2d50708de542ed841ffcd0e80"
+                }
+              ],
+              "totalItems": 5
+            },
+            "hostSelected": {
+              "items": [
+                {
+                  "kind": "evidence",
+                  "sourceId": {
+                    "hostId": "waste-rule-2026-11-12",
+                    "sha256": "379c9938f7af7b5ef7a9a153099484576a000acbbf2fca3f672780f3da8439b9"
+                  },
+                  "recordSha256": "d485502ddd695596ab6f5d79ed0e5c313a442e5f38e68042059c4b7e84ac6200"
+                },
+                {
+                  "kind": "evidence",
+                  "sourceId": {
+                    "hostId": "legal-291947-metal-nonferrous-annex4-code",
+                    "sha256": "53718dcdd54692286e44dcdd3ffcec2821e165ce645f8af5517206df7609b77a"
+                  },
+                  "recordSha256": "fc6be4e00306e0cd5d614faf1bdb9a60256925a3f9d0ba2cd3bad76e15a86be3"
+                },
+                {
+                  "kind": "evidence",
+                  "sourceId": {
+                    "hostId": "legal-291947-metal-nonferrous-annex4-2-r3-3",
+                    "sha256": "f3a166d4bbf429c1b9859e64e479c0f958517c152a621897df42373b1aaee7fb"
+                  },
+                  "recordSha256": "ed3559b1538eef05254e6fa632c3eaea29ec49dd4585c791fc845adbb406887f"
+                },
+                {
+                  "kind": "evidence",
+                  "sourceId": {
+                    "hostId": "legal-291947-metal-nonferrous-annex4-3-types",
+                    "sha256": "bc36bb614658ccbc02f02fc309fe6bfec08d772e75f8a8049b2c31078e5f740f"
+                  },
+                  "recordSha256": "190dff8c8e72805cfa227873215ac8ecc3dde0b91cf74e3abc1b8ab62886de56"
+                },
+                {
+                  "kind": "evidence",
+                  "sourceId": {
+                    "hostId": "legal-291947-metal-nonferrous-annex5-3-common",
+                    "sha256": "8c78f879af0fac84dcb4c27f65aa717458c2692fc6a8d8b08ed960953f5a6ce2"
+                  },
+                  "recordSha256": "ac61f15371b8cb2346580834adab24bf0a79e6b2d50708de542ed841ffcd0e80"
+                }
+              ],
+              "totalItems": 5
+            },
+            "status": "validation-passed",
+            "reason": "field-check-passed"
+          },
+          {
+            "stage": 4,
+            "proposed": {
+              "items": [],
+              "totalItems": 0
+            },
+            "hostSelected": {
+              "items": [],
+              "totalItems": 0
+            },
+            "status": "absent",
+            "reason": "no-proposed-fields"
+          },
+          {
+            "stage": 5,
+            "proposed": {
+              "items": [],
+              "totalItems": 0
+            },
+            "hostSelected": {
+              "items": [],
+              "totalItems": 0
+            },
+            "status": "absent",
+            "reason": "no-proposed-fields"
+          },
+          {
+            "stage": 6,
+            "proposed": {
+              "items": [
+                {
+                  "kind": "decision",
+                  "state": "compared",
+                  "humanApproval": "pending",
+                  "questionCount": 0,
+                  "reasonCount": 0
+                },
+                {
+                  "kind": "recommendation",
+                  "routeId": {
+                    "hostId": "mechanical-recycling",
+                    "sha256": "5ee1af80c82798294fedf0abadc3cb7a7ce48f91482be5ca33ecc77e9b4a913d"
+                  },
+                  "rank": 1,
+                  "grade": "public-conditional"
+                }
+              ],
+              "totalItems": 2
+            },
+            "hostSelected": {
+              "items": [
+                {
+                  "kind": "decision",
+                  "state": "compared",
+                  "humanApproval": "pending",
+                  "questionCount": 0,
+                  "reasonCount": 0
+                },
+                {
+                  "kind": "recommendation",
+                  "routeId": {
+                    "hostId": "mechanical-recycling",
+                    "sha256": "5ee1af80c82798294fedf0abadc3cb7a7ce48f91482be5ca33ecc77e9b4a913d"
+                  },
+                  "rank": 1,
+                  "grade": "public-conditional"
+                }
+              ],
+              "totalItems": 2
+            },
+            "status": "validation-passed",
+            "reason": "field-check-passed"
+          }
+        ]
+      },
+      "verificationPlan": {
+        "version": 1,
+        "caseId": "ced1973f-b6c6-49ea-876e-0029e89fdfdb",
+        "inputRevision": "1d09871bf9799f024148a05d578fefda9553383ad04586856354554b438083bf",
+        "decisionRevision": "cfdc888970d0aa053a96e88728e38c4a5a91c0213674edaf1d5c57c88b0ed38e",
+        "candidateCount": 15,
+        "offeredCount": 12,
+        "omittedCount": 3,
+        "candidateLimit": 12,
+        "textLimit": 2048,
+        "selectionLimit": 3,
+        "origin": "host-decision-reference",
+        "status": "validated-selection",
+        "rejectionReason": null,
+        "validationScope": "current-candidate-selection-only",
+        "selected": [
+          {
+            "id": "vp_beacb34bb13d33d2c24a44e02281cfec70a4cde8f2ebff7a47b024b03f9d3cdc",
+            "source": "pre-execution-check",
+            "text": "실제 비철금속과 사업장일반폐기물 분류 및 구체적 발생원 코드를 확인한다."
+          },
+          {
+            "id": "vp_1b5f2daff91bc1390dbd19b2d901b35259d24f02c1656edd48ee264235ac4da7",
+            "source": "pre-execution-check",
+            "text": "기름·도료·유해 접촉·혼합 여부가 unknown이면 안전 검토를 유지한다."
+          },
+          {
+            "id": "vp_3c0148c36c5f40a7f3f7035909fc8c91806d874c915f99b1cb5b90cd5dce4641",
+            "source": "pre-execution-check",
+            "text": "현행 허가의 유효기간·허가 범위와 해당 재질·품목·오염 상태의 처리 가능 여부를 관할기관·업체에 확인하세요."
+          }
+        ],
+        "proposalSha256": "a8ddfdb6abbca0e622c8c027718f9578c94f84265e363b9ed1270f296a007810"
+      }
+    },
+    "evaluated": {
+      "revision": "1d09871bf9799f024148a05d578fefda9553383ad04586856354554b438083bf",
+      "version": 1,
+      "committedAt": 1795317880910
+    },
+    "inputSha256": "1d09871bf9799f024148a05d578fefda9553383ad04586856354554b438083bf",
+    "decisionSha256": "cfdc888970d0aa053a96e88728e38c4a5a91c0213674edaf1d5c57c88b0ed38e"
+  },
+  {
+    "scenario": "hazard-hold",
+    "input": {
+      "caseId": "e1dc994f-1b52-4edd-83c0-9b74b5550e63",
+      "description": "동관 절단 공정의 구리 오프컷, 표면이 납으로 오염된 구리 절단편",
+      "photoRefs": [],
+      "process": "사업장일반폐기물 동관 절단 가공 공정",
+      "polymer": "구리",
+      "contamination": "없음",
+      "hazardousContact": "no",
+      "massKg": 100,
+      "region": "경기",
+      "assessmentDate": "2026-11-22"
+    },
+    "assessment": {
+      "decision": {
+        "state": "needs-review",
+        "caseId": "e1dc994f-1b52-4edd-83c0-9b74b5550e63",
+        "evidence": [
+          {
+            "sourceId": "waste-rule-2026-11-12",
+            "title": "폐기물관리법 시행규칙",
+            "publisher": "국가법령정보센터",
+            "url": "https://www.law.go.kr/LSW/lsInfoR.do?lsiSeq=291947&efYd=20261112",
+            "locator": "제4조의2 제1항",
+            "retrievedAt": "2026-11-13T10:25:00Z",
+            "effectiveFrom": "2026-11-12",
+            "effectiveTo": null,
+            "datasetVersion": "lsiSeq=291947",
+            "sha256": "ffda6c1dad0c53dcdc1db86543e768c346dbbecdea2d2a0d2fc649aca565e529",
+            "license": "저작권법 제7조 제1호 비보호저작물 (법령 본문)",
+            "licenseVerified": true
+          },
+          {
+            "sourceId": "legal-291947-metal-nonferrous-annex4-code",
+            "title": "폐기물관리법 시행규칙 별표 4 metal/nonferrous 발췌",
+            "publisher": "국가법령정보센터",
+            "url": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400799&bylClsCd=110201",
+            "locator": "별표4 제2호 51-29-02, PDF 11쪽",
+            "retrievedAt": "2026-11-21T11:37:49Z",
+            "effectiveFrom": "2026-11-12",
+            "effectiveTo": null,
+            "datasetVersion": "lsiSeq=291947; 시행 2026-11-12; 별표 개정 2025-12-30",
+            "sha256": "8a53d62c31c52df1ad762bee466daa7ea9dcb6025656c5f6d7f7011046469ba3",
+            "license": "저작권법 제7조 제1호 비보호저작물 (법령·별표 원문)",
+            "licenseVerified": true
+          },
+          {
+            "sourceId": "legal-291947-metal-nonferrous-annex4-2-r3-3",
+            "title": "폐기물관리법 시행규칙 별표 4-2 metal/nonferrous 발췌",
+            "publisher": "국가법령정보센터",
+            "url": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400831&bylClsCd=110201",
+            "locator": "별표4의2 제2호가목3), PDF 1쪽",
+            "retrievedAt": "2026-11-21T11:37:49Z",
+            "effectiveFrom": "2026-11-12",
+            "effectiveTo": null,
+            "datasetVersion": "lsiSeq=291947; 시행 2026-11-12; 별표 개정 2025-12-30",
+            "sha256": "32abd3c2990fd1080fab8bee37ed642990f466ff5d5f55b5dda4bb21832c9866",
+            "license": "저작권법 제7조 제1호 비보호저작물 (법령·별표 원문)",
+            "licenseVerified": true
+          },
+          {
+            "sourceId": "legal-291947-metal-nonferrous-annex4-3-types",
+            "title": "폐기물관리법 시행규칙 별표 4-3 metal/nonferrous 발췌",
+            "publisher": "국가법령정보센터",
+            "url": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400843&bylClsCd=110201",
+            "locator": "별표4의3 제2호 51-29-02, PDF 20쪽",
+            "retrievedAt": "2026-11-21T11:37:49Z",
+            "effectiveFrom": "2026-11-12",
+            "effectiveTo": null,
+            "datasetVersion": "lsiSeq=291947; 시행 2026-11-12; 별표 개정 2025-12-30",
+            "sha256": "21bd529bde151f3f12bc6df4cef95e4302470183c15346a448bd02186b3ad088",
+            "license": "저작권법 제7조 제1호 비보호저작물 (법령·별표 원문)",
+            "licenseVerified": true
+          },
+          {
+            "sourceId": "legal-291947-metal-nonferrous-annex5-3-common",
+            "title": "폐기물관리법 시행규칙 별표 5-3 metal/nonferrous 발췌",
+            "publisher": "국가법령정보센터",
+            "url": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400985&bylClsCd=110201",
+            "locator": "별표5의3 제1호가~마, PDF 1쪽",
+            "retrievedAt": "2026-11-21T11:37:49Z",
+            "effectiveFrom": "2026-11-12",
+            "effectiveTo": null,
+            "datasetVersion": "lsiSeq=291947; 시행 2026-11-12; 별표 개정 2025-12-30",
+            "sha256": "9401218bceb11e1da76d7a3f8195c07373190be9af0da8249036ff62e2ac4cb4",
+            "license": "저작권법 제7조 제1호 비보호저작물 (법령·별표 원문)",
+            "licenseVerified": true
+          }
+        ],
+        "conditionalAlternatives": [
+          {
+            "routeId": "disposal",
+            "title": "재활용 조건을 충족하지 못하는 경우 처분 경로 문의",
+            "state": "informational",
+            "executable": false,
+            "condition": {
+              "code": "contaminated-or-inseparable",
+              "description": "오염·분리·재활용 기준을 충족하는 경로가 확인되지 않는 경우입니다."
+            },
+            "rationale": "등록 조문은 세부분류를 별표 4에 따르도록 할 뿐 이 사례의 지정폐기물 해당 여부나 특정 처분 방식·소각 허가를 입증하지 않습니다.",
+            "nextChecks": [
+              "접촉 물질명·SDS·잔류량·시험 결과와 발생 공정을 제공하여 분류를 확인하고, 분류에 맞는 처분 방식의 개별 기준 및 업체 허가 범위·실제 인수 여부를 관할기관과 업체에 확인하세요."
+            ],
+            "support": {
+              "state": "unavailable",
+              "missingEvidence": [
+                "사례별 유해성 분류와 처분 방식·시설 허가·인수 조건의 등록 근거 없음"
+              ]
+            },
+            "citations": [
+              {
+                "sourceId": "waste-rule-2026-11-12",
+                "locator": "제4조의2 제1항",
+                "claim": "폐기물의 종류별 세부분류는 별표 4에 따른다.",
+                "quote": "① 법 제2조의2에 따른 폐기물의 종류별 세부분류는 별표 4와 같다.",
+                "scope": "general-requirement"
+              }
+            ]
+          }
+        ],
+        "reasons": [
+          "도료·방부제·접착제·오일 등 처리·접촉 가능성이 보고되었습니다. 성분·SDS·잔류량·유해성 분류를 검토하기 전에는 재활용 추천을 보류합니다."
+        ],
+        "preExecutionChecks": [
+          "현행 허가의 유효기간·허가 범위와 해당 수지·오염 상태의 처리 가능 여부를 관할기관·업체에 확인하세요.",
+          "업체의 실제 인수 의사·계약 조건을 확인하세요.",
+          "실측 질량·수율·운송 거리와 실제 견적·세금·운송 조건을 확인하세요.",
+          "탄소 계수의 수지·지역·기간·계산 경계와 크레딧 적용 가능성을 확인하세요.",
+          "반출·계약·처리 전 현장 책임자의 별도 검토와 승인을 받으세요.",
+          "일반 조문은 코드·처리경로 적합성의 개별 근거가 아니다.",
+          "실제 비철금속과 사업장일반폐기물 분류 및 구체적 발생원 코드를 확인한다.",
+          "기름·도료·유해 접촉·혼합 여부가 unknown이면 안전 검토를 유지한다.",
+          "고철 2% 조항의 비철 적용은 이 자료에서 확정하지 않았다.",
+          "해당 원료·제품 품질 기준을 별도로 확인한다.",
+          "strict 법적 적합성은 실제 사례 검토 전 unknown이다.",
+          "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+          "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+          "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+          "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다."
+        ]
+      },
+      "execution": {
+        "traceId": "chatgpt-subscription:d20da03b-7c42-4f02-8972-27574a292c3b",
+        "usage": "{\"provider\":\"chatgpt-subscription\",\"modelId\":\"gpt-6-sol\",\"input\":9850,\"output\":281,\"cacheRead\":0,\"cacheWrite\":0,\"total\":10131,\"imageCount\":0,\"imageSha256\":[]}"
+      },
+      "modelAudit": {
+        "version": 1,
+        "caseId": "e1dc994f-1b52-4edd-83c0-9b74b5550e63",
+        "inputRevision": "351d70f8af121d43ed9c73470ea4f01f00ef3743588eac5a7bfb16cae34251e5",
+        "decisionRevision": "3c5aab90419b89f4a710920ec9e4094353190333b910d5eaca342eee1aed1992",
+        "origin": "host-decision-reference",
+        "syntax": "not-evaluated",
+        "independentContribution": "not-established",
+        "validation": {
+          "status": "not-evaluated",
+          "passedChecks": [],
+          "failedCheck": null,
+          "reasons": [
+            "도료·방부제·접착제·오일 등 처리·접촉 가능성이 보고되었습니다. 성분·SDS·잔류량·유해성 분류를 검토하기 전에는 재활용 추천을 보류합니다."
+          ],
+          "reasonsTruncated": false
+        },
+        "stages": [
+          {
+            "stage": 1,
+            "proposed": {
+              "items": [],
+              "totalItems": 0
+            },
+            "hostSelected": {
+              "items": [],
+              "totalItems": 0
+            },
+            "status": "absent",
+            "reason": "not-in-proposal-contract"
+          },
+          {
+            "stage": 2,
+            "proposed": {
+              "items": [
+                {
+                  "kind": "alternative",
+                  "routeId": "disposal",
+                  "condition": "contaminated-or-inseparable",
+                  "support": "unavailable"
+                }
+              ],
+              "totalItems": 1
+            },
+            "hostSelected": {
+              "items": [
+                {
+                  "kind": "alternative",
+                  "routeId": "disposal",
+                  "condition": "contaminated-or-inseparable",
+                  "support": "unavailable"
+                }
+              ],
+              "totalItems": 1
+            },
+            "status": "not-evaluated",
+            "reason": "early-host-guard"
+          },
+          {
+            "stage": 3,
+            "proposed": {
+              "items": [
+                {
+                  "kind": "evidence",
+                  "sourceId": {
+                    "hostId": "waste-rule-2026-11-12",
+                    "sha256": "379c9938f7af7b5ef7a9a153099484576a000acbbf2fca3f672780f3da8439b9"
+                  },
+                  "recordSha256": "d485502ddd695596ab6f5d79ed0e5c313a442e5f38e68042059c4b7e84ac6200"
+                },
+                {
+                  "kind": "evidence",
+                  "sourceId": {
+                    "hostId": "legal-291947-metal-nonferrous-annex4-code",
+                    "sha256": "53718dcdd54692286e44dcdd3ffcec2821e165ce645f8af5517206df7609b77a"
+                  },
+                  "recordSha256": "fc6be4e00306e0cd5d614faf1bdb9a60256925a3f9d0ba2cd3bad76e15a86be3"
+                },
+                {
+                  "kind": "evidence",
+                  "sourceId": {
+                    "hostId": "legal-291947-metal-nonferrous-annex4-2-r3-3",
+                    "sha256": "f3a166d4bbf429c1b9859e64e479c0f958517c152a621897df42373b1aaee7fb"
+                  },
+                  "recordSha256": "ed3559b1538eef05254e6fa632c3eaea29ec49dd4585c791fc845adbb406887f"
+                },
+                {
+                  "kind": "evidence",
+                  "sourceId": {
+                    "hostId": "legal-291947-metal-nonferrous-annex4-3-types",
+                    "sha256": "bc36bb614658ccbc02f02fc309fe6bfec08d772e75f8a8049b2c31078e5f740f"
+                  },
+                  "recordSha256": "190dff8c8e72805cfa227873215ac8ecc3dde0b91cf74e3abc1b8ab62886de56"
+                },
+                {
+                  "kind": "evidence",
+                  "sourceId": {
+                    "hostId": "legal-291947-metal-nonferrous-annex5-3-common",
+                    "sha256": "8c78f879af0fac84dcb4c27f65aa717458c2692fc6a8d8b08ed960953f5a6ce2"
+                  },
+                  "recordSha256": "ac61f15371b8cb2346580834adab24bf0a79e6b2d50708de542ed841ffcd0e80"
+                }
+              ],
+              "totalItems": 5
+            },
+            "hostSelected": {
+              "items": [
+                {
+                  "kind": "evidence",
+                  "sourceId": {
+                    "hostId": "waste-rule-2026-11-12",
+                    "sha256": "379c9938f7af7b5ef7a9a153099484576a000acbbf2fca3f672780f3da8439b9"
+                  },
+                  "recordSha256": "d485502ddd695596ab6f5d79ed0e5c313a442e5f38e68042059c4b7e84ac6200"
+                },
+                {
+                  "kind": "evidence",
+                  "sourceId": {
+                    "hostId": "legal-291947-metal-nonferrous-annex4-code",
+                    "sha256": "53718dcdd54692286e44dcdd3ffcec2821e165ce645f8af5517206df7609b77a"
+                  },
+                  "recordSha256": "fc6be4e00306e0cd5d614faf1bdb9a60256925a3f9d0ba2cd3bad76e15a86be3"
+                },
+                {
+                  "kind": "evidence",
+                  "sourceId": {
+                    "hostId": "legal-291947-metal-nonferrous-annex4-2-r3-3",
+                    "sha256": "f3a166d4bbf429c1b9859e64e479c0f958517c152a621897df42373b1aaee7fb"
+                  },
+                  "recordSha256": "ed3559b1538eef05254e6fa632c3eaea29ec49dd4585c791fc845adbb406887f"
+                },
+                {
+                  "kind": "evidence",
+                  "sourceId": {
+                    "hostId": "legal-291947-metal-nonferrous-annex4-3-types",
+                    "sha256": "bc36bb614658ccbc02f02fc309fe6bfec08d772e75f8a8049b2c31078e5f740f"
+                  },
+                  "recordSha256": "190dff8c8e72805cfa227873215ac8ecc3dde0b91cf74e3abc1b8ab62886de56"
+                },
+                {
+                  "kind": "evidence",
+                  "sourceId": {
+                    "hostId": "legal-291947-metal-nonferrous-annex5-3-common",
+                    "sha256": "8c78f879af0fac84dcb4c27f65aa717458c2692fc6a8d8b08ed960953f5a6ce2"
+                  },
+                  "recordSha256": "ac61f15371b8cb2346580834adab24bf0a79e6b2d50708de542ed841ffcd0e80"
+                }
+              ],
+              "totalItems": 5
+            },
+            "status": "not-evaluated",
+            "reason": "early-host-guard"
+          },
+          {
+            "stage": 4,
+            "proposed": {
+              "items": [],
+              "totalItems": 0
+            },
+            "hostSelected": {
+              "items": [],
+              "totalItems": 0
+            },
+            "status": "absent",
+            "reason": "no-proposed-fields"
+          },
+          {
+            "stage": 5,
+            "proposed": {
+              "items": [],
+              "totalItems": 0
+            },
+            "hostSelected": {
+              "items": [],
+              "totalItems": 0
+            },
+            "status": "absent",
+            "reason": "no-proposed-fields"
+          },
+          {
+            "stage": 6,
+            "proposed": {
+              "items": [
+                {
+                  "kind": "decision",
+                  "state": "needs-review",
+                  "humanApproval": null,
+                  "questionCount": 0,
+                  "reasonCount": 1
+                }
+              ],
+              "totalItems": 1
+            },
+            "hostSelected": {
+              "items": [
+                {
+                  "kind": "decision",
+                  "state": "needs-review",
+                  "humanApproval": null,
+                  "questionCount": 0,
+                  "reasonCount": 1
+                }
+              ],
+              "totalItems": 1
+            },
+            "status": "not-evaluated",
+            "reason": "early-host-guard"
+          }
+        ]
+      },
+      "verificationPlan": {
+        "version": 1,
+        "caseId": "e1dc994f-1b52-4edd-83c0-9b74b5550e63",
+        "inputRevision": "351d70f8af121d43ed9c73470ea4f01f00ef3743588eac5a7bfb16cae34251e5",
+        "decisionRevision": "3c5aab90419b89f4a710920ec9e4094353190333b910d5eaca342eee1aed1992",
+        "candidateCount": 16,
+        "offeredCount": 12,
+        "omittedCount": 4,
+        "candidateLimit": 12,
+        "textLimit": 2048,
+        "selectionLimit": 3,
+        "origin": "host-decision-reference",
+        "status": "validated-selection",
+        "rejectionReason": null,
+        "validationScope": "current-candidate-selection-only",
+        "selected": [
+          {
+            "id": "vp_f19a8e700fbd30e5b6f365aad43b0b3011ecd0f95fa3a4a8c30a764a7cd652ff",
+            "source": "reason",
+            "text": "도료·방부제·접착제·오일 등 처리·접촉 가능성이 보고되었습니다. 성분·SDS·잔류량·유해성 분류를 검토하기 전에는 재활용 추천을 보류합니다."
+          },
+          {
+            "id": "vp_05b7aebf8f5db9c1145b65168271b5fd5fcea57aa413134922b1584ee13b4a01",
+            "source": "pre-execution-check",
+            "text": "실제 비철금속과 사업장일반폐기물 분류 및 구체적 발생원 코드를 확인한다."
+          },
+          {
+            "id": "vp_b3c750edb028b45beac16739f23b873702c61c6e2cf10bf4d25efacf823bb94c",
+            "source": "pre-execution-check",
+            "text": "기름·도료·유해 접촉·혼합 여부가 unknown이면 안전 검토를 유지한다."
+          }
+        ],
+        "proposalSha256": "b5dcfbb89d05d7f33f81a14f3d12d4c37fd527e00a8ba3415e5819412c94dd6c"
+      }
+    },
+    "evaluated": {
+      "revision": "351d70f8af121d43ed9c73470ea4f01f00ef3743588eac5a7bfb16cae34251e5",
+      "version": 1,
+      "committedAt": 1795317887984
+    },
+    "inputSha256": "351d70f8af121d43ed9c73470ea4f01f00ef3743588eac5a7bfb16cae34251e5",
+    "decisionSha256": "3c5aab90419b89f4a710920ec9e4094353190333b910d5eaca342eee1aed1992"
+  },
+  {
+    "scenario": "wood-normal",
+    "input": {
+      "caseId": "7adcdeb3-f711-4b0b-a7bd-41a37c23523a",
+      "description": "무처리 원목 자투리와 대패밥",
+      "photoRefs": [],
+      "process": "사업장일반폐기물 원목 제재 가공 부산물",
+      "polymer": "무처리 원목",
+      "contamination": "없음",
+      "hazardousContact": "no",
+      "massKg": 100,
+      "region": "경기",
+      "assessmentDate": "2026-11-22"
+    },
+    "assessment": {
+      "decision": {
+        "state": "compared",
+        "caseId": "7adcdeb3-f711-4b0b-a7bd-41a37c23523a",
+        "processors": [],
+        "scenarios": [],
+        "evidence": [
+          {
+            "sourceId": "waste-rule-2026-11-12",
+            "title": "폐기물관리법 시행규칙",
+            "publisher": "국가법령정보센터",
+            "url": "https://www.law.go.kr/LSW/lsInfoR.do?lsiSeq=291947&efYd=20261112",
+            "locator": "제4조의2 제1항",
+            "retrievedAt": "2026-11-13T10:25:00Z",
+            "effectiveFrom": "2026-11-12",
+            "effectiveTo": null,
+            "datasetVersion": "lsiSeq=291947",
+            "sha256": "ffda6c1dad0c53dcdc1db86543e768c346dbbecdea2d2a0d2fc649aca565e529",
+            "license": "저작권법 제7조 제1호 비보호저작물 (법령 본문)",
+            "licenseVerified": true
+          },
+          {
+            "sourceId": "legal-291947-wood-raw-byproduct-annex4-code",
+            "title": "폐기물관리법 시행규칙 별표 4 wood/raw-byproduct 발췌",
+            "publisher": "국가법령정보센터",
+            "url": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400799&bylClsCd=110201",
+            "locator": "별표4 제2호 51-20-22, PDF 9쪽",
+            "retrievedAt": "2026-11-21T11:37:49Z",
+            "effectiveFrom": "2026-11-12",
+            "effectiveTo": null,
+            "datasetVersion": "lsiSeq=291947; 시행 2026-11-12; 별표 개정 2025-12-30",
+            "sha256": "d06a37b72f85fc4bd470dd1fe7471bffbf27dff2aa93ad7fdcd309648e73ba8a",
+            "license": "저작권법 제7조 제1호 비보호저작물 (법령·별표 원문)",
+            "licenseVerified": true
+          },
+          {
+            "sourceId": "legal-291947-wood-raw-byproduct-annex4-2-r3-4",
+            "title": "폐기물관리법 시행규칙 별표 4-2 wood/raw-byproduct 발췌",
+            "publisher": "국가법령정보센터",
+            "url": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400831&bylClsCd=110201",
+            "locator": "별표4의2 제2호가목4), PDF 1쪽",
+            "retrievedAt": "2026-11-21T11:37:49Z",
+            "effectiveFrom": "2026-11-12",
+            "effectiveTo": null,
+            "datasetVersion": "lsiSeq=291947; 시행 2026-11-12; 별표 개정 2025-12-30",
+            "sha256": "58231d7897a45ce23408a7dec2690b7448522810a4a9fbc36dc4945e4001f3a8",
+            "license": "저작권법 제7조 제1호 비보호저작물 (법령·별표 원문)",
+            "licenseVerified": true
+          },
+          {
+            "sourceId": "legal-291947-wood-raw-byproduct-annex4-3-types",
+            "title": "폐기물관리법 시행규칙 별표 4-3 wood/raw-byproduct 발췌",
+            "publisher": "국가법령정보센터",
+            "url": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400843&bylClsCd=110201",
+            "locator": "별표4의3 제2호 51-20-22, PDF 18쪽",
+            "retrievedAt": "2026-11-21T11:37:49Z",
+            "effectiveFrom": "2026-11-12",
+            "effectiveTo": null,
+            "datasetVersion": "lsiSeq=291947; 시행 2026-11-12; 별표 개정 2025-12-30",
+            "sha256": "79fd261ad6a0087e81387fabdfb5f19aae9aa41fde01ac0c23471b11259e940e",
+            "license": "저작권법 제7조 제1호 비보호저작물 (법령·별표 원문)",
+            "licenseVerified": true
+          },
+          {
+            "sourceId": "legal-291947-wood-raw-byproduct-annex5-3-common",
+            "title": "폐기물관리법 시행규칙 별표 5-3 wood/raw-byproduct 발췌",
+            "publisher": "국가법령정보센터",
+            "url": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400985&bylClsCd=110201",
+            "locator": "별표5의3 제1호가~마, PDF 1쪽",
+            "retrievedAt": "2026-11-21T11:37:49Z",
+            "effectiveFrom": "2026-11-12",
+            "effectiveTo": null,
+            "datasetVersion": "lsiSeq=291947; 시행 2026-11-12; 별표 개정 2025-12-30",
+            "sha256": "9401218bceb11e1da76d7a3f8195c07373190be9af0da8249036ff62e2ac4cb4",
+            "license": "저작권법 제7조 제1호 비보호저작물 (법령·별표 원문)",
+            "licenseVerified": true
+          },
+          {
+            "sourceId": "legal-291947-wood-raw-byproduct-annex5-3-r3-4",
+            "title": "폐기물관리법 시행규칙 별표 5-3 wood/raw-byproduct 발췌",
+            "publisher": "국가법령정보센터",
+            "url": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=171400985&bylClsCd=110201",
+            "locator": "별표5의3 제2호나목1)라), PDF 8쪽",
+            "retrievedAt": "2026-11-21T11:37:49Z",
+            "effectiveFrom": "2026-11-12",
+            "effectiveTo": null,
+            "datasetVersion": "lsiSeq=291947; 시행 2026-11-12; 별표 개정 2025-12-30",
+            "sha256": "25f4977ef2d7dcc1d524400da59c8c02d914897c4dd0df1dae45490731dabe8c",
+            "license": "저작권법 제7조 제1호 비보호저작물 (법령·별표 원문)",
+            "licenseVerified": true
+          }
+        ],
+        "humanApproval": "pending",
+        "limitations": [
+          "추천 후보, 실행 전 확인 필요. 실행·반출·계약의 승인 결과가 아닙니다.",
+          "추천 순위는 검토 순서입니다. 검증되지 않은 수치·폐기물 코드·업체 허가를 추정하지 않습니다."
+        ],
+        "routes": [
+          {
+            "routeId": "reuse",
+            "route": "reuse",
+            "eligibility": {
+              "state": "unknown",
+              "missingFacts": [
+                "이 경로의 용도·처리 방식에 맞는 개별 공개 근거가 부족합니다."
+              ]
+            }
+          },
+          {
+            "routeId": "mechanical-recycling",
+            "route": "mechanical-recycling",
+            "eligibility": {
+              "state": "conditional",
+              "evidenceIds": [
+                "legal-291947-wood-raw-byproduct-annex4-code",
+                "legal-291947-wood-raw-byproduct-annex4-2-r3-4",
+                "legal-291947-wood-raw-byproduct-annex4-3-types",
+                "legal-291947-wood-raw-byproduct-annex5-3-common",
+                "legal-291947-wood-raw-byproduct-annex5-3-r3-4"
+              ],
+              "conditions": [
+                "공개 근거상 가능(조건부): 51-20-22의 R-3-4 원료물질 제조 유형 후보"
+              ]
+            }
+          },
+          {
+            "routeId": "other-recovery",
+            "route": "other-recovery",
+            "eligibility": {
+              "state": "unknown",
+              "missingFacts": [
+                "이 경로의 용도·처리 방식에 맞는 개별 공개 근거가 부족합니다."
+              ]
+            }
+          },
+          {
+            "routeId": "disposal",
+            "route": "disposal",
+            "eligibility": {
+              "state": "unknown",
+              "missingFacts": [
+                "이 경로의 용도·처리 방식에 맞는 개별 공개 근거가 부족합니다."
+              ]
+            }
+          }
+        ],
+        "recommendations": [
+          {
+            "routeId": "mechanical-recycling",
+            "rank": 1,
+            "grade": "public-conditional",
+            "basis": "공개 법령의 폐목재 분류·R-3-4 유형·기준을 연결한 원료화 검토 후보입니다. 사전 분석·확인과 원료·제품 규격 및 실제 허가·인수 조건을 확인해야 합니다. 발생 공정을 처리 공정으로 간주하거나 비용·탄소 우월성을 확정하지 않습니다.",
+            "legalCitations": [
+              {
+                "sourceId": "legal-291947-wood-raw-byproduct-annex4-code",
+                "locator": "별표4 제2호 51-20-22, PDF 9쪽",
+                "claim": "51-20-22 분류 문구 확인. 실제 사례 분류는 별도 검토한다."
+              },
+              {
+                "sourceId": "legal-291947-wood-raw-byproduct-annex4-2-r3-4",
+                "locator": "별표4의2 제2호가목4), PDF 1쪽",
+                "claim": "R-3-4 제품 원료물질 제조 유형이다."
+              },
+              {
+                "sourceId": "legal-291947-wood-raw-byproduct-annex4-3-types",
+                "locator": "별표4의3 제2호 51-20-22, PDF 18쪽",
+                "claim": "51-20-22 행의 유형과 사전 분석·확인 열을 대조했다."
+              },
+              {
+                "sourceId": "legal-291947-wood-raw-byproduct-annex5-3-common",
+                "locator": "별표5의3 제1호가~마, PDF 1쪽",
+                "claim": "공통기준, 다른 법령 기준 및 포장재 추가 의무를 검토해야 한다."
+              },
+              {
+                "sourceId": "legal-291947-wood-raw-byproduct-annex5-3-r3-4",
+                "locator": "별표5의3 제2호나목1)라), PDF 8쪽",
+                "claim": "제품 제조 용도 및 원료 규격 조건을 준수해야 한다."
+              }
+            ],
+            "cost": {
+              "value": null,
+              "unit": "KRW",
+              "label": "unavailable",
+              "reasons": [
+                "사례별 검증된 견적·운송·처리 비용 자료 없음"
+              ]
+            },
+            "carbon": {
+              "value": null,
+              "unit": "kgCO2e",
+              "label": "unavailable",
+              "reasons": [
+                "동일 계산 경계의 활동량·적용 가능한 탄소 계수 없음"
+              ]
+            }
+          }
+        ],
+        "confidence": {
+          "level": "low",
+          "reasons": [
+            "입력은 신고된 정보이며 현장 조건의 충족이나 법적 적합성을 확정하지 않았습니다.",
+            "비용·탄소 비교값이 없어 검토 순서만 제시합니다."
+          ]
+        },
+        "preExecutionChecks": [
+          "현행 허가의 유효기간·허가 범위와 해당 재질·품목·오염 상태의 처리 가능 여부를 관할기관·업체에 확인하세요.",
+          "업체의 실제 인수 의사·계약 조건을 확인하세요.",
+          "실측 질량·수율·운송 거리와 실제 견적·세금·운송 조건을 확인하세요.",
+          "탄소 계수의 재질·품목·지역·기간·계산 경계와 크레딧 적용 가능성을 확인하세요.",
+          "반출·계약·처리 전 현장 책임자의 별도 검토와 승인을 받으세요.",
+          "일반 조문은 코드·처리경로 적합성의 개별 근거가 아니다.",
+          "원목 가공과정 또는 원목상태의 깨끗한 목재가공공장 부산물·분진이라는 발생원·상태를 확인한다.",
+          "별표4의3 사전 분석·확인 필요 여부는 해당이다. 분석·확인 완료 증거를 별도로 확보한다.",
+          "접착제·페인트·기름·콘크리트·방부제·할로겐 유기화합물 사용과 특수 발생원을 확인하며 unknown을 깨끗함으로 바꾸지 않는다.",
+          "제품 제조 용도, 별도 추가 가공 불필요, KS/다른 법령 원료 기준 적합을 확인한다.",
+          "톱밥 제품 R-4-5로 제안하면 별도 목재 조건이 추가된다.",
+          "목재칩의 제품별 규격 고시는 이 묶음에서 확인하지 않았다.",
+          "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+          "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.",
+          "구체적인 회수 방식·생산물 용도와 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.",
+          "구체적인 처분 방식과 해당 사례에 적용할 처리 기준 및 충족 여부를 확인해야 합니다."
+        ]
+      },
+      "execution": {
+        "traceId": "chatgpt-subscription:388b04fd-e6f0-4a3b-8c87-6c7075d9c159",
+        "usage": "{\"provider\":\"chatgpt-subscription\",\"modelId\":\"gpt-6-sol\",\"input\":12204,\"output\":261,\"cacheRead\":0,\"cacheWrite\":0,\"total\":12465,\"imageCount\":0,\"imageSha256\":[]}"
+      },
+      "modelAudit": {
+        "version": 1,
+        "caseId": "7adcdeb3-f711-4b0b-a7bd-41a37c23523a",
+        "inputRevision": "1b9fa5e00e40a13d7d7de15e3a81c0b81923ee0980fd0c03cba4c51940c888dc",
+        "decisionRevision": "4056d972ffe6ff6da16d026a45f0e4abdfd1de10740db30b0f337fda432abb93",
+        "origin": "host-decision-reference",
+        "syntax": "valid",
+        "independentContribution": "not-established",
+        "validation": {
+          "status": "validation-passed",
+          "passedChecks": [
+            "syntax",
+            "case-binding",
+            "evidence",
+            "comparison"
+          ],
+          "failedCheck": null,
+          "reasons": [],
+          "reasonsTruncated": false
+        },
+        "stages": [
+          {
+            "stage": 1,
+            "proposed": {
+              "items": [],
+              "totalItems": 0
+            },
+            "hostSelected": {
+              "items": [],
+              "totalItems": 0
+            },
+            "status": "absent",
+            "reason": "not-in-proposal-contract"
+          },
+          {
+            "stage": 2,
+            "proposed": {
+              "items": [
+                {
+                  "kind": "route",
+                  "routeId": {
+                    "hostId": "reuse",
+                    "sha256": "40212409706364ac8455eee31195fe61a6fd22466f03c4536d4b5a8568d09d51"
+                  },
+                  "route": "reuse",
+                  "eligibility": "unknown"
+                },
+                {
+                  "kind": "route",
+                  "routeId": {
+                    "hostId": "mechanical-recycling",
+                    "sha256": "5ee1af80c82798294fedf0abadc3cb7a7ce48f91482be5ca33ecc77e9b4a913d"
+                  },
+                  "route": "mechanical-recycling",
+                  "eligibility": "conditional"
+                },
+                {
+                  "kind": "route",
+                  "routeId": {
+                    "hostId": "other-recovery",
+                    "sha256": "bc42348656a2d4683a95654a955adcce878ae5f6f99ad96f5e807b971c1f5c83"
+                  },
+                  "route": "other-recovery",
+                  "eligibility": "unknown"
+                },
+                {
+                  "kind": "route",
+                  "routeId": {
+                    "hostId": "disposal",
+                    "sha256": "5c99076f49f3782d4a0e0a083f4de29d5b779deaafc6550d23206f96db846db2"
+                  },
+                  "route": "disposal",
+                  "eligibility": "unknown"
+                }
+              ],
+              "totalItems": 4
+            },
+            "hostSelected": {
+              "items": [
+                {
+                  "kind": "route",
+                  "routeId": {
+                    "hostId": "reuse",
+                    "sha256": "40212409706364ac8455eee31195fe61a6fd22466f03c4536d4b5a8568d09d51"
+                  },
+                  "route": "reuse",
+                  "eligibility": "unknown"
+                },
+                {
+                  "kind": "route",
+                  "routeId": {
+                    "hostId": "mechanical-recycling",
+                    "sha256": "5ee1af80c82798294fedf0abadc3cb7a7ce48f91482be5ca33ecc77e9b4a913d"
+                  },
+                  "route": "mechanical-recycling",
+                  "eligibility": "conditional"
+                },
+                {
+                  "kind": "route",
+                  "routeId": {
+                    "hostId": "other-recovery",
+                    "sha256": "bc42348656a2d4683a95654a955adcce878ae5f6f99ad96f5e807b971c1f5c83"
+                  },
+                  "route": "other-recovery",
+                  "eligibility": "unknown"
+                },
+                {
+                  "kind": "route",
+                  "routeId": {
+                    "hostId": "disposal",
+                    "sha256": "5c99076f49f3782d4a0e0a083f4de29d5b779deaafc6550d23206f96db846db2"
+                  },
+                  "route": "disposal",
+                  "eligibility": "unknown"
+                }
+              ],
+              "totalItems": 4
+            },
+            "status": "validation-passed",
+            "reason": "field-check-passed"
+          },
+          {
+            "stage": 3,
+            "proposed": {
+              "items": [
+                {
+                  "kind": "evidence",
+                  "sourceId": {
+                    "hostId": "waste-rule-2026-11-12",
+                    "sha256": "379c9938f7af7b5ef7a9a153099484576a000acbbf2fca3f672780f3da8439b9"
+                  },
+                  "recordSha256": "d485502ddd695596ab6f5d79ed0e5c313a442e5f38e68042059c4b7e84ac6200"
+                },
+                {
+                  "kind": "evidence",
+                  "sourceId": {
+                    "hostId": "legal-291947-wood-raw-byproduct-annex4-code",
+                    "sha256": "eb4d766f5fb364d9649cbf60b1e09d3f49d95683a9353ccd15052cbb57c148cb"
+                  },
+                  "recordSha256": "f2852c670ae92790a91038d6a528cce67a169df309acb02334f41dcd31bfe903"
+                },
+                {
+                  "kind": "evidence",
+                  "sourceId": {
+                    "hostId": "legal-291947-wood-raw-byproduct-annex4-2-r3-4",
+                    "sha256": "e57ec52815d609b514dfe4dad61893e83a86a29f26c7a6dd38e3b880aa752e18"
+                  },
+                  "recordSha256": "3b50344a1e948e041ccdde77e938bebd165fc45c85d5f40c11df4a88b5dfe0c1"
+                },
+                {
+                  "kind": "evidence",
+                  "sourceId": {
+                    "hostId": "legal-291947-wood-raw-byproduct-annex4-3-types",
+                    "sha256": "e823f0e04c26ee480d96ebf3d0b3d9b3de279d2f2c1c0cc2367d7f64d7d2c470"
+                  },
+                  "recordSha256": "38218220c006cc9ef90c3c27927614fa6002bbef3be0dbb62d5f1e5e1bf891cf"
+                },
+                {
+                  "kind": "evidence",
+                  "sourceId": {
+                    "hostId": "legal-291947-wood-raw-byproduct-annex5-3-common",
+                    "sha256": "245ecaf27a3ebcaacba6362560b7e5b8b076e1bbcdfe70bc7d93f41113760470"
+                  },
+                  "recordSha256": "68106b1754e5341b95c6e6e9971359e49f9bbe26cb1c58ad8b732275feefa674"
+                },
+                {
+                  "kind": "evidence",
+                  "sourceId": {
+                    "hostId": "legal-291947-wood-raw-byproduct-annex5-3-r3-4",
+                    "sha256": "c43ddcd0a3c18d7fb5a28ec08083c67d2c3097ae1bf09847f65d80d3146f6bae"
+                  },
+                  "recordSha256": "982782a8a1e6a42ceb6c00a680eeaf9da9a2b236a2a771263eedcf3b6b868767"
+                }
+              ],
+              "totalItems": 6
+            },
+            "hostSelected": {
+              "items": [
+                {
+                  "kind": "evidence",
+                  "sourceId": {
+                    "hostId": "waste-rule-2026-11-12",
+                    "sha256": "379c9938f7af7b5ef7a9a153099484576a000acbbf2fca3f672780f3da8439b9"
+                  },
+                  "recordSha256": "d485502ddd695596ab6f5d79ed0e5c313a442e5f38e68042059c4b7e84ac6200"
+                },
+                {
+                  "kind": "evidence",
+                  "sourceId": {
+                    "hostId": "legal-291947-wood-raw-byproduct-annex4-code",
+                    "sha256": "eb4d766f5fb364d9649cbf60b1e09d3f49d95683a9353ccd15052cbb57c148cb"
+                  },
+                  "recordSha256": "f2852c670ae92790a91038d6a528cce67a169df309acb02334f41dcd31bfe903"
+                },
+                {
+                  "kind": "evidence",
+                  "sourceId": {
+                    "hostId": "legal-291947-wood-raw-byproduct-annex4-2-r3-4",
+                    "sha256": "e57ec52815d609b514dfe4dad61893e83a86a29f26c7a6dd38e3b880aa752e18"
+                  },
+                  "recordSha256": "3b50344a1e948e041ccdde77e938bebd165fc45c85d5f40c11df4a88b5dfe0c1"
+                },
+                {
+                  "kind": "evidence",
+                  "sourceId": {
+                    "hostId": "legal-291947-wood-raw-byproduct-annex4-3-types",
+                    "sha256": "e823f0e04c26ee480d96ebf3d0b3d9b3de279d2f2c1c0cc2367d7f64d7d2c470"
+                  },
+                  "recordSha256": "38218220c006cc9ef90c3c27927614fa6002bbef3be0dbb62d5f1e5e1bf891cf"
+                },
+                {
+                  "kind": "evidence",
+                  "sourceId": {
+                    "hostId": "legal-291947-wood-raw-byproduct-annex5-3-common",
+                    "sha256": "245ecaf27a3ebcaacba6362560b7e5b8b076e1bbcdfe70bc7d93f41113760470"
+                  },
+                  "recordSha256": "68106b1754e5341b95c6e6e9971359e49f9bbe26cb1c58ad8b732275feefa674"
+                },
+                {
+                  "kind": "evidence",
+                  "sourceId": {
+                    "hostId": "legal-291947-wood-raw-byproduct-annex5-3-r3-4",
+                    "sha256": "c43ddcd0a3c18d7fb5a28ec08083c67d2c3097ae1bf09847f65d80d3146f6bae"
+                  },
+                  "recordSha256": "982782a8a1e6a42ceb6c00a680eeaf9da9a2b236a2a771263eedcf3b6b868767"
+                }
+              ],
+              "totalItems": 6
+            },
+            "status": "validation-passed",
+            "reason": "field-check-passed"
+          },
+          {
+            "stage": 4,
+            "proposed": {
+              "items": [],
+              "totalItems": 0
+            },
+            "hostSelected": {
+              "items": [],
+              "totalItems": 0
+            },
+            "status": "absent",
+            "reason": "no-proposed-fields"
+          },
+          {
+            "stage": 5,
+            "proposed": {
+              "items": [],
+              "totalItems": 0
+            },
+            "hostSelected": {
+              "items": [],
+              "totalItems": 0
+            },
+            "status": "absent",
+            "reason": "no-proposed-fields"
+          },
+          {
+            "stage": 6,
+            "proposed": {
+              "items": [
+                {
+                  "kind": "decision",
+                  "state": "compared",
+                  "humanApproval": "pending",
+                  "questionCount": 0,
+                  "reasonCount": 0
+                },
+                {
+                  "kind": "recommendation",
+                  "routeId": {
+                    "hostId": "mechanical-recycling",
+                    "sha256": "5ee1af80c82798294fedf0abadc3cb7a7ce48f91482be5ca33ecc77e9b4a913d"
+                  },
+                  "rank": 1,
+                  "grade": "public-conditional"
+                }
+              ],
+              "totalItems": 2
+            },
+            "hostSelected": {
+              "items": [
+                {
+                  "kind": "decision",
+                  "state": "compared",
+                  "humanApproval": "pending",
+                  "questionCount": 0,
+                  "reasonCount": 0
+                },
+                {
+                  "kind": "recommendation",
+                  "routeId": {
+                    "hostId": "mechanical-recycling",
+                    "sha256": "5ee1af80c82798294fedf0abadc3cb7a7ce48f91482be5ca33ecc77e9b4a913d"
+                  },
+                  "rank": 1,
+                  "grade": "public-conditional"
+                }
+              ],
+              "totalItems": 2
+            },
+            "status": "validation-passed",
+            "reason": "field-check-passed"
+          }
+        ]
+      },
+      "verificationPlan": {
+        "version": 1,
+        "caseId": "7adcdeb3-f711-4b0b-a7bd-41a37c23523a",
+        "inputRevision": "1b9fa5e00e40a13d7d7de15e3a81c0b81923ee0980fd0c03cba4c51940c888dc",
+        "decisionRevision": "4056d972ffe6ff6da16d026a45f0e4abdfd1de10740db30b0f337fda432abb93",
+        "candidateCount": 16,
+        "offeredCount": 12,
+        "omittedCount": 4,
+        "candidateLimit": 12,
+        "textLimit": 2048,
+        "selectionLimit": 3,
+        "origin": "host-decision-reference",
+        "status": "validated-selection",
+        "rejectionReason": null,
+        "validationScope": "current-candidate-selection-only",
+        "selected": [
+          {
+            "id": "vp_2d5a06eb1fe8b616077d231fc1fe2a412b764268262657fa72c1a24270d859f2",
+            "source": "pre-execution-check",
+            "text": "별표4의3 사전 분석·확인 필요 여부는 해당이다. 분석·확인 완료 증거를 별도로 확보한다."
+          },
+          {
+            "id": "vp_5cc1ce40fda7afa0577e83cb2656c7ae3ec26eb61fe990f5f87ea7512a5215fa",
+            "source": "pre-execution-check",
+            "text": "원목 가공과정 또는 원목상태의 깨끗한 목재가공공장 부산물·분진이라는 발생원·상태를 확인한다."
+          },
+          {
+            "id": "vp_160d99edb69e229a834271c4ce55e578e93919755419bb734400443ca8fb6f87",
+            "source": "pre-execution-check",
+            "text": "접착제·페인트·기름·콘크리트·방부제·할로겐 유기화합물 사용과 특수 발생원을 확인하며 unknown을 깨끗함으로 바꾸지 않는다."
+          }
+        ],
+        "proposalSha256": "c1aa47ab3f4406b904a777d232ac79fd4a1ad27cddf98bcf00379f13caaf7a6f"
+      }
+    },
+    "evaluated": {
+      "revision": "1b9fa5e00e40a13d7d7de15e3a81c0b81923ee0980fd0c03cba4c51940c888dc",
+      "version": 1,
+      "committedAt": 1795317898199
+    },
+    "inputSha256": "1b9fa5e00e40a13d7d7de15e3a81c0b81923ee0980fd0c03cba4c51940c888dc",
+    "decisionSha256": "4056d972ffe6ff6da16d026a45f0e4abdfd1de10740db30b0f337fda432abb93"
+  }
+]

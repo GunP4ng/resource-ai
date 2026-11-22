@@ -1,0 +1,51 @@
+{
+  "main": "24578438ceb49ad651d8a664d9c88d970782ca8f",
+  "selection": "Three synthetic scenarios chosen before execution; no output selection or retries.",
+  "cases": [
+    {
+      "label": "metal-normal",
+      "input": {
+        "caseId": "MATSAFE-NF-01",
+        "description": "동관 절단 공정의 구리 오프컷",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 동관 절단 가공 공정",
+        "polymer": "구리",
+        "contamination": "없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "label": "hazard-hold",
+      "input": {
+        "caseId": "MATSAFE-NF-02",
+        "description": "동관 절단 공정의 구리 오프컷, 표면이 납으로 오염된 구리 절단편",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 동관 절단 가공 공정",
+        "polymer": "구리",
+        "contamination": "없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "label": "wood-normal",
+      "input": {
+        "caseId": "MATSAFE-WD-01",
+        "description": "무처리 원목 자투리와 대패밥",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 원목 제재 가공 부산물",
+        "polymer": "무처리 원목",
+        "contamination": "없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    }
+  ]
+}
