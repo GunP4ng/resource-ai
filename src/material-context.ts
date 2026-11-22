@@ -257,6 +257,24 @@ function hasUnresolvedMaterialHistory(value: string | null): boolean {
   return base !== null && canonicalMaterial(base[1]) !== null;
 }
 
+function hasCorroboratedCopperResidueAbsence(input: CaseInput): boolean {
+  const fields = [input.polymer, input.description, input.process, input.contamination];
+  if (fields.some(value => value !== null && (physicalLineBoundary.test(value) || value.includes("\uFEFF")))) return false;
+  const normalize = (value: string | null) => (value ?? "").normalize("NFKC")
+    .replace(/[\p{Zs}\t]+/gu, " ").replace(/^ | $/gu, "");
+  if (canonicalMaterial(input.polymer) !== "copper" || !standaloneClean.test(normalize(input.contamination))) return false;
+
+  const descriptor = /^([^,]+?) *, *잔여물은 없음 *\.?$/u.exec(normalize(input.description))?.[1];
+  if (descriptor === undefined || canonicalMaterial(descriptor.replace(/ (?:절단편|스크랩)$/u, "")) !== "copper") return false;
+
+  // The complete process must corroborate the observation. A matching prefix can be followed by another assertion.
+  const origin = /^사업장일반폐기물(?: *, *| )(.+)$/u.exec(normalize(input.process))?.[1];
+  if (origin === undefined) return false;
+  if (origin === "금속 절단") return true;
+  const copperSource = /^(?:([^,]+) 절단 공정|기계 가공 공정에서 나온 ([^,]+) 절삭 스크랩)$/u.exec(origin);
+  return canonicalMaterial(copperSource?.[1] ?? copperSource?.[2]) === "copper";
+}
+
 export function materialQuestions(input: CaseInput): readonly string[] {
   const family = materialFamily(input);
   if (family === null) return [];
@@ -288,7 +306,8 @@ export function materialQuestions(input: CaseInput): readonly string[] {
   if (materialStream(input) !== "carton" && /혼합|복합|합판|MDF|파티클|particle|plywood|\bmixed\b/iu.test(material)) {
     questions.push("구성 재질·접착제·코팅과 분리 가능 여부를 확인해 주세요. 혼합·가공 재료를 깨끗한 단일 재질로 간주하지 않습니다.");
   }
-  const unresolvedHistory = [input.description, input.process].some(hasUnresolvedMaterialHistory);
+  const unresolvedHistory = hasUnresolvedMaterialHistory(input.process)
+    || (hasUnresolvedMaterialHistory(input.description) && !hasCorroboratedCopperResidueAbsence(input));
   if ((unresolvedHistory || (input.contamination?.trim() && !isDeclaredCleanMaterial(input, family)))
     && materialHazardReasons(input).length === 0) questions.push(safetyReasons.contaminationUnknown);
   return questions;

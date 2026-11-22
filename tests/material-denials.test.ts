@@ -414,6 +414,68 @@ test("residual history questions keep complete denials and untreated controls lo
   }
 });
 
+const copperCuttingProcess = "사업장일반폐기물 구리 절단 공정";
+const copperFragmentObservation = "구리 절단편, 잔여물은 없음";
+
+test("complete copper residue observations preserve the unconditional decision and pending approval", async () => {
+  const copper = cases[0]!.input;
+  const observations = [
+    ["구리 절단편, 잔여물이 없음", copperFragmentObservation, copperCuttingProcess],
+    ["구리, 잔여물이 없음", "구리, 잔여물은 없음", "사업장일반폐기물 금속 절단"],
+    ["구리 스크랩, 잔여물이 없음", "구리 스크랩, 잔여물은 없음", "사업장일반폐기물, 기계 가공 공정에서 나온 구리 절삭 스크랩"],
+    ["copper, 잔여물이 없음", "ＣＯＰＰＥＲ\t스크랩，\u3000잔여물은\t없음． ", "사업장일반폐기물, copper 절단 공정"],
+  ] as const;
+  for (const [control, description, process] of observations) {
+    const input = { ...copper, process, contamination: "없음" };
+    const expected = await createResourceDomain({ ...input, description: control }).decide();
+    assert.equal(expected.state, "compared", control);
+    const decision = await createResourceDomain({ ...input, description }).decide();
+    assert.equal(decision.state, "compared", description);
+    assert.deepEqual(decision, expected, description);
+    assert.equal(decision.humanApproval, "pending");
+  }
+});
+
+test("a copper residue observation needs a whole descriptor and independent corroboration", async () => {
+  const input: CaseInput = { ...cases[0]!.input, process: copperCuttingProcess,
+    description: copperFragmentObservation, contamination: "없음" };
+  const unresolved: readonly Partial<CaseInput>[] = [
+    ...["잔여물은 없음", "합성 구리 절단편, 잔여물은 없음", "구리판 절단편, 잔여물은 없음",
+      "구리절단편, 잔여물은 없음", "구리 절단편 스크랩, 잔여물은 없음", "알루미늄, 잔여물은 없음",
+      "구리 절단편, 잔여물·찌꺼기는 없음", "구리 절단편, 찌꺼기는 없음", "구리 절단편, 잔여물은 없음?",
+      "구리 절단편, 잔여물은 없음, 추정", "구리 절단편, 잔여물은 없음; 다만 확인 전",
+      "세척하면, 잔여물은 없음", "구리 절단편 세척 후라면, 잔여물은 없음",
+      "구리 절단편, 잔여물은 없음, 잔여물 있음", "구리 절단편, 잔여물 있음\n잔여물은 없음",
+      "구리 절단편, 잔여물은 없음, 잔여 물질 있음", "구리\n절단편, 잔여물은 없음",
+      "구리 절단편, 잔여물은\r\n없음", `${copperFragmentObservation}\n`, `${copperFragmentObservation}\n추정`]
+      .map(description => ({ description })),
+    ...[`${copperCuttingProcess}, 잔여 물질 있음`, `${copperCuttingProcess}, 세척할 경우에만 해당`,
+      `${copperCuttingProcess},`, `${copperCuttingProcess}\r\n`, "사업장일반폐기물\n구리 절단 공정",
+      "사업장일반폐기물 알루미늄 절단 공정", "사업장일반폐기물 구리 연마 공정"].map(process => ({ process })),
+    { polymer: "알루미늄" }, { polymer: "구\n리" },
+    { contamination: "잔여물 있음" }, { contamination: "없음, 추정" }, { contamination: "없음\n" },
+  ];
+  for (const change of unresolved) {
+    const label = JSON.stringify(change);
+    const decision = await createResourceDomain({ ...input, ...change }).decide();
+    assert.equal(decision.state, "needs-information", label);
+    assert.ok(decision.questions.includes(safetyReasons.contaminationUnknown), label);
+  }
+  for (const change of [{ description: "납, 잔여물은 없음" }, { description: `납 검출, ${copperFragmentObservation}` },
+    { description: `${copperFragmentObservation}, 납 부착` }, { process: `${copperCuttingProcess}, 납 검출` },
+    { contamination: "납 오염" }]) {
+    const decision = await createResourceDomain({ ...input, ...change }).decide();
+    assert.equal(decision.state, "needs-review");
+    assert.ok(decision.reasons.includes(safetyReasons.materialTreatment));
+  }
+  const contact = await createResourceDomain({ ...input, hazardousContact: "yes" }).decide();
+  assert.equal(contact.state, "needs-review");
+  assert.ok(contact.reasons.includes(safetyReasons.contactClassification));
+  const unknown = await createResourceDomain({ ...input, hazardousContact: "unknown" }).decide();
+  assert.equal(unknown.state, "needs-information");
+  assert.ok(unknown.questions.includes(safetyReasons.contactUnknown));
+});
+
 const nativeCases = [
   ["표면이 납으로 오염된 구리 절단편", "검토 필요"],
   ["구리 절단편, 납 오염", "검토 필요"],
@@ -432,7 +494,13 @@ const nativeCases = [
   ["비철 금속, 잔여 물질 있음", "추가 정보 필요"],
   ["잔여 물질 있음", "추가 정보 필요"],
   ["구리 스크랩, 잔여 물질 없음", "기계적 재활용 추천"],
-  ["구리 스크랩, 잔여물은 없음", "추가 정보 필요"],
+  ["구리 스크랩, 잔여물은 없음", "기계적 재활용 추천"],
+  ["구리 절단편, 잔여물이 없음", "기계적 재활용 추천", "없음", copperCuttingProcess],
+  [copperFragmentObservation, "기계적 재활용 추천", "없음", copperCuttingProcess],
+  [`${copperFragmentObservation}.`, "기계적 재활용 추천", "없음", copperCuttingProcess],
+  ["납, 잔여물은 없음", "검토 필요", "없음", copperCuttingProcess],
+  ["구리\n절단편, 잔여물은 없음", "추가 정보 필요", "없음", copperCuttingProcess],
+  [copperFragmentObservation, "추가 정보 필요", "없음", `${copperCuttingProcess}, 잔여 물질 있음`],
   ["구리 스크랩, 잔여 물질 있으면 분리", "기계적 재활용 추천"],
   ["세척하면, 잔여 물질 있음", "기계적 재활용 추천"],
   ["구리 스크랩, 잔여 물질 있음?", "기계적 재활용 추천"],
@@ -444,11 +512,12 @@ const nativeCases = [
   ...ambiguousUnplatedDescriptions.map(description => [description, "검토 필요"] as const),
 ] as const;
 
-for (const [description, heading, contamination = "없음"] of nativeCases) {
-  test(`native copper report and raw export: ${description}`, async () => {
+for (const [description, heading, contamination = "없음",
+  process = "사업장일반폐기물, 기계 가공 공정에서 나온 구리 절삭 스크랩"] of nativeCases) {
+  test(`native copper report and raw export: ${description} / ${process}`, async () => {
     const origin = "http://localhost:3000";
     const app = createResourceApp({ origin });
-    const fields = { polymer: "구리", process: "사업장일반폐기물, 기계 가공 공정에서 나온 구리 절삭 스크랩",
+    const fields = { polymer: "구리", process,
       contamination, description,
       hazardousContact: "no", massKg: "180", region: "경기", assessmentDate: base.assessmentDate };
     try {
