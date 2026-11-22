@@ -6,6 +6,7 @@ import type { createPhotoStore } from "./photos.ts";
 import type { PhotoExecutionAuthority } from "./photo-execution.ts";
 import type { ModelHostAudit } from "./o-model-audit.ts";
 import type { VerificationPlan } from "./o-verification-plan.ts";
+import type { ReviewProgress } from "./app-progress.ts";
 export interface AssessmentEnvelope {
   readonly decision: DecisionResult;
   readonly execution?: { readonly traceId: string; readonly usage?: string | null };
@@ -22,6 +23,7 @@ export interface AssessmentAdapter {
 export interface AppDependencies {
   readonly origin: string;
   readonly adapter?: AssessmentAdapter;
+  readonly reviewConfigured?: boolean;
   readonly timeoutMs?: number;
   readonly maxBodyBytes?: number;
   readonly now?: () => number;
@@ -33,7 +35,7 @@ export interface AppDependencies {
   readonly preparer?: {
     prepareSubmit(raw: unknown, format: "json" | "form"): CaseInput;
     prepareAnswer(input: CaseInput, raw: unknown): CaseInput;
-    evaluate(input: CaseInput, signal: AbortSignal): Promise<AssessmentEnvelope>;
+    evaluate(input: CaseInput, signal: AbortSignal, reportProgress?: ReviewProgress): Promise<AssessmentEnvelope>;
   };
   readonly caseStore?: OCaseStore;
   readonly photoStore?: Awaited<ReturnType<typeof createPhotoStore>>;
@@ -63,4 +65,5 @@ export interface RouteRequest {
   readonly sessionDeadline: number | undefined;
   readonly caseMatch: RegExpExecArray | null;
   readonly photoMatch: RegExpExecArray | null;
+  readonly reportProgress?: ReviewProgress;
 }

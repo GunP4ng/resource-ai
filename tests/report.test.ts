@@ -40,7 +40,7 @@ test("held alternatives stay informational and precede source and next-action se
   const closedDetails: string[] = [];
   const leadingContent: string[] = [];
   await new HTMLRewriter()
-    .on("#commercial-summary > #decision-summary, #commercial-summary > #next-action, #commercial-summary > .state.held", {
+    .on("#commercial-summary > .result-overview > #decision-summary, #commercial-summary > .result-overview > #next-action, #commercial-summary > .result-overview > .state.held", {
       element(element) { leadingContent.push(element.getAttribute("id") ?? "held"); },
     })
     .on("a.primary-action:not(.secondary-action)", { element(element) { primaryTargets.push(element.getAttribute("href")); } })
@@ -49,10 +49,11 @@ test("held alternatives stay informational and precede source and next-action se
       closedDetails.push(element.getAttribute("id") ?? "");
     } }).transform(new Response(html)).text();
   assert.deepEqual(leadingContent, ["held", "decision-summary", "next-action"]);
-  assert.deepEqual(primaryTargets, ["#checks"]);
+  assert.deepEqual(primaryTargets, ["#case-reasons"]);
+  assert.match(html, /id="case-reasons"/);
   assert.deepEqual(closedDetails, ["result-context", "decision-detail"]);
-  assert.match(html, /현재 실행 보류는 유지됩니다/);
-  assert.match(html, /이 처리 경로의 적합성은 아직 확인하지 못했습니다/);
+  assert.match(html, /실행 보류는 그대로입니다/);
+  assert.match(html, /이 처리 경로의 근거를 더 확보해야 합니다/);
   assert.match(html, /이 대안의 근거와 적용 범위/);
   assert.match(html, /먼저 확인할 것/);
   assert.doesNotMatch(html, /aria-label="추천 경로 순위"|1순위/);
@@ -63,29 +64,29 @@ test("reported string zero survives while missing usage stays unavailable; histo
   const decision = { state: "needs-information", caseId: "metadata-case", questions: ["질량 확인"], evidence: [] } as const;
   const zero = renderReport(decision, { mode: "live", runtime: { identity: "local-operator", storage: "sqlite", runner: "subscription" }, execution: { traceId: "senpi:trace", usage: "0" }, historical: true });
   const missing = renderReport(decision, { mode: "live", execution: { traceId: "senpi:trace", usage: null } });
-  assert.match(zero, /사용량 0<\/p>/); assert.doesNotMatch(zero, /사용량 미제공/);
-  assert.match(missing, /사용량 미제공/); assert.doesNotMatch(missing, /사용량 0/);
-  assert.match(zero, /과거 평가: 현재 입력과 평가 당시 입력이 다릅니다/);
-  assert.match(zero, /구성된 실행기 구독 경로 모델 실행 \(실행 성공과 별개\)/);
-  assert.match(zero, /제공자 요청 ID를 보증하지 않습니다/); assert.match(zero, /청구 비용 미제공/);
+  assert.match(zero, /사용량 0<\/p>/); assert.doesNotMatch(zero, /사용량 기록 없음/);
+  assert.match(missing, /사용량 기록 없음/); assert.doesNotMatch(missing, /사용량 0/);
+  assert.match(zero, /과거 평가입니다. 입력이 바뀌었으니/);
+  assert.match(zero, /검토 방식 구독 모델 \(설정값\)/);
+  assert.match(zero, /제공자 요청 ID라는 보장은 없습니다/); assert.match(zero, /청구 비용은 제공하지 않습니다/);
 });
 for (const [runner, label, missing] of [
   [undefined, null, "실행 성공 미검증"],
   ["unspecified", "미지정", "실행 성공 미검증"],
-  ["subscription", "구독 경로 모델 실행", "구독 경로 모델 실행 성공 미검증"],
-  ["azure", "Azure 연결", "Azure 성공 미검증"],
+  ["subscription", "구독 모델", "구독 모델 성공 미검증"],
+  ["azure", "Azure", "Azure 성공 미검증"],
   ["local", null, "외부 모델 호출 없음"],
 ] as const) test(`live report without execution uses saved runtime ${runner ?? "absent"} without claiming success`, () => {
   const html = renderReport({ state: "needs-information", caseId: "no-execution", questions: ["질량 확인"], evidence: [] }, {
     mode: "live", ...(runner ? { runtime: { identity: "local-operator", storage: "sqlite", runner } } : {}),
   });
-  assert.match(html, /모델 실행 정보 미제공/);
-  assert.ok(html.includes(`<p>모델 실행 정보 미제공 · ${missing}</p>`), `missing execution disclosure for ${runner ?? "absent"}`);
-  if (label) assert.ok(html.includes(`구성된 실행기 ${label} (실행 성공과 별개)`), `configured label for ${runner}`);
+  assert.match(html, /모델 실행 기록 없음/);
+  assert.ok(html.includes(`<p>모델 실행 기록 없음 · ${missing}</p>`), `missing execution disclosure for ${runner ?? "absent"}`);
+  if (label) assert.ok(html.includes(`검토 방식 ${label} (설정값)`), `configured label for ${runner}`);
   else if (runner === "local") {
-    assert.match(html, /평가 당시: 로컬 운영자 · SQLite 보관/);
+    assert.match(html, /평가 당시: 운영자 · SQLite 보관/);
     assert.doesNotMatch(html, /구성된 실행기|로컬 실행|로컬 평가/);
-  } else assert.match(html, /평가 당시 인증·저장·실행기 설정 미제공/);
+  } else assert.match(html, /평가 당시 설정 기록 없음/);
   if (runner !== "azure") assert.ok(!html.includes("Azure"), "must not assume Azure");
   if (runner !== "local") assert.doesNotMatch(html, /모델 호출 없음/);
   assert.doesNotMatch(html, /추적 |SiWC|인증 성공/);
@@ -98,7 +99,7 @@ test("question and review states escape hostile text and disallow executable sou
   assert.ok(information.includes("&lt;script&gt;attack&lt;/script&gt;"));
   assert.ok(!information.includes('<a href="javascript:'));
   assert.ok(!review.includes("<img"));
-  assert.ok(review.includes("사전 녹화"));
+  assert.ok(review.includes("녹화 결과"));
   assert.equal(safeLink("data:text/html,hi"), null);
   assert.equal(safeLink("//example.org"), null);
   assert.equal(safeLink("https://user:pass@example.org"), null);
@@ -111,19 +112,21 @@ test("compared report reads function results and preserves pending approval and 
   assert.ok(html.includes("240,000 KRW"));
   assert.ok(html.includes("230,000 KRW"));
   assert.ok(html.includes("45 kgCO2e"));
-  assert.ok(html.includes("현장 담당자 승인 대기"));
+  assert.ok(html.includes("실행·반출·계약은 현장 담당자의 승인을 받은 뒤 진행하세요."));
+  assert.ok(!html.includes("현장 담당자의 승인 기록이 있습니다."));
   assert.ok(!html.includes("humanApproval:"));
   assert.ok(html.includes("1순위군 · 견적 B · 일괄 청구"));
   assert.ok(html.includes("2순위군 · 견적 A · 항목별 청구"));
-  assert.ok(html.includes("합성 데모 · 모델 호출 없음"));
+  assert.ok(html.includes("합성 예시 · 모델 호출 없음"));
   assert.ok(html.includes("입력값 고정 계산"));
   const unavailable = renderReport({ ...fixture.result, scenarios: fixture.result.scenarios.map((s) => ({ ...s, netCost: { state: "unavailable", missingInputs: ["quote-missing<script>"] } })), humanApproval: "approved" }, { mode: "live", execution: { traceId: "<trace>", usage: null } });
   assert.ok(unavailable.includes("계산 불가"));
   assert.ok(unavailable.includes("quote-missing&lt;script&gt;"));
-  assert.ok(unavailable.includes("인간 승인 기록 있음"));
+  assert.ok(unavailable.includes("현장 담당자의 승인 기록이 있습니다."));
+  assert.ok(!unavailable.includes("실행·반출·계약은 현장 담당자의 승인을 받은 뒤 진행하세요."));
   assert.ok(!unavailable.includes("humanApproval:"));
   assert.ok(unavailable.includes("&lt;trace&gt;"));
-  assert.ok(unavailable.includes("사용량 미제공"));
+  assert.ok(unavailable.includes("사용량 기록 없음"));
   assert.ok(unavailable.includes("순비용 또는 순배출 자료 부족: 순위 보류"));
   assert.ok(!unavailable.includes("1순위군"));
 });
@@ -133,7 +136,7 @@ test("externally supplied intervals render with their assumptions; invalid order
   const result = { ...fixture.result, scenarios: fixture.result.scenarios.map((s) => ({ ...s, netEmissions: { state: "available", low: 25, central: 45, high: 65, unit: "kgCO2e", evidenceIds: ["synthetic-evidence"], assumptions: ["지원된 외부 공동 시나리오 범위 · 독립 확률분포 아님"] } as const })) };
   const html = renderReport(result, fixture.presentation);
   assert.ok(html.includes("45 kgCO2e (범위 25–65)"));
-  assert.ok(html.includes("우열 불확실"));
+  assert.ok(html.includes("우열 미정"));
   assert.throws(() => renderReport({ ...result, scenarios: result.scenarios.map((s) => ({ ...s, netEmissions: { ...s.netEmissions, low: 90 } })) }, fixture.presentation), /invalid-estimate-or-evidence/);
 });
 
@@ -141,7 +144,8 @@ test("summary follows approval; disclosed and printable audits retain exact assu
   const fixture = await demo("normal");
   assert.ok(fixture && fixture.result.state === "compared");
   const html = renderReport(fixture.result, fixture.presentation);
-  assert.ok(html.indexOf("현장 담당자 승인 대기") < html.indexOf("대안 비교 요약"));
+  const approval = html.indexOf("실행·반출·계약은 현장 담당자의 승인을 받은 뒤 진행하세요.");
+  assert.ok(approval >= 0 && approval < html.indexOf("대안 비교 요약"));
   assert.ok(html.indexOf("240,000 KRW") < html.indexOf("경로와 조건"));
   const screen = html.match(/<details class="screen-only"><summary>.*?<\/summary>([\s\S]*?)<\/details>/)?.[1];
   const print = html.match(/<div class="print-only">([\s\S]*?)<\/div>\s*<details id="advanced"/)?.[1];

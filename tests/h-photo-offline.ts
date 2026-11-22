@@ -226,10 +226,10 @@ try {
     const form = Object.fromEntries(Object.entries(fields).map(([key, value]) => [key, key === "photoRefs" ? "" : value === null ? "" : String(value)]));
     const created = await fetch(origin + "/cases", { method: "POST", redirect: "manual", headers: { origin, cookie, "content-type": "application/x-www-form-urlencoded" }, body: new URLSearchParams(form) });
     assert.equal(created.status, 303); const path = created.headers.get("location")!;
-    const before = await (await fetch(origin + path, { headers: { cookie } })).text(); assert.ok(before.includes("층별·구성 수지"));
+    const before = await (await fetch(origin + path, { headers: { cookie } })).text(); assert.ok(before.includes("층별 수지 명세"));
     const answered = await fetch(origin + path + "/answers", { method: "POST", redirect: "manual", headers: { origin, cookie, "content-type": "application/x-www-form-urlencoded" }, body: new URLSearchParams({ answers: JSON.stringify({ polymer: "PP" }) }) });
     assert.equal(answered.status, 303);
-    const after = await (await fetch(origin + path, { headers: { cookie } })).text(); assert.ok(!after.includes("층별·구성 수지"));
+    const after = await (await fetch(origin + path, { headers: { cookie } })).text(); assert.ok(!after.includes("층별 수지 명세"));
     const stranger = await fetch(origin), otherCookie = stranger.headers.get("set-cookie")!.split(";", 1)[0]!;
     const inaccessible = await fetch(origin + path, { headers: { cookie: otherCookie } }); assert.equal(inaccessible.status, 404);
     http = { createStatus: created.status, answerStatus: answered.status, otherSessionStatus: inaccessible.status,

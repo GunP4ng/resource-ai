@@ -54,3 +54,55 @@ test("out-of-scope app input produces no evaluation or stored case and cannot ov
     assert.deepEqual(store.read(owner, id), before);
   } finally { app.dispose(); }
 });
+
+test("initial native 422 keeps all eight fields and multiline text available for correction", async () => {
+  const origin = "http://localhost:3000", owner = "actor:scope-form";
+  const store = createCaseStore();
+  let evaluations = 0, commits = 0;
+  const app = createResourceApp({ origin, caseStore: store, actorForRequest: async () => "scope-form",
+    runner: async () => { evaluations++; return {}; }, committed: () => { commits++; } });
+  const original = {
+    description: "\n합성 시료 A\n두 번째 줄", process: '세척 <A> & "B"', polymer: "유리", contamination: "없음",
+    hazardousContact: "no", massKg: "180", region: "경기", assessmentDate: "2026-11-22",
+  };
+  const post = (fields: URLSearchParams) => app.fetch(new Request(origin + "/cases", { method: "POST", headers: { origin }, body: fields }));
+  const entities: Record<string, string> = { "&lt;": "<", "&gt;": ">", "&amp;": "&", "&quot;": '"', "&#39;": "'" };
+  const decode = (text: string) => text.replace(/&(?:lt|gt|amp|quot|#39);/g, key => entities[key] ?? key);
+  try {
+    const rejected = await post(new URLSearchParams(original));
+    assert.equal(rejected.status, 422);
+    assert.equal(rejected.headers.get("cache-control"), "private, no-store");
+    assert.equal(rejected.headers.get("location"), null);
+    assert.equal(rejected.headers.get("set-cookie"), null);
+    assert.deepEqual([evaluations, commits, store.list(owner).length], [0, 0, 0]);
+
+    const selector = '[data-out-of-scope] form[method="post"][action="/cases"]';
+    const fields = new URLSearchParams();
+    let forms = 0, description = "";
+    const html = await new HTMLRewriter()
+      .on(selector, { element() { forms++; } })
+      .on(`${selector} input[name]`, { element(el) { fields.append(el.getAttribute("name") ?? "", decode(el.getAttribute("value") ?? "")); } })
+      .on(`${selector} textarea[name="description"]`, { text(chunk) { description += chunk.text; } })
+      .on(`${selector} select[name="hazardousContact"] option[selected]`, { element(el) { fields.append("hazardousContact", el.getAttribute("value") ?? ""); } })
+      .transform(rejected).text();
+    assert.equal(forms, 1);
+    assert.match(html, /role="alert"/);
+    assert.match(html, /세척 &lt;A&gt; &amp; &quot;B&quot;/);
+    assert.doesNotMatch(html, /data-intake-landing|id="decision-summary"/);
+    // A browser discards the first newline after the opening textarea tag.
+    fields.append("description", decode(description).replace(/^\n/, ""));
+    assert.equal(fields.size, 8);
+    assert.deepEqual(Object.fromEntries(fields), original);
+
+    fields.set("polymer", "PET");
+    const accepted = await post(fields);
+    assert.equal(accepted.status, 303);
+    const path = accepted.headers.get("location");
+    assert.ok(path);
+    const stored = await app.fetch(new Request(origin + path + "/input"));
+    assert.equal(stored.status, 200);
+    assert.deepEqual(await stored.json(), { ...original, caseId: path.slice("/cases/".length), polymer: "PET", massKg: 180, photoRefs: [] });
+    assert.equal((await app.fetch(new Request(origin + path + "/report"))).status, 200);
+    assert.deepEqual([evaluations, commits, store.list(owner).length], [1, 1, 1]);
+  } finally { app.dispose(); await app.close(); store.dispose(); }
+});

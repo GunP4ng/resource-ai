@@ -54,8 +54,8 @@ test("verified purchase-price scope stays separate from unchanged plastics VAT a
   assert.match(verified, /중간가공업체의 고철 스크랩\(경량 B급\) 매입 가격/);
   assert.match(verified, /중간가공업체의 미압축 고지 매입 가격/);
   assert.doesNotMatch(verified, /VAT·물류 미확인|참고 매각가격/);
-  assert.match(html, /<h2>참고 매각가격<\/h2><p>VAT·물류 미확인 · 실제 견적 아님<\/p>/);
-  assert.match(html, /136개 정규화 가격/);
+  assert.match(html, /<h2>참고 매각가격<\/h2><p>참고가격 · VAT·물류 별도 확인<\/p>/);
+  assert.match(html, /136개 가격 · 공란은 미발표/);
   assert.match(html, /압축-PE\(잡색\)/);
 });
 

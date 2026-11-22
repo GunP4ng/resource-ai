@@ -109,8 +109,8 @@ for (const [field, question] of [
     const { cookie } = await app.home();
     const path = await created(await app.create(cookie, { [field]: "" }));
     const views = [
-      [path, "누락된 사례 정보를 확인해 답변란에 입력하세요."],
-      [path + "/report", "아래 보류 사유에서 누락된 정보를 확인하고 필요한 자료를 준비하세요."],
+      [path, "빠진 정보를 확인해 답변란에 입력하세요."],
+      [path + "/report", "아래 보류 사유를 보고 필요한 자료를 준비하세요."],
     ] as const;
     async function assertMissing(raw: string | null) {
       assert.equal((await exported(app, path, cookie))[field], raw);
@@ -118,11 +118,15 @@ for (const [field, question] of [
         const html = await readable(await app.get(view, cookie));
         assert.equal(html.match(/<h1>([^<]*)<\/h1>/)?.[1], "추가 정보 필요", view);
         assert.ok(html.match(/<section id="case-reasons">([\s\S]*?)<\/section>/)?.[1]?.includes(question), view);
-        assert.match(html, /<li data-guidance-stage="1" data-state="partial">/, view);
-        assert.ok(html.includes(`<p id="next-action"><strong>다음 행동:</strong> ${action}</p>`), view);
+        const states: (string | null)[] = [];
+        await new HTMLRewriter().on('#case-progress [data-guidance-stage="1"]', { element(el) { states.push(el.getAttribute("data-state")); } }).transform(new Response(html)).text();
+        assert.deepEqual(states, ["partial"], view);
+        let nextAction = "";
+        await new HTMLRewriter().on("#next-action", { text(chunk) { nextAction += chunk.text; } }).transform(new Response(html)).text();
+        assert.equal(nextAction.trim(), `다음 할 일: ${action}`, view);
         if (field === "process") {
           const stage = html.match(/<section id="guidance-stage-1">([\s\S]*?)<\/section>/)?.[1];
-          assert.ok(stage?.includes("<li>발생 공정이 미확보입니다.</li>"), view);
+          assert.ok(stage?.includes("<li>발생 공정을 입력해 주세요.</li>"), view);
         }
       }
     }
@@ -138,7 +142,9 @@ for (const [field, question] of [
     for (const [view] of views) {
       const html = await readable(await app.get(view, cookie));
       assert.equal(html.match(/<h1>([^<]*)<\/h1>/)?.[1], "기계적 재활용 추천", view);
-      assert.match(html, /<li data-guidance-stage="1" data-state="available">/, view);
+      const states: (string | null)[] = [];
+      await new HTMLRewriter().on('#case-progress [data-guidance-stage="1"]', { element(el) { states.push(el.getAttribute("data-state")); } }).transform(new Response(html)).text();
+      assert.deepEqual(states, ["available"], view);
     }
   });
 }
@@ -151,8 +157,8 @@ function stageOneRows(html: string, sectionAttributes: string): string[] {
 
 const guidanceActor = "synthetic-guidance-owner";
 for (const [field, label, reason] of [
-  ["region", "발생 지역", "발생 지역이 미확보입니다."],
-  ["contamination", "오염 상태", "오염 상태가 미확보입니다."],
+  ["region", "발생 지역", "발생 지역을 입력해 주세요."],
+  ["contamination", "오염 상태", "오염 상태를 입력해 주세요."],
 ] as const) {
   const prefix = `${label}: `;
   const outputRows = (rows: string[]) => rows.filter(row => row.startsWith(prefix));
@@ -240,7 +246,7 @@ for (const [polymer, process, description] of [
     const result = await app.create(cookie, { polymer, process, description, massKg: "" });
     assert.equal(result.status, 422);
     const html = await result.text();
-    assert.match(html, /지원 범위 밖 · 판정 없음/);
+    assert.ok(html.includes(`${polymer}는 검토 범위에 포함되지 않습니다`));
     assert.ok(html.includes("폐플라스틱·금속 스크랩·폐목재·포장재(종이·복합 포함)"));
     assert.equal(app.evaluations(), 0);
     assert.deepEqual(app.store.list(ownerFor(cookie)), []);
@@ -272,9 +278,11 @@ for (const description of ["   ", ""]) {
 
     async function assertLinks(expected: string) {
       const html = await readable(await app.get("/cases", cookie));
-      const anchors = [...html.matchAll(/<a href="([^"]+)">([\s\S]*?)<\/a>/g)];
-      assert.deepEqual(anchors.filter(([, href]) => href === path).map(([, , label]) => label), [expected]);
-      assert.deepEqual(anchors.filter(([, href]) => href === path + "/report").map(([, , label]) => label), ["보고서"]);
+      const titles: string[] = [], links: (string | null)[] = [];
+      await new HTMLRewriter().on(".case-list h2", { element() { titles.push(""); }, text(chunk) { titles[titles.length - 1] += chunk.text; } })
+        .on(".case-list a", { element(el) { links.push(el.getAttribute("href")); } }).transform(new Response(html)).text();
+      assert.deepEqual(titles, [expected.trim()]);
+      assert.deepEqual(links, [path, path + "/report"]);
     }
     assert.equal((await exported(app, path, cookie)).description, description);
     await assertLinks(caseId(path));
@@ -318,11 +326,15 @@ test("late anonymous detail and list show the session deadline while storage ret
   assert.deepEqual([row?.editUntil, row?.expires], [at(85), at(115)]);
   const detail = await readable(await app.get(path, cookie));
   const list = await readable(await app.get("/cases", cookie));
-  assert.deepEqual([
-    detail.match(/수정 가능 기한 \(UTC\): ([^<]+)/)?.[1],
-    list.match(/<th>([^<]+ \(UTC\))<\/th>/)?.[1],
-    list.match(/<td data-label="([^"]+ \(UTC\))">([^<]+)/)?.slice(1),
-  ], [utc(60), "조회 가능 기한 (UTC)", ["조회 가능 기한 (UTC)", utc(60)]]);
+  const labels: string[] = [], times: (string | null)[] = [], displayed: string[] = [];
+  await new HTMLRewriter().on('.case-table td[headers="case-version"], .case-table td[headers="case-deadline"]', {
+    element(el) { labels.push(el.getAttribute("data-label") ?? ""); },
+  }).on(".case-table time", { element(el) { times.push(el.getAttribute("datetime")); displayed.push(""); }, text(chunk) { displayed[displayed.length - 1] += chunk.text; } })
+    .transform(new Response(list)).text();
+  assert.equal(detail.match(/수정 기한 \(UTC\): ([^<]+)/)?.[1], utc(60));
+  assert.deepEqual(labels, ["버전", "열람 기한 (UTC)"]);
+  assert.deepEqual(times, [utc(60)]);
+  assert.deepEqual(displayed, [utc(60)]);
 });
 
 test("anonymous read and edit controls include the last session instant, then isolate the replacement session", async t => {
@@ -340,7 +352,10 @@ test("anonymous read and edit controls include the last session instant, then is
   for (const p of paths) assert.equal((await app.get(p, cookie)).status, 403, p);
   const replacement = await app.home(cookie);
   assert.notEqual(replacement.cookie, cookie);
-  assert.match(await readable(await app.get("/cases", replacement.cookie)), /저장된 사례가 없습니다\./);
+  const replacementList = await readable(await app.get("/cases", replacement.cookie));
+  let empty = "";
+  await new HTMLRewriter().on(".case-empty", { text(chunk) { empty += chunk.text; } }).transform(new Response(replacementList)).text();
+  assert.equal(empty.trim(), "저장된 사례가 없어요.");
   assert.equal((await app.get(path, replacement.cookie)).status, 404);
 });
 
@@ -367,7 +382,7 @@ test("an early anonymous case stops editing at its stored cutoff while it remain
   const path = await created(await app.create(cookie));
   app.setTime(at(30) - 1);
   const editable = await readable(await app.get(path, cookie));
-  assert.equal(editable.match(/수정 가능 기한 \(UTC\): ([^<]+)/)?.[1], utc(30));
+  assert.equal(editable.match(/수정 기한 \(UTC\): ([^<]+)/)?.[1], utc(30));
   app.setTime(at(30));
   assert.doesNotMatch(await readable(await app.get(path, cookie)), /action="[^"]+\/answers"/);
   assert.equal((await app.edit(path, cookie, "polymer", "PP")).status, 404);
@@ -378,8 +393,14 @@ test("an actor retains case deadlines with a shorter credential and an anonymous
   const { cookie } = await app.home();
   app.setTime(at(55));
   const path = await created(await app.create(cookie));
-  assert.equal((await readable(await app.get(path, cookie))).match(/수정 가능 기한 \(UTC\): ([^<]+)/)?.[1], utc(85));
-  assert.ok((await readable(await app.get("/cases", cookie))).includes(`<td data-label="보관 만료 (UTC)">${utc(115)}</td>`));
+  assert.equal((await readable(await app.get(path, cookie))).match(/수정 기한 \(UTC\): ([^<]+)/)?.[1], utc(85));
+  const deadlines: string[] = [], times: (string | null)[] = [];
+  await new HTMLRewriter().on('.case-table td[headers="case-version"], .case-table td[headers="case-deadline"]', {
+    element(el) { deadlines.push(el.getAttribute("data-label") ?? ""); },
+  }).on(".case-table time", { element(el) { times.push(el.getAttribute("datetime")); } })
+    .transform(new Response(await readable(await app.get("/cases", cookie)))).text();
+  assert.deepEqual(deadlines, ["버전", "보관 만료 (UTC)"]);
+  assert.deepEqual(times, [utc(115)]);
   app.setTime(at(60) + 1);
   assert.equal((await app.get(path + "/input", cookie)).status, 200);
   app.setTime(at(65));
@@ -455,7 +476,7 @@ const paperLabel = "종이 라벨이 붙은 사출 용기 파쇄품";
 async function assertMissingResin(app: ReturnType<typeof fixture>, path: string, cookie: string, version: number) {
   const detail = await readable(await app.get(path, cookie));
   assert.match(detail, /<h1>추가 정보 필요<\/h1>/);
-  assert.ok(detail.includes("확인된 재질·품목과 이를 확인한 자료(라벨·재질 명세·발생 이력 등)가 있나요?"));
+  assert.ok(detail.includes("확인된 재질·품목과 그 근거 자료(라벨·재질 명세·발생 이력 등)가 있나요?"));
   assert.ok(detail.includes(`<p>버전 ${version}</p>`));
 }
 
@@ -504,7 +525,7 @@ for (const [polymer, description, material] of [
   const result = await app.create(cookie, { polymer, description });
   if (material === "유리") {
     assert.equal(result.status, 422);
-    assert.ok((await result.text()).includes(`입력에 ${material} 재질`));
+    assert.ok((await result.text()).includes(`${material}는 검토 범위에 포함되지 않습니다`));
     assert.deepEqual(app.store.list(ownerFor(cookie)), []);
     assert.equal(app.evaluations(), 0);
   } else {

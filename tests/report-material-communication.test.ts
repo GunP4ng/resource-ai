@@ -8,6 +8,7 @@ import { buildCaseGuidance } from "../src/o-case-guidance.ts";
 import { createCaseStore } from "../src/o-case-store.ts";
 import { createMemoryRuntimeDatabase } from "../src/o-runtime-db.ts";
 import { safetyReasons } from "../src/o-safety-reasons.ts";
+import { readableReason } from "../src/report-evidence.ts";
 import { renderReport } from "../src/report.ts";
 import { createSyntheticResourceApp } from "./synthetic-runtime.ts";
 
@@ -20,7 +21,7 @@ const base: CaseInput = {
 function assertDetectedTerms(html: string, expected: readonly string[], view = ""): void {
   const paragraphs = [...html.matchAll(/<p class="detected-hazard-terms">([\s\S]*?)<\/p>/gu)].map(match => match[1]);
   assert.deepEqual(paragraphs, expected.length
-    ? [`입력에서 감지한 표현: ${expected.join(" · ")}. 해당 물질·처리 이력의 확인 자료가 필요합니다.`]
+    ? [`입력에서 찾은 표현: ${expected.join(" · ")}. 이 물질과 처리 이력의 확인 자료를 준비하세요.`]
     : [], view);
 }
 
@@ -48,7 +49,7 @@ for (const [description, contamination, expected, state] of [
     assert.deepEqual(materialHazardTerms(input), expected);
     assertDetectedTerms(html, expected);
     assert.equal(result.state, state);
-    assert.equal(reasons.includes(safetyReasons.materialTreatment), state === "needs-review");
+    assert.equal(reasons.includes(readableReason(safetyReasons.materialTreatment)), state === "needs-review");
     assert.equal(injectedImages, 0);
     assert.deepEqual(input, original);
     assert.deepEqual(result, decision);
@@ -67,7 +68,7 @@ test("reports without evaluated input and historical reports do not infer detect
       .on("#case-reasons", { text(chunk) { reasons += chunk.text; } })
       .transform(new Response(renderReport(result, presentation, { audience: "commercial" }, view))).text();
     assert.equal(terms, 0);
-    assert.ok(reasons.includes(safetyReasons.materialTreatment));
+    assert.ok(reasons.includes(readableReason(safetyReasons.materialTreatment)));
   }
 });
 
@@ -151,7 +152,7 @@ for (const [description, contamination, expected, state] of [
         .transform(new Response(detail)).text();
       assert.ok(label.includes("재질·품목"));
       for (const [view, html] of [["detail", detail], ["commercial", commercial], ["research", research]] as const) {
-        assert.equal(html.includes(safetyReasons.materialTreatment), state === "needs-review", view);
+        assert.equal(html.includes(readableReason(safetyReasons.materialTreatment)), state === "needs-review", view);
         assertDetectedTerms(html, expected, view);
       }
       assert.deepEqual(materialHazardTerms(exported), expected);
@@ -165,7 +166,7 @@ for (const [description, contamination, expected, state] of [
           const stage1 = html.match(/<section id="guidance-stage-1"[^>]*>([\s\S]*?)<\/section>/u)?.[1] ?? "";
           const stage2 = html.match(/<section id="guidance-stage-2"[^>]*>([\s\S]*?)<\/section>/u)?.[1] ?? "";
           assert.match(stage2, /<li>조건부 추천: 기계적 재활용<\/li>/u, view);
-          assert.match(stage2, /<li>추천·가정별 안내는 엄격 적격성이나 처리 실행 승인과 다릅니다\.<\/li>/u, view);
+          assert.match(stage2, /<li>추천과 조건별 안내는 검토 순서입니다\. 처리 실행은 현장 담당자 승인 후 진행하세요\.<\/li>/u, view);
           assert.doesNotMatch(stage1, /<batch\b/u, view);
           assert.equal(stage1.match(/<li>발생 공정: ([^<]*)<\/li>/u)?.[1], process, view);
         }

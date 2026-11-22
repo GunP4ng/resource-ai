@@ -315,7 +315,7 @@ test("photo failures retain O4 provider handling without exposing image details"
     }));
     assert.equal(response.status, 502);
     const html = await response.text();
-    assert.match(html, /실행 서비스 요청에 실패했습니다/);
+    assert.match(html, /모델 요청이 실패했습니다/);
     assert.doesNotMatch(html, /image-unavailable|detailCode|private-photo-reference/);
   } finally { app.dispose(); }
 });

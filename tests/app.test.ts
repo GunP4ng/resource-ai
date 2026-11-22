@@ -32,16 +32,23 @@ async function session(app: (request: Request) => Promise<Response>): Promise<st
 function post(path: string, cookie: string, body = "{}", headers: Readonly<Record<string, string>> = {}): Request {
   return new Request(`${origin}${path}`, { method: "POST", headers: { cookie, origin, "content-type": "application/json", ...headers }, body });
 }
-for (const localAuth of [true, false]) for (const [runner, label] of [
-  ["subscription", "구독 경로 모델 실행"], ["azure", "Azure 연결"], ["local", null], ["unspecified", "미지정"],
-] as const) test(`input page ${localAuth ? "local operator" : "session"} shows configured ${runner} without claiming successful execution`, () => {
-  const html = inputPage({ authenticated: true, localAuth, connected: true, photoEnabled: false, runner });
-  if (label) assert.ok(html.includes(`${localAuth ? "검토 방식" : "구성된 실행기"} ${label} · 실행 성공은 평가 후 확인`), `configured ${runner} label and pending success`);
-  else assert.doesNotMatch(html, /검토 방식|구성된 실행기|로컬/);
+for (const localAuth of [true, false]) test(`input stays focused on review and help explains retention (${localAuth ? "operator" : "guest"})`, async () => {
+  const html = inputPage({ authenticated: localAuth, localAuth, connected: true, photoEnabled: false });
+  assert.doesNotMatch(html, /검토 방식|구성된 실행기|미지정|익명 임시 세션/);
   assert.doesNotMatch(html, /SiWC|인증 성공|실행 성공 확인됨/);
-  assert.match(html, /<form method="post" action="\/cases">/);
-  assert.equal(html.includes("로그인한 담당자 · 사례 보관 최대 1시간"), localAuth);
+  const forms: (string | null)[] = [];
+  await new HTMLRewriter().on('form[action="/cases"]', { element(el) { forms.push(el.getAttribute("method")); } }).transform(new Response(html)).text();
+  assert.deepEqual(forms, ["post"]);
+  assert.doesNotMatch(html, /최대 1시간|서버가 재시작되면/);
   assert.doesNotMatch(html, /SQLite/);
+  const app = createApp({ origin });
+  try {
+    const help = await app(new Request(origin + "/help"));
+    assert.equal(help.status, 200);
+    const guide = await help.text();
+    assert.match(guide, /로그인한 사례는 최대 1시간/);
+    assert.match(guide, /서버가 재시작되거나 열람 기한이 지나면 다시 열 수 없습니다/);
+  } finally { app.dispose(); }
 });
 test("adapter absent: visible input, real 503, health readiness, allowlisted demos and real snapshots", async () => {
   const app = createApp({ origin });
@@ -51,7 +58,7 @@ test("adapter absent: visible input, real 503, health readiness, allowlisted dem
   assert.ok((await unavailable.text()).includes("H1/H4"));
   const health = await app(new Request(`${origin}/health`));
   assert.deepEqual(await health.json(), { app: "ready", backend: "unavailable", azure: "not-verified" });
-  for (const [path, content] of [["/demo/normal", "240,000 KRW"], ["/demo/held", "추가 정보 필요"], ["/demo/review", "검토 필요"], ["/reference", "허가 미확인"]]) {
+  for (const [path, content] of [["/demo/normal", "240,000 KRW"], ["/demo/held", "추가 정보 필요"], ["/demo/review", "검토 필요"], ["/reference", "허가 확인 필요"]]) {
     const result = await app(new Request(`${origin}${path}`));
     assert.equal(result.status, 200);
     assert.ok((await result.text()).includes(content ?? "missing"));
@@ -253,7 +260,7 @@ test("case-owned execution metadata survives storage, answer updates and report 
   assert.ok(!second.includes("trace-1"));
   assert.equal((await app(post("/cases/meta-1/answers", cookie))).status, 303);
   const updated = await report(1);
-  assert.ok(updated.includes("answer-trace · 사용량 미제공"));
+  assert.ok(updated.includes("answer-trace · 사용량 기록 없음"));
   assert.ok(!updated.includes("tokens-10"));
   assert.ok((await report(2)).includes("trace-2 · 사용량 tokens-20"));
   answerMode = "invalid";
@@ -315,20 +322,20 @@ test("saved commercial reports return to their own case from the summary actions
           element(anchor) { links.push({ href: anchor.getAttribute("href"), text: "" }); },
           text(chunk) { links.at(-1)!.text += chunk.text; },
         })
-        .on("#commercial-summary > p.screen-only", { element() { summaryParagraphs.push([]); } })
-        .on("#commercial-summary > p.screen-only > a", {
+        .on("#commercial-summary .result-actions", { element() { summaryParagraphs.push([]); } })
+        .on("#commercial-summary .result-actions > a", {
           element() { summaryParagraphs.at(-1)!.push(links.at(-1)!); },
         })
         .transform(new Response(report)).text();
 
-      const returns = links.filter(link => link.text.trim() === "사례로 돌아가기");
+      const returns = links.filter(link => link.href === path);
       assert.equal(returns.length, 1, `${path}/report must have exactly one case return link`);
       const [returnLink] = returns;
       const href = returnLink?.href;
       assert.equal(href, path);
       assert.ok(summaryParagraphs.some(([primary, next]) =>
-        primary?.href === "#checks" && primary.text.trim() === "실행 전 확인하기" && next === returnLink),
-        "the return link must immediately follow the primary action in the screen-only summary paragraph");
+        primary?.href === "#case-reasons" && primary.text.trim() === "보류 사유 확인하기" && next === returnLink),
+        "the held report return link must follow the action leading to its reasons");
       const detail = await ownedPage(app.fetch, cookie, href);
       assert.ok(detail.includes(`<form method="post" action="${path}/answers">`));
     }
@@ -457,7 +464,7 @@ test("O4 native corrections refresh missing questions and remain usable after re
     await new HTMLRewriter()
       .on("#report-results > #case-reasons li", { text(chunk) { visibleQuestions.push(chunk.text); } })
       .on("details #case-reasons li", { text(chunk) { hiddenQuestions.push(chunk.text); } })
-      .on('#report-results > p > a.primary-action:not(.secondary-action)[href="#answer-fields"]', { element(element) { answerLinks.push(element.getAttribute("href")); } })
+      .on('#report-results .result-actions > a.primary-action:not(.secondary-action)[href="#answer-fields"]', { element(element) { answerLinks.push(element.getAttribute("href")); } })
       .on('details a[href="#answer-fields"]', { element(element) { hiddenAnswerLinks.push(element.getAttribute("href")); } })
       .transform(new Response(before)).text();
     assert.match(visibleQuestions.join(""), /재질·품목/);
@@ -472,7 +479,7 @@ test("O4 native corrections refresh missing questions and remain usable after re
     const middle = await ownedPage(app.fetch, cookie, path);
     assert.doesNotMatch(middle, /수지 종류/);
     assert.match(middle, /기계적 재활용 추천/);
-    assert.match(middle, /질량을 입력하면 비용·탄소를 계산해요/);
+    assert.match(middle, /질량을 입력하고 비용·탄소 계산하기/);
     assert.equal((await app.fetch(post(path + "/answers", cookie, '{"massKg":100}'))).status, 303);
     const reviewed = await ownedPage(app.fetch, cookie, path);
     assert.match(reviewed, /공개 근거상 가능\(조건부\)/);
@@ -490,15 +497,15 @@ test("optional mass answer updates the same recommended case with supported cost
     const path = await submitNative(app.fetch, cookie, { ...nativeFields, polymer: "PP", massKg: "" });
     const before = await ownedPage(app.fetch, cookie, path);
     assert.match(before, /기계적 재활용 추천/);
-    assert.match(before, /질량을 입력하면 비용·탄소를 계산해요/);
+    assert.match(before, /질량을 입력하고 비용·탄소 계산하기/);
     const massLinks: string[] = [], hiddenMassLinks: string[] = [], order: string[] = [];
     await new HTMLRewriter()
       .on('#report-results > p > a[href="#answer-fields"]', { text(chunk) { massLinks.push(chunk.text); } })
       .on('details a[href="#answer-fields"]', { text(chunk) { hiddenMassLinks.push(chunk.text); } })
-      .on('#next-action, a[href="#answer-fields"], #result-context', {
+      .on('#next-action, #report-results > p > a[href="#answer-fields"], #result-context', {
         element(element) { order.push(element.getAttribute("id") ?? "mass-link"); },
       }).transform(new Response(before)).text();
-    assert.match(massLinks.join(""), /질량을 입력하면 비용·탄소를 계산해요/);
+    assert.match(massLinks.join(""), /질량을 입력하고 비용·탄소 계산하기/);
     assert.deepEqual(hiddenMassLinks, []);
     assert.deepEqual(order, ["next-action", "mass-link", "result-context"]);
     assert.match(before, /질량을 몰라 비용을 계산하지 않았어요/);
@@ -516,7 +523,7 @@ test("optional mass answer updates the same recommended case with supported cost
     assert.match(after, /240,000 KRW/);
     assert.match(after, /45 kgCO2e/);
     assert.match(after, /name="baseVersion" value="2"/);
-    assert.doesNotMatch(after, /질량을 입력하면 비용·탄소를 계산해요/);
+    assert.doesNotMatch(after, /질량을 입력하고 비용·탄소 계산하기/);
   } finally { app.dispose(); await app.close(); }
 });
 
@@ -579,7 +586,11 @@ test("O4 unknown or non-Error session failure shapes remain generic 502s", async
     const app = createApp({ origin, adapter: { submit: async () => { throw error; }, answer: async (id) => held(id) } });
     const response = await app(post("/cases", await session(app)));
     assert.equal(response.status, 502);
-    assert.doesNotMatch(await response.text(), /private-secret|capacity|unknown/);
+    let text = "";
+    const html = await response.text();
+    await new HTMLRewriter().on("main", { text(chunk) { text += chunk.text; } }).transform(new Response(html)).text();
+    assert.doesNotMatch(html, /private-secret/);
+    assert.doesNotMatch(text, /capacity|unknown/);
   }
 });
 
@@ -604,9 +615,9 @@ test("committed case editing controls expire while report and input remain acces
   const app = createApp({ origin, now: () => now, preparer: adapter, actorForRequest: async () => "expiry-owner" });
   const action = (html: string) => html.match(/<p id="next-action">([\s\S]*?)<\/p>/)?.[1] ?? "";
   const assertReadOnly = (html: string) => {
-    assert.match(action(html), /아래 보류 사유에서 누락된 정보를 확인하고 필요한 자료를 준비하세요\./);
+    assert.match(action(html), /아래 보류 사유를 보고 필요한 자료를 준비하세요\./);
     assert.doesNotMatch(action(html), /답변란/);
-    assert.match(html, /<a class="primary-action" href="#checks"/);
+    assert.match(html, /<a class="primary-action" href="#case-reasons"/);
     assert.match(html, /id="checks"/);
     assert.doesNotMatch(html, /action="[^"]+\/answers"|href="#answer-fields"/);
   };
@@ -615,7 +626,7 @@ test("committed case editing controls expire while report and input remain acces
     const before = await ownedPage(app, cookie, path + "/report");
     now = 1_799_999;
     const editable = await ownedPage(app, cookie, path);
-    assert.match(action(editable), /누락된 사례 정보를 확인해 답변란에 입력하세요\./);
+    assert.match(action(editable), /빠진 정보를 확인해 답변란에 입력하세요\./);
     assert.match(editable, /<a class="primary-action" href="#answer-fields"/);
     assert.match(editable, /id="answer-fields"[\s\S]*?<form method="post" action="[^"]+\/answers"/);
     assertReadOnly(before);
@@ -686,7 +697,7 @@ test("O4 reviewed comparison allows corrections and rejects cached supplements a
       const cookie = await session(app.fetch);
       const path = await submitNative(app.fetch, cookie, { ...nativeFields, polymer: "PP", massKg: "2000" });
       const html = await ownedPage(app.fetch, cookie, path);
-      assert.match(html, /현장 담당자 승인 대기/);
+      assert.match(html, /실행·반출·계약은 현장 담당자의 승인을 받은 뒤 진행하세요/);
       assert.doesNotMatch(html, /humanApproval:/);
       assert.match(html, /<form\b/);
       assert.match(html, /기준선/);
@@ -732,7 +743,7 @@ test("O4 source and packaged launchers reduce missing questions before review an
       const reference = await fetch(url + "/reference", { signal: AbortSignal.timeout(2000) });
       assert.equal(reference.status, 200, `${launcher}: reference assets resolve outside repository cwd`);
       const referenceHtml = await reference.text();
-      assert.match(referenceHtml, /136개 정규화 가격/);
+      assert.match(referenceHtml, /136개 가격 · 공란은 미발표/);
       assert.match(referenceHtml, /31곳 등재/);
       const home = await fetch(url, { signal: AbortSignal.timeout(2000) });
       const cookie = home.headers.get("set-cookie")?.split(";")[0];
@@ -745,7 +756,7 @@ test("O4 source and packaged launchers reduce missing questions before review an
       const page = await fetch(url + path, { headers: { cookie }, signal: AbortSignal.timeout(2000) });
       assert.equal(page.status, 200);
       const initial = await page.text();
-      const polymerQuestion = "확인된 재질·품목과 이를 확인한 자료(라벨·재질 명세·발생 이력 등)가 있나요?";
+      const polymerQuestion = "확인된 재질·품목과 그 근거 자료(라벨·재질 명세·발생 이력 등)가 있나요?";
       const massQuestion = "확인된 질량은 몇 kg인가요?";
       const questions = (html: string): string[] => {
         assert.match(html, /<h1>추가 정보 필요<\/h1>/);

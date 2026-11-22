@@ -22,7 +22,7 @@ for (const mismatch of [false, true]) test(`stored ${mismatch ? "rejected" : "va
     const presentation = { mode: "synthetic" as const, modelAudit: output.modelAudit };
     let origin: string | null = null, privateStages: string[] = [], rejected: string[] = [], commercialAudits = 0;
     await new HTMLRewriter().on("[data-model-audit-origin]", { element(node) { origin = node.getAttribute("data-model-audit-origin"); } })
-      .on("[data-model-audit-stage]", { element(node) {
+      .on(".screen-only [data-model-audit-stage]", { element(node) {
         privateStages.push(node.getAttribute("data-model-audit-stage") ?? "");
         if (node.getAttribute("data-validation-status") === "validation-rejected") rejected.push(node.getAttribute("data-model-audit-stage") ?? "");
       } }).transform(new Response(renderReport(output.decision, presentation, {

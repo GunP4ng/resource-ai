@@ -192,7 +192,7 @@ export function createAssessmentAdapter(options: { readonly runner?: CaseRunner;
   submitForm(raw: unknown, signal: AbortSignal): Promise<AssessmentEnvelope>; dispose(): void;
   prepareSubmit(raw: unknown, format: "json" | "form"): CaseInput;
   prepareAnswer(input: CaseInput, raw: unknown): CaseInput;
-  evaluate(input: CaseInput, signal: AbortSignal): Promise<AssessmentEnvelope>;
+  evaluate(input: CaseInput, signal: AbortSignal, reportProgress?: import("./app-progress.ts").ReviewProgress): Promise<AssessmentEnvelope>;
   settled(): Promise<void>;
 } {
   const timeoutMs = options.timeoutMs ?? 30_000, ttlMs = options.ttlMs ?? 1_800_000, maxCases = options.maxCases ?? 100;
@@ -202,7 +202,7 @@ export function createAssessmentAdapter(options: { readonly runner?: CaseRunner;
   const active = new Set<AbortController>();
   const pendingWork = new Set<Promise<unknown>>();
   let pending = 0, disposed = false;
-  const evaluate = async (input: CaseInput, signal: AbortSignal): Promise<AssessmentEnvelope> => {
+  const evaluate = async (input: CaseInput, signal: AbortSignal, reportProgress?: import("./app-progress.ts").ReviewProgress): Promise<AssessmentEnvelope> => {
     if (disposed || signal.aborted) throw new SessionFailure("cancelled");
     const controller = new AbortController();
     const cancel = () => controller.abort();
@@ -211,6 +211,7 @@ export function createAssessmentAdapter(options: { readonly runner?: CaseRunner;
       let audit: { proposal: unknown; origin: ModelHostAudit["origin"]; observation: HostProposalObservation } | undefined;
       let verification: Parameters<typeof createVerificationPlan>[2] | undefined;
       const result = await boundedRun(async (value, runSignal) => {
+        reportProgress?.("evidence");
         const resources = structuredClone(await options.resources?.(structuredClone(value), runSignal) ?? {});
         runSignal.throwIfAborted();
         if (!options.runner) throw new SessionFailure("not-configured");
@@ -219,6 +220,7 @@ export function createAssessmentAdapter(options: { readonly runner?: CaseRunner;
         const domain = createResourceDomain(value, resources, proposed.photoObservations);
         const proposal = structuredClone(proposed.proposal);
         let observation: HostProposalObservation | undefined;
+        reportProgress?.("routes");
         const decision = await domain.decide(proposal, receipt => { observation = structuredClone(receipt); });
         if (proposed.verificationPlan !== undefined) {
           verification = { raw: structuredClone(proposed.verificationPlan), origin: modelOrigins.get(proposed) ?? "runner-output",
@@ -282,7 +284,7 @@ export function createResourceApp(options: { readonly origin: string; readonly r
   // O's adapter receives parsed values without the request's content type. Carry that
   // server-owned distinction per async request without changing O's interface or state.
   const format = new AsyncLocalStorage<"json" | "form">();
-  const app = createApp({ ...options, preparer: adapter, origin: options.origin, timeoutMs: options.timeoutMs, adapter: {
+  const app = createApp({ ...options, preparer: adapter, reviewConfigured: options.runner !== undefined, origin: options.origin, timeoutMs: options.timeoutMs, adapter: {
     submit: (raw, signal) => format.getStore() === "form" ? adapter.submitForm(raw, signal) : adapter.submit(raw, signal),
     answer: adapter.answer,
   } });

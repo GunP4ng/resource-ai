@@ -75,19 +75,20 @@ test("beforeprint reveals actual decision sections and afterprint restores discl
   details[0]!.open = true; // Keep the disclosure the reader had already opened.
   const original = details.map(detail => detail.open);
   const visible = () => segments.filter(segment => segment.ancestors.every(detail => detail.open)).map(segment => segment.text).join("");
-  const sections = ["대안 비교 요약", "서버 후보 우선순위", "경로와 조건", "사례별 업체 근거", "제약과 다음 확보 항목",
-    "사용량은 청구·비용 증빙이 아닙니다. 사진 실행은 설정이나 실행 식별자만으로 확인되지 않습니다.", ...checks.slice(3)];
-  for (const check of checks.slice(0, 3)) assert.equal(visible().split(check).length - 1, 1);
+  const sections = ["대안 비교 요약", "후보 우선순위", "경로와 조건", "사례별 업체 근거",
+    "사용량은 청구·비용 증빙이 아닙니다. 사진 실행 여부는 설정이나 실행 식별자로 확인할 수 없습니다.", ...checks];
   for (const section of sections) assert.equal(visible().includes(section), false);
   const events = new Map<string, () => void>();
   runInNewContext(feedbackScript, {
     document: {
       querySelectorAll(selector: string) {
         if (selector === 'form[method="post"]') return [];
+        if (selector === "form[data-intake-form]") return [];
         assert.equal(selector, "details"); return details;
       },
       addEventListener() {},
     },
+    location: { hash: "" },
     window: { addEventListener(name: string, listener: () => void) { events.set(name, listener); } },
   });
   const before = events.get("beforeprint"), after = events.get("afterprint");
@@ -121,7 +122,7 @@ test("primary answer links resolve on fixed demos and legacy adapter cases", asy
     const held = await navigation(await app(new Request(origin + "/demo/held")));
     assert.equal(held.answerId, null);
     assert.equal(held.links[0], "#answer-fields");
-    assert.match(held.nextAction, /누락된 사례 정보를 확인해 답변란에 입력하세요\./);
+    assert.match(held.nextAction, /빠진 정보를 확인해 답변란에 입력하세요\./);
     await navigation(await app(new Request(origin + "/demo/review")));
     const home = await app(new Request(origin));
     const cookie = home.headers.get("set-cookie")?.split(";")[0];
@@ -134,7 +135,7 @@ test("primary answer links resolve on fixed demos and legacy adapter cases", asy
     const legacy = await navigation(await app(new Request(origin + path, { headers: { cookie } })));
     assert.ok(legacy.answerId);
     assert.ok(legacy.links.includes("#" + legacy.answerId), "legacy answer action reaches its real JSON control");
-    assert.match(legacy.nextAction, /누락된 사례 정보를 확인해 답변란에 입력하세요\./);
+    assert.match(legacy.nextAction, /빠진 정보를 확인해 답변란에 입력하세요\./);
   } finally { app.dispose(); }
 });
 
@@ -165,11 +166,12 @@ test("feedback keeps first native submit, prevents duplicates and recovers on pa
   const status = { className: "", textContent: "", setAttribute: (key: string, value: string) => attributes.set("status:" + key, value) };
   const button = { setAttribute: (key: string, value: string) => buttonAttributes.set(key, value), removeAttribute: (key: string) => buttonAttributes.delete(key),
     set disabled(_value: boolean) { throw new Error("native serialization must retain submitter"); } };
-  const form = { setAttribute: (key: string, value: string) => attributes.set(key, value), removeAttribute: (key: string) => attributes.delete(key),
+  const form = { hasAttribute: () => false, setAttribute: (key: string, value: string) => attributes.set(key, value), removeAttribute: (key: string) => attributes.delete(key),
     querySelectorAll: () => [button], querySelector: () => status, append: () => {},
     addEventListener: (name: string, handler: (event: { defaultPrevented: boolean; preventDefault(): void }) => void) => events.set(name, handler) };
-  runInNewContext(feedbackScript, { document: { querySelectorAll: () => [form], createElement: () => status },
-    window: { addEventListener: (_name: string, handler: () => void) => { pageshow = handler; } } });
+  runInNewContext(feedbackScript, { document: { getElementById: () => null, querySelectorAll: (selector: string) => selector === 'form[method="post"]' ? [form] : [], createElement: () => status },
+    location: { hash: "" },
+    window: { addEventListener: (name: string, handler: () => void) => { if (name === "pageshow") pageshow = handler; } } });
   let prevented = 0;
   const event = { defaultPrevented: false, preventDefault: () => { prevented++; } };
   const submit = events.get("submit");
@@ -204,9 +206,9 @@ test("same-origin script is external and CSP retains its restrictive directives"
     assert.equal(await script.text(), feedbackScript);
     assert.match(html, /<script src="\/app-feedback.js" defer><\/script>/);
     const csp = home.headers.get("content-security-policy") ?? "";
-    for (const directive of ["default-src 'none'", "script-src 'self'", "form-action 'self'", "base-uri 'none'", "frame-ancestors 'none'"]) assert.ok(csp.includes(directive));
+    for (const directive of ["default-src 'none'", "script-src 'self'", "connect-src 'self'", "form-action 'self'", "base-uri 'none'", "frame-ancestors 'none'"]) assert.ok(csp.includes(directive));
     assert.doesNotMatch(csp, /script-src[^;]*unsafe-inline/);
-    assert.doesNotMatch(feedbackScript, /fetch\(|XMLHttpRequest|document\.cookie|localStorage|sessionStorage/);
+    assert.doesNotMatch(feedbackScript, /XMLHttpRequest|document\.cookie|localStorage|sessionStorage/);
     assert.doesNotMatch(html, /합성 보류 데모|실측 질량/);
   } finally { app.dispose(); }
 });
@@ -230,7 +232,7 @@ test("ordinary Korean fields submit without JavaScript, preserve null, and reeva
     assert.ok(before);
     const html = await (await app.fetch(new Request(origin + path, { headers: { cookie } }))).text();
     assert.ok(html.indexOf('name="field_massKg"') < html.indexOf('name="answers"'));
-    assert.match(html, /자료 반영해 다시 평가하기/);
+    assert.match(html, /다시 평가하기/);
     const questionNavigation = { links: 0, targets: 0, fields: [] as string[] };
     await new HTMLRewriter()
       .on('a.primary-action[href="#answer-fields"]', { element() { questionNavigation.links++; } })

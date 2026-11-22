@@ -1,7 +1,39 @@
+import { intakeScript } from "./intake-client.ts";
+
 /** Progressive enhancement: native POST and field serialization stay native. */
 export const feedbackPath = "/app-feedback.js";
 export const feedbackScript = `"use strict";
 (() => {
+${intakeScript}
+  const menu = document.querySelector?.("[data-menu-toggle]");
+  if (menu) {
+    menu.hidden = false;
+    menu.setAttribute("aria-expanded", "false");
+    menu.addEventListener("click", () => {
+      menu.setAttribute("aria-expanded", String(menu.getAttribute("aria-expanded") !== "true"));
+    });
+    menu.closest("header").addEventListener("keydown", event => {
+      if (event.key === "Escape" && menu.getAttribute("aria-expanded") === "true") {
+        menu.setAttribute("aria-expanded", "false");
+        menu.focus();
+      }
+    });
+  }
+  const revealLinkedDetail = () => {
+    let target;
+    if (!globalThis.location?.hash) return;
+    try { target = document.getElementById(decodeURIComponent(location.hash.slice(1))); } catch { return; }
+    if (!target) return;
+    let detail = target.closest("details");
+    if (!detail) return;
+    while (detail) {
+      detail.open = true;
+      detail = detail.parentElement?.closest("details");
+    }
+    if (typeof target.scrollIntoView === "function") target.scrollIntoView();
+  };
+  window.addEventListener("hashchange", revealLinkedDetail);
+  revealLinkedDetail();
   const openedForPrint = new Set();
   window.addEventListener("beforeprint", () => {
     for (const detail of document.querySelectorAll("details")) {
@@ -23,6 +55,8 @@ export const feedbackScript = `"use strict";
   const pending = new WeakSet();
   const forms = [...document.querySelectorAll('form[method="post"]')];
   const reset = form => {
+    reviewReset.get(form)?.();
+    reviewReset.delete(form);
     pending.delete(form);
     form.removeAttribute("aria-busy");
     for (const button of form.querySelectorAll('[type="submit"]')) button.removeAttribute("aria-disabled");
@@ -43,8 +77,9 @@ export const feedbackScript = `"use strict";
       }
       pending.add(form);
       form.setAttribute("aria-busy", "true");
-      status.textContent = "처리 중입니다. 완료되면 결과 화면으로 이동합니다.";
+      status.textContent = "검토 중입니다. 끝나면 결과 화면으로 이동합니다.";
       for (const button of form.querySelectorAll('[type="submit"]')) button.setAttribute("aria-disabled", "true");
+      if (form.hasAttribute("data-intake-form")) beginReview(form, status);
     });
   }
   window.addEventListener("pageshow", () => {

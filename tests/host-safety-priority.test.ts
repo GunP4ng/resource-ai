@@ -71,7 +71,7 @@ test("multiple host safety reasons form the first group even without a model pla
     }))).text();
   assert.equal(firstKind, "host-safety");
   assert.equal(marker, 1);
-  assert.ok(markerText.includes("호스트가 안전 사유를 앞에 둠"));
+  assert.ok(markerText.includes("안전 사유를 1번에 둠"));
   assert.equal(modelItems, 0);
 });
 

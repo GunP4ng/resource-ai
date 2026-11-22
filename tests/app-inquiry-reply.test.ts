@@ -91,7 +91,7 @@ for (const material of ["PET", "HDPE"] as const) {
       const mass = env.input.massKg;
       assert.ok(mass);
       const expected = mass / 1000 * cost("c") + mass / 1000 * cost("d0") * cost("r");
-      assert.equal(rows.find(row => row.route === "energy_recovery")?.cells[0], "미확보");
+      assert.equal(rows.find(row => row.route === "energy_recovery")?.cells[0], "값 없음");
       assert.equal(Number(rows.find(row => row.route === "energy_recovery")?.cells[1]), Math.round(expected));
       assert.equal((await env.app(new Request(origin + env.path + "/report"))).status, 200);
       env.assertReadOnly();
@@ -124,8 +124,8 @@ test("each selectable reply amount uses the selected model input and keeps fee m
       const rows = await results(response);
       assert.equal(rows.length, 3);
       const incineration = rows.find(row => row.route === "energy_recovery");
-      assert.equal(incineration?.cells[0], "미확보");
-      if (inputId !== "f_inc") assert.equal(incineration?.cells[1], "미확보");
+      assert.equal(incineration?.cells[0], "값 없음");
+      if (inputId !== "f_inc") assert.equal(incineration?.cells[1], "값 없음");
       const recycling = rows.find(row => row.route === "recycling");
       assert.ok(recycling);
       if (inputId !== "f_inc") assert.notEqual(recycling.cells[0], recycling.cells[1]);

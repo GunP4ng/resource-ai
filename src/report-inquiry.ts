@@ -41,7 +41,7 @@ const contactLabels = { yes: "있음", no: "없음", unknown: "미상" } as cons
 const stateLabels = {
   "needs-information": "추가 정보 필요 · 실행 보류",
   "needs-review": "검토 필요 · 실행 보류",
-  compared: "비교 기록 · 인간 승인 대기 · 실행 미승인",
+  compared: "비교 완료 · 현장 담당자 승인 대기",
 } as const;
 
 /**
@@ -57,7 +57,7 @@ export function renderInquiry(
   const historical = options.historical === true;
   const status = historical ? "과거 평가 · 재평가 필요 · 실행 보류"
     : decision.state === "compared" && decision.humanApproval === "approved"
-      ? "인간 승인 기록 있음 · 실제 반입·계약 조건은 별도 확인"
+      ? "현장 담당자 승인 기록 있음 · 반입·계약 조건은 업체와 확인"
       : stateLabels[decision.state];
   const caseId = escapeHtml(input.caseId);
   const assessmentDate = escapeHtml(input.assessmentDate);
@@ -67,41 +67,41 @@ export function renderInquiry(
     ["재질·품목 (신고)", excerpt(input.polymer)],
     ["발생 공정 (신고)", excerpt(input.process)],
     ["오염 상태 (신고)", excerpt(input.contamination)],
-    ["질량 (신고)", { text: input.massKg === null ? "미상 · 계량값 확인 필요" : `${escapeHtml(String(input.massKg))} kg`, omitted: null }],
+    ["질량 (신고)", { text: input.massKg === null ? "미상 · 계량 필요" : `${escapeHtml(String(input.massKg))} kg`, omitted: null }],
     ["발생 지역 (신고)", excerpt(input.region)],
     ["설명 (신고)", excerpt(input.description, 72)],
   ] as const;
   const appendix = fields.map(([label, { omitted }]) =>
     omitted === null ? "" : `<dt>${label}</dt><dd>${escapeHtml(omitted)}</dd>`).join("");
   return page("처리업체 문의서", `<article data-inquiry-sheet>
-    <nav class="screen-only" aria-label="문의서 동작">
-      <a href="${escapeHtml(casePath)}">사례로 돌아가기</a>
+    <nav class="screen-only" aria-label="문의서 메뉴">
+      <a href="${escapeHtml(casePath)}">사례 결과로 돌아가기</a>
       <button type="button" data-inquiry-print>문의서 인쇄</button>
     </nav>
-    ${options.replyTarget ? `<p class="screen-only"><a data-inquiry-reply-link href="${escapeHtml(options.replyTarget)}">업체 회신을 입력해 저장 없이 가정 비교</a></p>` : ""}
+    ${options.replyTarget ? `<p class="screen-only"><a data-inquiry-reply-link href="${escapeHtml(options.replyTarget)}">업체 회신 넣어 비용 비교하기</a></p>` : ""}
     <h1>처리업체 문의서</h1>
-    <p>현재 신고 입력에 대한 확인 요청입니다. 허가·반입 수락·가격·시설 적합성은 확인되지 않았습니다.</p>
+    <p>아래 신고 내용을 바탕으로 허가 범위, 반입 수락, 가격, 시설 적합성을 문의합니다.</p>
     <p class="state held" data-inquiry-status>${status}</p>
-    ${historical ? '<p class="inquiry-warning" data-inquiry-historical>과거 평가의 순위·업체 제안은 사용하지 않습니다. 아래 현재 입력으로 재평가가 필요합니다.</p>' : ""}
-    ${options.permissionChanged ? '<p class="notice inquiry-warning" role="alert" data-inquiry-permission>사진 권한이 변경되었습니다. 과거 평가는 당시 권한 기준이며, 이미 전송된 사진은 회수할 수 없습니다. 현재 입력으로 재평가가 필요합니다.</p>' : ""}
-    <p data-inquiry-recipient>수신 업체: ${options.recipientName?.trim() ? `${excerpt(options.recipientName).text} (사용자 선택명 · 허가 증빙 아님)` : "________________ (수신자가 작성하는 공란)"}</p>
-    <h2>현재 신고 입력</h2>
-    <p class="notice inquiry-warning" data-inquiry-contact="${input.hazardousContact}">유해물질 접촉 (신고): ${contactLabels[input.hazardousContact]}. ${input.hazardousContact === "no" ? "신고값이며 무해성 확인을 뜻하지 않습니다." : "접촉 내역과 취급 요건 확인 전 실행을 보류하세요."}</p>
-    <dl class="inquiry-fields">${fields.map(([label, { text, omitted }]) => `<dt>${label}</dt><dd>${text}${omitted === null ? "" : ' <span data-inquiry-full-input>이 항목의 전체 신고 내용은 별지에 있습니다</span>'}</dd>`).join("")}</dl>
+    ${historical ? '<p class="inquiry-warning" data-inquiry-historical>과거 평가입니다. 아래 현재 입력으로 다시 평가한 뒤 문의하세요.</p>' : ""}
+    ${options.permissionChanged ? '<p class="notice inquiry-warning" role="alert" data-inquiry-permission>사진 권한이 바뀌었습니다. 이전 보고서는 과거 평가입니다. 이미 전송된 사진은 회수되지 않습니다. 현재 입력으로 다시 평가하세요.</p>' : ""}
+    <p data-inquiry-recipient>수신 업체: ${options.recipientName?.trim() ? `${excerpt(options.recipientName).text} (사용자가 고른 업체명 · 허가 증빙 아님)` : "________________ (수신 업체 작성)"}</p>
+    <h2>현재 신고 내용</h2>
+    <p class="notice inquiry-warning" data-inquiry-contact="${input.hazardousContact}">유해물질 접촉 (신고): ${contactLabels[input.hazardousContact]}. ${input.hazardousContact === "no" ? "신고값입니다. 무해성은 확인하지 않았습니다." : "접촉 내역과 취급 요건을 확인할 때까지 실행을 보류하세요."}</p>
+    <dl class="inquiry-fields">${fields.map(([label, { text, omitted }]) => `<dt>${label}</dt><dd>${text}${omitted === null ? "" : ' <span data-inquiry-full-input>전체 내용은 별지에 있습니다</span>'}</dd>`).join("")}</dl>
     <h2>처리업체에 확인할 질문</h2>
     <ol data-inquiry-questions>
       <li data-inquiry-question="permit">신고 재질과 발생 공정이 귀사 허가의 대상 물질·폐기물 코드·처리 범위에 포함되나요? 허가 문서와 해당 범위를 알려 주세요.</li>
       <li data-inquiry-question="contamination">오염·유해물질 접촉에 대한 반입 기준, 필요한 성분 분석·증빙, 세척·분리·포장 요건은 무엇인가요?</li>
-      <li data-inquiry-question="logistics">해당 질량의 최소·최대 수용량, 가능 일정, 계량 방식, 수거 지역·운송 주체·운송 조건은 무엇인가요?</li>
-      <li data-inquiry-question="quote">처리·운송·분석·추가 비용을 나눈 견적과 단위, VAT 포함 여부, 유효기간, 최종 수락 조건·거절 시 비용을 회신해 주시겠어요?</li>
+      <li data-inquiry-question="logistics">이 질량에 대한 최소·최대 수용량, 가능 일정, 계량 방식, 수거 지역·운송 주체·운송 조건은 무엇인가요?</li>
+      <li data-inquiry-question="quote">처리·운송·분석·추가 비용을 나눈 견적과 단위, VAT 포함 여부, 유효기간, 최종 수락 조건, 반입 거절 시 비용을 알려 주세요.</li>
     </ol>
     <div class="inquiry-reply" data-inquiry-reply>
-      <p>업체 회신 작성란 (아래 공란은 수신자가 작성): 담당자·회신 연락처 ________________</p>
-      <p>허가 문서·조건·항목별 견적: 별도 회신 첨부 ________________</p>
+      <p>업체 회신란 (수신 업체 작성): 담당자·연락처 ________________</p>
+      <p>허가 문서·조건·항목별 견적 (첨부) ________________</p>
       <p>반입 수락 여부·조건 ________________ 회신일 ________________</p>
     </div>
     ${appendix ? `<section data-inquiry-appendix>
-      <h2>별지 · 현재 신고 입력 전문</h2>
+      <h2>별지 · 신고 내용 전문</h2>
       <p>사례 ID: ${caseId} · 평가 기준일: ${assessmentDate}</p>
       <dl>${appendix}</dl>
     </section>` : ""}
