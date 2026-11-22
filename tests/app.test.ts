@@ -295,6 +295,44 @@ async function ownedPage(app: (request: Request) => Promise<Response>, cookie: s
   return result.text();
 }
 
+test("saved commercial reports return to their own case from the summary actions", async () => {
+  const app = createResourceApp({ origin });
+  try {
+    const cookie = await session(app.fetch);
+    const first = await submitNative(app.fetch, cookie, { ...nativeFields, description: "첫 번째 합성 사례" });
+    const second = await submitNative(app.fetch, cookie, { ...nativeFields, description: "두 번째 합성 사례" });
+    assert.notEqual(first, second);
+
+    for (const path of [first, second]) {
+      const report = await ownedPage(app.fetch, cookie, `${path}/report`);
+      type Link = { href: string | null; text: string };
+      const links: Link[] = [];
+      const summaryParagraphs: Link[][] = [];
+      await new HTMLRewriter()
+        .on("a", {
+          element(anchor) { links.push({ href: anchor.getAttribute("href"), text: "" }); },
+          text(chunk) { links.at(-1)!.text += chunk.text; },
+        })
+        .on("#commercial-summary > p.screen-only", { element() { summaryParagraphs.push([]); } })
+        .on("#commercial-summary > p.screen-only > a", {
+          element() { summaryParagraphs.at(-1)!.push(links.at(-1)!); },
+        })
+        .transform(new Response(report)).text();
+
+      const returns = links.filter(link => link.text.trim() === "사례로 돌아가기");
+      assert.equal(returns.length, 1, `${path}/report must have exactly one case return link`);
+      const [returnLink] = returns;
+      const href = returnLink?.href;
+      assert.equal(href, path);
+      assert.ok(summaryParagraphs.some(([primary, next]) =>
+        primary?.href === "#checks" && primary.text.trim() === "실행 전 확인하기" && next === returnLink),
+        "the return link must immediately follow the primary action in the screen-only summary paragraph");
+      const detail = await ownedPage(app.fetch, cookie, href);
+      assert.ok(detail.includes(`<form method="post" action="${path}/answers">`));
+    }
+  } finally { await app.close(); }
+});
+
 test("native case POST and versioned edit round-trip 1,900 Korean syllables", async () => {
   const app = createResourceApp({ origin });
   try {
