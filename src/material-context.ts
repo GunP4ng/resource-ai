@@ -156,21 +156,26 @@ export function materialStream(input: CaseInput): MaterialStream | null {
 }
 
 /** Keep affirmative risk in each field even when another field denies contact. */
-export function materialHazardTerms(input: CaseInput): readonly string[] {
-  if (materialFamily(input) === null) return [];
+function scanMaterialHazards(input: CaseInput): { terms: readonly string[]; hold: boolean } {
+  if (materialFamily(input) === null) return { terms: [], hold: false };
   const fields = [input.polymer, input.description, input.process, input.contamination];
   const unplated = fields.map(value => unplatedFields.has((value ?? "").normalize("NFKC").trim()));
-  const masked = fields.map(maskMaterialDenials);
-  // Retain the original hazard scan when any independent coating signal remains.
-  const withoutUnplated = masked.map((value, index) => unplated[index] ? "" : value);
-  const hazardFields = withoutUnplated.some(value => coatingSignal.test(value)) ? masked : withoutUnplated;
-  return [...new Set(hazardFields.flatMap(value =>
+  const hazardFields = fields.map((value, index) => unplated[index] ? "" : maskMaterialDenials(value));
+  const terms = [...new Set(hazardFields.flatMap(value =>
     [...value.replace(/\b(?:unpainted|untreated|oil-free)\b/giu, "")
       .matchAll(new RegExp(materialHazard.source, "giu"))].map(match => match[0])))];
+  // Bare and PP coating keep the treatment hold alongside an exact unplated field,
+  // even when the coating contributes no display term.
+  const hold = terms.length > 0 || (unplated.includes(true) && hazardFields.some(value => coatingSignal.test(value)));
+  return { terms, hold };
+}
+
+export function materialHazardTerms(input: CaseInput): readonly string[] {
+  return scanMaterialHazards(input).terms;
 }
 
 export function materialHazardReasons(input: CaseInput): readonly string[] {
-  return materialHazardTerms(input).length ? [safetyReasons.materialTreatment] : [];
+  return scanMaterialHazards(input).hold ? [safetyReasons.materialTreatment] : [];
 }
 
 export function materialQuestions(input: CaseInput): readonly string[] {

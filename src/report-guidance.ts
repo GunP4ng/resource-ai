@@ -94,7 +94,7 @@ export function guidanceProgress(guidance: CaseGuidance, presentation: ReportPre
         ${guidance.scenario ? `<p><strong>가정 계산:</strong> ${escapeHtml(guidanceScenarioConclusion(guidance, names) ?? "명시한 가정 범위에서도 조건부 최적성은 미확정입니다.")}</p>` : ""}
         <p>실제 추천의 수치 우위와 가정표 안의 우위는 서로 다른 판단입니다.</p>`
         : stage.stage === 3 ? `<p>연결된 근거 ${stage.outputs.length}건 · <a href="#evidence">출처와 원문 위치 보기</a></p>`
-          : stage.outputs.length ? list(stage.outputs.map(output))
+          : stage.outputs.length ? list(stage.stage === 1 ? stage.outputs : stage.outputs.map(output))
             : "<p>현재 연결된 산출물이 없습니다.</p>"}
       ${stage.stage === 6 ? `${showReasons(stage.reasons.filter(reason => !guidance.actualComparison.unavailableReasons.includes(reason)))}
         <p><a href="#guidance-stage-5">비용·탄소 비교 범위와 미확보 사유는 5단계에서 확인하세요.</a></p>`
