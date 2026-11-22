@@ -1202,6 +1202,1426 @@
         "region": "경기",
         "assessmentDate": "2026-11-22"
       }
+    },
+    {
+      "family": "ferrous",
+      "condition": "residue-막-description-positive",
+      "expected": {
+        "state": "needs-information",
+        "reasonKey": "contaminationUnknown"
+      },
+      "input": {
+        "caseId": "RESIDUE-01-description-positive",
+        "description": "분리 수거된 철 스크랩, 막 있음",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 금속 절단",
+        "polymer": "고철",
+        "contamination": "없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "ferrous",
+      "condition": "residue-막-description-denial",
+      "expected": {
+        "state": "compared",
+        "reasonKey": null
+      },
+      "input": {
+        "caseId": "RESIDUE-01-description-denial",
+        "description": "분리 수거된 철 스크랩, 막 없음",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 금속 절단",
+        "polymer": "고철",
+        "contamination": "없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "ferrous",
+      "condition": "residue-막-process-positive",
+      "expected": {
+        "state": "needs-information",
+        "reasonKey": "contaminationUnknown"
+      },
+      "input": {
+        "caseId": "RESIDUE-01-process-positive",
+        "description": "분리 수거된 철 스크랩",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 금속 절단, 막 있음",
+        "polymer": "고철",
+        "contamination": "없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "ferrous",
+      "condition": "residue-막-process-denial",
+      "expected": {
+        "state": "compared",
+        "reasonKey": null
+      },
+      "input": {
+        "caseId": "RESIDUE-01-process-denial",
+        "description": "분리 수거된 철 스크랩",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 금속 절단, 막 없음",
+        "polymer": "고철",
+        "contamination": "없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "ferrous",
+      "condition": "residue-막-contamination-positive",
+      "expected": {
+        "state": "needs-information",
+        "reasonKey": "contaminationUnknown"
+      },
+      "input": {
+        "caseId": "RESIDUE-01-contamination-positive",
+        "description": "분리 수거된 철 스크랩",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 금속 절단",
+        "polymer": "고철",
+        "contamination": "막 있음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "ferrous",
+      "condition": "residue-막-contamination-denial",
+      "expected": {
+        "state": "compared",
+        "reasonKey": null
+      },
+      "input": {
+        "caseId": "RESIDUE-01-contamination-denial",
+        "description": "분리 수거된 철 스크랩",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 금속 절단",
+        "polymer": "고철",
+        "contamination": "막 없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "nonferrous",
+      "condition": "residue-잔여물-description-positive",
+      "expected": {
+        "state": "needs-information",
+        "reasonKey": "contaminationUnknown"
+      },
+      "input": {
+        "caseId": "RESIDUE-02-description-positive",
+        "description": "동관 절단 공정의 구리 오프컷, 잔여물 있음",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 동관 절단 가공 공정",
+        "polymer": "구리",
+        "contamination": "없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "nonferrous",
+      "condition": "residue-잔여물-description-denial",
+      "expected": {
+        "state": "compared",
+        "reasonKey": null
+      },
+      "input": {
+        "caseId": "RESIDUE-02-description-denial",
+        "description": "동관 절단 공정의 구리 오프컷, 잔여물 없음",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 동관 절단 가공 공정",
+        "polymer": "구리",
+        "contamination": "없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "nonferrous",
+      "condition": "residue-잔여물-process-positive",
+      "expected": {
+        "state": "needs-information",
+        "reasonKey": "contaminationUnknown"
+      },
+      "input": {
+        "caseId": "RESIDUE-02-process-positive",
+        "description": "동관 절단 공정의 구리 오프컷",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 동관 절단 가공 공정, 잔여물 있음",
+        "polymer": "구리",
+        "contamination": "없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "nonferrous",
+      "condition": "residue-잔여물-process-denial",
+      "expected": {
+        "state": "compared",
+        "reasonKey": null
+      },
+      "input": {
+        "caseId": "RESIDUE-02-process-denial",
+        "description": "동관 절단 공정의 구리 오프컷",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 동관 절단 가공 공정, 잔여물 없음",
+        "polymer": "구리",
+        "contamination": "없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "nonferrous",
+      "condition": "residue-잔여물-contamination-positive",
+      "expected": {
+        "state": "needs-information",
+        "reasonKey": "contaminationUnknown"
+      },
+      "input": {
+        "caseId": "RESIDUE-02-contamination-positive",
+        "description": "동관 절단 공정의 구리 오프컷",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 동관 절단 가공 공정",
+        "polymer": "구리",
+        "contamination": "잔여물 있음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "nonferrous",
+      "condition": "residue-잔여물-contamination-denial",
+      "expected": {
+        "state": "compared",
+        "reasonKey": null
+      },
+      "input": {
+        "caseId": "RESIDUE-02-contamination-denial",
+        "description": "동관 절단 공정의 구리 오프컷",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 동관 절단 가공 공정",
+        "polymer": "구리",
+        "contamination": "잔여물 없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "wood",
+      "condition": "residue-찌꺼기-description-positive",
+      "expected": {
+        "state": "needs-information",
+        "reasonKey": "contaminationUnknown"
+      },
+      "input": {
+        "caseId": "RESIDUE-03-description-positive",
+        "description": "무처리 원목 자투리와 대패밥, 찌꺼기 있음",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 원목 제재 가공 부산물",
+        "polymer": "무처리 원목",
+        "contamination": "없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "wood",
+      "condition": "residue-찌꺼기-description-denial",
+      "expected": {
+        "state": "compared",
+        "reasonKey": null
+      },
+      "input": {
+        "caseId": "RESIDUE-03-description-denial",
+        "description": "무처리 원목 자투리와 대패밥, 찌꺼기 없음",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 원목 제재 가공 부산물",
+        "polymer": "무처리 원목",
+        "contamination": "없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "wood",
+      "condition": "residue-찌꺼기-process-positive",
+      "expected": {
+        "state": "needs-information",
+        "reasonKey": "contaminationUnknown"
+      },
+      "input": {
+        "caseId": "RESIDUE-03-process-positive",
+        "description": "무처리 원목 자투리와 대패밥",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 원목 제재 가공 부산물, 찌꺼기 있음",
+        "polymer": "무처리 원목",
+        "contamination": "없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "wood",
+      "condition": "residue-찌꺼기-process-denial",
+      "expected": {
+        "state": "compared",
+        "reasonKey": null
+      },
+      "input": {
+        "caseId": "RESIDUE-03-process-denial",
+        "description": "무처리 원목 자투리와 대패밥",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 원목 제재 가공 부산물, 찌꺼기 없음",
+        "polymer": "무처리 원목",
+        "contamination": "없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "wood",
+      "condition": "residue-찌꺼기-contamination-positive",
+      "expected": {
+        "state": "needs-information",
+        "reasonKey": "contaminationUnknown"
+      },
+      "input": {
+        "caseId": "RESIDUE-03-contamination-positive",
+        "description": "무처리 원목 자투리와 대패밥",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 원목 제재 가공 부산물",
+        "polymer": "무처리 원목",
+        "contamination": "찌꺼기 있음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "wood",
+      "condition": "residue-찌꺼기-contamination-denial",
+      "expected": {
+        "state": "compared",
+        "reasonKey": null
+      },
+      "input": {
+        "caseId": "RESIDUE-03-contamination-denial",
+        "description": "무처리 원목 자투리와 대패밥",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 원목 제재 가공 부산물",
+        "polymer": "무처리 원목",
+        "contamination": "찌꺼기 없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "paper",
+      "condition": "residue-얼룩-description-positive",
+      "expected": {
+        "state": "needs-information",
+        "reasonKey": "contaminationUnknown"
+      },
+      "input": {
+        "caseId": "RESIDUE-04-description-positive",
+        "description": "제품 포장 후 분리한 무코팅 골판지 상자, 얼룩 있음",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 제품 포장 및 박스 조립",
+        "polymer": "무코팅 골판지",
+        "contamination": "없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "paper",
+      "condition": "residue-얼룩-description-denial",
+      "expected": {
+        "state": "compared",
+        "reasonKey": null
+      },
+      "input": {
+        "caseId": "RESIDUE-04-description-denial",
+        "description": "제품 포장 후 분리한 무코팅 골판지 상자, 얼룩 없음",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 제품 포장 및 박스 조립",
+        "polymer": "무코팅 골판지",
+        "contamination": "없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "paper",
+      "condition": "residue-얼룩-process-positive",
+      "expected": {
+        "state": "needs-information",
+        "reasonKey": "contaminationUnknown"
+      },
+      "input": {
+        "caseId": "RESIDUE-04-process-positive",
+        "description": "제품 포장 후 분리한 무코팅 골판지 상자",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 제품 포장 및 박스 조립, 얼룩 있음",
+        "polymer": "무코팅 골판지",
+        "contamination": "없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "paper",
+      "condition": "residue-얼룩-process-denial",
+      "expected": {
+        "state": "compared",
+        "reasonKey": null
+      },
+      "input": {
+        "caseId": "RESIDUE-04-process-denial",
+        "description": "제품 포장 후 분리한 무코팅 골판지 상자",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 제품 포장 및 박스 조립, 얼룩 없음",
+        "polymer": "무코팅 골판지",
+        "contamination": "없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "paper",
+      "condition": "residue-얼룩-contamination-positive",
+      "expected": {
+        "state": "needs-information",
+        "reasonKey": "contaminationUnknown"
+      },
+      "input": {
+        "caseId": "RESIDUE-04-contamination-positive",
+        "description": "제품 포장 후 분리한 무코팅 골판지 상자",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 제품 포장 및 박스 조립",
+        "polymer": "무코팅 골판지",
+        "contamination": "얼룩 있음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "paper",
+      "condition": "residue-얼룩-contamination-denial",
+      "expected": {
+        "state": "compared",
+        "reasonKey": null
+      },
+      "input": {
+        "caseId": "RESIDUE-04-contamination-denial",
+        "description": "제품 포장 후 분리한 무코팅 골판지 상자",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 제품 포장 및 박스 조립",
+        "polymer": "무코팅 골판지",
+        "contamination": "얼룩 없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "composite-packaging",
+      "condition": "residue-부착물-description-positive",
+      "expected": {
+        "state": "needs-information",
+        "reasonKey": "contaminationUnknown"
+      },
+      "input": {
+        "caseId": "RESIDUE-05-description-positive",
+        "description": "식품 음료용 PE 적층 종이팩, 부착물 있음",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 음료 포장재 사용",
+        "polymer": "복합 종이팩",
+        "contamination": "없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "composite-packaging",
+      "condition": "residue-부착물-description-denial",
+      "expected": {
+        "state": "compared",
+        "reasonKey": null
+      },
+      "input": {
+        "caseId": "RESIDUE-05-description-denial",
+        "description": "식품 음료용 PE 적층 종이팩, 부착물 없음",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 음료 포장재 사용",
+        "polymer": "복합 종이팩",
+        "contamination": "없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "composite-packaging",
+      "condition": "residue-부착물-process-positive",
+      "expected": {
+        "state": "needs-information",
+        "reasonKey": "contaminationUnknown"
+      },
+      "input": {
+        "caseId": "RESIDUE-05-process-positive",
+        "description": "식품 음료용 PE 적층 종이팩",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 음료 포장재 사용, 부착물 있음",
+        "polymer": "복합 종이팩",
+        "contamination": "없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "composite-packaging",
+      "condition": "residue-부착물-process-denial",
+      "expected": {
+        "state": "compared",
+        "reasonKey": null
+      },
+      "input": {
+        "caseId": "RESIDUE-05-process-denial",
+        "description": "식품 음료용 PE 적층 종이팩",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 음료 포장재 사용, 부착물 없음",
+        "polymer": "복합 종이팩",
+        "contamination": "없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "composite-packaging",
+      "condition": "residue-부착물-contamination-positive",
+      "expected": {
+        "state": "needs-information",
+        "reasonKey": "contaminationUnknown"
+      },
+      "input": {
+        "caseId": "RESIDUE-05-contamination-positive",
+        "description": "식품 음료용 PE 적층 종이팩",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 음료 포장재 사용",
+        "polymer": "복합 종이팩",
+        "contamination": "부착물 있음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "composite-packaging",
+      "condition": "residue-부착물-contamination-denial",
+      "expected": {
+        "state": "compared",
+        "reasonKey": null
+      },
+      "input": {
+        "caseId": "RESIDUE-05-contamination-denial",
+        "description": "식품 음료용 PE 적층 종이팩",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 음료 포장재 사용",
+        "polymer": "복합 종이팩",
+        "contamination": "부착물 없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "ferrous",
+      "condition": "residue-묻음-description-positive",
+      "expected": {
+        "state": "needs-information",
+        "reasonKey": "contaminationUnknown"
+      },
+      "input": {
+        "caseId": "RESIDUE-06-description-positive",
+        "description": "분리 수거된 철 스크랩, 묻음 있음",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 금속 절단",
+        "polymer": "고철",
+        "contamination": "없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "ferrous",
+      "condition": "residue-묻음-description-denial",
+      "expected": {
+        "state": "compared",
+        "reasonKey": null
+      },
+      "input": {
+        "caseId": "RESIDUE-06-description-denial",
+        "description": "분리 수거된 철 스크랩, 묻음 없음",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 금속 절단",
+        "polymer": "고철",
+        "contamination": "없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "ferrous",
+      "condition": "residue-묻음-process-positive",
+      "expected": {
+        "state": "needs-information",
+        "reasonKey": "contaminationUnknown"
+      },
+      "input": {
+        "caseId": "RESIDUE-06-process-positive",
+        "description": "분리 수거된 철 스크랩",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 금속 절단, 묻음 있음",
+        "polymer": "고철",
+        "contamination": "없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "ferrous",
+      "condition": "residue-묻음-process-denial",
+      "expected": {
+        "state": "compared",
+        "reasonKey": null
+      },
+      "input": {
+        "caseId": "RESIDUE-06-process-denial",
+        "description": "분리 수거된 철 스크랩",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 금속 절단, 묻음 없음",
+        "polymer": "고철",
+        "contamination": "없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "ferrous",
+      "condition": "residue-묻음-contamination-positive",
+      "expected": {
+        "state": "needs-information",
+        "reasonKey": "contaminationUnknown"
+      },
+      "input": {
+        "caseId": "RESIDUE-06-contamination-positive",
+        "description": "분리 수거된 철 스크랩",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 금속 절단",
+        "polymer": "고철",
+        "contamination": "묻음 있음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "ferrous",
+      "condition": "residue-묻음-contamination-denial",
+      "expected": {
+        "state": "compared",
+        "reasonKey": null
+      },
+      "input": {
+        "caseId": "RESIDUE-06-contamination-denial",
+        "description": "분리 수거된 철 스크랩",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 금속 절단",
+        "polymer": "고철",
+        "contamination": "묻음 없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "nonferrous",
+      "condition": "residue-끈적-description-positive",
+      "expected": {
+        "state": "needs-information",
+        "reasonKey": "contaminationUnknown"
+      },
+      "input": {
+        "caseId": "RESIDUE-07-description-positive",
+        "description": "동관 절단 공정의 구리 오프컷, 끈적한 표면",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 동관 절단 가공 공정",
+        "polymer": "구리",
+        "contamination": "없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "nonferrous",
+      "condition": "residue-끈적-description-denial",
+      "expected": {
+        "state": "compared",
+        "reasonKey": null
+      },
+      "input": {
+        "caseId": "RESIDUE-07-description-denial",
+        "description": "동관 절단 공정의 구리 오프컷, 끈적임 없음",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 동관 절단 가공 공정",
+        "polymer": "구리",
+        "contamination": "없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "nonferrous",
+      "condition": "residue-끈적-process-positive",
+      "expected": {
+        "state": "needs-information",
+        "reasonKey": "contaminationUnknown"
+      },
+      "input": {
+        "caseId": "RESIDUE-07-process-positive",
+        "description": "동관 절단 공정의 구리 오프컷",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 동관 절단 가공 공정, 끈적한 표면",
+        "polymer": "구리",
+        "contamination": "없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "nonferrous",
+      "condition": "residue-끈적-process-denial",
+      "expected": {
+        "state": "compared",
+        "reasonKey": null
+      },
+      "input": {
+        "caseId": "RESIDUE-07-process-denial",
+        "description": "동관 절단 공정의 구리 오프컷",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 동관 절단 가공 공정, 끈적임 없음",
+        "polymer": "구리",
+        "contamination": "없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "nonferrous",
+      "condition": "residue-끈적-contamination-positive",
+      "expected": {
+        "state": "needs-information",
+        "reasonKey": "contaminationUnknown"
+      },
+      "input": {
+        "caseId": "RESIDUE-07-contamination-positive",
+        "description": "동관 절단 공정의 구리 오프컷",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 동관 절단 가공 공정",
+        "polymer": "구리",
+        "contamination": "끈적한 표면",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "nonferrous",
+      "condition": "residue-끈적-contamination-denial",
+      "expected": {
+        "state": "compared",
+        "reasonKey": null
+      },
+      "input": {
+        "caseId": "RESIDUE-07-contamination-denial",
+        "description": "동관 절단 공정의 구리 오프컷",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 동관 절단 가공 공정",
+        "polymer": "구리",
+        "contamination": "끈적임 없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "wood",
+      "condition": "residue-슬러지-description-positive",
+      "expected": {
+        "state": "needs-information",
+        "reasonKey": "contaminationUnknown"
+      },
+      "input": {
+        "caseId": "RESIDUE-08-description-positive",
+        "description": "무처리 원목 자투리와 대패밥, 슬러지 있음",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 원목 제재 가공 부산물",
+        "polymer": "무처리 원목",
+        "contamination": "없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "wood",
+      "condition": "residue-슬러지-description-denial",
+      "expected": {
+        "state": "compared",
+        "reasonKey": null
+      },
+      "input": {
+        "caseId": "RESIDUE-08-description-denial",
+        "description": "무처리 원목 자투리와 대패밥, 슬러지 없음",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 원목 제재 가공 부산물",
+        "polymer": "무처리 원목",
+        "contamination": "없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "wood",
+      "condition": "residue-슬러지-process-positive",
+      "expected": {
+        "state": "needs-information",
+        "reasonKey": "contaminationUnknown"
+      },
+      "input": {
+        "caseId": "RESIDUE-08-process-positive",
+        "description": "무처리 원목 자투리와 대패밥",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 원목 제재 가공 부산물, 슬러지 있음",
+        "polymer": "무처리 원목",
+        "contamination": "없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "wood",
+      "condition": "residue-슬러지-process-denial",
+      "expected": {
+        "state": "compared",
+        "reasonKey": null
+      },
+      "input": {
+        "caseId": "RESIDUE-08-process-denial",
+        "description": "무처리 원목 자투리와 대패밥",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 원목 제재 가공 부산물, 슬러지 없음",
+        "polymer": "무처리 원목",
+        "contamination": "없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "wood",
+      "condition": "residue-슬러지-contamination-positive",
+      "expected": {
+        "state": "needs-information",
+        "reasonKey": "contaminationUnknown"
+      },
+      "input": {
+        "caseId": "RESIDUE-08-contamination-positive",
+        "description": "무처리 원목 자투리와 대패밥",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 원목 제재 가공 부산물",
+        "polymer": "무처리 원목",
+        "contamination": "슬러지 있음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "wood",
+      "condition": "residue-슬러지-contamination-denial",
+      "expected": {
+        "state": "compared",
+        "reasonKey": null
+      },
+      "input": {
+        "caseId": "RESIDUE-08-contamination-denial",
+        "description": "무처리 원목 자투리와 대패밥",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 원목 제재 가공 부산물",
+        "polymer": "무처리 원목",
+        "contamination": "슬러지 없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "paper",
+      "condition": "residue-분진-description-positive",
+      "expected": {
+        "state": "needs-information",
+        "reasonKey": "contaminationUnknown"
+      },
+      "input": {
+        "caseId": "RESIDUE-09-description-positive",
+        "description": "제품 포장 후 분리한 무코팅 골판지 상자, 분진 있음",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 제품 포장 및 박스 조립",
+        "polymer": "무코팅 골판지",
+        "contamination": "없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "paper",
+      "condition": "residue-분진-description-denial",
+      "expected": {
+        "state": "compared",
+        "reasonKey": null
+      },
+      "input": {
+        "caseId": "RESIDUE-09-description-denial",
+        "description": "제품 포장 후 분리한 무코팅 골판지 상자, 분진 없음",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 제품 포장 및 박스 조립",
+        "polymer": "무코팅 골판지",
+        "contamination": "없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "paper",
+      "condition": "residue-분진-process-positive",
+      "expected": {
+        "state": "needs-information",
+        "reasonKey": "contaminationUnknown"
+      },
+      "input": {
+        "caseId": "RESIDUE-09-process-positive",
+        "description": "제품 포장 후 분리한 무코팅 골판지 상자",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 제품 포장 및 박스 조립, 분진 있음",
+        "polymer": "무코팅 골판지",
+        "contamination": "없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "paper",
+      "condition": "residue-분진-process-denial",
+      "expected": {
+        "state": "compared",
+        "reasonKey": null
+      },
+      "input": {
+        "caseId": "RESIDUE-09-process-denial",
+        "description": "제품 포장 후 분리한 무코팅 골판지 상자",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 제품 포장 및 박스 조립, 분진 없음",
+        "polymer": "무코팅 골판지",
+        "contamination": "없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "paper",
+      "condition": "residue-분진-contamination-positive",
+      "expected": {
+        "state": "needs-information",
+        "reasonKey": "contaminationUnknown"
+      },
+      "input": {
+        "caseId": "RESIDUE-09-contamination-positive",
+        "description": "제품 포장 후 분리한 무코팅 골판지 상자",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 제품 포장 및 박스 조립",
+        "polymer": "무코팅 골판지",
+        "contamination": "분진 있음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "paper",
+      "condition": "residue-분진-contamination-denial",
+      "expected": {
+        "state": "compared",
+        "reasonKey": null
+      },
+      "input": {
+        "caseId": "RESIDUE-09-contamination-denial",
+        "description": "제품 포장 후 분리한 무코팅 골판지 상자",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 제품 포장 및 박스 조립",
+        "polymer": "무코팅 골판지",
+        "contamination": "분진 없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "composite-packaging",
+      "condition": "residue-이물-description-positive",
+      "expected": {
+        "state": "needs-information",
+        "reasonKey": "contaminationUnknown"
+      },
+      "input": {
+        "caseId": "RESIDUE-10-description-positive",
+        "description": "식품 음료용 PE 적층 종이팩, 이물 있음",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 음료 포장재 사용",
+        "polymer": "복합 종이팩",
+        "contamination": "없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "composite-packaging",
+      "condition": "residue-이물-description-denial",
+      "expected": {
+        "state": "compared",
+        "reasonKey": null
+      },
+      "input": {
+        "caseId": "RESIDUE-10-description-denial",
+        "description": "식품 음료용 PE 적층 종이팩, 이물 없음",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 음료 포장재 사용",
+        "polymer": "복합 종이팩",
+        "contamination": "없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "composite-packaging",
+      "condition": "residue-이물-process-positive",
+      "expected": {
+        "state": "needs-information",
+        "reasonKey": "contaminationUnknown"
+      },
+      "input": {
+        "caseId": "RESIDUE-10-process-positive",
+        "description": "식품 음료용 PE 적층 종이팩",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 음료 포장재 사용, 이물 있음",
+        "polymer": "복합 종이팩",
+        "contamination": "없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "composite-packaging",
+      "condition": "residue-이물-process-denial",
+      "expected": {
+        "state": "compared",
+        "reasonKey": null
+      },
+      "input": {
+        "caseId": "RESIDUE-10-process-denial",
+        "description": "식품 음료용 PE 적층 종이팩",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 음료 포장재 사용, 이물 없음",
+        "polymer": "복합 종이팩",
+        "contamination": "없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "composite-packaging",
+      "condition": "residue-이물-contamination-positive",
+      "expected": {
+        "state": "needs-information",
+        "reasonKey": "contaminationUnknown"
+      },
+      "input": {
+        "caseId": "RESIDUE-10-contamination-positive",
+        "description": "식품 음료용 PE 적층 종이팩",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 음료 포장재 사용",
+        "polymer": "복합 종이팩",
+        "contamination": "이물 있음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "composite-packaging",
+      "condition": "residue-이물-contamination-denial",
+      "expected": {
+        "state": "compared",
+        "reasonKey": null
+      },
+      "input": {
+        "caseId": "RESIDUE-10-contamination-denial",
+        "description": "식품 음료용 PE 적층 종이팩",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 음료 포장재 사용",
+        "polymer": "복합 종이팩",
+        "contamination": "이물 없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "nonferrous",
+      "condition": "sticky-film-description",
+      "expected": {
+        "state": "needs-information",
+        "reasonKey": "contaminationUnknown"
+      },
+      "input": {
+        "caseId": "RESIDUE-STICKY-description",
+        "description": "합성 구리 스크랩, 끈적한 막",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 동관 절단 가공 공정",
+        "polymer": "구리",
+        "contamination": "없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "nonferrous",
+      "condition": "sticky-film-process",
+      "expected": {
+        "state": "needs-information",
+        "reasonKey": "contaminationUnknown"
+      },
+      "input": {
+        "caseId": "RESIDUE-STICKY-process",
+        "description": "합성 구리 스크랩",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 동관 절단 가공 공정, 끈적한 막",
+        "polymer": "구리",
+        "contamination": "없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "nonferrous",
+      "condition": "sticky-film-contamination",
+      "expected": {
+        "state": "needs-information",
+        "reasonKey": "contaminationUnknown"
+      },
+      "input": {
+        "caseId": "RESIDUE-STICKY-contamination",
+        "description": "합성 구리 스크랩",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 동관 절단 가공 공정",
+        "polymer": "구리",
+        "contamination": "끈적한 막",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "nonferrous",
+      "condition": "mixed-before",
+      "expected": {
+        "state": "needs-information",
+        "reasonKey": "contaminationUnknown"
+      },
+      "input": {
+        "caseId": "RESIDUE-mixed-before",
+        "description": "합성 구리 스크랩, 얼룩 없음, 끈적한 막",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 동관 절단 가공 공정",
+        "polymer": "구리",
+        "contamination": "없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "nonferrous",
+      "condition": "mixed-after",
+      "expected": {
+        "state": "needs-information",
+        "reasonKey": "contaminationUnknown"
+      },
+      "input": {
+        "caseId": "RESIDUE-mixed-after",
+        "description": "합성 구리 스크랩, 끈적한 막, 얼룩 없음",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 동관 절단 가공 공정",
+        "polymer": "구리",
+        "contamination": "없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "nonferrous",
+      "condition": "cross-field",
+      "expected": {
+        "state": "needs-information",
+        "reasonKey": "contaminationUnknown"
+      },
+      "input": {
+        "caseId": "RESIDUE-cross-field",
+        "description": "합성 구리 스크랩, 끈적한 막",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 동관 절단 가공 공정",
+        "polymer": "구리",
+        "contamination": "막 없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "nonferrous",
+      "condition": "hazard-precedence",
+      "expected": {
+        "state": "needs-review",
+        "reasonKey": "materialTreatment"
+      },
+      "input": {
+        "caseId": "RESIDUE-hazard-precedence",
+        "description": "합성 구리 스크랩, 납 오염",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 동관 절단 가공 공정, 얼룩 없음",
+        "polymer": "구리",
+        "contamination": "끈적한 막",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "nonferrous",
+      "condition": "ordinary-words",
+      "expected": {
+        "state": "compared",
+        "reasonKey": null
+      },
+      "input": {
+        "caseId": "RESIDUE-ordinary-words",
+        "description": "납품·수납용 합성 구리 스크랩",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 동관 절단 가공 공정",
+        "polymer": "구리",
+        "contamination": "얼룩 없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "nonferrous",
+      "condition": "lead-leftover-affirmative",
+      "expected": {
+        "state": "needs-information",
+        "reasonKey": "contaminationUnknown"
+      },
+      "input": {
+        "caseId": "RESIDUE-LEAD-leftover",
+        "description": "구리 스크랩, 잔여물 있음",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 동관 절단 가공 공정",
+        "polymer": "구리",
+        "contamination": "없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "nonferrous",
+      "condition": "lead-stain-denial",
+      "expected": {
+        "state": "compared",
+        "reasonKey": null
+      },
+      "input": {
+        "caseId": "RESIDUE-LEAD-stain-denial",
+        "description": "구리판, 얼룩 없음",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 동관 절단 가공 공정",
+        "polymer": "구리",
+        "contamination": "없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "nonferrous",
+      "condition": "lead-combined-denial",
+      "expected": {
+        "state": "compared",
+        "reasonKey": null
+      },
+      "input": {
+        "caseId": "RESIDUE-LEAD-combined-denial",
+        "description": "합성 구리 스크랩",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 동관 절단 가공 공정",
+        "polymer": "구리",
+        "contamination": "막·잔여물·이물 없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
     }
   ]
 }

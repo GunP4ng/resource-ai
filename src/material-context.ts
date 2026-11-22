@@ -9,9 +9,12 @@ const oilTerms = "(?:오일|기름|유류|절삭유|윤활유|작동유|유압�
 // Match lead as a substance, not ordinary words such as 납품, 수납 or 납작.
 const nonOilTerms = "(?:절삭액|냉각수|방청제|도금|카드뮴|크롬|석면|중금속|납땜|땜납|\\bPCB\\b|(?<![가-힣A-Za-z])납"
   + "(?=$|[^가-힣A-Za-z]|(?:함유|성분|검출|오염|부착|잔류)|(?:이|은|을|과|도|의|에|으로)(?=$|[^가-힣A-Za-z])))";
-const denialTerms = `(?:도료|도장|페인트|방부(?:처리|제|목)?|접착(?:제)?|${oilTerms}|${nonOilTerms}|유해물질|이물질|잔류물|잔류막|오염|약제|약품|표면처리|코팅|비닐|테이프|플라스틱|복합층|복합재|라미네이트|알루미늄|PET|HDPE|LDPE|PP|PE|PS|PVC|ABS)`;
+const residueTerms = "(?:잔류(?:물|막)?|잔여물|찌꺼기|얼룩|부착물|묻음|끈적(?:임)?|슬러지|분진|이물(?:질)?"
+  + "|(?<![가-힣A-Za-z])막(?=$|[^가-힣A-Za-z]|(?:이|은|을|과|도|의|에)(?=$|[^가-힣A-Za-z])))";
+const denialTerms = `(?:도료|도장|페인트|방부(?:처리|제|목)?|접착(?:제)?|${oilTerms}|${nonOilTerms}|${residueTerms}|유해물질|오염|약제|약품|표면처리|코팅|비닐|테이프|플라스틱|복합층|복합재|라미네이트|알루미늄|PET|HDPE|LDPE|PP|PE|PS|PVC|ABS)`;
 const materialDenial = new RegExp(`(?:^|[,;.\\n])\\s*${denialTerms}(?:\\s*[·ㆍ/,]\\s*${denialTerms})*\\s*(?:처리|접촉|오염|사용|잔류)?\\s*(?:이|가)?\\s*(?:없음|없습니다|없다|하지\\s*않음|아님)(?=\\s*(?:[,;.\\n]|$))`, "giu");
 const materialHazard = new RegExp(`도료|도장|페인트|방부|접착|${oilTerms}|${nonOilTerms}|크레오소트|할로겐|\\b(?:paint(?:ed)?|preservative|oil(?:y)?|treated|adhesive|creosote)\\b`, "iu");
+const unresolvedMaterialHistory = new RegExp(`${residueTerms}|잔존|부착|묻[은어]|오염|약제|약품|처리|피막|\\b(?:residu\\w*|treatment|coated)\\b`, "iu");
 
 const unplatedFields = new Set(["무도금", "무도금 구리판", "무도금 구리판 절단편"]);
 const coatingSignal = /도금|코팅|도료|도장|페인트/u;
@@ -130,7 +133,7 @@ export function materialStream(input: CaseInput): MaterialStream | null {
     /(?:무처리|미처리|무코팅|비코팅)[^,.;\n]{0,12}(?:아님|아닌)|\bnot\s+(?:untreated|uncoated)\b/iu.test(value)
     || [...value.matchAll(/(?:무처리|미처리|무코팅|비코팅|처리\s*이력|코팅\s*이력|treatment\s+history|coating\s+history)\s*(?:여부|이력|유무)?\s*(?:은|는|이|가)?\s*[:：]?\s*([^,.;\n]+)/giu)]
       .some(match => isUnknownCaseText(match[1], "clause")))) return null;
-  if (/건설폐기물|분진|슬러지|오니|배터리|축전지|폐전선|전자제품|광재/iu.test([input.process, input.description].join(" "))) return null;
+  if (/건설폐기물|분진|슬러지|오니|배터리|축전지|폐전선|전자제품|광재/iu.test([input.process, input.description].map(maskMaterialDenials).join(" "))) return null;
   const material = canonicalMaterial(input.polymer);
   if (material === null) return null;
   if (["paper", "cardboard", "paper-packaging", "uncoated-paper"].includes(material)) {
@@ -176,7 +179,7 @@ export function materialQuestions(input: CaseInput): readonly string[] {
   if (family === "metal" && !["ferrous", "nonferrous", "aluminum", "copper"].includes(canonicalMaterial(material) ?? "")) {
     questions.push("철·비철 구분과 정확한 금속 품목을 알려 주세요. 금속캔·용기, 분진·슬러지 또는 혼합물은 별도 분류 근거가 필요합니다.");
   }
-  if (family === "metal" && /건설폐기물|분진|슬러지|오니|배터리|축전지|폐전선|전자제품|광재/iu.test([input.process, input.description].join(" "))) {
+  if (family === "metal" && /건설폐기물|분진|슬러지|오니|배터리|축전지|폐전선|전자제품|광재/iu.test([input.process, input.description].map(maskMaterialDenials).join(" "))) {
     questions.push("별도 분류 대상 발생물의 구체적 발생원·성분·유해성을 확인해 주세요. 일반 금속 스크랩 코드로 추정하지 않습니다.");
   }
   if (family === "wood" && materialStream(input) === null) {
@@ -197,7 +200,7 @@ export function materialQuestions(input: CaseInput): readonly string[] {
   const unresolvedHistory = [input.description, input.process].some(value => {
     const remainder = maskMaterialDenials(value)
       .replace(/(?:무처리|미처리|\buntreated\b)(?![^,;.\n]*(?:미상|미확인|불명|모름|추정|아님|아닌|unknown))/giu, "");
-    return /잔류|잔존|찌꺼기|부착|묻[은어]|오염|약제|약품|처리|피막|얼룩|\b(?:residu\w*|treatment|coated)\b/iu.test(remainder);
+    return unresolvedMaterialHistory.test(remainder);
   });
   if ((unresolvedHistory || (input.contamination?.trim() && !isDeclaredCleanMaterial(input.contamination, family)))
     && materialHazardReasons(input).length === 0) questions.push(safetyReasons.contaminationUnknown);
