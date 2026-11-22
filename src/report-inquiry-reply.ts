@@ -26,8 +26,11 @@ export function renderInquiryReply(view: InquiryReplyView): string {
         return `<td data-label="업체 ${index + 1} 회신 금액 없음 · 기준 모델값"><span data-reply-amount>${escapeHtml(before.display.net_cost_krw ?? "미확보")}</span></td><td data-label="업체 ${index + 1} 차이 (원)">${before.net_cost_krw === null ? "미산정" : "기준과 동일"}</td>`;
       }
       const result = variant.calculations.results.find(item => item.case_id === before.case_id && item.route_id === before.route_id);
-      const change = before.net_cost_krw === null || result?.net_cost_krw === null || result?.net_cost_krw === undefined
-        ? null : (result.net_cost_krw - before.net_cost_krw).toLocaleString("ko-KR", { maximumFractionDigits: 0 });
+      const baselineWon = before.display.net_cost_krw;
+      const assumedWon = result?.display.net_cost_krw;
+      const change = baselineWon == null || assumedWon == null
+        ? null
+        : (BigInt(assumedWon) - BigInt(baselineWon)).toLocaleString("ko-KR");
       return `<td data-label="업체 ${index + 1} 가정 순비용 (원)"><span data-reply-amount>${escapeHtml(result?.display.net_cost_krw ?? "미확보")}</span></td><td data-label="업체 ${index + 1} 차이 (가정 − 기준, 원)">${change === null ? "미산정 (기준값 또는 회신 금액 미확보)" : `<span data-reply-amount>${escapeHtml(change)}</span>`}</td>`;
     }).join("");
     return `<tr data-reply-result="${before.route_id}"><th scope="row" class="reply-route">${route}</th><td data-label="기준 순비용 (원)"><span data-reply-amount>${escapeHtml(before.display.net_cost_krw ?? "미확보")}</span></td>${cells}</tr>`;

@@ -87,14 +87,15 @@ for (const material of ["PET", "HDPE"] as const) {
       for (const row of rows) {
         const baseline = env.context.calculations.results.find(item => item.route_id === row.route);
         assert.ok(baseline);
-        assert.equal(row.cells[0], baseline.display.net_cost_krw ?? "미확보");
+        const baselineCell = row.cells[0];
+        assert.equal(baselineCell, baseline.display.net_cost_krw ?? "미확보");
         variants.forEach((variant, index) => {
           const expected = variant.calculations.results.find(item => item.route_id === row.route);
           assert.ok(expected);
-          assert.equal(row.cells[1 + index * 2], expected.display.net_cost_krw ?? "미확보");
-          if (baseline.net_cost_krw !== null && expected.net_cost_krw !== null) {
-            assert.equal(row.cells[2 + index * 2], (expected.net_cost_krw - baseline.net_cost_krw)
-              .toLocaleString("ko-KR", { maximumFractionDigits: 0 }));
+          const assumedCell = row.cells[1 + index * 2];
+          assert.equal(assumedCell, expected.display.net_cost_krw ?? "미확보");
+          if (baseline.display.net_cost_krw !== null && expected.display.net_cost_krw !== null) {
+            assert.equal(row.cells[2 + index * 2], (BigInt(assumedCell) - BigInt(baselineCell)).toLocaleString("ko-KR"));
           }
         });
       }
@@ -111,21 +112,63 @@ for (const material of ["PET", "HDPE"] as const) {
   });
 }
 
+async function nativeForm(env: Awaited<ReturnType<typeof setup>>) {
+  const url = origin + env.path + "/inquiry-reply";
+  const form = new URLSearchParams();
+  await new HTMLRewriter().on("input", { element(element) {
+    const name = element.getAttribute("name");
+    if (name) form.set(name, element.getAttribute("value") ?? "");
+  } }).transform(await env.app(new Request(url))).text();
+  for (const prefix of ["", "second_"]) {
+    form.set(prefix + "acceptance", "unknown"); form.set(prefix + "sourceNote", "");
+  }
+  form.set("companyName", "업체 A");
+  const submit = () => env.app(new Request(url, {
+    method: "POST", headers: { origin, "content-type": "application/x-www-form-urlencoded" }, body: form,
+  }));
+  return { form, submit };
+}
+
+for (const [name, field, amount, cells] of [
+  ["native PET recycling fee 50025 shows the difference between displayed whole won",
+    "amount_f_rec", "50025", ["-13867", "-12667", "1,200"]],
+  ["native PET sale price 616810 shows zero for equal displayed costs",
+    "amount_PET.price", "616810", ["-13867", "-13867", "0"]],
+  ["native PET recycling fee 25 shows zero for equal displayed costs",
+    "amount_f_rec", "25", ["-13867", "-13867", "0"]],
+  ["native PET recycling fee 50000 keeps the exact whole-won difference",
+    "amount_f_rec", "50000", ["-13867", "-12667", "1,200"]],
+] as const) {
+  test(name, async () => {
+    const env = await setup();
+    try {
+      const { form, submit } = await nativeForm(env);
+      const inputBytes = async () => {
+        const response = await env.app(new Request(origin + env.path + "/input"));
+        assert.equal(response.status, 200);
+        return response.arrayBuffer();
+      };
+      const before = await inputBytes();
+      form.set(field, amount);
+      const response = await submit();
+      let retained: string | null = null;
+      await new HTMLRewriter().on(`input[name="${field}"]`, { element(element) {
+        retained = element.getAttribute("value");
+      } }).transform(response.clone()).text();
+      assert.equal(retained, amount);
+      assert.deepEqual(await inputBytes(), before);
+      env.readOnly();
+      const rows = await readRows(response);
+      assert.deepEqual(rows.find(row => row.route === "recycling")?.cells, cells);
+    } finally { env.dispose(); }
+  });
+}
+
 test("native dual form retains blank versus zero and an unused optional company stays absent", async () => {
   const env = await setup();
   try {
-    const form = new URLSearchParams();
-    await new HTMLRewriter().on("input", { element(element) {
-      const name = element.getAttribute("name");
-      if (name) form.set(name, element.getAttribute("value") ?? "");
-    } }).transform(await env.app(new Request(origin + env.path + "/inquiry-reply"))).text();
-    for (const prefix of ["", "second_"]) {
-      form.set(prefix + "acceptance", "unknown"); form.set(prefix + "sourceNote", "");
-    }
-    form.set("companyName", "업체 A"); form.set("amount_f_inc", "0");
-    const submit = () => env.app(new Request(origin + env.path + "/inquiry-reply", {
-      method: "POST", headers: { origin, "content-type": "application/x-www-form-urlencoded" }, body: form,
-    }));
+    const { form, submit } = await nativeForm(env);
+    form.set("amount_f_inc", "0");
     const single = await readRows(await submit());
     assert.equal(single[0]?.cells.length, 3);
     form.set("second_companyName", "업체 B");
@@ -160,11 +203,12 @@ test("native dual form retains blank versus zero and an unused optional company 
       const expected = variant.calculations.results.find(item => item.route_id === row.route);
       const baseline = env.context.calculations.results.find(item => item.route_id === row.route);
       assert.ok(expected && baseline);
+      assert.equal(row.cells[0], baseline.display.net_cost_krw ?? "미확보");
       assert.equal(row.cells[3], expected.display.net_cost_krw ?? "미확보");
-      if (expected.net_cost_krw === null || baseline.net_cost_krw === null) {
+      if (expected.display.net_cost_krw === null || baseline.display.net_cost_krw === null) {
         assert.match(row.cells[4] ?? "", /^미산정/);
       } else {
-        assert.equal(row.cells[4], (expected.net_cost_krw - baseline.net_cost_krw).toLocaleString("ko-KR", { maximumFractionDigits: 0 }));
+        assert.equal(row.cells[4], (BigInt(row.cells[3]) - BigInt(row.cells[0])).toLocaleString("ko-KR"));
       }
     }
 
