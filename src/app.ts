@@ -17,6 +17,7 @@ import type { OCaseStore } from "./o-case-store.ts";
 import { LocalAuthError } from "./o-auth.ts";
 import { RuntimeStorageError } from "./o-runtime-db.ts";
 import { feedbackPath, feedbackScript } from "./app-feedback.ts";
+import { themePath, themeScript } from "./app-theme.ts";
 import { reviewProgressStore } from "./app-progress.ts";
 import { buildCaseGuidance } from "./o-case-guidance.ts";
 import recyclingDirectory from "../data/reference/public-recycling-candidates-20261121.json" with { type: "json" };
@@ -64,6 +65,7 @@ export function createApp(dependencies: AppDependencies) {
         const url = new URL(request.url);
         if (url.origin !== origin) throw new HttpFailure(400, "앱 주소가 다릅니다. 앱 첫 화면에서 다시 시작해 주세요.");
         if (request.method === "GET" && url.pathname === feedbackPath) return response(feedbackScript, 200, { "content-type": "text/javascript; charset=utf-8" });
+        if (request.method === "GET" && url.pathname === themePath) return response(themeScript, 200, { "content-type": "text/javascript; charset=utf-8" });
         const sameOrigin = () => {
           if (request.headers.get("origin") !== origin || request.headers.get("sec-fetch-site") === "cross-site") throw new HttpFailure(403, "이 앱 화면에서 다시 제출해 주세요.");
         };
