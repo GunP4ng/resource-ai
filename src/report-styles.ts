@@ -1,6 +1,7 @@
 import { intakeStyles } from "./intake-styles.ts";
 import { caseListStyles } from "./case-list-styles.ts";
 import { resultScreenStyles } from "./result-screen-styles.ts";
+import { loginStyles } from "./login-styles.ts";
 
 const darkScreenPalette = `
     color-scheme:dark;
@@ -318,4 +319,4 @@ code{font-family:ui-monospace,monospace}
   .intake-material svg{width:40px;height:40px}
   .guidance-stages li{padding:var(--s12) var(--s16)}
 }
-`;
+` + loginStyles;

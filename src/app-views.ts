@@ -4,6 +4,7 @@ import { escapeHtml, page } from "./report-html.ts";
 import { caseFormTextLimits, HttpFailure } from "./app-http.ts";
 import { intakeForm } from "./intake-form.ts";
 import { koreanDeadline, koreanSourceDate } from "./report-date.ts";
+export { loginPage } from "./login-views.ts";
 
 const contactLabels = { unknown: "미상", yes: "있음", no: "없음" } as const;
 const textFields = [
@@ -80,9 +81,6 @@ export interface InputView {
   readonly localAuth: boolean;
   readonly connected: boolean;
   readonly photoEnabled: boolean;
-}
-export function loginPage(): string {
-  return page("로그인", `<h1>운영자 로그인</h1><p>운영자가 발급한 계정으로 로그인하세요. 로그인은 사례 보관과 비공개 화면 접근에 쓰입니다.</p><form method="post" action="/login"><label for="username">사용자 이름</label><input id="username" name="username" autocomplete="username" required maxlength="64"><label for="password">비밀번호</label><input id="password" name="password" type="password" autocomplete="current-password" required maxlength="1024"><button type="submit">로그인</button></form>`);
 }
 export interface CaseListRow {
   readonly caseId: string;

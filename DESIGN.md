@@ -23,6 +23,8 @@
 system-ui, sans-serif를 사용하며 코드만 ui-monospace, monospace다. --body=17px, --secondary=15px(600·muted), --h3=22px, --h2=28px, --h1=36px, 본문 행간 1.7, 제목 1.3. 각 제목 단계는 1.25배 이상이다. h4는 별도 작은 제목 대신 본문 크기의 굵은 내역 표제다. 짧은 한국어 결론과 자연스러운 줄바꿈을 사용한다. 숫자는 tabular-nums다. 인쇄는 body 10.5pt, h1 21pt/h2 16pt/h3 12.5pt로 문서 공간을 보존한다.
 
 ## 4. 간격과 레이아웃
+Layout: 로그인·로그인 안내 - 계정 입력과 다음 행동에 집중 -> cover + content-limiter + stack; scroll owner: document; anti-patterns: 고정 높이, 작업용 탐색 메뉴, 화면 전체 너비의 입력란, 중첩 스크롤.
+로그인 화면은 현재 `report-styles.ts`의 화면 토큰을 따른다. 청록색 `--action`, 회색 `--bg`, 흰색/다크 `--surface`, `--held-bg` 오류 표면과 `--held` 오류 글자를 재사용한다. 화면 본문은 16px, 보조 글자는 14px, 카드 모서리는 12px, 버튼은 10px다. 새 크기 토큰 `--login-max:440px`는 로그인 콘텐츠의 최대 너비이며 모바일에서는 가용 너비까지 줄어든다. 카드 안쪽은 `--s32`(좁은 화면 `--s24`), 필드 사이 `--s20`, label과 input 사이 `--s8`을 사용한다. 인쇄 토큰은 변경하지 않는다.
 Layout: 결과 첫 화면 - 결론과 다음 행동을 먼저 읽기 -> stack + content-limiter (https://github.com/changeroa/StyleGallery/blob/main/patterns/stacking/stack.md); scroll owner: document; anti-patterns: 고정 높이, 중첩 세로 스크롤, 단서로 결론 밀어내기.
 Layout: 공통 헤더 - 탐색 순서 뒤에 테마 선택 -> desktop cluster / mobile disclosure stack (https://github.com/changeroa/StyleGallery/blob/main/patterns/in-line-grouping/cluster.md); scroll owner: document; anti-patterns: 제어 복제, 헤더 구분선과 터치 영역 겹침. 테마는 32px 알약 안의 상태 표시와 44px 터치 영역을 분리한다.
 --s8/12/16/20/24/32/48은 각각 8/12/16/20/24/32/48px. --target=44px, --radius=4px, --border=1px, --focus-width=2px, --focus-offset=3px. 사진 미리보기 최대 높이는 기존 240px, textarea 최소 높이는 136px. 인쇄 여백은 기존 A4 18mm다.
@@ -32,6 +34,9 @@ Layout: 공통 헤더 - 탐색 순서 뒤에 테마 선택 -> desktop cluster / 
 좁은 목록·정의 목록의 재배치 기준은 600px이다. 링크 밑줄 간격은 .2em이다. 인쇄 본문 행간은 1.45이며 모든 색 토큰을 밝은 테마로 고정한다. 인쇄 세부 간격은 위 8/12/20px 토큰을 재사용한다.
 
 ## 5. 재사용 요소와 정보 순서
+로그인 화면의 주 동작은 `로그인`이다. 제품명과 서비스 설명 → 아이디·비밀번호 → 로그인 버튼 순서로 읽는다. 공통 `page`의 로그인 전용 레이아웃은 기존 테마 선택·본문 건너뛰기·외부 스크립트를 공유한다. 카드·입력·주 버튼·오류 메시지는 기존 `surface`, `radius`, `elevation`, `target`, `focus` 토큰과 native form 구성을 따른다. 로그인에 필요 없는 작업 메뉴와 보고서 하단 문구, 가입·소셜 로그인·비밀번호 재설정 등 없는 기능은 추가하지 않는다.
+아이디·비밀번호는 visible label과 기존 autocomplete/maxlength를 유지한다. 비밀번호 표시 버튼은 JavaScript가 연결된 후 나타나고, 클릭·키보드로 표시와 숨김을 바꾼다. 실패 메시지는 입력 위에서 읽히고 입력란과 연결된다. 기존 403/429/400 등의 응답 상태는 유지하며 다시 제출할 수 있는 폼을 제공한다. 보호 화면의 비로그인 403은 같은 브랜드 화면에서 `/login`으로 가는 주 동작을 제공한다.
+참고: GitHub 로그인은 필드 위의 명확한 label과 native password 입력, Vercel 로그인은 제품명과 직접적인 로그인 제목, Linear 로그인은 좁은 중앙 열과 주 동작·보조 안내 분리를 참고했다. 공급자 로그인이나 해당 사이트의 브랜드 색상은 가져오지 않는다.
 3차 결과 화면 우선순위: 결론 한 문장 → 다음 행동 하나와 실행 보류/미승인 → 공개 비용·탄소 비교 → 조건별 대안·근거·확인사항. 주 동작은 질문/보류이면 답변·입력 확인, 비교이면 실행 전 확인이다. 확신도 이유·실행 메타데이터·자세한 단서는 details로 접되 안전 상태와 과거 평가 경고는 항상 보인다. 기존 내용과 출처를 삭제하지 않는다. 반복 요약 카드·장식·새 색상은 추가하지 않는다. 변경 전 캡처는 lane evidence/round3-ui/before-*이며 로컬 실제 앱에서 촬영했다.
 page는 의미 있는 nav/main/footer, 건너뛰기 링크, 공유 스타일·same-origin defer script를 제공한다. 결론 → 확신도·이유 → 연구 계산 → 처분 문의 행 → 실행 전 확인 → 법적 원문 → 고급 메타데이터 순서다. 근거 확인하기 / 실행 전 확인하기는 실제 anchor로 연결한다. 서버 전용 연구 context는 일반 보고서에서 완전히 제외한다.
 

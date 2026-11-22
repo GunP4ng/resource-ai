@@ -5,6 +5,23 @@ export const feedbackPath = "/app-feedback.js";
 export const feedbackScript = `"use strict";
 (() => {
 ${intakeScript}
+  const loginForm = document.querySelector?.("[data-login-form]");
+  if (loginForm) {
+    const password = loginForm.querySelector("#password");
+    const toggle = loginForm.querySelector("[data-password-toggle]");
+    if (password && toggle) {
+      const showPassword = visible => {
+        password.type = visible ? "text" : "password";
+        toggle.textContent = visible ? "숨김" : "표시";
+        toggle.setAttribute("aria-label", visible ? "비밀번호 숨김" : "비밀번호 표시");
+      };
+      toggle.hidden = false;
+      toggle.addEventListener("click", () => showPassword(password.type === "password"));
+      loginForm.addEventListener("submit", () => showPassword(false));
+      window.addEventListener("pageshow", () => showPassword(false));
+    }
+    loginForm.querySelector("[role=alert]")?.focus();
+  }
   const menu = document.querySelector?.("[data-menu-toggle]");
   if (menu) {
     menu.hidden = false;
@@ -77,7 +94,7 @@ ${intakeScript}
       }
       pending.add(form);
       form.setAttribute("aria-busy", "true");
-      status.textContent = "검토 중입니다. 끝나면 결과 화면으로 이동합니다.";
+      status.textContent = form.hasAttribute("data-login-form") ? "로그인 중입니다." : "검토 중입니다. 끝나면 결과 화면으로 이동합니다.";
       for (const button of form.querySelectorAll('[type="submit"]')) button.setAttribute("aria-disabled", "true");
       if (form.hasAttribute("data-intake-form")) beginReview(form, status);
     });

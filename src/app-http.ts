@@ -8,6 +8,7 @@ import { CaseConflict } from "./o-case-store.ts";
 import { PhotoHttpFailure } from "./o-photo-http.ts";
 import { PhotoStorageError } from "./photo-codec.ts";
 import { AssessmentInputError } from "./assessment.ts";
+import { loginPage } from "./login-views.ts";
 export class HttpFailure extends Error {
   constructor(readonly status: number, readonly publicMessage: string) {
     super(publicMessage);
@@ -162,10 +163,11 @@ export const response = (html: string, status = 200, headers: HeadersInit = {}) 
     "content-security-policy": "default-src 'none'; img-src 'self'; style-src 'unsafe-inline'; script-src 'self'; connect-src 'self'; form-action 'self'; base-uri 'none'; frame-ancestors 'none'", ...headers } });
 export const redirect = (path: string) => response("", 303, { location: path });
 
-export function errorResponse(error: unknown, recovery: string, dependencies: AppDependencies): Response {
+export function errorResponse(error: unknown, recovery: string, dependencies: AppDependencies, loginRequest = false): Response {
   if (error instanceof LocalAuthError) {
     const status = { denied: 403, throttled: 429, unavailable: 503, cancelled: 408 }[error.code];
     const message = error.code === "throttled" ? "잠시 후 다시 시도해 주세요." : "로그인 정보나 계정 상태를 확인해 주세요.";
+    if (loginRequest) return response(loginPage(message), status);
     return response(page("로그인 상태", `<h1>요청을 완료하지 못했습니다</h1><p role="alert">${message}</p><p><a href="/login">로그인</a></p>${recovery}`), status);
   }
   if (error instanceof RuntimeStorageError || error instanceof ResourceUnavailableError) return response(page("저장소 상태", `<h1>검토 실패</h1><p role="alert">저장소나 사례 자료에 접근하지 못했습니다. 내 사례에서 마지막 저장 결과를 확인해 주세요.</p>${recovery}`), 503);
@@ -173,7 +175,8 @@ export function errorResponse(error: unknown, recovery: string, dependencies: Ap
   if (error instanceof CaseConflict) return response(page("수정 충돌", `<p>다른 수정이 먼저 반영되었습니다. 새로고침한 뒤 다시 제출해 주세요.</p>${recovery}`), 409);
   if (error instanceof PhotoHttpFailure) return response(page("사진 확인", `<p>PNG 또는 JPEG, 5 MiB 이하인지 확인해 주세요.</p>${recovery}`), error.status);
   if (error instanceof PhotoStorageError) return response(page("사진 처리 실패", `<p>사진 동의, 파일 형식, 저장소 상태를 확인해 주세요.</p>${recovery}`), error.code === "denied" ? 403 : error.code === "unavailable" ? 503 : 400);
-  if (error instanceof HttpFailure) return response(page("요청 상태", `<h1>요청을 완료하지 못했습니다</h1><p role="alert">${escapeHtml(error.publicMessage)}</p>${recovery}${dependencies.localAuth ? '<p><a href="/login">로그인</a></p>' : ""}`), error.status);
+  if (error instanceof HttpFailure) return loginRequest ? response(loginPage(error.publicMessage), error.status)
+    : response(page("요청 상태", `<h1>요청을 완료하지 못했습니다</h1><p role="alert">${escapeHtml(error.publicMessage)}</p>${recovery}${dependencies.localAuth ? '<p><a href="/login">로그인</a></p>' : ""}`), error.status);
   if (error instanceof AssessmentInputError) {
     const labels = { $: "사례 입력", caseId: "사례 번호", description: "폐자원 설명", photoRefs: "사진",
       process: "발생 공정", polymer: "재질·품목", contamination: "오염 상태", hazardousContact: "유해물질 접촉",
