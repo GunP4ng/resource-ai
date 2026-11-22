@@ -40,7 +40,7 @@ test("held alternatives stay informational and precede source and next-action se
   const closedDetails: string[] = [];
   const leadingContent: string[] = [];
   await new HTMLRewriter()
-    .on("main > #decision-summary, main > #next-action, main > .state.held", {
+    .on("#commercial-summary > #decision-summary, #commercial-summary > #next-action, #commercial-summary > .state.held", {
       element(element) { leadingContent.push(element.getAttribute("id") ?? "held"); },
     })
     .on("a.primary-action:not(.secondary-action)", { element(element) { primaryTargets.push(element.getAttribute("href")); } })

@@ -17,7 +17,7 @@ const post = (path: string, raw: unknown) => new Request(origin + path, {
 async function decisionSurface(html: string) {
   const surface = { heading: "", recommendations: "", checks: "", caseIdentity: "" };
   await new HTMLRewriter()
-    .on("main > h1", { text(chunk) { surface.heading += chunk.text; } })
+    .on("main > h1, #commercial-summary > h1", { text(chunk) { surface.heading += chunk.text; } })
     .on('section[aria-labelledby="recommendation-heading"]', { text(chunk) { surface.recommendations += chunk.text; } })
     .on("#checks", { text(chunk) { surface.checks += chunk.text; } })
     .on("#advanced > p:first-of-type", { text(chunk) { surface.caseIdentity += chunk.text; } })
@@ -48,7 +48,7 @@ test("permissionChanged warning stays outside disclosures near the conclusion", 
       const order: string[] = [];
       const html = await new HTMLRewriter()
         .on("#decision-summary", { element() { order.push("conclusion"); } })
-        .on("main > #permission-change-warning", { element() { order.push("notice"); }, text(chunk) { visible += chunk.text; } })
+        .on("main > #permission-change-warning, #commercial-summary > #permission-change-warning", { element() { order.push("notice"); }, text(chunk) { visible += chunk.text; } })
         .on("details #permission-change-warning", { text(chunk) { folded += chunk.text; } })
         .on("#next-action", { element() { order.push("next-action"); } })
         .transform(await app.fetch(new Request(origin + path + suffix))).text();
