@@ -207,8 +207,8 @@ test("safety-held reports subordinate citation shortage without losing reason an
     .on('a[href^="#case-reason-"]', { element(el) { links.push((el.getAttribute("href") ?? "").slice(1)); } })
     .transform(new Response(html)).text();
   assert.ok(primary.join("").includes(readableReason(safetyReasons.materialTreatment)));
-  assert.ok(!primary.join("").includes("인용 부족"));
-  assert.ok(secondary.join("").includes("인용 부족"));
+  assert.ok(!primary.join("").includes("법령 근거가 아직 부족"));
+  assert.ok(secondary.join("").includes("법령 근거가 아직 부족"));
   assert.ok(html.indexOf(readableReason(safetyReasons.materialTreatment)) < html.indexOf('class="supporting-reasons"'));
   assert.equal(new Set(allIds).size, allIds.length);
   assert.equal(allIds.length, result.reasons.length);
@@ -226,7 +226,7 @@ test("citation shortage remains primary when it is not subordinate to a safety h
     .on("#case-reasons > ul > li", { text(chunk) { primary.push(chunk.text); } })
     .transform(new Response(renderReport(result, { mode: "offline" }))).text();
   assert.equal(groups, 0);
-  assert.ok(primary.join("").includes("인용 부족"));
+  assert.ok(primary.join("").includes("법령 근거가 아직 부족"));
 });
 
 test("unknown-material questions render neutral wording while the stored decision stays unchanged", async () => {

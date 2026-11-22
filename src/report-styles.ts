@@ -1,6 +1,6 @@
 import { intakeStyles } from "./intake-styles.ts";
 import { caseListStyles } from "./case-list-styles.ts";
-import { resultScreenStyles } from "./result-screen-styles.ts";
+import { resultReadabilityStyles, resultScreenStyles } from "./result-screen-styles.ts";
 import { loginStyles } from "./login-styles.ts";
 
 const darkScreenPalette = `
@@ -224,10 +224,10 @@ code{font-family:ui-monospace,monospace}
     --held:#833c12;--held-bg:#fcecdf;
     --elevation:0 1px 3px #17172210,0 4px 16px #1717220c;
     --font:Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",system-ui,sans-serif;
-    --body:16px;--secondary:14px;--h1:44px;--h2:28px;--h3:22px;
+    --body:16px;--secondary:15px;--h1:44px;--h2:28px;--h3:22px;
     --radius:12px;--button-radius:10px;--target:44px;
   }
-  body{font-family:var(--font);line-height:1.6}
+  body{font-family:var(--font);line-height:1.7}
   h1,h2,h3{font-weight:750;line-height:1.22}
   h1,h2{letter-spacing:-.025em}
   h1{margin-block:var(--s32) var(--s16)}
@@ -256,7 +256,7 @@ code{font-family:ui-monospace,monospace}
   .notice,blockquote{border-radius:var(--radius)}
   .notice{background:var(--quiet)}
   .notice[role="alert"]{background:var(--held-bg)}
-  .intake-landing h1{color:var(--ink);font-size:clamp(36px,5.5vw,68px);line-height:1.16}
+  .intake-landing h1{color:var(--ink);font-size:clamp(30px,4vw,48px);line-height:1.2}
   .intake-landing .primary-action{padding-block:var(--s12)}
   .intake-section-title{font-weight:750}
   .intake-materials{gap:var(--s16)}
@@ -319,4 +319,4 @@ code{font-family:ui-monospace,monospace}
   .intake-material svg{width:40px;height:40px}
   .guidance-stages li{padding:var(--s12) var(--s16)}
 }
-` + loginStyles;
+` + resultReadabilityStyles + loginStyles;
