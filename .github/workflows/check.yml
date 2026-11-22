@@ -21,6 +21,11 @@ jobs:
       - run: bun run typecheck
       - run: bun run typecheck:o-tests
       - run: bun test --timeout 30000 ./tests
+      - run: |
+          output="$(mktemp -d)"
+          trap 'rm -rf "$output"' EXIT
+          bun scripts/measure-guidance.ts --out "$output/measure"
+          bun -e 'const s = await Bun.file(process.argv.at(-1)).json(); if (s.cases !== 18 || s.completeDecisionsUnchanged !== 18 || s.materialSafety.cases !== 131 || s.materialSafety.passed !== 131 || s.materialSafety.failed !== 0) process.exit(1); console.log("measure-guidance: 18 unchanged, 131 matching");' "$output/measure/summary.json"
       - run: bun run build
       - run: bun run build:app
       - run: bun run smoke

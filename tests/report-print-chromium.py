@@ -1,19 +1,21 @@
-"""Run with `python tests/report-print-chromium.py` from the repo root.
+"""Run with `python3 tests/report-print-chromium.py` from the repo root.
 
 Requires an existing Bun, Python Playwright, Chromium and PyMuPDF setup.
 RESOURCE_QA_CHROMIUM can point at an alternate local Chromium executable.
+RESOURCE_QA_EVIDENCE_DIR saves each named PDF and its rendered page PNGs.
 The standalone test runs outside Bun CI and uses a temporary local account.
 """
 
 from contextlib import contextmanager
+import json
 import os
 from pathlib import Path
 import re
 import secrets
+import selectors
 import socket
 import subprocess
 import tempfile
-import time
 import unittest
 from urllib.request import ProxyHandler, build_opener
 
@@ -23,6 +25,7 @@ from playwright.sync_api import sync_playwright
 REPO = Path(__file__).resolve().parents[1]
 USAGE = "사용량은 청구·비용 증빙이 아닙니다. 사진 실행 여부는 설정이나 실행 식별자로 확인할 수 없습니다."
 DESCRIPTION = "QA 로그인 연구 PET 사출 부산물"
+MINIMUM_LAST_PAGE_BODY = 80
 
 
 @contextmanager
@@ -42,20 +45,21 @@ def local_operator():
         origin = f"http://localhost:{port}"
         env.update(PORT=str(port), RESOURCE_MODEL_RUNNER="subscription", RESOURCE_APP_AUTH="local-operator",
                    RESOURCE_STATE_DIR=state, RESOURCE_PRIVATE_PHOTOS="off")
-        process = subprocess.Popen(["bun", "tests/synthetic-app.ts"], cwd=REPO, env=env)
+        process = subprocess.Popen(["bun", "tests/synthetic-app.ts"], cwd=REPO, env=env,
+                                   stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
         try:
+            with selectors.DefaultSelector() as selector:
+                selector.register(process.stdout, selectors.EVENT_READ)
+                if not selector.select(timeout=10):
+                    raise RuntimeError("Test app startup timed out")
+            ready = process.stdout.readline()
+            if process.poll() is not None or origin not in ready:
+                raise RuntimeError(f"Test app failed to start: {ready.strip()}")
+            print(ready, end="", flush=True)
             http = build_opener(ProxyHandler({}))
-            for _ in range(100):
-                if process.poll() is not None:
-                    raise RuntimeError(f"Test app exited with status {process.returncode}")
-                try:
-                    with http.open(origin + "/health", timeout=0.5) as response:
-                        if response.status == 200:
-                            break
-                except OSError:
-                    time.sleep(0.1)
-            else:
-                raise RuntimeError("Test app startup timed out")
+            with http.open(origin + "/health", timeout=0.5) as response:
+                if response.status != 200:
+                    raise RuntimeError(f"Test app health returned {response.status}")
             yield origin, password
         finally:
             process.terminate()
@@ -64,6 +68,7 @@ def local_operator():
             except subprocess.TimeoutExpired:
                 process.kill()
                 process.wait()
+            process.stdout.close()
 
 
 def normalized(text):
@@ -71,14 +76,22 @@ def normalized(text):
 
 
 class ChromiumPrintTest(unittest.TestCase):
-    def pdf_pages(self, page, check_marker_bounds=False):
+    def pdf_pages(self, page, check_marker_bounds=False, artifact=None):
         data = page.pdf(prefer_css_page_size=True)
+        evidence = os.environ.get("RESOURCE_QA_EVIDENCE_DIR")
+        if evidence and artifact:
+            directory = Path(evidence)
+            directory.mkdir(parents=True, exist_ok=True)
+            (directory / f"{artifact}.pdf").write_bytes(data)
         with fitz.open(stream=data, filetype="pdf") as document:
             texts = []
-            for sheet in document:
+            for number, sheet in enumerate(document, start=1):
                 self.assertAlmostEqual(sheet.rect.width, 595.28, delta=2)
                 self.assertAlmostEqual(sheet.rect.height, 841.89, delta=2)
                 texts.append(normalized(sheet.get_text()))
+                if evidence and artifact:
+                    sheet.get_pixmap(matrix=fitz.Matrix(1.5, 1.5), alpha=False).save(
+                        str(Path(evidence) / f"{artifact}-page-{number}.png"))
                 if check_marker_bounds:
                     margin = 18 * 72 / 25.4
                     for x0, y0, x1, y1, text, *_ in sheet.get_text("blocks"):
@@ -89,10 +102,10 @@ class ChromiumPrintTest(unittest.TestCase):
             self.assertTrue(texts and all(texts), "PDF contains an empty page")
             return texts
 
-    def submit(self, page, origin, description):
+    def submit(self, page, origin, description, polymer="PET", mass="100"):
         response = page.request.post(origin + "/cases", headers={"Origin": origin}, max_redirects=0,
-                                     form=dict(description=description, process="사출", polymer="PET",
-                                               contamination="없음", hazardousContact="no", massKg="100",
+                                     form=dict(description=description, process="사출", polymer=polymer,
+                                               contamination="없음", hazardousContact="no", massKg=mass,
                                                region="울산", assessmentDate="2026-11-25"))
         self.assertEqual(response.status, 303)
         path = response.headers["location"]
@@ -105,9 +118,24 @@ class ChromiumPrintTest(unittest.TestCase):
         self.assertTrue(pages[-1].endswith(f"{USAGE} {footer}"),
                         f"Page {len(pages)} ends with {pages[-1][-200:]!r}")
 
+    def assert_substantive_last_page(self, pages, footer, label):
+        self.assert_report_ending(pages, footer)
+        ending = f"{USAGE} {footer}"
+        body = pages[-1][:-len(ending)].strip()
+        amount = len(body)
+        print(f"{label}: pages={len(pages)} last_page_body={amount}", flush=True)
+        evidence = os.environ.get("RESOURCE_QA_EVIDENCE_DIR")
+        if evidence:
+            (Path(evidence) / f"{label}.json").write_text(json.dumps({
+                "pages": len(pages), "lastPageBody": amount,
+                "lastPageText": pages[-1],
+            }, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        self.assertGreaterEqual(amount, MINIMUM_LAST_PAGE_BODY,
+                                f"{label} page {len(pages)} has only {amount} body characters before the notice/footer")
+
     def check_report(self, page, url):
         self.assertEqual(page.goto(url + "/report").status, 200)
-        default_pages = self.pdf_pages(page)
+        default_pages = self.pdf_pages(page, artifact="authenticated-pet")
         page.emulate_media(media="print")
         print_style = page.locator("#advanced").evaluate(
             "node => ({inside: getComputedStyle(node).breakInside, after: getComputedStyle(node).breakAfter})")
@@ -126,20 +154,24 @@ class ChromiumPrintTest(unittest.TestCase):
         self.assertFalse(disclosure.evaluate("el => el.open"))
         self.assertFalse(usage.is_visible())
 
-        self.assert_report_ending(default_pages, footer_text)
+        self.assert_substantive_last_page(default_pages, footer_text, "authenticated-pet")
+        last_checks = [normalized(item) for item in page.locator("#checks li").all_text_contents()][-3:]
+        self.assertEqual(len(last_checks), 3)
+        for check in last_checks:
+            self.assertIn(check, default_pages[-1], "Final PET page must contain the report's actual checks")
         default_text = " ".join(default_pages)
-        # Vary the last block around the observed page boundary (688–704 px).
-        # The separate oversized-content case below uses printable text, not blank padding.
+        # Replay #129's last-block padding around the observed page boundary (688–704 px).
+        # The separate oversized-content case below verifies printable text fragmentation.
         for pixels in range(624, 801, 8):
             with self.subTest(padding_px=pixels):
                 style = page.add_style_tag(content=f"@media print{{#advanced{{padding-top:{pixels}px}}}}")
                 try:
-                    pages = self.pdf_pages(page)
+                    pages = self.pdf_pages(page, artifact=f"height-{pixels}")
                 finally:
                     style.evaluate("style => style.remove()")
                 self.assertEqual(details.evaluate_all("elements => elements.map(el => el.open)"), states)
                 self.assertEqual(" ".join(pages), default_text)
-                self.assert_report_ending(pages, footer_text)
+                self.assert_substantive_last_page(pages, footer_text, f"height-{pixels}")
 
         self.assertTrue(footer.is_visible())
         disclosure.locator("summary").press("Enter")
@@ -173,6 +205,12 @@ class ChromiumPrintTest(unittest.TestCase):
         self.assertEqual(text, default_text)
         self.assertEqual(details.evaluate_all("elements => elements.map(el => el.open)"), states)
         return footer_text
+
+    def check_material_report(self, page, url, label):
+        self.assertEqual(page.goto(url + "/report").status, 200)
+        footer = normalized(page.locator("main footer").inner_text())
+        pages = self.pdf_pages(page, artifact=label)
+        self.assert_substantive_last_page(pages, footer, label)
 
     def check_inquiry(self, page, url, footer, description=None):
         self.assertEqual(page.goto(url + "/inquiry").status, 200)
@@ -213,6 +251,13 @@ class ChromiumPrintTest(unittest.TestCase):
                 page.goto(origin + "/")
                 url = self.submit(page, origin, DESCRIPTION)
                 footer = self.check_report(page, url)
+                for label, polymer, mass in [
+                    ("authenticated-hdpe", "HDPE", "100"),
+                    ("authenticated-pp", "PP", "100"),
+                    ("authenticated-default", "", ""),
+                ]:
+                    material_url = self.submit(page, origin, f"QA 로그인 {label} 사출 부산물", polymer, mass)
+                    self.check_material_report(page, material_url, label)
                 self.check_inquiry(page, url, footer)
                 description = " ".join(f"synthetic-appendix-{index:02d}" for index in range(30))
                 self.check_inquiry(page, self.submit(page, origin, description), footer, description)
