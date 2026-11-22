@@ -211,6 +211,8 @@ code{font-family:ui-monospace,monospace}
   :is(input,textarea)::placeholder{color:var(--muted);opacity:1}
   input[type=checkbox]{inline-size:20px;block-size:20px;min-height:0;accent-color:var(--action)}
   .consent{cursor:pointer}
+  /* Keep navigation focus on non-interactive destinations without drawing a ring around the content. */
+  :is(h1,h2,main,#case-intake,#report-results,#case-editor)[tabindex="-1"]:focus{outline:none}
   button,.primary-action{min-inline-size:var(--target);border-radius:var(--button-radius);font-weight:700}
   button:not(.secondary-action),.primary-action:not(.secondary-action){border-color:transparent}
   button:not(.secondary-action):not(.intake-material):not(.site-menu-toggle):hover,.primary-action:not(.secondary-action):hover{
