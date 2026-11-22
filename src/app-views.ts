@@ -3,7 +3,7 @@ import { MAX_CASE_MASS_KG } from "./contracts.ts";
 import { escapeHtml, page } from "./report-html.ts";
 import { caseFormTextLimits, HttpFailure } from "./app-http.ts";
 
-const exampleStart = '<p class="cluster screen-only"><a class="primary-action" data-example-start href="/demo/normal">예시로 시작</a><span>합성 사례 · 외부 모델 호출 없음</span></p>';
+const contactLabels = { unknown: "미상", yes: "있음", no: "없음" } as const;
 const textFields = [
   ["description", "폐자원 설명"], ["process", "발생 공정"], ["polymer", "재질·품목"],
   ["contamination", "오염 상태"], ["region", "발생 지역"], ["assessmentDate", "평가 기준일"],
@@ -52,9 +52,19 @@ function fields(input?: CaseInput, editing = false, draft?: Readonly<Record<stri
     && [input.process, input.polymer, input.contamination, input.region].every(value => value !== null && value.trim() !== "");
   return massOnly ? massField + remaining : remaining + massField;
 }
+export function caseInputSummary(input: CaseInput): string {
+  const values: readonly (readonly [string, string | null])[] = [
+    ["발생 공정", input.process], ["재질·품목", input.polymer], ["오염 상태", input.contamination],
+    ["유해물질 접촉", contactLabels[input.hazardousContact]], ["질량", input.massKg === null ? null : `${input.massKg.toLocaleString("ko-KR")} kg`],
+    ["발생 지역", input.region], ["평가 기준일", input.assessmentDate],
+  ];
+  return `<div class="case-input-summary screen-only"><h2>현재 사례 입력</h2><p>${escapeHtml(input.description)}</p><dl>${values.map(([label, value]) =>
+    `<dt>${label}</dt><dd>${escapeHtml(value || "미상")}</dd>`).join("")}</dl><a href="#answer-fields">입력 수정하기</a></div>`;
+}
+
 export function form(action: string, answers = false, version?: number, selection = "", input?: CaseInput, draft?: Readonly<Record<string, unknown>>): string {
   const versionField = version === undefined ? "" : `<input type="hidden" name="baseVersion" value="${version}">`;
-  if (!answers) return `<form method="post" action="${escapeHtml(action)}">${fields(undefined, false, draft)}<p>사진은 사례를 만든 후 별도로 업로드하세요.</p><button type="submit">사례 제출</button></form>`;
+  if (!answers) return `<form method="post" action="${escapeHtml(action)}">${fields(input, false, draft)}<p>사진은 사례를 만든 후 별도로 업로드하세요.</p><button type="submit">사례 제출</button></form>`;
   const native = input ? `<h2 id="answer-fields" tabindex="-1">답변·사례 수정</h2><p>현재 입력을 표시합니다. 바꿀 항목을 수정하세요. 공란은 미상이며 질량 단위는 kg입니다. 그대로 제출해도 실제 입력값으로 다시 평가합니다.</p>
     <form method="post" action="${escapeHtml(action)}">${versionField}<input type="hidden" name="answerMode" value="fields">${fields(input, true, draft)}${selection}
       <button type="submit">자료 반영해 다시 평가하기</button></form>` : "";
@@ -76,7 +86,7 @@ export function loginPage(): string {
   return page("로그인", `<h1>로컬 운영자 로그인</h1><p>운영자가 발급한 계정으로 로그인하세요. 조직 소속이나 자료 승인을 인증하지 않습니다.</p><form method="post" action="/login"><label for="username">사용자 이름</label><input id="username" name="username" autocomplete="username" required maxlength="64"><label for="password">비밀번호</label><input id="password" name="password" type="password" autocomplete="current-password" required maxlength="1024"><button type="submit">로그인</button></form>`);
 }
 export function caseListPage(rows: string, localAuth: boolean, deadlineLabel: string): string {
-  return page("내 사례", `<h1>내 사례</h1>${rows ? "" : exampleStart}<p><a class="primary-action${rows ? "" : " secondary-action"}" href="/">새 사례 입력</a></p>${rows ? `<div class="table-wrap case-list" role="region" aria-label="내 사례 목록" tabindex="0"><table><thead><tr><th>사례</th><th>버전</th><th>${escapeHtml(deadlineLabel)}</th><th>결과</th></tr></thead><tbody>${rows}</tbody></table></div>` : "<p>저장된 사례가 없습니다.</p>"}${localAuth ? '<form method="post" action="/logout"><button class="secondary-action" type="submit">로그아웃</button></form>' : ""}`);
+  return page("내 사례", `<h1>내 사례</h1><p><a class="primary-action" href="/">새 사례 입력</a></p>${rows ? `<div class="table-wrap case-list" role="region" aria-label="내 사례 목록" tabindex="0"><table><thead><tr><th>사례</th><th>버전</th><th>${escapeHtml(deadlineLabel)}</th><th>결과</th></tr></thead><tbody>${rows}</tbody></table></div>` : "<p>저장된 사례가 없습니다.</p>"}${localAuth ? '<form method="post" action="/logout"><button class="secondary-action" type="submit">로그아웃</button></form>' : ""}`);
 }
 export function inputPage(options: InputView): string {
   const { authenticated, localAuth, connected, photoEnabled, runner } = options;
@@ -88,10 +98,10 @@ export function inputPage(options: InputView): string {
           <p>실제 자료와 합성 데모를 구분합니다. 설명·사진만으로 법적 코드나 처리 허가를 확정하지 않습니다.</p>
           <p>${authenticated ? "서버 인증 사용자" : "익명 임시 세션 · 재시작하면 사례를 복구할 수 없습니다."}${runnerLabel ? ` 구성된 실행기 ${runnerLabel} · 실행 성공은 평가 후 확인하세요.` : ""}</p>`;
   const support = authenticated && localAuth
-    ? `<p>사진: ${photoEnabled ? "비공개 저장 전용" : "저장 비활성"}</p><p><a href="/demo/normal">합성 비교 데모</a></p>`
-    : `<p>사진 저장: ${photoEnabled ? "인증된 사례에서 사용 가능" : "인증된 비공개 사진 저장소를 사용할 수 없습니다."}</p><p><a href="/demo/review">합성 위험·검토 예시 보기</a></p>`;
+    ? `<p>사진: ${photoEnabled ? "비공개 저장 전용" : "저장 비활성"}</p>`
+    : `<p>사진 저장: ${photoEnabled ? "인증된 사례에서 사용 가능" : "인증된 비공개 사진 저장소를 사용할 수 없습니다."}</p>`;
   return page("사례 입력", `<nav class="workspace-nav" aria-label="작업 영역"><a href="#case-editor">사례 입력</a><a href="#input-overview">검토 안내</a></nav>
-    <div class="input-workspace"><div class="input-overview" id="input-overview" tabindex="-1"><h1>폐자원 조건부 검토</h1>${exampleStart}${purpose}${account}<p><a href="/cases">내 사례·복구</a></p></div>
+    <div class="input-workspace"><div class="input-overview" id="input-overview" tabindex="-1"><h1>폐자원 조건부 검토</h1>${purpose}${account}<p><a href="/cases">내 사례·복구</a></p></div>
     <aside class="case-editor" id="case-editor" aria-label="사례 입력" tabindex="-1"><div class="case-editor-body"><h2 class="workspace-heading">사례 입력</h2>${form("/cases")}</div></aside>
     <div class="input-support">${support}</div></div>`, "workspace");
 }

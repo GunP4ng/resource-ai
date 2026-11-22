@@ -47,6 +47,7 @@ export interface ReportView {
   readonly caseReturnTarget?: string;
   readonly inquiryTarget?: string;
   readonly researchFirst?: boolean;
+  readonly researchNavigation?: boolean;
 }
 export const routeNames = { reuse: "재사용", "mechanical-recycling": "기계적 재활용", "other-recovery": "기타 회수", disposal: "처분" } as const;
 function recommendationSummary(result: Extract<DecisionResult, { state: "compared" }>, references: EvidenceReferences): string {
@@ -205,9 +206,9 @@ export function renderReport(result: DecisionResult, presentation: ReportPresent
     <p class="screen-only"><a class="primary-action" href="${answerAction ?? "#checks"}">${answerAction ? result.state === "needs-information" ? "답변 입력하기" : "입력 다시 확인하기" : "실행 전 확인하기"}</a>${view.caseReturnTarget ? ` <a href="${escapeHtml(view.caseReturnTarget)}">사례로 돌아가기</a>` : ""}</p>
     ${commercialSummary ? `${data}
       ${heldReasons.length ? `<p><a href="#case-reasons">보류 사유와 필요한 확인 ${heldReasons.length}개</a> · 전체 사유는 다음 상세에 있습니다.</p>` : ""}
-      <div id="summary-evidence"><h2>근거 위치</h2>${result.evidence.length ? `<ul>${result.evidence.slice(0, 3).map((item, index) => `<li><a href="#evidence-${index + 1}">[${index + 1}] ${escapeHtml(item.title)} · ${escapeHtml(item.locator)}</a></li>`).join("")}</ul>` : "<p>연결된 근거 없음</p>"}</div>
-      <p><a href="#evidence">전체 ${result.evidence.length}개 출처와 원문 위치 확인하기</a></p>
-      <div id="summary-unavailable"><h2>미확보값과 계산 상태</h2>${list(unavailable)}<p><a href="#decision-detail">미산정 사유와 계산 조건 확인하기</a></p></div>
+      <div class="commercial-summary-cards"><div id="summary-evidence"><h2>근거 위치</h2>${result.evidence.length ? `<ul>${result.evidence.slice(0, 3).map((item, index) => `<li><a href="#evidence-${index + 1}">[${index + 1}] ${escapeHtml(item.title)} · ${escapeHtml(item.locator)}</a></li>`).join("")}</ul>` : "<p>연결된 근거 없음</p>"}
+      <p><a href="#evidence">전체 ${result.evidence.length}개 출처와 원문 위치 확인하기</a></p></div>
+      <div id="summary-unavailable"><h2>미확보값과 계산 상태</h2>${list(unavailable)}<p><a href="#decision-detail">미산정 사유와 계산 조건 확인하기</a></p></div></div>
       <p><a href="#checks">실행 전 확인 ${checks.length ? `${checks.length}개 전체` : "안내"} 보기</a> · 모든 확인과 별도 승인이 필요합니다.</p>
       </section>` : ""}
     ${result.state === "compared" ? view.answerPrompt ?? "" : ""}
@@ -227,7 +228,8 @@ export function renderReport(result: DecisionResult, presentation: ReportPresent
     ${guidance ? guidanceProgress(guidance, presentation, names) + guidanceOneFact(guidance, names) : view.progress ? publicCaseProgress(view.progress) : ""}
     ${context.audience === "authenticated-research" && view.publicScenarioMissing?.length
       ? `<section id="public-scenario-unavailable"><h2>공개 비용·탄소 비교가 없는 이유</h2>${list(view.publicScenarioMissing)}<p>추천은 기존 공개 근거에 따른 검토 순서입니다. 비교 부재를 비용 0이나 재활용 불가로 해석하지 않습니다.</p></section>` : ""}
-    <p class="screen-only"><a href="/reference#material-purchase-prices">철스크랩·폐지의 공식 참고 매입가격 보기</a> · 실제 견적이나 이 사례의 적용 가격이 아닙니다.</p>
+    ${context.audience === "authenticated-research" && view.researchNavigation ? `<nav class="screen-only" aria-label="연구 자료"><a href="/demo/normal?purpose=research">합성 비교 데모</a><a href="/demo/held">합성 추가 정보 데모</a><a href="/demo/review">합성 위험·검토 예시</a><a href="/reference">실자료 현황</a></nav>
+    <p class="screen-only"><a href="/reference#material-purchase-prices">철스크랩·폐지의 공식 참고 매입가격 보기</a> · 실제 견적이나 이 사례의 적용 가격이 아닙니다.</p>` : ""}
     ${publicScenario ? publicInputCalculations(publicScenario) : ""}${view.researchFirst ? researchSections : ""}
     ${guidance ? guidanceStability(guidance, names) : ""}
     ${sensitivity ? guidanceSensitivity(sensitivity, names) : ""}
@@ -250,5 +252,5 @@ export function renderReport(result: DecisionResult, presentation: ReportPresent
       publicModel: calculationContext?.calculations.model_version ?? null,
       publicSource: calculationContext ? calculationContext.purpose === "research-display" ? calculationContext.calculations.fixtureSha256
         : calculationContext.provenance.derivedDatasetSha256 : null,
-    })}</details>${view.editing ? "</div></div>" : ""}`, "workspace");
+    })}</details>${view.editing ? "</div></div>" : ""}`, commercialSummary ? "commercial" : "workspace");
 }

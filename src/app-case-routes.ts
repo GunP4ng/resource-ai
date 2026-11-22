@@ -7,7 +7,7 @@ import { matchesPhotoConsent } from "./photo-execution.ts";
 import { revision } from "./o-validation.ts";
 import { renderReport } from "./report.ts";
 import { HttpFailure, body, caseBody, idPattern, redirect, response, sessionFailures, versionOf } from "./app-http.ts";
-import { form, nativeAnswer } from "./app-views.ts";
+import { caseInputSummary, form, nativeAnswer } from "./app-views.ts";
 import { photoUI, photoRoute } from "./app-photo-routes.ts";
 import { readCaseResearchCatalog } from "./o-case-research.ts";
 import { buildPublicInputScenario, publicScenarioEligibility } from "./o-input-public-scenario.ts";
@@ -145,7 +145,7 @@ export async function caseRoute(services: RouteServices, context: RouteRequest):
         ? '<p class="screen-only"><a class="primary-action secondary-action" href="#answer-fields">질량을 입력하면 비용·탄소를 계산해요</a> (선택)</p><p>견적·탄소 계수 등 근거가 있는 항목부터 계산합니다. 자료가 없으면 필요한 내용을 알려드려요.</p>'
         : '<p class="screen-only"><a class="primary-action secondary-action" href="#answer-fields">선택 정보: 질량을 입력할 수 있습니다</a></p><p>질량 입력은 선택 사항이며 보류 사유를 해제하거나 비용·탄소 계산을 보장하지 않습니다.</p>' : "";
     const actions = suffix === "report" ? "" : `<p class="cluster screen-only"><a href="/cases/${id}/report">상업용 보고서</a>${actor ? `<a href="/cases/${id}/report?purpose=research">비공개 연구용 보고서</a>` : ""}<a href="/cases/${id}/input">정확한 입력 내보내기</a><a href="/cases">내 사례</a></p>`;
-    const editing = suffix === "report" ? "" : `<p>버전 ${snapshot.version}</p>${editable
+    const editing = suffix === "report" ? "" : `${editable && stored.decision.state !== "compared" ? caseInputSummary(snapshot.input) : ""}<p>버전 ${snapshot.version}</p>${editable
       ? `<p>수정 가능 기한 (UTC): ${new Date(editDeadline).toISOString()}</p>${form(`/cases/${id}/answers`, true, snapshot.version, selection, snapshot.input)}`
       : '<p class="notice">수정 기한이 지났습니다. 보관 중인 보고서와 입력은 확인할 수 있습니다. 다시 평가하려면 <a href="/">새 사례를 입력하세요</a>.</p>'}${photoUI(snapshot, ticket, services)}`;
     const result = response(renderReport(stored.decision, {
@@ -155,6 +155,7 @@ export async function caseRoute(services: RouteServices, context: RouteRequest):
       ...(privateAudience && stored.modelAudit ? { modelAudit: stored.modelAudit } : {}),
       ...(privateAudience && stored.verificationPlan ? { verificationPlan: stored.verificationPlan } : {}),
     }, audience, { notice, actions, editing, answerPrompt: suffix === "report" ? "" : optionalMass,
+      researchNavigation: !!privateAudience && suffix === "report",
       ...(suffix === "report" && audience.audience === "commercial" ? { caseReturnTarget: `/cases/${caseId}` } : {}),
       ...(snapshot.evaluated.revision === revision(snapshot.input) ? { evaluatedInput: snapshot.input } : {}),
       ...(!guidance && !snapshot.permissionChanged && snapshot.evaluated.revision === revision(snapshot.input)

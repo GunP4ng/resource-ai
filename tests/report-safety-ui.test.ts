@@ -40,7 +40,7 @@ for (const state of ["compared", "needs-review", "needs-information"] as const) 
     }).decide();
     assert.equal(result.state, state);
     const before: DecisionResult = structuredClone(result);
-    let summaries = 0, conclusion = "", action = "", unavailable = "";
+    let summaries = 0, conclusion = "", action = "", unavailable = "", evidenceIndex = "";
     const locations: string[] = [], targets: string[] = [], ids: string[] = [], evidenceText = new Map<string, string>();
     await new HTMLRewriter()
       .on("main > #commercial-summary", { element() { summaries++; } })
@@ -48,7 +48,8 @@ for (const state of ["compared", "needs-review", "needs-information"] as const) 
       .on("#commercial-summary #next-action", { text(chunk) { action += chunk.text; } })
       .on("#summary-unavailable", { text(chunk) { unavailable += chunk.text; } })
       .on("#summary-evidence li", { element() { locations.push(""); }, text(chunk) { locations[locations.length - 1] += chunk.text; } })
-      .on('#summary-evidence a[href^="#"]', { element(el) { targets.push((el.getAttribute("href") ?? "").slice(1)); } })
+      .on('#summary-evidence li a[href^="#"]', { element(el) { targets.push((el.getAttribute("href") ?? "").slice(1)); } })
+      .on("#summary-evidence > p > a", { element(el) { evidenceIndex = el.getAttribute("href") ?? ""; } })
       .on("[id]", { element(el) { ids.push(el.getAttribute("id") ?? ""); } })
       .on('#evidence > section', { element(el) {
         const id = el.getAttribute("id") ?? "";
@@ -66,6 +67,7 @@ for (const state of ["compared", "needs-review", "needs-information"] as const) 
     assert.match(unavailable, state === "compared" ? /미산정/ : /비교 미수행/);
     assert.deepEqual(locations, result.evidence.slice(0, 3).map((item, index) => `[${index + 1}] ${item.title} · ${item.locator}`));
     assert.deepEqual(targets, result.evidence.slice(0, 3).map((_, index) => `evidence-${index + 1}`));
+    assert.equal(evidenceIndex, "#evidence");
     for (const [index, target] of targets.entries()) {
       const record = result.evidence[index];
       assert.ok(record);
