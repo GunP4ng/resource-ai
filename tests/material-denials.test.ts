@@ -180,7 +180,7 @@ test("residual history questions keep complete denials and untreated controls lo
   }
 });
 
-const nativeDescriptions = [
+const nativeCases = [
   ["표면이 납으로 오염된 구리 절단편", "검토 필요"],
   ["구리 절단편, 납 오염", "검토 필요"],
   ["동관 절단 공정의 구리 오프컷, 땜납 다량 부착", "검토 필요"],
@@ -191,15 +191,18 @@ const nativeDescriptions = [
   ["합성 구리 스크랩, 끈적한 막", "추가 정보 필요"],
   ["합성 구리 스크랩, 얼룩 없음", "기계적 재활용 추천"],
   ["합성 구리 스크랩, 얼룩 없음, 끈적한 막", "추가 정보 필요"],
+  ["구리 스크랩, 잔여물 있음", "추가 정보 필요"],
+  ["구리판, 얼룩 없음", "기계적 재활용 추천"],
+  ["합성 구리 스크랩", "기계적 재활용 추천", "막·잔여물·이물 없음"],
   ...ambiguousUnplatedDescriptions.map(description => [description, "검토 필요"] as const),
 ] as const;
 
-for (const [description, heading] of nativeDescriptions) {
+for (const [description, heading, contamination = "없음"] of nativeCases) {
   test(`native copper report and raw export: ${description}`, async () => {
     const origin = "http://localhost:3000";
     const app = createResourceApp({ origin });
     const fields = { polymer: "구리", process: "사업장일반폐기물, 기계 가공 공정에서 나온 구리 절삭 스크랩",
-      contamination: "없음", description,
+      contamination, description,
       hazardousContact: "no", massKg: "180", region: "경기", assessmentDate: base.assessmentDate };
     try {
       const home = await app.fetch(new Request(origin));

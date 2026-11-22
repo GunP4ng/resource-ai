@@ -1,6 +1,6 @@
 {
   "inputFile": "inputs.json",
-  "sourceHash": "33719f65dd9ee09e7182fc0799189b43234f892be68b0704f9bc3ff0facc0b14",
+  "sourceHash": "4e71612563939cbcf0abbf6df608cbe73d1454cc9903deac59a287b6a9b019dd",
   "canonicalInputHash": "src/o-validation.ts revision",
   "cases": [
     {
@@ -514,6 +514,18 @@
     {
       "caseId": "RESIDUE-ordinary-words",
       "inputSha256": "7d5ada59c9519fd79bbfd62c173fb5f06f75c4ab5bd6ea2616c5e6e256c083aa"
+    },
+    {
+      "caseId": "RESIDUE-LEAD-leftover",
+      "inputSha256": "289337283278c037e9657288b113559932de608ba922d46e889498ce94d85648"
+    },
+    {
+      "caseId": "RESIDUE-LEAD-stain-denial",
+      "inputSha256": "f9a7901e6a516f403c8d7dc652590b3a9f20fc654455e6b03cd40b2e0c65d8f9"
+    },
+    {
+      "caseId": "RESIDUE-LEAD-combined-denial",
+      "inputSha256": "178fdf24b28f2a58eb8a54d1bafd9e15eb8809974bb65b0986f85006d6d63d32"
     }
   ]
 }

@@ -2562,6 +2562,66 @@
         "region": "경기",
         "assessmentDate": "2026-11-22"
       }
+    },
+    {
+      "family": "nonferrous",
+      "condition": "lead-leftover-affirmative",
+      "expected": {
+        "state": "needs-information",
+        "reasonKey": "contaminationUnknown"
+      },
+      "input": {
+        "caseId": "RESIDUE-LEAD-leftover",
+        "description": "구리 스크랩, 잔여물 있음",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 동관 절단 가공 공정",
+        "polymer": "구리",
+        "contamination": "없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "nonferrous",
+      "condition": "lead-stain-denial",
+      "expected": {
+        "state": "compared",
+        "reasonKey": null
+      },
+      "input": {
+        "caseId": "RESIDUE-LEAD-stain-denial",
+        "description": "구리판, 얼룩 없음",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 동관 절단 가공 공정",
+        "polymer": "구리",
+        "contamination": "없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "nonferrous",
+      "condition": "lead-combined-denial",
+      "expected": {
+        "state": "compared",
+        "reasonKey": null
+      },
+      "input": {
+        "caseId": "RESIDUE-LEAD-combined-denial",
+        "description": "합성 구리 스크랩",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 동관 절단 가공 공정",
+        "polymer": "구리",
+        "contamination": "막·잔여물·이물 없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
     }
   ]
 }
