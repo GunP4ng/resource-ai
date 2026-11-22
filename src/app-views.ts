@@ -94,7 +94,7 @@ export function inputPage(options: InputView): string {
   const purpose = "<p>공정에서 나온 폐플라스틱·금속 스크랩·폐목재·종이 및 복합 포장재의 재사용·재활용·처리 대안을 검토합니다. 재질과 오염 상태를 입력하면 조건별 대안, 공개 근거와 다음 확인할 일을 보여 줍니다.</p><p>정보가 부족하거나 위험이 의심되면 실행을 보류하고, 어떤 조건을 확인해야 다음 대안을 검토할 수 있는지 안내합니다.</p>";
   const account = authenticated && localAuth
     ? `<p class="notice">로그인한 담당자 · 사례 보관 최대 1시간${runnerLabel ? ` · 검토 방식 ${runnerLabel} · 실행 성공은 평가 후 확인` : ""}</p><p>입력은 미검토 자료입니다. 로그인은 자료나 법적 승인을 뜻하지 않습니다.</p>`
-    : `<p class="notice">${connected ? "입력을 받아 검토할 준비가 됐습니다. 제출 후 결과를 확인하세요." : "사례 검토 연결을 준비 중입니다. 지금 제출하면 준비 상태를 안내합니다."}</p>
+    : `<p class="notice">${connected ? "사례 정보를 입력하세요. 제출하면 검토 결과 또는 실행 연결 상태를 안내합니다." : "사례 검토 연결을 준비 중입니다. 지금 제출하면 준비 상태를 안내합니다."}</p>
           <p>실제 자료와 합성 데모를 구분합니다. 설명·사진만으로 법적 코드나 처리 허가를 확정하지 않습니다.</p>
           <p>${authenticated ? "서버 인증 사용자" : "익명 임시 세션 · 재시작하면 사례를 복구할 수 없습니다."}${runnerLabel ? ` 구성된 실행기 ${runnerLabel} · 실행 성공은 평가 후 확인하세요.` : ""}</p>`;
   const support = authenticated && localAuth

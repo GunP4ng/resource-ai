@@ -83,6 +83,7 @@ code{font-family:ui-monospace,monospace}
 @media screen and (min-width:1280px){
   main.workspace-shell,.primary-nav.workspace-shell{max-width:var(--workspace-max);padding-inline:var(--s32)}
   .workspace-nav{display:flex;margin-block:var(--s16);font-size:var(--secondary)}
+  .mobile-editor-shortcut{display:none}
   .workspace-heading{display:block}
   .report-workspace,.input-workspace{display:grid;grid-template-columns:minmax(var(--editor-min),var(--editor-max)) minmax(0,1fr);column-gap:var(--s32);align-items:start}
   .report-workspace{grid-template-areas:"editor results" "editor records"}

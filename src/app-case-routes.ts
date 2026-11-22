@@ -144,6 +144,8 @@ export async function caseRoute(services: RouteServices, context: RouteRequest):
       ? stored.decision.state === "compared"
         ? '<p class="screen-only"><a class="primary-action secondary-action" href="#answer-fields">질량을 입력하면 비용·탄소를 계산해요</a> (선택)</p><p>견적·탄소 계수 등 근거가 있는 항목부터 계산합니다. 자료가 없으면 필요한 내용을 알려드려요.</p>'
         : '<p class="screen-only"><a class="primary-action secondary-action" href="#answer-fields">선택 정보: 질량을 입력할 수 있습니다</a></p><p>질량 입력은 선택 사항이며 보류 사유를 해제하거나 비용·탄소 계산을 보장하지 않습니다.</p>' : "";
+    const answerPrompt = optionalMass || (suffix === undefined && editable && stored.decision.state === "compared" && stored.decision.recommendations?.[0]
+      ? '<p class="screen-only mobile-editor-shortcut"><a href="#case-editor">답변·사례 수정</a></p>' : "");
     const actions = suffix === "report" ? "" : `<p class="cluster screen-only"><a href="/cases/${id}/report">상업용 보고서</a>${actor ? `<a href="/cases/${id}/report?purpose=research">비공개 연구용 보고서</a>` : ""}<a href="/cases/${id}/input">정확한 입력 내보내기</a><a href="/cases">내 사례</a></p>`;
     const editing = suffix === "report" ? "" : `${editable && stored.decision.state !== "compared" ? caseInputSummary(snapshot.input) : ""}<p>버전 ${snapshot.version}</p>${editable
       ? `<p>수정 가능 기한 (UTC): ${new Date(editDeadline).toISOString()}</p>${form(`/cases/${id}/answers`, true, snapshot.version, selection, snapshot.input)}`
@@ -154,7 +156,7 @@ export async function caseRoute(services: RouteServices, context: RouteRequest):
       execution: stored.execution ? { traceId: stored.execution.traceId, usage: stored.execution.usage ?? null } : undefined,
       ...(privateAudience && stored.modelAudit ? { modelAudit: stored.modelAudit } : {}),
       ...(privateAudience && stored.verificationPlan ? { verificationPlan: stored.verificationPlan } : {}),
-    }, audience, { notice, actions, editing, answerPrompt: suffix === "report" ? "" : optionalMass,
+    }, audience, { notice, actions, editing, answerPrompt: suffix === "report" ? "" : answerPrompt,
       researchNavigation: !!privateAudience && suffix === "report",
       ...(suffix === "report" && audience.audience === "commercial" ? { caseReturnTarget: `/cases/${caseId}` } : {}),
       ...(snapshot.evaluated.revision === revision(snapshot.input) ? { evaluatedInput: snapshot.input } : {}),
