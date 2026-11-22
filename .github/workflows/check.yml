@@ -18,6 +18,7 @@ jobs:
         with:
           bun-version: 1.4.2
       - run: bun install --frozen-lockfile --ignore-scripts
+      - run: bun audit
       - run: bun run typecheck
       - run: bun run typecheck:o-tests
       - run: bun test --timeout 30000 ./tests
