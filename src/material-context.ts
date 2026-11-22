@@ -7,10 +7,14 @@ export type MaterialStream = "ferrous" | "nonferrous" | "wood-byproduct" | "wood
 
 const oilTerms = "(?:오일|기름|유류|절삭유|윤활유|작동유|유압유|그리스|유분)";
 // Match lead as a substance, not ordinary words such as 납품, 수납 or 납작.
-const nonOilTerms = "(?:절삭액|냉각수|방청제|도금|카드뮴|크롬|석면|중금속|납땜|\\bPCB\\b|(?<![가-힣A-Za-z])납(?=$|[^가-힣A-Za-z]|(?:함유|성분|검출|오염|부착|잔류)|(?:이|은|을|과|도|의|에)(?=$|[^가-힣A-Za-z])))";
+const nonOilTerms = "(?:절삭액|냉각수|방청제|도금|카드뮴|크롬|석면|중금속|납땜|땜납|\\bPCB\\b|(?<![가-힣A-Za-z])납"
+  + "(?=$|[^가-힣A-Za-z]|(?:함유|성분|검출|오염|부착|잔류)|(?:이|은|을|과|도|의|에)(?=$|[^가-힣A-Za-z])|으로[ \\t]+오염된(?![\\p{L}\\p{M}\\p{N}\\p{Pc}])))";
 const denialTerms = `(?:도료|도장|페인트|방부(?:처리|제)?|접착(?:제)?|${oilTerms}|${nonOilTerms}|유해물질|이물질|코팅|비닐|테이프|플라스틱|복합층|복합재|라미네이트|알루미늄|PET|HDPE|LDPE|PP|PE|PS|PVC|ABS)`;
 const materialDenial = new RegExp(`(?:^|[,;.\\n])\\s*${denialTerms}(?:\\s*[·ㆍ/,]\\s*${denialTerms})*\\s*(?:처리|접촉|오염|사용|잔류)?\\s*(?:이|가)?\\s*(?:없음|없습니다|없다|하지\\s*않음|아님)(?=\\s*(?:[,;.\\n]|$))`, "giu");
 const materialHazard = new RegExp(`도료|도장|페인트|방부|접착|${oilTerms}|${nonOilTerms}|크레오소트|할로겐|\\b(?:paint(?:ed)?|preservative|oil(?:y)?|treated|adhesive|creosote)\\b`, "iu");
+
+const unplatedFields = new Set(["무도금", "무도금 구리판", "무도금 구리판 절단편"]);
+const coatingSignal = /도금|코팅|도료|도장|페인트/u;
 
 /** Like maskExplicitHazardDenial, mask complete clauses in one field, never adjoining assertions. */
 function maskMaterialDenials(value: string | null): string {
@@ -151,11 +155,13 @@ export function materialStream(input: CaseInput): MaterialStream | null {
 /** Keep affirmative risk in each field even when another field denies contact. */
 export function materialHazardReasons(input: CaseInput): readonly string[] {
   if (materialFamily(input) === null) return [];
-  const risk = [input.polymer, input.description, input.process, input.contamination].some(value => {
-    const text = maskMaterialDenials(value)
-      .replace(/\b(?:unpainted|untreated|oil-free)\b/giu, "");
-    return materialHazard.test(text);
-  });
+  const fields = [input.polymer, input.description, input.process, input.contamination];
+  const unplated = fields.map(value => unplatedFields.has((value ?? "").normalize("NFKC").trim()));
+  const masked = fields.map(maskMaterialDenials);
+  // Retain the original hazard scan when any independent coating signal remains.
+  const withoutUnplated = masked.map((value, index) => unplated[index] ? "" : value);
+  const hazardFields = withoutUnplated.some(value => coatingSignal.test(value)) ? masked : withoutUnplated;
+  const risk = hazardFields.some(value => materialHazard.test(value.replace(/\b(?:unpainted|untreated|oil-free)\b/giu, "")));
   return risk ? [safetyReasons.materialTreatment] : [];
 }
 
