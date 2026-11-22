@@ -2,7 +2,8 @@ import { randomBytes } from "node:crypto";
 import type { AppDependencies, StoredAssessment } from "./app-types.ts";
 export type { AppDependencies, AssessmentAdapter, AssessmentEnvelope } from "./app-types.ts";
 import { HttpFailure, bounded, body, caseBody, defaultBodyBytes, errorResponse, idPattern, redirect, response } from "./app-http.ts";
-import { caseInputSummary, form, loginPage, caseListPage, inputPage } from "./app-views.ts";
+import { caseInputSummary, form, caseListPage, inputPage } from "./app-views.ts";
+import { loginPage, loginRequiredPage } from "./login-views.ts";
 import { caseRoute } from "./app-case-routes.ts";
 import { demo } from "./o-demo.ts";
 import { referencePage } from "./o-reference.ts";
@@ -118,7 +119,10 @@ export function createApp(dependencies: AppDependencies) {
             throw new HttpFailure(503, "로그인 서비스에 연결하지 못했습니다.");
           }
           guard(signal);
-          if ((!actor && !reportDemo) || (actor && !/^[A-Za-z0-9_-]{1,128}$/.test(actor)) || validUntil <= now() || Number.isNaN(validUntil)) throw new HttpFailure(403, "로그인해 주세요.");
+          if ((!actor && !reportDemo) || (actor && !/^[A-Za-z0-9_-]{1,128}$/.test(actor)) || validUntil <= now() || Number.isNaN(validUntil)) {
+            if (dependencies.localAuth && request.method === "GET") return response(loginRequiredPage(), 403);
+            throw new HttpFailure(403, "로그인해 주세요.");
+          }
         }
         const identityGuard = () => {
           guard(signal);
@@ -306,7 +310,8 @@ export function createApp(dependencies: AppDependencies) {
         throw new HttpFailure(404, "페이지를 찾을 수 없습니다.");
       }, request, timeoutMs, pending);
     } catch (error) {
-      return errorResponse(error, recovery, dependencies);
+      return errorResponse(error, recovery, dependencies,
+        !!dependencies.localAuth && request.method === "POST" && new URL(request.url).pathname === "/login");
     }
   };
   return Object.assign(fetch, {
