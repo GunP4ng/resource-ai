@@ -24,6 +24,7 @@ system-ui, sans-serif를 사용하며 코드만 ui-monospace, monospace다. --bo
 
 ## 4. 간격과 레이아웃
 Layout: 결과 첫 화면 - 결론과 다음 행동을 먼저 읽기 -> stack + content-limiter (https://github.com/changeroa/StyleGallery/blob/main/patterns/stacking/stack.md); scroll owner: document; anti-patterns: 고정 높이, 중첩 세로 스크롤, 단서로 결론 밀어내기.
+Layout: 공통 헤더 - 탐색 순서 뒤에 테마 선택 -> desktop cluster / mobile disclosure stack (https://github.com/changeroa/StyleGallery/blob/main/patterns/in-line-grouping/cluster.md); scroll owner: document; anti-patterns: 제어 복제, 헤더 구분선과 터치 영역 겹침. 테마는 32px 알약 안의 상태 표시와 44px 터치 영역을 분리한다.
 --s8/12/16/20/24/32/48은 각각 8/12/16/20/24/32/48px. --target=44px, --radius=4px, --border=1px, --focus-width=2px, --focus-offset=3px. 사진 미리보기 최대 높이는 기존 240px, textarea 최소 높이는 136px. 인쇄 여백은 기존 A4 18mm다.
 
 결과·폼·보고서는 [stack](https://github.com/changeroa/StyleGallery/blob/main/patterns/stacking/stack.md)으로 세로 읽기 순서를 유지하고 [content-limiter](https://github.com/changeroa/StyleGallery/blob/main/patterns/containment/content-limiter.md)로 최대 68ch 안에 둔다. 최초 74ch에서 실제 영문 출처 설명이 한 줄 86자로 측정되어 80자 이내로 줄였다. document/body가 유일한 세로 스크롤 소유자이며 모바일 양옆은 20px이다. 탐색·동작은 줄바꿈 가능한 [cluster](https://github.com/changeroa/StyleGallery/blob/main/patterns/in-line-grouping/cluster.md)이며 DOM·시각·포커스 순서가 같다. 중첩 스크롤 shell, 고정 높이, 강제 동일 카드 높이는 없다. 표만 필요할 때 가로로 넘길 수 있고 세로 스크롤은 만들지 않는다. 사례 목록은 좁은 화면에서 행을 세로 정보로 전개한다.

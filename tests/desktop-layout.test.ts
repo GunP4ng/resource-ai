@@ -86,7 +86,7 @@ test("local operator login retains native authentication fields without the work
   await new HTMLRewriter()
     .on(".case-editor", { element() { editors++; } })
     .on("form", { element(el) { action = el.getAttribute("action") ?? ""; } })
-    .on("input", { element(el) { controls.push(el.getAttribute("name") ?? ""); } })
+    .on('form[action="/login"] input', { element(el) { controls.push(el.getAttribute("name") ?? ""); } })
     .transform(new Response(loginPage())).text();
   assert.equal(editors, 0);
   assert.equal(action, "/login");
