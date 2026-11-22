@@ -84,7 +84,7 @@ for (const [runner, label, missing] of [
   assert.ok(html.includes(`<p>모델 실행 기록 없음 · ${missing}</p>`), `missing execution disclosure for ${runner ?? "absent"}`);
   if (label) assert.ok(html.includes(`검토 방식 ${label} (설정값)`), `configured label for ${runner}`);
   else if (runner === "local") {
-    assert.match(html, /평가 당시: 운영자 · SQLite 보관/);
+    assert.match(html, /평가 당시: 운영자 · 저장소 보관/);
     assert.doesNotMatch(html, /구성된 실행기|로컬 실행|로컬 평가/);
   } else assert.match(html, /평가 당시 설정 기록 없음/);
   if (runner !== "azure") assert.ok(!html.includes("Azure"), "must not assume Azure");
@@ -109,9 +109,9 @@ test("compared report reads function results and preserves pending approval and 
   const fixture = await demo("normal");
   assert.ok(fixture && fixture.result.state === "compared");
   const html = renderReport(fixture.result, fixture.presentation);
-  assert.ok(html.includes("240,000 KRW"));
-  assert.ok(html.includes("230,000 KRW"));
-  assert.ok(html.includes("45 kgCO2e"));
+  assert.ok(html.includes("240,000 원"));
+  assert.ok(html.includes("230,000 원"));
+  assert.ok(html.includes("45 kg CO₂ 환산"));
   assert.ok(html.includes("실행·반출·계약은 현장 담당자의 승인을 받은 뒤 진행하세요."));
   assert.ok(!html.includes("현장 담당자의 승인 기록이 있습니다."));
   assert.ok(!html.includes("humanApproval:"));
@@ -135,7 +135,7 @@ test("externally supplied intervals render with their assumptions; invalid order
   assert.ok(fixture && fixture.result.state === "compared");
   const result = { ...fixture.result, scenarios: fixture.result.scenarios.map((s) => ({ ...s, netEmissions: { state: "available", low: 25, central: 45, high: 65, unit: "kgCO2e", evidenceIds: ["synthetic-evidence"], assumptions: ["지원된 외부 공동 시나리오 범위 · 독립 확률분포 아님"] } as const })) };
   const html = renderReport(result, fixture.presentation);
-  assert.ok(html.includes("45 kgCO2e (범위 25–65)"));
+  assert.ok(html.includes("45 kg CO₂ 환산 (범위 25–65)"));
   assert.ok(html.includes("우열 미정"));
   assert.throws(() => renderReport({ ...result, scenarios: result.scenarios.map((s) => ({ ...s, netEmissions: { ...s.netEmissions, low: 90 } })) }, fixture.presentation), /invalid-estimate-or-evidence/);
 });
@@ -146,7 +146,8 @@ test("summary follows approval; disclosed and printable audits retain exact assu
   const html = renderReport(fixture.result, fixture.presentation);
   const approval = html.indexOf("실행·반출·계약은 현장 담당자의 승인을 받은 뒤 진행하세요.");
   assert.ok(approval >= 0 && approval < html.indexOf("대안 비교 요약"));
-  assert.ok(html.indexOf("240,000 KRW") < html.indexOf("경로와 조건"));
+  const amountPosition = html.indexOf("240,000 원");
+  assert.ok(amountPosition >= 0 && amountPosition < html.indexOf("경로와 조건"));
   const screen = html.match(/<details class="screen-only"><summary>.*?<\/summary>([\s\S]*?)<\/details>/)?.[1];
   const print = html.match(/<div class="print-only">([\s\S]*?)<\/div>\s*<details id="advanced"/)?.[1];
   assert.ok(screen && print);
@@ -192,7 +193,7 @@ test("sales excluded from net cost keep their amount and visible audit explanati
     const disclosure = html.match(/<details class="screen-only">([\s\S]*?)<\/details>/)?.[1];
     assert.ok(disclosure);
     assert.ok(disclosure.includes(explanation));
-    assert.ok(disclosure.includes("20,000 KRW"));
+    assert.ok(disclosure.includes("20,000 원"));
   }
 });
 

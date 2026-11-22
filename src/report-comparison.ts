@@ -3,6 +3,7 @@ import type { DecisionResult, Estimate, ScenarioComparison } from "./contracts.t
 import { readableReasons } from "./report-evidence.ts";
 import { rankScenarios } from "./ranking.ts";
 import { escapeHtml, list } from "./report-html.ts";
+import { displayUnit } from "./report-copy.ts";
 type Metric = Estimate<"KRW" | "kgCO2e">;
 export type EvidenceReferences = (ids: readonly string[]) => string;
 
@@ -11,7 +12,7 @@ export function metric(value: Metric, references: EvidenceReferences, shared: re
     case "unavailable":
       return `<strong>계산 불가</strong>${list(readableReasons(value.missingInputs))}`;
     case "available": {
-      const amount = `${escapeHtml(value.central.toLocaleString("ko-KR", { maximumFractionDigits: 3 }))} ${escapeHtml(value.unit)}`;
+      const amount = `${escapeHtml(value.central.toLocaleString("ko-KR", { maximumFractionDigits: 3 }))} ${escapeHtml(displayUnit(value.unit))}`;
       const range = value.low !== value.high ? ` (범위 ${escapeHtml(String(value.low))}–${escapeHtml(String(value.high))})` : "";
       if (compact) return `${amount}${range}${list(readableReasons(value.assumptions.filter((note) => /대체효과 제외 경계/.test(note))))}`;
       const assumptions = value.assumptions.filter((item) => !shared.includes(item));
@@ -52,7 +53,7 @@ export function comparisonSummary(scenarios: readonly ScenarioComparison[], labe
 export function prioritySummary(result: Extract<DecisionResult, { state: "compared" }>, labels: readonly string[], references: EvidenceReferences): string {
   const priorities = rankScenarios(result.scenarios, result.routes);
   return `<section aria-labelledby="priority-heading"><h2 id="priority-heading">후보 우선순위</h2>
-    <p>적합성을 충족한 후보는 사업자 순비용(KRW)과 순배출(kgCO2e)이 작을수록 앞섭니다. 같은 기능단위·계산 경계에서 두 지표의 최악값이 상대 최선값 이하이고 하나라도 더 작으면 우월합니다. 우월한 후보부터 순위군을 매깁니다.</p>
+    <p>적합성을 충족한 후보는 사업자 순비용과 온실가스 순배출량이 작을수록 앞섭니다. 같은 기능단위·계산 경계에서 두 지표의 최악값이 상대 최선값 이하이고 하나라도 더 작으면 우월합니다. 우월한 후보부터 순위군을 매깁니다.</p>
     <p>같은 군 안의 동률·상충·범위 겹침은 우열 미정입니다. 군 안의 표시 순서는 입력 순서입니다. 자료가 부족한 후보는 순위 보류로 표시합니다.</p>
     <ol>${priorities.map((priority) => {
       const scenario = result.scenarios[priority.scenarioIndex];

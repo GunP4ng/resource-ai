@@ -1,4 +1,4 @@
-import { displayGuidanceOutput } from "./report-copy.ts";
+import { displayGuidanceOutput, displayLocator, displaySourcePeriod, displayUnit } from "./report-copy.ts";
 import type { CaseGuidance, GuidanceStage } from "./o-case-guidance.ts";
 import type { ReportContext, ReportPresentation } from "./report.ts";
 import type { DecisionResult } from "./contracts.ts";
@@ -6,7 +6,6 @@ import type { ScenarioSensitivity } from "./o-scenario-sensitivity.ts";
 import { escapeHtml, list, safeLink } from "./report-html.ts";
 import { rawReasons, readableReason, readableReasons } from "./report-evidence.ts";
 import { renderModelHostAudit } from "./report-model-audit.ts";
-import { koreanSourceDate } from "./report-date.ts";
 
 type Names = Readonly<Record<string, string>>;
 const number = (value: number, digits: number) => value.toLocaleString("ko-KR", { maximumFractionDigits: digits });
@@ -60,14 +59,14 @@ export function resultMetrics(result: DecisionResult, context: ReportContext): s
   const rows = [
     { key: "cost", name: "실제 비용 차이", value: canCompare ? comparison.costAdvantageKrw : null, unit: "원",
       missing: "비교할 견적이 부족해요. 두 처리 경로의 업체 견적을 같은 조건으로 받아 주세요." },
-    { key: "carbon", name: "실제 탄소 차이", value: canCompare ? comparison.carbonAdvantageKgCo2e : null, unit: "kgCO2e",
+    { key: "carbon", name: "실제 탄소 차이", value: canCompare ? comparison.carbonAdvantageKgCo2e : null, unit: displayUnit("kgCO2e"),
       missing: "두 경로를 비교할 배출 자료가 부족해요. 처리량과 공정별 배출계수를 확인해 주세요." },
   ];
   return `<section class="result-metrics screen-only" aria-label="비용·탄소와 참고가격">${rows.map(row => `<article data-result-metric="${row.key}"><h2>${row.name}</h2><p class="metric-value">${row.value == null ? "비교 자료 필요" : `${number(row.value, row.key === "cost" ? 0 : 2)} <span>${row.unit}</span>`}</p>
     <p>${row.value == null ? result.state === "compared" ? row.missing : "검토가 보류돼 아직 비교할 수 없어요. 아래 질문과 보류 사유를 먼저 확인해 주세요." : "실제 2순위 − 1순위 · 양수이면 1순위가 낮습니다."}</p>
     <a href="${row.value == null ? result.state === "compared" ? "#decision-detail" : "#case-reasons" : "#guidance-stage-5"}">${row.value == null ? "필요한 자료 보기" : "비교 조건 보기"}</a></article>`).join("")}
-    <article data-result-metric="price"><h2>참고 매각가격</h2><p class="metric-value">${reference?.source_value != null && source && href ? `${number(reference.source_value, 3)} <span>${escapeHtml(reference.source_unit ?? reference.unit)}</span>` : "참고 단가 없음"}</p>
-    ${reference?.source_value != null && source && href ? `<p>${escapeHtml(material ?? "")} · ${escapeHtml(reference.geography)} · ${escapeHtml(koreanSourceDate(reference.period))}<br>공개 참고값 · 사례 견적은 업체에 확인하세요.</p><details><summary>가격 출처와 적용 범위</summary><a href="${href}" rel="noreferrer">${escapeHtml(source.title)}</a><p>${escapeHtml(source.locator)} · ${escapeHtml(reference.quality_grade)} · VAT ${escapeHtml(reference.tax_basis)}</p></details>` : '<p>이 사례에 표시할 공개 단가가 없어요. 실제 매각가는 재질과 등급을 알려 주고 업체에 문의해 주세요.</p><a href="#decision-detail">산정 조건 보기</a>'}</article></section>`;
+    <article data-result-metric="price"><h2>참고 매각가격</h2><p class="metric-value">${reference?.source_value != null && source && href ? `${number(reference.source_value, 3)} <span>${escapeHtml(displayUnit(reference.source_unit ?? reference.unit))}</span>` : "참고 단가 없음"}</p>
+    ${reference?.source_value != null && source && href ? `<p>${escapeHtml(material ?? "")} · ${escapeHtml(reference.geography)} · ${escapeHtml(displaySourcePeriod(reference.period))}<br>공개 참고값 · 사례 견적은 업체에 확인하세요.</p><details><summary>가격 출처와 적용 범위</summary><a href="${href}" rel="noreferrer">${escapeHtml(source.title)}</a><p>${escapeHtml(displayLocator(source.locator))} · ${escapeHtml(reference.quality_grade === "compressed_mixed_colour" ? "혼합 색상 압축품" : reference.quality_grade)} · 부가세 ${escapeHtml(reference.tax_basis === "unverified" ? "확인 필요" : reference.tax_basis)}</p></details>` : '<p>이 사례에 표시할 공개 단가가 없어요. 실제 매각가는 재질과 등급을 알려 주고 업체에 문의해 주세요.</p><a href="#decision-detail">산정 조건 보기</a>'}</article></section>`;
 }
 
 export function publicCaseProgress(stages: readonly Pick<GuidanceStage, "stage" | "name" | "status" | "reasons">[] = ([1, 2, 3, 4, 5, 6] as const).map(stage => ({ stage, name: stageNames[stage - 1] ?? "", status: "missing", reasons: ["단계별 자료를 연결하면 진행 상태를 확인할 수 있습니다."] }))): string {
@@ -87,7 +86,7 @@ export function guidanceScenarioConclusion(guidance: CaseGuidance, names: Names)
       const condition = scenario.feeBound ? " 및 소각단가 0원/t 이상" : "";
       const first = (names[scenario.firstRouteId] ?? scenario.firstRouteId).replace(/ 시나리오$/u, "");
       const second = (names[scenario.hypotheticalRunnerUpRouteId] ?? scenario.hypotheticalRunnerUpRouteId).replace(/ 시나리오$/u, "");
-      return `가정표에서 ${first}은 ${second}보다 비용 약 ${number(difference.costAdvantageKrw, 0)}원·탄소 약 ${number(difference.carbonAdvantageKgCo2e, 2)}kgCO2e가 낮거나 같아 조건부 최적안입니다(규정·허가·인수${condition} 조건).`;
+      return `가정표에서 ${first}은 ${second}보다 비용 약 ${number(difference.costAdvantageKrw, 0)}원·탄소 약 ${number(difference.carbonAdvantageKgCo2e, 2)} ${displayUnit("kgCO2e")}가 낮거나 같아 조건부 최적안입니다(규정·허가·인수${condition} 조건).`;
     }
   }
   return undefined;
@@ -99,7 +98,7 @@ export function guidanceConclusion(guidance: CaseGuidance, names: Names): string
     return `현재 ${names[comparison.firstRouteId] ?? comparison.firstRouteId}만 추천 후보입니다. 실제 2순위와 비용·탄소를 비교할 근거는 아직 없습니다.`;
   }
   if (!comparison.firstRouteId || !comparison.secondRouteId) return undefined;
-  return `${names[comparison.firstRouteId] ?? comparison.firstRouteId}과 2순위 ${names[comparison.secondRouteId] ?? comparison.secondRouteId}의 차이(2순위 − 1순위): 비용 ${comparison.costAdvantageKrw === null ? "자료 필요" : `${number(comparison.costAdvantageKrw, 0)}원`}, 탄소 ${comparison.carbonAdvantageKgCo2e === null ? "자료 필요" : `${number(comparison.carbonAdvantageKgCo2e, 2)}kgCO2e`}. 규정·허가·인수 조건은 따로 확인하세요.`;
+  return `${names[comparison.firstRouteId] ?? comparison.firstRouteId}과 2순위 ${names[comparison.secondRouteId] ?? comparison.secondRouteId}의 차이(2순위 − 1순위): 비용 ${comparison.costAdvantageKrw === null ? "자료 필요" : `${number(comparison.costAdvantageKrw, 0)}원`}, 탄소 ${comparison.carbonAdvantageKgCo2e === null ? "자료 필요" : `${number(comparison.carbonAdvantageKgCo2e, 2)} ${displayUnit("kgCO2e")}`}. 규정·허가·인수 조건은 따로 확인하세요.`;
 }
 
 export function guidanceProgress(guidance: CaseGuidance, presentation: ReportPresentation, names: Names): string {
@@ -167,8 +166,8 @@ export function guidanceStability(guidance: CaseGuidance, names: Names): string 
       : `<p>현재 자료로는 모든 대안에서 비용·탄소 순위가 유지되는지 확인하지 못했습니다.</p>${list(readableReasons(scenario.unavailableReasons))}`}
     <p>${bound ? "소각단가 0원은 조건 검사를 위한 가정입니다. 실제 단가는 견적으로 확인하세요. " : ""}실제 추천 2순위가 아닙니다. 허가·인수는 업체에 확인하세요.</p>
     <details><summary>계산 범위와 가정</summary>
-      <p>목적: ${escapeHtml(readableReason(scenario.objective))} · 경계: ${escapeHtml(scenario.boundary ?? "자료 필요")}</p>
-      ${bound ? `<p>소각과 비용이 같아지는 단가: ${escapeHtml(String(bound.sufficientMinimum))} KRW/t. 식: (선두 비용 − 소각단가 0 가정의 계산값) ÷ 질량(t). 수집·운송비는 원래 값을 씁니다.</p>` : ""}
+      <p>목적: ${escapeHtml(readableReason(scenario.objective))} · 경계: ${escapeHtml(scenario.boundary === "EPA-WARM-v16-US-default-net-lifecycle" ? "미국 환경보호청 WARM 16판의 미국 기본 조건, 순 전과정" : scenario.boundary ?? "자료 필요")}</p>
+      ${bound ? `<p>소각과 비용이 같아지는 단가: ${escapeHtml(String(bound.sufficientMinimum))} 원/t. 식: (선두 비용 − 소각단가 0 가정의 계산값) ÷ 질량(t). 수집·운송비는 원래 값을 씁니다.</p>` : ""}
       ${list(readableReasons(scenario.assumptions))}
       <p>수율·가격·운송·계수는 고정했습니다. 2순위가 없으면 값이 모두 있는 경로를 비교 대상으로 씁니다.</p>
       <p>원본 ${escapeHtml(scenario.provenance.parentFixtureSha256)} · 준비 데이터 ${escapeHtml(scenario.provenance.preparedDatasetSha256)}
@@ -213,7 +212,7 @@ export function guidanceOneFact(guidance: CaseGuidance, names: Names): string {
 export function guidanceSensitivity(value: ScenarioSensitivity, names: Names): string {
   const retained = value.samples.filter(sample => sample.retained).length;
   return `<section id="price-allocation-sensitivity"><h2>가격·배분이 달라질 때</h2>
-    <p>기준 가격 ${number(value.basePrice, 0)} ${escapeHtml(value.priceUnit)}의 80%·100%·120%와 모델 배분 0.6·0.8·1을 조합했습니다.
+    <p>기준 가격 ${number(value.basePrice, 0)} ${escapeHtml(displayUnit(value.priceUnit))}의 80%·100%·120%와 모델 배분 0.6·0.8·1을 조합했습니다.
       <strong>9개 가정 중 ${retained}개에서 ${escapeHtml(names[value.baselineRouteId] ?? value.baselineRouteId)}의 조건부 우위가 유지됩니다.</strong></p>
     <p>소각비는 아직 확보하지 못했고, 각 칸은 소각단가 0원/t 이상을 가정합니다. 배분 비율은 모델 가정이며 실측 회수율·대체율이 아닙니다.
       표의 9개 점만 계산했습니다. 점 사이 값과 범위 밖은 보장하지 않으며 실제 추천·승인도 아닙니다.</p>
@@ -223,18 +222,18 @@ export function guidanceSensitivity(value: ScenarioSensitivity, names: Names): s
         .map(sample => `<td data-sensitivity-cell="${sample.allocation}:${sample.priceMultiplier}" data-retained="${sample.retained}">${sample.retained ? "우위 유지" : "미확정"}</td>`).join("")}</tr>`).join("")}</tbody></table></div>
     <h3>판매단가 교차점 (소각단가 0 가정)</h3>
     <ul>${value.priceCrossovers.map(row => `<li data-price-crossover="${row.allocation}">배분 ${row.allocation}:
-      ${row.minimumPrice === null ? "미확정" : `약 ${number(row.minimumPrice, 2)} ${escapeHtml(value.priceUnit === "KRW/metric_tonne" ? "원/t (1,000kg)" : value.priceUnit)}`}</li>`).join("")}</ul>
+      ${row.minimumPrice === null ? "미확정" : `약 ${number(row.minimumPrice, 2)} ${escapeHtml(displayUnit(value.priceUnit))}`}</li>`).join("")}</ul>
     <p><strong>소각단가 0원/t일 때 판매단가가 이 값보다 낮으면 결론이 바뀝니다:</strong> 재활용이 비용·탄소 모두 앞서는 조건이 깨집니다.
       교차점에서 제한 경로와 비용이 같습니다. 실제 소각단가가 더 높으면 경계도 달라집니다. 경로 전환은 현장 승인 후 결정하세요.
       교차점이 음수면 판매단가 0 이상 범위에는 이 경계가 없습니다.</p>
     <details><summary>교차 단가의 계산식·정밀값</summary>
       <p>판매단가 0으로 계산한 (재활용 순비용 − 각 비교 경로 순비용) ÷ 재활용 배분 질량(t)의 최댓값입니다.
-        배분별 탄소가 모든 비교 경로 이하일 때 표시합니다. 나머지 단가·거리·계수는 고정했고 실제 소각단가는 null로 남깁니다.</p>
+        배분별 탄소가 모든 비교 경로 이하일 때 표시합니다. 나머지 단가·거리·계수는 고정했고 실제 소각단가는 미확보로 남깁니다.</p>
       <ul>${value.priceCrossovers.map(row => `<li>배분 ${row.allocation}: ${row.minimumPrice === null
-        ? escapeHtml(row.unavailableReason ?? "자료 필요") : `${escapeHtml(String(row.minimumPrice))} ${escapeHtml(value.priceUnit)} · 제한 경로 ${escapeHtml(row.limitingRouteIds.map(id => names[id] ?? id).join(", "))}`}</li>`).join("")}</ul>
+        ? escapeHtml(row.unavailableReason ?? "자료 필요") : `${escapeHtml(String(row.minimumPrice))} ${escapeHtml(displayUnit(value.priceUnit))} · 제한 경로 ${escapeHtml(row.limitingRouteIds.map(id => names[id] ?? id).join(", "))}`}</li>`).join("")}</ul>
       <p>고정된 선형 비용식에서 구한 가격 경계입니다.</p></details>
-    <details><summary>각 가정의 단가·소각비 조건</summary><ul>${value.samples.map(sample => `<li>배분 ${sample.allocation} · 가격 ${number(sample.price, 0)} ${escapeHtml(value.priceUnit)}:
-      ${sample.feeMinimum === null ? "충분한 소각비 경계 미확보" : `계산상 소각비 충분 하한 ${number(sample.feeMinimum, 2)} KRW/t`}
+    <details><summary>각 가정의 단가·소각비 조건</summary><ul>${value.samples.map(sample => `<li>배분 ${sample.allocation} · 가격 ${number(sample.price, 0)} ${escapeHtml(displayUnit(value.priceUnit))}:
+      ${sample.feeMinimum === null ? "충분한 소각비 경계 미확보" : `계산상 소각비 충분 하한 ${number(sample.feeMinimum, 2)} 원/t`}
       ${list(readableReasons(sample.reasons))}</li>`).join("")}</ul>
       <p>거리·처리비·미국 WARM 경계와 원본 입력은 고정했습니다. 가격은 참고값이며 견적은 업체에서 받으세요.
         기준 준비 데이터 ${escapeHtml(value.preparedDatasetSha256)}</p></details></section>`;

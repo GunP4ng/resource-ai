@@ -7,8 +7,40 @@ import { createResourceDomain } from "../src/domain.ts";
 import { buildPublicInputScenario } from "../src/o-input-public-scenario.ts";
 import { buildCalculationVariant } from "../src/o-calculation-variant.ts";
 import { revision } from "../src/o-validation.ts";
+import { renderInquiryReply } from "../src/report-inquiry-reply.ts";
+import { replyAmountOptions } from "../src/o-inquiry-reply.ts";
 
 const origin = "http://localhost:3000";
+test("Korean reply rendering preserves submitted model units and closed original assumptions", async () => {
+  const catalog = await readCaseResearchCatalog();
+  const source = catalog.calculations.data.cases[0];
+  assert.ok(source);
+  const input = source.original;
+  const baseline = buildPublicInputScenario({ actorId: "display-owner", input, inputRevision: revision(input) }, catalog);
+  assert.ok(baseline);
+  const options = replyAmountOptions(baseline, "PET");
+  const variant = buildCalculationVariant(baseline, [{ inputId: "f_inc", value: 0 }], "Original assumption & identity");
+  const html = renderInquiryReply({ caseId: input.caseId, version: 1, inputRevision: revision(input),
+    options, blockedReason: null, comparison: { baseline, variants: [variant] },
+    replies: [{ companyName: "Original Company", acceptance: "unknown", permitCheckDate: "",
+      sourceNote: "Original source note", amounts: [{ inputId: "f_inc", label: "소각 처리비", unit: "KRW/metric_tonne", amount: 0 }] }] });
+  const wireUnits: string[] = [];
+  let labels = "", originals = "", open = false;
+  await new HTMLRewriter().on('input[type="hidden"][name^="unit_"]', {
+    element(element) { wireUnits.push(element.getAttribute("value") ?? ""); },
+  }).on("form label", { text(chunk) { labels += chunk.text; } })
+    .on("[data-reply-provenance] details", {
+      element(element) { open ||= element.hasAttribute("open"); },
+      text(chunk) { originals += chunk.text; },
+    }).transform(new Response(html)).text();
+  assert.deepEqual(wireUnits, options.map(option => option.unit));
+  assert.match(labels, /원\/t/);
+  assert.doesNotMatch(labels, /KRW/);
+  assert.equal(open, false);
+  for (const assumption of variant.assumptions) assert.ok(originals.replaceAll("&amp;", "&").includes(assumption));
+  assert.ok(html.includes("Original Company"));
+  assert.ok(html.includes("Original source note"));
+});
 async function setup(material: "PET" | "HDPE" = "PET") {
   const catalog = await readCaseResearchCatalog();
   const source = catalog.calculations.data.cases.find(item => item.material === material);

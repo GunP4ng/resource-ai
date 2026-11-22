@@ -1,4 +1,4 @@
-import { displayReason } from "./report-copy.ts";
+import { displayLawTitle, displayLawVersion, displayLocator, displayReason } from "./report-copy.ts";
 import registryJson from "../data/sources/evidence-candidates.json" with { type: "json" };
 import { loadEvidenceRegistry } from "./evidence-registry.ts";
 import { sourceManifest } from "./sources.ts";
@@ -58,13 +58,15 @@ export function evidenceSection(result: DecisionResult): string {
     const page = candidate?.record.locator.match(/PDF\s*(\d+)쪽/);
     const originalUrl = original?.downloadUrl ?? original?.url ?? evidence.url;
     const url = safeLink(page && original ? `${originalUrl}#page=${page[1]}` : originalUrl);
-    const title = url === null ? escapeHtml(evidence.title) : `<a class="source-link" href="${url}" rel="noreferrer">${escapeHtml(evidence.title)} · 원문 열기</a>`;
+    const label = escapeHtml(displayLawTitle(evidence.title));
+    const title = url === null ? label : `<a class="source-link" href="${url}" rel="noreferrer">${label} · 원문 열기</a>`;
     return `<section id="evidence-${index + 1}"><h3>[${index + 1}] ${title}</h3>
       ${provenance ? `<blockquote>${escapeHtml(provenance.quote)}</blockquote>` : "<p>등록된 발췌가 없습니다. 아래 원문 위치에서 확인하세요.</p>"}
-      <p>${escapeHtml(evidence.publisher)} · ${escapeHtml(evidence.locator)}</p>
-      <p>시행본 ${escapeHtml(evidence.datasetVersion)} · 조회 ${escapeHtml(koreanSourceDate(evidence.retrievedAt))}</p>
+      <p>${escapeHtml(evidence.publisher)} · ${escapeHtml(displayLocator(evidence.locator))}</p>
+      <p>시행본 ${escapeHtml(displayLawVersion(evidence.datasetVersion))} · 조회 ${escapeHtml(koreanSourceDate(evidence.retrievedAt))}</p>
       <p>사용권 ${escapeHtml(evidence.license ?? "미확인")} · 확인 ${evidence.licenseVerified ? "예" : "아니오"}</p>
       <details><summary>근거 식별자와 원본 해시 보기</summary><p>출처 ID ${escapeHtml(evidence.sourceId)} · SHA-256 ${escapeHtml(evidence.sha256)}</p>
+      ${displayLawVersion(evidence.datasetVersion) !== evidence.datasetVersion ? `<p>자료 기준 원문: ${escapeHtml(evidence.datasetVersion)}</p>` : ""}
       ${provenance ? `<p>원본 ${escapeHtml(provenance.originalSourceId ?? "미확인")} · SHA-256 ${escapeHtml(provenance.originalSha256 ?? "미확인")}</p>` : ""}</details></section>`;
   }).join("") : "<p>연결된 근거 없음</p>"}</section>`;
 }

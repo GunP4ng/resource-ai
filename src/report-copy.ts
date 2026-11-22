@@ -1,5 +1,52 @@
+import { koreanSourceDate } from "./report-date.ts";
+
+const unitLabels: Readonly<Record<string, string>> = {
+  KRW: "원", "KRW/kg": "원/kg", "KRW/t": "원/t", "KRW/trip": "원/회",
+  "KRW/metric_tonne": "원/t", "KRW/(metric_tonne*km)": "원/(t·km)",
+  kgCO2e: "kg CO₂ 환산", "kgCO2e/kg": "kg CO₂ 환산/kg",
+  "kg CO2 eq.": "kg CO₂ 환산", "tCO2e/MWh": "MWh당 CO₂ 환산 t",
+  "MTCO2e/US_short_ton": "미국식 톤당 CO₂ 환산 t", "MTCO2e/short ton": "미국식 톤당 CO₂ 환산 t",
+  metric_tonne: "t", fraction: "비율",
+};
+
+export function displayUnit(value: string): string {
+  return unitLabels[value] ?? value;
+}
+
+export function displaySourcePeriod(value: string): string {
+  const price = /^survey (\d{4})-(\d{2})-(\d{2}); published (\d{4})-(\d{2})-(\d{2})$/u.exec(value);
+  if (price && price[1] === price[4]) {
+    return `조사 ${Number(price[2])}월 ${Number(price[3])}일 · 공표 ${Number(price[5])}월 ${Number(price[6])}일`;
+  }
+  return koreanSourceDate(value)
+    .replace(/^survey /u, "조사 ").replace(/; published /u, " · 공표 ")
+    .replace(/^publisher modified /u, "발행처 수정 ")
+    .replace(/^December (\d{4}); upstream /u, "$1년 12월 · 기초 자료 ");
+}
+
+export function displayLocator(value: string): string {
+  return value
+    .replace(/^CSV row (\d+), column (.+)$/u, "CSV $1행 · $2 열")
+    .replace(/^CSV header-inclusive rows ([\d/]+); columns ([\d/]+)$/u, "CSV 머리글 포함 $1행 · $2열");
+}
+
+export function displayLawVersion(value: string): string {
+  return koreanSourceDate(value.replace(/\blsiSeq=(\d+)/gu, "법령 일련번호 $1").replace(/\badmRulSeq=(\d+)/gu, "행정규칙 일련번호 $1"));
+}
+
+const lawSubjects: Readonly<Record<string, string>> = {
+  "metal/iron": "철 스크랩", "metal/nonferrous": "비철금속 스크랩",
+  "wood/raw-byproduct": "원목 가공 부산물", "wood/raw-listed": "무처리 폐목재",
+  "paper/ordinary": "일반 폐종이",
+};
+export function displayLawTitle(value: string): string {
+  return value.replace(/\b(?:metal\/(?:iron|nonferrous)|wood\/raw-(?:byproduct|listed)|paper\/ordinary)\b/gu, subject => lawSubjects[subject] ?? subject);
+}
+
 /** Exact host wording only. Keep raw identity and escape the display text. */
 const reasonCopy: Readonly<Record<string, string>> = {
+  "정보 부족·검토 예시는 작성된 고정 fixture이며 H1/H3 또는 모델의 판정이 아닙니다.": "정보 부족·검토 화면은 미리 만든 예시입니다. 모델이 새로 판정한 결과가 아닙니다.",
+  "실제 허가·견적·배출계수와 H1/H4·Azure 통합은 미연결입니다.": "이 예시에는 실제 허가·견적·배출계수나 외부 서비스가 연결되지 않았습니다.",
   "사용자가 신고한 미검증 업체 회신 금액을 동일한 모델 단위로 가정했습니다. 실제 승인·업체 사실·확정 견적이 아닙니다.": "사용자가 신고한 업체 회신 금액을 같은 모델 단위로 넣어 가정 계산했습니다. 업체가 확인한 견적이 아니므로 확정 견적은 업체에서 받으세요.",
   "재사용하려는 용도·방식과 해당 사례에 적용할 기준 및 충족 여부를 확인해야 합니다.": "재사용 용도·방식을 정하고, 적용 기준을 충족하는지 확인하세요.",
   "실제 재활용 처리 공정·생산물 용도와 해당 사례에 적용할 유형·세부기준 및 충족 여부를 확인해야 합니다.": "재활용 공정과 생산물 용도를 정하고, 해당 유형·세부기준을 충족하는지 확인하세요.",
@@ -24,7 +71,7 @@ const reasonCopy: Readonly<Record<string, string>> = {
   "동일 기능단위·경계의 실제 1·2순위 비용 비교값이 없습니다.": "같은 기능단위·경계의 1·2순위 비용값을 확보해야 합니다.",
   "동일 기능단위·경계의 실제 1·2순위 탄소 비교값이 없습니다.": "같은 기능단위·경계의 1·2순위 탄소값을 확보해야 합니다.",
   "모든 모델 경로의 비용·탄소 구간에서 약우월성을 보장하지 못합니다. 미확보값·상충에 가중치를 임의 부여하지 않습니다.": "모든 모델 경로의 구간에서 비용·탄소가 낮거나 같은지 확인하지 못했습니다. 빈 값과 상충에는 가중치를 주지 않았습니다.",
-  "모든 다른 경로에 대해 first.cost.high <= other.cost.low 및 first.carbon.high <= other.carbon.low. 추가 불리한 변화의 합이 각 단위의 여유 이하여야 하며 경계·규정 조건은 고정입니다.": "모든 다른 경로에 대해 first.cost.high <= other.cost.low 및 first.carbon.high <= other.carbon.low. 불리한 변화의 합이 각 단위의 여유 안에 있어야 하고, 경계·규정 조건은 고정합니다.",
+  "모든 다른 경로에 대해 first.cost.high <= other.cost.low 및 first.carbon.high <= other.carbon.low. 추가 불리한 변화의 합이 각 단위의 여유 이하여야 하며 경계·규정 조건은 고정입니다.": "선두의 비용·탄소 최댓값이 각각 다른 경로의 최솟값 이하여야 합니다. 불리한 변화는 각 지표의 여유 안에 있어야 하고, 경계·규정 조건은 그대로 둡니다.",
   "기존 공개 규칙만 격리된 가설 입력에 실행합니다. 실제 입력·결정·엄격 적격성·승인은 바꾸지 않습니다.": "공개 규칙을 가설 입력에 따로 적용한 결과입니다. 실제 입력과 판정은 그대로입니다.",
   "열린 경로 수는 새 추천 또는 새 route-supported 안내의 합집합이며 허가·인수·실행 가능 경로 수가 아닙니다.": "열린 경로 수는 새로 추천되거나 근거가 생긴 경로를 센 값입니다. 허가·인수는 따로 확인하세요.",
   "가설은 검증된 사실이 아닙니다. 제시한 사실을 자료로 확인한 뒤 원래 평가 흐름에서 재평가해야 합니다.": "가설 사실을 자료로 확인한 뒤 입력에 반영해 다시 평가하세요.",
@@ -56,8 +103,8 @@ const reasonCopy: Readonly<Record<string, string>> = {
   "오염·접촉 이력에 미확인 내용이 있습니다. 이전 내용물·접촉 물질명과 SDS 등 확인 자료, 잔류물·세척 확인 자료가 있나요? 확인 전에는 세척 여부만으로 유해물질 접촉이 없었다고 확정하지 않습니다.": "오염·접촉 이력에 확인되지 않은 내용이 있습니다. 이전 내용물·접촉 물질명, SDS 등 자료, 잔류물·세척 확인 자료가 있나요? 세척했다는 사실만으로는 유해물질 접촉 없음으로 보지 않습니다.",
   "유해물질 접촉이 보고되었습니다. 접촉 물질·시험 자료와 지정폐기물 해당 여부를 별도 검토해야 합니다.": "유해물질 접촉이 신고되었습니다. 접촉 물질·시험 자료로 지정폐기물 해당 여부를 검토하세요.",
   "공개 시나리오의 수율·가격·거리·수거·선별·처리비와 WARM 계수를 고정합니다. 현장 관측값이나 견적이 아닙니다.": "공개 시나리오의 수율·가격·거리·수거·선별·처리비와 WARM 계수를 고정한 계산입니다.",
-  "이 충분조건은 실제 소각비 f_inc가 null인 입력에 한정됩니다. f_inc >= 0 KRW/t는 관측값이 아닌 명시적인 가정입니다.": "이 조건은 소각비 f_inc가 null인 입력에 적용합니다. f_inc >= 0 KRW/t는 가정입니다.",
-  "비용(KRW)과 탄소(kgCO2e)를 각각 최소화하며 가중합을 만들지 않습니다.": "비용(KRW)과 탄소(kgCO2e)를 각각 최소화합니다.",
+  "이 충분조건은 실제 소각비 f_inc가 null인 입력에 한정됩니다. f_inc >= 0 KRW/t는 관측값이 아닌 명시적인 가정입니다.": "실제 소각비가 없을 때만 적용합니다. 소각비가 톤당 0원 이상이라는 값은 가정입니다.",
+  "비용(KRW)과 탄소(kgCO2e)를 각각 최소화하며 가중합을 만들지 않습니다.": "비용과 탄소를 각각 줄이는 경로를 찾습니다.",
   "미국 WARM 경계·내재 운송·재활용 배분 가정을 유지합니다. 수율은 실제 대체율 검증이 아닙니다.": "미국 WARM 경계, 내재 운송, 재활용 배분 가정을 그대로 씁니다. 수율은 모델 가정값입니다.",
   "모델링한 세 경로만 비교합니다. 실제 허가·업체 인수·실행 승인 또는 실제 추천 2순위를 뜻하지 않습니다.": "모델링한 세 경로만 비교한 결과입니다. 실제 추천 2순위가 아닙니다. 허가·업체 인수·실행 승인은 따로 확인하세요.",
   "comparisonOrder와 가상 차순위는 비용·탄소가 모두 확보된 행 사이의 순서이며 누락 비용 경로를 포함한 전체 차순위가 아닙니다.": "가정 차순위는 비용·탄소가 모두 있는 경로끼리 매긴 순서입니다.",
@@ -65,7 +112,7 @@ const reasonCopy: Readonly<Record<string, string>> = {
   "현재 경계와 미확보값으로 조건부 최적 경로를 증명할 수 없습니다.": "현재 자료로는 조건부 최적 경로가 정해지지 않습니다.",
   "단일 PET/HDPE 시나리오와 양의 질량이 필요합니다. 혼합·미확인 수지는 수치 대응하지 않습니다.": "단일 PET 또는 HDPE와 0보다 큰 질량이 필요합니다.",
   "세 모델 경로 모두의 동일 경계 탄소값이 필요합니다. 누락 차원을 임의로 채우지 않습니다.": "세 모델 경로 모두 같은 경계의 탄소값이 필요합니다.",
-  "이 충분조건은 실제 f_inc=null이고 소각 비용에서 f_inc만 미확보인 고정 모델에 한정됩니다.": "이 충분조건은 실제 f_inc가 null이고 소각비에서 f_inc만 빠진 고정 모델에만 적용합니다.",
+  "이 충분조건은 실제 f_inc=null이고 소각 비용에서 f_inc만 미확보인 고정 모델에 한정됩니다.": "실제 소각 처리단가만 미확보이고 나머지 조건을 고정한 경우에만 적용합니다.",
   "소각비 외의 비용 미확보값이 있어 충분한 경계를 만들 수 없습니다.": "소각비 외에도 빠진 비용이 있어 경계를 계산하지 않았습니다.",
   "비용·탄소 간 상충이 있어 가중치 없는 전체 약우월 경로가 없습니다.": "비용과 탄소가 엇갈려 둘 다 낮거나 같은 경로가 없습니다.",
   "기존 엔진의 격리된 0원 소각비 가설 계산에서 절편을 확보하지 못했습니다.": "소각비 0원 가정 계산이 실패해 경계를 구하지 못했습니다.",
