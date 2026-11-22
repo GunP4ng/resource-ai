@@ -100,7 +100,7 @@ code{font-family:ui-monospace,monospace}
   li{margin-block:0}
   dl{gap:var(--s8);margin-block:var(--s8)}
   tr,section[aria-labelledby="priority-heading"] li{break-inside:avoid}
-  #advanced{break-inside:avoid}
+  #advanced{break-inside:auto;break-after:avoid-page}
   #advanced p{margin-block:4pt}
   thead{display:table-header-group}
   p{orphans:3;widows:3}

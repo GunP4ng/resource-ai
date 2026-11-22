@@ -73,7 +73,8 @@ test("beforeprint reveals actual decision sections and afterprint restores discl
   details[0]!.open = true; // Keep the disclosure the reader had already opened.
   const original = details.map(detail => detail.open);
   const visible = () => segments.filter(segment => segment.ancestors.every(detail => detail.open)).map(segment => segment.text).join("");
-  const sections = ["대안 비교 요약", "서버 후보 우선순위", "경로와 조건", "사례별 업체 근거", "제약과 다음 확보 항목"];
+  const sections = ["대안 비교 요약", "서버 후보 우선순위", "경로와 조건", "사례별 업체 근거", "제약과 다음 확보 항목",
+    "사용량은 청구·비용 증빙이 아닙니다. 사진 실행은 설정이나 실행 식별자만으로 확인되지 않습니다."];
   for (const section of sections) assert.equal(visible().includes(section), false);
   const events = new Map<string, () => void>();
   runInNewContext(feedbackScript, {
@@ -92,6 +93,7 @@ test("beforeprint reveals actual decision sections and afterprint restores discl
   for (const section of sections) assert.ok(visible().includes(section), `${section} must be available to printing`);
   after(); after();
   assert.deepEqual(details.map(detail => detail.open), original);
+  for (const section of sections) assert.equal(visible().includes(section), false);
 });
 
 test("primary answer links resolve on fixed demos and legacy adapter cases", async () => {
