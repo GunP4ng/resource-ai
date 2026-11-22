@@ -2,7 +2,7 @@ import type { CaseGuidance, GuidanceStage } from "./o-case-guidance.ts";
 import type { ReportPresentation } from "./report.ts";
 import type { ScenarioSensitivity } from "./o-scenario-sensitivity.ts";
 import { escapeHtml, list } from "./report-html.ts";
-import { readableReasons } from "./report-evidence.ts";
+import { readableReason, readableReasons } from "./report-evidence.ts";
 import { renderModelHostAudit } from "./report-model-audit.ts";
 
 type Names = Readonly<Record<string, string>>;
@@ -57,7 +57,7 @@ export function guidanceProgress(guidance: CaseGuidance, presentation: ReportPre
     return list(unique.filter(item => !sharedReasons.includes(item)))
       + (unique.some(item => sharedReasons.includes(item)) ? `<p><a href="${reasonTarget}">이 사례의 사유와 필요한 확인 보기</a></p>` : "");
   };
-  const output = (text: string) => text.replace(/\b(mechanical-recycling|other-recovery|energy_recovery|recycling|landfill|disposal|reuse|route-supported|unavailable)\b/gu,
+  const output = (text: string) => readableReason(text).replace(/\b(mechanical-recycling|other-recovery|energy_recovery|recycling|landfill|disposal|reuse|route-supported|unavailable)\b/gu,
     id => names[id] ?? (id === "route-supported" ? "조건별 경로 근거 있음" : "근거 미확보"));
   let executionState: "no-model" | "recording" | "trace" | "none";
   let executionLabel: string;
@@ -94,7 +94,7 @@ export function guidanceProgress(guidance: CaseGuidance, presentation: ReportPre
         ${guidance.scenario ? `<p><strong>가정 계산:</strong> ${escapeHtml(guidanceScenarioConclusion(guidance, names) ?? "명시한 가정 범위에서도 조건부 최적성은 미확정입니다.")}</p>` : ""}
         <p>실제 추천의 수치 우위와 가정표 안의 우위는 서로 다른 판단입니다.</p>`
         : stage.stage === 3 ? `<p>연결된 근거 ${stage.outputs.length}건 · <a href="#evidence">출처와 원문 위치 보기</a></p>`
-          : stage.outputs.length ? list(stage.outputs.map(text => stage.stage === 2 || stage.stage === 5 ? output(text) : text))
+          : stage.outputs.length ? list(stage.outputs.map(output))
             : "<p>현재 연결된 산출물이 없습니다.</p>"}
       ${stage.stage === 6 ? `${showReasons(stage.reasons.filter(reason => !guidance.actualComparison.unavailableReasons.includes(reason)))}
         <p><a href="#guidance-stage-5">비용·탄소 비교 범위와 미확보 사유는 5단계에서 확인하세요.</a></p>`
@@ -140,7 +140,7 @@ export function guidanceOneFact(guidance: CaseGuidance, names: Names): string {
     <p>현재 보류와 원본 입력은 유지합니다. 아래는 확인 가정 한 항목만 바꿔 기존 공개 규칙으로 계산한 반응이며 실행 허용이 아닙니다.</p>
     ${first ? `<article data-priority-fact="${escapeHtml(first.id)}"><h3>${fieldNames[first.field]}</h3>
       <p>현재 입력(유지): ${escapeHtml(first.originalValue ?? "미확인")}</p>
-      <p><strong>${escapeHtml(first.hypothesis)}</strong></p>
+      <p><strong>${escapeHtml(readableReason(first.hypothesis))}</strong></p>
       <p>확인 가정에서 추가로 검토되는 경로: ${escapeHtml([...new Set([...first.newlyRecommendedRouteIds, ...first.newlySupportedRouteIds])].map(id => names[id] ?? id).join(", "))}.</p>
       <p>실제 경로 자격·허가·인수는 별도 확인이 필요합니다. 이 값을 확인한 사실로 자동 입력하지 않습니다.</p>
       <details><summary>그 뒤에도 확인할 사항</summary>${unknowns(first.remainingUnknowns)}</details></article>`
@@ -153,7 +153,7 @@ export function guidanceOneFact(guidance: CaseGuidance, names: Names): string {
         <p><a href="#case-reasons">이 사례에서 확보할 자료와 보류 사유 보기</a></p></article>`}
     <details><summary>확인 가정의 범위·제한</summary>${list(limitations)}</details>
     ${value.probes.length ? `<details><summary>검토한 다른 확인 가정과 반응</summary><ol>${value.probes.map(probe => `<li>
-      ${escapeHtml(probe.hypothesis)} · 추가 검토 경로 ${probe.openedPathCount}개 · 공개 규칙 상태 ${{ compared: "조건부 비교", "needs-information": "추가 정보 필요", "needs-review": "검토 필요" }[probe.resultingState]}
+      ${escapeHtml(readableReason(probe.hypothesis))} · 추가 검토 경로 ${probe.openedPathCount}개 · 공개 규칙 상태 ${{ compared: "조건부 비교", "needs-information": "추가 정보 필요", "needs-review": "검토 필요" }[probe.resultingState]}
       ${unknowns(probe.remainingUnknowns)}</li>`).join("")}</ol></details>` : ""}
     </section>`;
 }

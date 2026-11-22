@@ -36,7 +36,7 @@ function fieldText(item: ModelAuditField): string {
       ?? value.hostId ?? `호스트 미확인 식별자 SHA-256 ${value.sha256}`;
   switch (item.kind) {
     case "route": return `${routes[item.route]} · ${eligibility[item.eligibility]}`;
-    case "alternative": return `${routes[item.routeId]} · ${{ "clean-separated": "깨끗한 단일 수지 분리 확인", "contaminated-or-inseparable": "오염·분리 가능성 확인", "hazard-classification": "유해성 분류 확인", "reuse-purpose": "재사용 용도 확인" }[item.condition]} · ${item.support === "route-supported" ? "조건별 경로 근거 있음" : "경로 근거 미확보"}`;
+    case "alternative": return `${routes[item.routeId]} · ${{ "clean-separated": "깨끗한 단일 재질·품목 분리 확인", "contaminated-or-inseparable": "오염·분리 가능성 확인", "hazard-classification": "유해성 분류 확인", "reuse-purpose": "재사용 용도 확인" }[item.condition]} · ${item.support === "route-supported" ? "조건별 경로 근거 있음" : "경로 근거 미확보"}`;
     case "evidence": return `출처 ${id(item.sourceId)} · 기록 SHA-256 ${item.recordSha256}`;
     case "processor": return `업체 ${id(item.processorId)} · 인수 ${item.acceptance === "confirmed" ? "확인" : "미확인"}`;
     case "scenario": return `${id(item.routeId)} · 비용 ${availability[item.cost]} · 탄소 ${availability[item.carbon]}`;

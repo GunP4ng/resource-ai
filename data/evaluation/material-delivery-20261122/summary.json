@@ -1,0 +1,220 @@
+{
+  "scope": "Same 18 exposed original inputs; text-only as prior baseline; deterministic existing rules and engine; zero model/provider calls",
+  "cases": 18,
+  "originalHashesVerified": 18,
+  "completeDecisionsUnchanged": 18,
+  "states": {
+    "compared": 8,
+    "needs-information": 6,
+    "needs-review": 4
+  },
+  "stateChanges": 0,
+  "materialSafety": {
+    "scope": "exposed-synthetic-development",
+    "limitations": "Fixed synthetic cases with predeclared safety expectations; not an unseen dataset, legal classification or field accuracy measurement.",
+    "inputPath": "data/evaluation/material-safety-20261122/inputs.json",
+    "sourceHash": "4e71612563939cbcf0abbf6df608cbe73d1454cc9903deac59a287b6a9b019dd",
+    "cases": 131,
+    "passed": 131,
+    "failed": 0,
+    "states": {
+      "compared": 47,
+      "needs-information": 64,
+      "needs-review": 20
+    }
+  },
+  "automaticPublicScenarios": 7,
+  "conditionalOptima": 6,
+  "actualSeconds": 0,
+  "recommendedWithoutPublicScenarioWithReasons": 2,
+  "computedPriceCrossovers": 18,
+  "verificationCandidateInventory": {
+    "cases": 18,
+    "candidates": 210,
+    "offered": 161,
+    "omitted": 49,
+    "interpretation": "Host-issued verification options only; no model selection or priority-quality measurement occurred in this replay."
+  },
+  "heldCasesWithHostSafetyPriority": 9,
+  "heldCasesWithOneFactPriority": 3,
+  "hypotheticalOneFactProbes": 17,
+  "heldWithoutPriorityWithRequiredFacts": 7,
+  "sensitivity": {
+    "cases": 6,
+    "samples": 54,
+    "retained": 54,
+    "priceMultipliers": [
+      0.8,
+      1,
+      1.2
+    ],
+    "allocationValues": [
+      0.6,
+      0.8,
+      1
+    ],
+    "interpretation": "Finite model samples; y is a model allocation, not measured substitution. No interval/extrapolation guarantee."
+  },
+  "inputDecisionContextCatalogPreserved": true,
+  "actualIncinerationFeeAndCostRemainNull": true,
+  "baseline": {
+    "path": "data/evaluation/material-expansion-20261122/results.json",
+    "sha256": "7bc310d74e3d7e9bf7729aa62bbe83c494a23adc512686a4d290b2e36991ef5f"
+  },
+  "limitations": [
+    "Development inputs were exposed, not an unseen evaluation or human accuracy study.",
+    "Hypothetical route openings are not strict eligibility, facility acceptance or execution approval.",
+    "No actual rank2 is invented from the fully quantified scenario comparator.",
+    "Conditional optimum holds only for the modeled three routes, fixed other assumptions and stated fee bound."
+  ],
+  "implementation": [
+    {
+      "path": "src/o-case-guidance.ts",
+      "sha256": "a116bf5e75d39c09ac4ee88fa022130fc3320bf93f7567f5f38bf07a3d60694b"
+    },
+    {
+      "path": "src/o-scenario-guidance.ts",
+      "sha256": "1b984c847accf4f660e8e4bd3337e9a13a718e940a1f750525ed7dbf1720bf96"
+    },
+    {
+      "path": "src/o-supported-scope.ts",
+      "sha256": "b9580551b1f1f95a761af138f06394d36685857b7c11b481643c5bb4c688c2bf"
+    },
+    {
+      "path": "src/o-input-public-scenario.ts",
+      "sha256": "de0a411cba9b05c72277a7d7e3839564b5476b7c6694112f3281f7fa49e8a17b"
+    },
+    {
+      "path": "src/o-calculation-variant.ts",
+      "sha256": "a15136b15a13bd53297e59ead2f51c81044ae47bf9bbb2c02bb1c3c3b33a9d64"
+    },
+    {
+      "path": "src/o-scenario-sensitivity.ts",
+      "sha256": "0a25c20d49bcd91ccc64ca3c1f32e86eeaf44bfa1452a900a013ebaa228a1ddc"
+    },
+    {
+      "path": "src/o-inquiry-reply.ts",
+      "sha256": "f7b114767f1828333844d580d47da04cfb77df35fb561e1988fd1410f33fb84b"
+    },
+    {
+      "path": "src/report-inquiry-reply.ts",
+      "sha256": "418c535e3124fe708e00b1eeb30a0d79a2a90164a519e54a78136eb8e82d773d"
+    },
+    {
+      "path": "src/app-case-routes.ts",
+      "sha256": "174cc8f67d3bc69e070a79ccd1428bd70fa5173222e9caa324e7c259af092edc"
+    },
+    {
+      "path": "src/app.ts",
+      "sha256": "b2a6cadfaa6e282ecd33472e274989ff081790722bff415cf96baa437375257a"
+    },
+    {
+      "path": "src/app-views.ts",
+      "sha256": "0aa7c79096a7bb5abf0497346c2a87f94d37a73b797d96dfa850868b15c5c249"
+    },
+    {
+      "path": "src/app-feedback.ts",
+      "sha256": "806108410bc3c7f9d9ce8851c9210bf913e9f1c6f81fe15f144677ad253d0bbf"
+    },
+    {
+      "path": "src/report.ts",
+      "sha256": "eb4109c7ff45cac5c53492cf3cb19810768e9d1a82127d3a4e3f9f4246048adb"
+    },
+    {
+      "path": "src/report-guidance.ts",
+      "sha256": "ad9446a6d52165ceae684a165a85235d85cd643256639c9bb82e925f73e10eb6"
+    },
+    {
+      "path": "src/report-inquiry.ts",
+      "sha256": "d1db4da35818f14bc20093bd314ca8b8c534c6f4ee92b877e83c4b5e93df9419"
+    },
+    {
+      "path": "src/report-model-audit.ts",
+      "sha256": "7cead5b1e716cdc48c5658166258ed712fcaeab927f1e668eea8f9a5473cebf6"
+    },
+    {
+      "path": "src/o-model-audit.ts",
+      "sha256": "0ac36ba384be9bc70492e3c3dd4ae14cb865dba9e8c3dc351ff4a94cf9bab463"
+    },
+    {
+      "path": "src/o-model-audit-schema.ts",
+      "sha256": "962e5e4560f7826270d8c0171e656db96497a7d732a640825b2307fd9b65a8dc"
+    },
+    {
+      "path": "src/domain.ts",
+      "sha256": "3ba44ff161d433b69ba72acdf6a23fdac503927c8db236163a25c0e8a7093ca6"
+    },
+    {
+      "path": "src/session.ts",
+      "sha256": "87cecf30b265182a868799d529b04ebff22e1180c57fe78b535184ef9ad71cfc"
+    },
+    {
+      "path": "src/app-types.ts",
+      "sha256": "76d0305b8cb62449c42e93587afa23e34ff97a5b92fc788defeee99305c16fe8"
+    },
+    {
+      "path": "src/o-case-record-validation.ts",
+      "sha256": "3b11fc10dd7dcc19dfd8e342129f2868e7c0be78e651f4ed05aa819af3437615"
+    },
+    {
+      "path": "src/o-verification-plan.ts",
+      "sha256": "23ff457637e54fc0b1d2acbdd5e8e45c9a6df2796ef555cb025c3412292c1af2"
+    },
+    {
+      "path": "src/o-verification-plan-schema.ts",
+      "sha256": "89d46ac2e978e7ea1cb2c1343afeef14cd7ba180c7fef3e51c7c3e3f8de249cb"
+    },
+    {
+      "path": "src/o-verification-plan-candidates.ts",
+      "sha256": "74bec1f0a3dfaf522a9d09e15ef75e9fd51ecdcca96f563c8ecc715b254b746c"
+    },
+    {
+      "path": "src/extension.ts",
+      "sha256": "7d31299a91094f50795b656eabdd4dbdcb72c767105c11e9495a65e0486baf10"
+    },
+    {
+      "path": "src/report-verification-plan.ts",
+      "sha256": "86c192df24b9597003c32fe9a226b135bf78480455889464358a4876404de960"
+    },
+    {
+      "path": "src/report-evidence.ts",
+      "sha256": "4e6bc5a60f3401537801c715c7579f23b5090c204587cdf999de7fbf5bac34a0"
+    },
+    {
+      "path": "src/o-safety-reasons.ts",
+      "sha256": "b7289ab6f58e432f006dbd98c18cab4feadde7024ae4a4b480c3127a1eaa84d1"
+    },
+    {
+      "path": "src/material-context.ts",
+      "sha256": "e9829aa2bf4a1c027a7a4747c62c009ea5ec86d43213453bfbc4ba9bc5efae1d"
+    },
+    {
+      "path": "src/input.ts",
+      "sha256": "60f1b9bf7837623e811808736415a06c0f777305b9122b0ff937497731f26380"
+    },
+    {
+      "path": "src/assessment.ts",
+      "sha256": "e2893d5e01d79845c8b90b0a085e0b5c3f907020685d3131b2290972c8897306"
+    },
+    {
+      "path": "src/recommendation.ts",
+      "sha256": "5b2542bb0f11f3c0a247155668a8624b6e6ad79efa62575cb6ed34cbcb3c57a9"
+    },
+    {
+      "path": "src/report-research.ts",
+      "sha256": "ed1c92f4210ff59c3d8b9176b88e2f6cd6328277a8d2b6262887ce3eaf99e6ec"
+    },
+    {
+      "path": "src/report-styles.ts",
+      "sha256": "ae7869ae1554e8862600b98ff6e231b771f3b72c1ebce31f99f719e24972cc0e"
+    },
+    {
+      "path": "scripts/measure-guidance.ts",
+      "sha256": "457127d1689e46e9f5405c50a2166740d885ef69847fe8ebbbe9a2d59baf4b30"
+    },
+    {
+      "path": "data/reference/domestic-scenario-context-20261121.json",
+      "sha256": "8beb81a06248aafe9f117807111d82f8bbd7e7da8e70f2526e9c747f48ed66c3"
+    }
+  ]
+}

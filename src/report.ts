@@ -1,4 +1,4 @@
-import type { DecisionResult } from "./contracts.ts";
+import type { CaseInput, DecisionResult } from "./contracts.ts";
 import { parseDecision } from "./o-decision.ts";
 import type { CaseResearchReport } from "./o-case-research-schema.ts";
 import type { PublicInputScenario } from "./o-input-public-scenario.ts";
@@ -11,7 +11,8 @@ import { buildScenarioSensitivity } from "./o-scenario-sensitivity.ts";
 import { escapeHtml, list, page } from "./report-html.ts";
 import { evidenceSection, readableReason, readableReasons } from "./report-evidence.ts";
 import { massQuestion } from "./input.ts";
-import { isHostSafetyReason } from "./o-safety-reasons.ts";
+import { isHostSafetyReason, safetyReasons } from "./o-safety-reasons.ts";
+import { materialHazardTerms } from "./material-context.ts";
 import { researchCalculations, researchDirectory, publicInputCalculations, publicRecyclingDirectory, publicScenarioNames } from "./report-research.ts";
 import { comparisonSummary, comparisonConditions, prioritySummary, routeConditions, scenarioAudit } from "./report-comparison.ts";
 import type { EvidenceReferences } from "./report-comparison.ts";
@@ -34,6 +35,7 @@ export type ReportContext =
   | { readonly audience: "authenticated-research"; readonly research: CaseResearchReport | null; readonly publicScenario?: PublicInputScenario | null; readonly guidance?: CaseGuidance | null };
 /** Trusted server view fragments; never taken from model output or input metadata. */
 export interface ReportView {
+  readonly evaluatedInput?: CaseInput;
   readonly caseRegion?: string | null;
   readonly publicScenarioMissing?: readonly string[];
   readonly notice?: string;
@@ -167,9 +169,12 @@ export function renderReport(result: DecisionResult, presentation: ReportPresent
   const supportingReasons = result.state === "needs-review" && result.reasons.some(isHostSafetyReason)
     ? heldReasons.filter(reason => reason.includes("인용 부족")) : [];
   const primaryReasons = heldReasons.filter(reason => !supportingReasons.includes(reason));
+  const hazardTerms = view.evaluatedInput && !presentation.historical
+    ? materialHazardTerms(view.evaluatedInput) : [];
   const reasonItem = (reason: string): string => {
     const number = heldReasons.indexOf(reason) + 1;
-    return `<li id="case-reason-${number}"><strong>사유 ${number}.</strong> ${escapeHtml(reason)}</li>`;
+    return `<li id="case-reason-${number}"><strong>사유 ${number}.</strong> ${escapeHtml(reason)}${reason === safetyReasons.materialTreatment && hazardTerms.length
+      ? `<p class="detected-hazard-terms">입력에서 감지한 표현: ${escapeHtml(hazardTerms.join(" · "))}. 해당 물질·처리 이력의 확인 자료가 필요합니다.</p>` : ""}</li>`;
   };
   const answerAction = result.state !== "compared" ? view.answerTarget : undefined;
   const nextAction = result.state === "needs-information"
@@ -221,6 +226,7 @@ export function renderReport(result: DecisionResult, presentation: ReportPresent
     ${guidance ? guidanceProgress(guidance, presentation, names) + guidanceOneFact(guidance, names) : view.progress ? publicCaseProgress(view.progress) : ""}
     ${context.audience === "authenticated-research" && view.publicScenarioMissing?.length
       ? `<section id="public-scenario-unavailable"><h2>공개 비용·탄소 비교가 없는 이유</h2>${list(view.publicScenarioMissing)}<p>추천은 기존 공개 근거에 따른 검토 순서입니다. 비교 부재를 비용 0이나 재활용 불가로 해석하지 않습니다.</p></section>` : ""}
+    <p class="screen-only"><a href="/reference#material-purchase-prices">철스크랩·폐지의 공식 참고 매입가격 보기</a> · 실제 견적이나 이 사례의 적용 가격이 아닙니다.</p>
     ${publicScenario ? publicInputCalculations(publicScenario) : ""}${view.researchFirst ? researchSections : ""}
     ${guidance ? guidanceStability(guidance, names) : ""}
     ${sensitivity ? guidanceSensitivity(sensitivity, names) : ""}

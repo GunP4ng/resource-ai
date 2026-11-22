@@ -24,6 +24,12 @@ const reasons: Readonly<Record<string, string>> = {
 export function readableReason(reason: string): string {
   let text = reason.replace("합성 보류 예시:", "합성 추가 정보 예시:");
   text = text.replaceAll("폐플라스틱이 발생한", "폐자원이 발생한")
+    .replaceAll("해당 수지", "해당 재질·품목")
+    .replaceAll("계수의 수지", "계수의 재질·품목")
+    .replaceAll("적용 행·수지", "적용 행·재질·품목")
+    .replace(/\bunknown\b/giu, "미확인")
+    .replace(/\bstrict\b/giu, "엄격한 기준의")
+    .replace(/\bguidance\b/giu, "안내")
     .replace("확인된 수지 종류와 이를 확인한 자료(라벨·재질 명세 등)가 있나요?",
       "확인된 재질·품목과 이를 확인한 자료(라벨·재질 명세·발생 이력 등)가 있나요?");
   for (const [code, korean] of Object.entries(reasons)) text = text.replaceAll(code, korean);

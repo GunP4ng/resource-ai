@@ -148,7 +148,7 @@ export function publicRecyclingDirectory(inquiryTarget?: string, caseRegion?: st
       ${regionComparison(caseRegion, row.address)}
       <p data-permit-listed>허가 공개자료 확인 · ${escapeHtml(row.sourceDate)} 기준 명부 등재</p>
       <p data-acceptance-unverified><strong>인수 의사 미확인</strong></p>
-      <p>현재 허가 유효성·영업 미확인 · 사례 지역·운송·수지·오염 조건 적합성 미확인</p>
+      <p>현재 허가 유효성·영업 미확인 · 사례 지역·운송·재질·품목·오염 조건 적합성 미확인</p>
       ${inquiryTarget ? `<p class="screen-only"><a href="${escapeHtml(inquiryTarget)}?recipient=${encodeURIComponent(row.name)}">이 업체에 문의서 준비</a></p>` : ""}</section>`).join("")}
     <details><summary>재활용업 명부 출처 확인하기</summary>
       <p>원본 ${escapeHtml(recyclingDirectory.source.originalFilename)} · 제공기관 ${escapeHtml(recyclingDirectory.source.publisher)}
