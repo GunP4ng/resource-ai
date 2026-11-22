@@ -21,7 +21,7 @@ import fitz
 from playwright.sync_api import sync_playwright
 
 REPO = Path(__file__).resolve().parents[1]
-USAGE = "사용량은 청구·비용 증빙이 아닙니다. 사진 실행은 설정이나 실행 식별자만으로 확인되지 않습니다."
+USAGE = "사용량은 청구·비용 증빙이 아닙니다. 사진 실행 여부는 설정이나 실행 식별자로 확인할 수 없습니다."
 DESCRIPTION = "QA 로그인 연구 PET 사출 부산물"
 
 
@@ -190,7 +190,7 @@ class ChromiumPrintTest(unittest.TestCase):
         if description is None:
             self.assertEqual(len(pages), 1)
         else:
-            appendix = "별지·현재신고입력전문"
+            appendix = "별지·신고내용전문"
             self.assertNotIn(appendix, first)
             self.assertIn(appendix, "".join(pages[1].split()))
             self.assertIn("".join(description.split()), "".join(" ".join(pages[1:]).split()))

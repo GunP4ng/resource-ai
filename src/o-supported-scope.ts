@@ -33,11 +33,11 @@ export function unsupportedScope(input: Pick<CaseInput, "polymer" | "description
 }
 
 export function unsupportedScopePage(material: string, caseId?: string): string {
-  return page("지원 범위 밖", `<section data-out-of-scope><h1>지원 범위 밖 · 판정 없음</h1>
-    <p>입력에 ${escapeHtml(material)} 재질이 명시되어 있습니다. 현재 앱은 폐플라스틱·금속 스크랩·폐목재·포장재(종이·복합 포함)의 조건부 검토를 제공합니다.</p>
-    <p>이번 요청에서는 새 판정·순위·처리 코드를 생성하지 않았습니다.${caseId ? " 기존 사례와 판정은 수정하지 않았습니다." : ""}</p>
+  return page("지원 범위 밖", `<section data-out-of-scope><h1>지원 범위 밖 재질입니다</h1>
+    <p>입력에 ${escapeHtml(material)} 재질이 있습니다. 이 앱은 폐플라스틱·금속 스크랩·폐목재·포장재(종이·복합 포함)를 검토합니다.</p>
+    <p>이번 요청으로 만든 판정은 없습니다.${caseId ? " 기존 사례와 판정은 그대로입니다." : ""}</p>
     <ul><li>재질·발생 공정·오염·유해물질 접촉 자료를 먼저 확인하세요.</li>
-    <li>해당 폐기물을 지원하는 전문 검토 경로에서 분류·허가·처리 조건을 확인해야 합니다.</li>
-    <li>혼합재나 재질 미상을 플라스틱으로 추정하지 않습니다.</li></ul>
+    <li>이 폐기물을 다루는 전문 기관에서 분류·허가·처리 조건을 확인하세요.</li>
+    <li>혼합재이거나 재질을 모르면 재질을 확인한 뒤 다시 입력하세요.</li></ul>
     <p><a class="primary-action" href="${caseId ? `/cases/${encodeURIComponent(caseId)}` : "/"}">입력 확인하기</a></p></section>`);
 }

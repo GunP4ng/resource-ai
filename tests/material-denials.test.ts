@@ -100,8 +100,8 @@ const denialFixtures = cases.filter(({ issue }) => issue === 121);
 const copper = cases[0]!.input;
 const wood = cases[1]!.input;
 const plainWood = { ...wood, polymer: "목재", description: "제재소에서 나온 목재 자투리", contamination: "방부 미처리" };
-const historyQuestion = "목재의 도장·접착·방부·오일 처리가 없다는 이력 자료가 있나요? 오염 없음만으로 무처리 목재를 확정하지 않습니다.";
-const originQuestion = "원목 제재·가공 부산물인지 사용한 포장재·가구·건설 목재인지 알려 주세요. 도장·접착·방부·오일 처리 이력도 확인해 주세요.";
+const historyQuestion = "도장·접착·방부·오일 처리 이력이 없다는 자료가 있나요? 오염 없음 답변만으로는 무처리 목재로 보지 않습니다.";
+const originQuestion = "원목 제재·가공 부산물인지, 사용한 포장재·가구·건설 목재인지 알려 주세요. 도장·접착·방부·오일 처리 이력도 함께 확인해 주세요.";
 
 function cleanVariants(denial: string): string[] {
   return [denial, ...[", ", ...verticalBoundaries.slice(0, 3)].flatMap(separator =>
@@ -312,12 +312,12 @@ for (const { label, input, outcome, terms = [], treatment = terms.length > 0, qu
         const html = await response.text();
         const observed = {
           heading: html.match(/<h1>([^<]*)<\/h1>/u)?.[1],
-          terms: html.match(/class="detected-hazard-terms">입력에서 감지한 표현: ([^.]+)\./u)?.[1]?.split(" · ") ?? [],
-          treatment: html.includes(safetyReasons.materialTreatment),
+          terms: html.match(/class="detected-hazard-terms">입력에서 찾은 표현: ([^.]+)\./u)?.[1]?.split(" · ") ?? [],
+          treatment: html.includes("도료·방부제·접착제·오일 등 처리·접촉 가능성이 입력에 있습니다. 성분·SDS·잔류량·유해성 분류를 확인하기 전에는 재활용 추천을 보류합니다."),
           contact: html.includes(safetyReasons.contactClassification),
-          unknownContact: html.includes(safetyReasons.contactUnknown),
+          unknownContact: html.includes("유해물질과 접촉했는지 확인해 주세요."),
           codes: ["51-29-02", "51-20-22", "51-28-02"].filter(value => html.includes(value)),
-          missingQuestions: questions.filter(question => !html.includes(question)),
+          missingQuestions: questions.filter(question => !html.includes(question === safetyReasons.contaminationUnknown ? "오염·접촉 이력에 확인되지 않은 내용이 있습니다. 이전 내용물·접촉 물질명, SDS 등 자료, 잔류물·세척 확인 자료가 있나요? 세척했다는 사실만으로는 유해물질 접촉 없음으로 보지 않습니다." : question)),
         };
         assert.deepEqual(observed, { heading: headings[outcome], terms, treatment,
           contact: input.hazardousContact === "yes", unknownContact: input.hazardousContact === "unknown",
@@ -469,8 +469,8 @@ for (const [description, heading, contamination = "없음"] of nativeCases) {
         assert.equal(report.status, 200);
         const html = await report.text();
         assert.equal(html.match(/<h1>([^<]*)<\/h1>/)?.[1], heading);
-        assert.equal(html.includes(safetyReasons.materialTreatment), heading === "검토 필요");
-        assert.equal(html.includes(safetyReasons.contaminationUnknown), heading === "추가 정보 필요");
+        assert.equal(html.includes("도료·방부제·접착제·오일 등 처리·접촉 가능성이 입력에 있습니다. 성분·SDS·잔류량·유해성 분류를 확인하기 전에는 재활용 추천을 보류합니다."), heading === "검토 필요");
+        assert.equal(html.includes("오염·접촉 이력에 확인되지 않은 내용이 있습니다. 이전 내용물·접촉 물질명, SDS 등 자료, 잔류물·세척 확인 자료가 있나요? 세척했다는 사실만으로는 유해물질 접촉 없음으로 보지 않습니다."), heading === "추가 정보 필요");
       }
     } finally { await app.close(); }
   });

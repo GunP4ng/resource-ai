@@ -17,7 +17,7 @@ const post = (path: string, raw: unknown) => new Request(origin + path, {
 async function decisionSurface(html: string) {
   const surface = { heading: "", recommendations: "", checks: "", caseIdentity: "" };
   await new HTMLRewriter()
-    .on("main > h1, #report-results > h1, #commercial-summary > h1", { text(chunk) { surface.heading += chunk.text; } })
+    .on(".result-overview > h1", { text(chunk) { surface.heading += chunk.text; } })
     .on('section[aria-labelledby="recommendation-heading"]', { text(chunk) { surface.recommendations += chunk.text; } })
     .on("#checks", { text(chunk) { surface.checks += chunk.text; } })
     .on("#advanced > p:first-of-type", { text(chunk) { surface.caseIdentity += chunk.text; } })
@@ -51,13 +51,13 @@ test("permissionChanged warning stays outside disclosures near the conclusion", 
       assert.equal(response.status, 200, responseHtml);
       const html = await new HTMLRewriter()
         .on("#decision-summary", { element() { order.push("conclusion"); } })
-        .on("main > #permission-change-warning, #report-results > #permission-change-warning, #commercial-summary > #permission-change-warning", { element() { order.push("notice"); }, text(chunk) { visible += chunk.text; } })
+        .on(".result-overview > #permission-change-warning", { element() { order.push("notice"); }, text(chunk) { visible += chunk.text; } })
         .on("details #permission-change-warning", { text(chunk) { folded += chunk.text; } })
         .on("#next-action", { element() { order.push("next-action"); } })
         .transform(new Response(responseHtml)).text();
-      assert.match(visible, /사진 권한이 변경/);
+      assert.match(visible, /사진 권한이 바뀌/);
       assert.match(visible, /과거 평가/);
-      assert.match(visible, /이미 전송된 사진을 회수하지 않습니다/);
+      assert.match(visible, /이미 전송된 사진은 회수되지 않습니다/);
       assert.equal(folded, "");
       assert.deepEqual(order, ["conclusion", "notice", "next-action"]);
       assert.doesNotMatch(html, /data-guidance-stage|id="rank-stability"/);
@@ -127,7 +127,7 @@ test("committed research uses one atomic report read and only explicit private r
     assert.doesNotMatch(normal, /data-public-scenario-result/);
     assert.match(research, /data-research-result/);
     const publicStages: string[] = [];
-    await new HTMLRewriter().on('[data-progress-audience="public"] [data-guidance-stage]', {
+    await new HTMLRewriter().on('.screen-only [data-progress-audience="public"] [data-guidance-stage]', {
       element(element) { publicStages.push(element.getAttribute("data-guidance-stage") ?? ""); },
     }).transform(new Response(commercial)).text();
     assert.deepEqual(publicStages, ["1", "2", "3", "4", "5", "6"]);
@@ -162,14 +162,14 @@ test("anonymous current case and commercial report expose status-only stages wit
       const stages: (string | null)[] = [], states: (string | null)[] = [];
       let reasons = "";
       const html = await new HTMLRewriter()
-        .on('[data-progress-audience="public"] [data-guidance-stage]', {
+        .on('.screen-only [data-progress-audience="public"] [data-guidance-stage]', {
           element(element) { stages.push(element.getAttribute("data-guidance-stage")); states.push(element.getAttribute("data-state")); },
         })
         .on('#guidance-stage-5', { text(chunk) { reasons += chunk.text; } })
         .transform(await app.fetch(new Request(origin + path + suffix, { headers: { cookie } }))).text();
       assert.deepEqual(stages, ["1", "2", "3", "4", "5", "6"]);
       assert.deepEqual(states, ["available", "partial", "partial", "missing", "missing", "partial"]);
-      assert.match(reasons, /실제 1·2순위.*없습니다/);
+      assert.match(reasons, /같은 기능단위·경계의 1·2순위 비용값을 확보해야 합니다/); assert.match(reasons, /같은 기능단위·경계의 1·2순위 탄소값을 확보해야 합니다/);
       assert.doesNotMatch(html, /data-public-scenario-result|data-research-result|WARM|Wonju|parentFixtureSha256|id="rank-stability"|id="hypothetical-summary"/);
     }
     assert.equal((await app.fetch(new Request(origin + path + "/report?purpose=research", { headers: { cookie } }))).status, 403);
@@ -305,14 +305,14 @@ test("default authenticated demo binds PET and HDPE decisions to source inputs w
       assert.ok(rows.get("landfill")?.includes(`${landfillCost} KRW`));
       assert.ok(rows.get("landfill")?.includes(`${landfillCarbon} kgCO2e`));
       assert.ok(rows.get("energy_recovery")?.includes(`${recoveryCarbon} kgCO2e`));
-      assert.ok(rows.get("energy_recovery")?.includes("소각 처리비 미확보"));
+      assert.ok(rows.get("energy_recovery")?.includes("소각 처리비 없음"));
       assert.equal((html.match(/data-directory-row=/g) ?? []).length, 8);
       assert.equal((html.match(/data-recycling-directory-row=/g) ?? []).length, 4);
       assert.ok(html.indexOf('id="research-calculations"') < html.indexOf('id="recommendation-heading"'));
       assert.doesNotMatch(html, /240,000 KRW/);
       assert.match(html, /공개 자료 기반 계산값\(관측값 아님\)/);
       assert.match(html, /미국 기본 조건의 WARM/);
-      assert.match(html, /실제 견적이 아닙니다/);
+      assert.match(html, /합성 시나리오 입력입니다\. 견적은 업체에서 받으세요/);
       assert.doesNotMatch(html, /실행 성공 확인됨|Azure 호출 성공/);
     }
     const commercial = await (await app(new Request(origin + "/demo/normal?purpose=commercial&material=HDPE"))).text();
@@ -345,7 +345,7 @@ test("authenticated research demo notices unsupported and empty material instead
       const response = await app(new Request(origin + "/demo/normal?purpose=research&" + query));
       assert.equal(response.status, 400);
       const html = await response.text();
-      assert.match(html, /이 재질은 공개 연구 계산 예시가 없습니다\(현재 PET·HDPE\)/);
+      assert.match(html, /공개 연구 계산 예시는 PET와 HDPE에 있습니다/);
       assert.match(html, /href="\/demo\/normal\?purpose=research"/);
       assert.match(html, /href="\/demo\/normal\?purpose=research&amp;material=HDPE"/);
       assert.doesNotMatch(html, /data-research-result|OYS-20261110-001/);

@@ -60,12 +60,12 @@ test("current native case form omits photoRefs and commits owned normalized text
     const home = await app.fetch(new Request(origin));
     assert.equal(home.status, 200);
     const html = await home.text();
-    const form = /<form method="post" action="\/cases">([\s\S]*?)<\/form>/.exec(html)?.[1];
+    const form = /<form\b[^>]*\bmethod="post"[^>]*\baction="\/cases"[^>]*>([\s\S]*?)<\/form>/.exec(html)?.[1];
     assert.ok(form);
     const values = { description: "합성 네이티브 사례", process: "사출", polymer: "", contamination: "없음",
       hazardousContact: "no", massKg: "12.5", region: "울산", assessmentDate: "2026-11-05" };
     const names = [...form.matchAll(/<(?:input|textarea|select)\b[^>]*\bname="([^"]+)"/g)].map(match => match[1]);
-    assert.deepEqual(names, Object.keys(values));
+    assert.deepEqual(names.toSorted(), Object.keys(values).toSorted());
     const submit = (value: Record<string, string>) => app.fetch(new Request(origin + "/cases", {
       method: "POST", headers: { origin, "content-type": "application/x-www-form-urlencoded" }, body: new URLSearchParams(value),
     }));

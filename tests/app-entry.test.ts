@@ -22,7 +22,7 @@ test("ordinary navigation contains only case links and the signed-in research re
         const href = el.getAttribute("href");
         if (href?.startsWith("/demo/") || href?.startsWith("/reference")) internal.push(href);
       } }).transform(response).text();
-      assert.deepEqual(primary, ["/", "/cases"]);
+      assert.deepEqual(primary, ["/#case-intake", "/cases", "/help"]);
       return internal;
     }
     assert.deepEqual(await links("/"), []);
@@ -66,7 +66,7 @@ test("current guidance and inquiry stay case-bound while commercial and other ow
     const result = await app.fetch(new Request(origin + path));
     assert.equal(result.status, 200);
     const html = await new HTMLRewriter()
-      .on("[data-guidance-stage]", { element() { counts.stages++; } })
+      .on("#case-progress [data-guidance-stage]", { element() { counts.stages++; } })
       .on("[data-permit-listed]", { element() { counts.permits++; } })
       .on("[data-acceptance-unverified]", { element() { counts.acceptanceUnknown++; } })
       .on("[data-epd-reference]", { element() { counts.epd++; } })
@@ -83,7 +83,7 @@ test("current guidance and inquiry stay case-bound while commercial and other ow
     assert.equal(await (await app.fetch(new Request(origin + path + "/input"))).text(), beforeInput);
     const commercial = await (await app.fetch(new Request(origin + path + "/report"))).text();
     const publicStages: (string | null)[] = [];
-    await new HTMLRewriter().on('[data-progress-audience="public"] [data-guidance-stage]', {
+    await new HTMLRewriter().on('#case-progress[data-progress-audience="public"] [data-guidance-stage]', {
       element(element) { publicStages.push(element.getAttribute("data-guidance-stage")); },
     }).transform(new Response(commercial)).text();
     assert.deepEqual(publicStages, ["1", "2", "3", "4", "5", "6"]);

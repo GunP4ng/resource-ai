@@ -46,7 +46,7 @@ test("inquiry reports current fields and leaves processor answers for the recipi
     .on("img", { element() { structure.photos++; } })
     .on("form", { element() { structure.forms++; } })
     .on("script", { element(element) { structure.scripts.push(element.getAttribute("src") ?? "inline"); } })
-    .on('[aria-label="문의서 동작"] a', { element(element) { structure.back = element.getAttribute("href") ?? ""; } })
+    .on('[aria-label="문의서 메뉴"] a', { element(element) { structure.back = element.getAttribute("href") ?? ""; } })
     .transform(new Response(html)).text();
   assert.deepEqual(structure, {
     sheets: 1, replies: 1, photos: 0, forms: 0, scripts: ["/app-feedback.js"],
@@ -54,7 +54,7 @@ test("inquiry reports current fields and leaves processor answers for the recipi
   });
   assert.doesNotMatch(html, /PRIVATE_PHOTO_SENTINEL|PRIVATE_DECISION_SENTINEL/);
   assert.deepEqual(await textAt(html, "[data-inquiry-appendix], [data-inquiry-full-input]"), []);
-  assert.match((await textAt(html, "[data-inquiry-recipient]")).join(""), /수신자가 작성하는 공란/);
+  assert.match((await textAt(html, "[data-inquiry-recipient]")).join(""), /수신 업체 작성/);
 });
 
 test("long reported fields have bounded excerpts and full escaped originals in the labelled print appendix", async () => {
@@ -82,14 +82,14 @@ test("long reported fields have bounded excerpts and full escaped originals in t
   assert.equal(markup.back, "/cases/" + encodeURIComponent(long.caseId));
   const fields = await textAt(html, ".inquiry-fields dd");
   for (const index of [2, 3, 4, 6, 7]) {
-    assert.match(fields[index] ?? "", /\[발췌\] 이 항목의 전체 신고 내용은 별지에 있습니다$/);
+    assert.match(fields[index] ?? "", /\[발췌\] 전체 내용은 별지에 있습니다$/);
     assert.ok((fields[index] ?? "").length < 200, "visible fields remain bounded even with hostile text");
     assert.doesNotMatch(fields[index] ?? "", /OMITTED_TAIL/);
   }
   assert.match(html, /&lt;img src=x onerror=&quot;/);
   assert.doesNotMatch(html, /\uFFFD|PRIVATE_PHOTO_SENTINEL|PRIVATE_DECISION_SENTINEL/);
   assert.match((await textAt(html, "[data-inquiry-contact]")).join(""), /있음/);
-  assert.match((await textAt(html, "[data-inquiry-full-input]")).join(""), /이 항목의 전체 신고 내용은 별지에 있습니다/);
+  assert.match((await textAt(html, "[data-inquiry-full-input]")).join(""), /전체 내용은 별지에 있습니다/);
   assert.deepEqual(await textAt(html, "[data-inquiry-appendix] dt"), [
     "재질·품목 (신고)", "발생 공정 (신고)", "오염 상태 (신고)", "발생 지역 (신고)", "설명 (신고)",
   ]);
@@ -125,7 +125,7 @@ test("null and blank reported fields remain unknown without inferred data", asyn
     description: "", massKg: null, hazardousContact: "no",
   }, decision, {});
   assert.deepEqual(await textAt(html, ".inquiry-fields dd"), [
-    input.caseId, input.assessmentDate, "미상", "미상", "미상", "미상 · 계량값 확인 필요", "미상", "미상",
+    input.caseId, input.assessmentDate, "미상", "미상", "미상", "미상 · 계량 필요", "미상", "미상",
   ]);
   assert.match((await textAt(html, "[data-inquiry-contact]")).join(""), /없음/);
 });
@@ -140,14 +140,14 @@ for (const result of [
     const current = renderInquiry(input, result, {});
     const historical = renderInquiry(input, result, { historical: true, permissionChanged: true });
     const expected = {
-      compared: "인간 승인 대기", "needs-information": "추가 정보 필요", "needs-review": "검토 필요",
+      compared: "현장 담당자 승인 대기", "needs-information": "추가 정보 필요", "needs-review": "검토 필요",
     } as const;
     const status = (await textAt(current, "[data-inquiry-status]")).join("");
     assert.ok(status.includes(result.state === "compared" && result.humanApproval === "approved"
-      ? "인간 승인 기록 있음" : expected[result.state]));
+      ? "현장 담당자 승인 기록 있음" : expected[result.state]));
     assert.deepEqual(await textAt(current, "[data-inquiry-historical],[data-inquiry-permission]"), []);
     assert.match((await textAt(historical, "[data-inquiry-status]")).join(""), /과거 평가.*재평가 필요.*실행 보류/);
-    assert.doesNotMatch(historical, /OLD_RANKING_SENTINEL|인간 승인 기록 있음|인간 승인 대기/);
+    assert.doesNotMatch(historical, /OLD_RANKING_SENTINEL|현장 담당자 승인 기록 있음|현장 담당자 승인 대기/);
     assert.deepEqual(await textAt(historical, ".inquiry-fields dd"), await textAt(current, ".inquiry-fields dd"));
   });
 }
@@ -162,5 +162,5 @@ test("permission warning is visible without disclosure and does not depend on hi
     .transform(new Response(html)).text();
   assert.equal(warningDepth, 0);
   assert.match((await textAt(html, "[data-inquiry-permission]")).join(""), /過去|과거 평가/);
-  assert.match((await textAt(html, "[data-inquiry-permission]")).join(""), /이미 전송된 사진은 회수할 수 없습니다/);
+  assert.match((await textAt(html, "[data-inquiry-permission]")).join(""), /이미 전송된 사진은 회수되지 않습니다/);
 });

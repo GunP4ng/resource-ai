@@ -88,21 +88,21 @@ for (const material of ["PET", "HDPE"] as const) {
         const baseline = env.context.calculations.results.find(item => item.route_id === row.route);
         assert.ok(baseline);
         const baselineCell = row.cells[0];
-        assert.equal(baselineCell, baseline.display.net_cost_krw ?? "미확보");
+        assert.equal(baselineCell, baseline.display.net_cost_krw ?? "값 없음");
         variants.forEach((variant, index) => {
           const expected = variant.calculations.results.find(item => item.route_id === row.route);
           assert.ok(expected);
           const assumedCell = row.cells[1 + index * 2];
-          assert.equal(assumedCell, expected.display.net_cost_krw ?? "미확보");
+          assert.equal(assumedCell, expected.display.net_cost_krw ?? "값 없음");
           if (baseline.display.net_cost_krw !== null && expected.display.net_cost_krw !== null) {
             assert.equal(row.cells[2 + index * 2], (BigInt(assumedCell) - BigInt(baselineCell)).toLocaleString("ko-KR"));
           }
         });
       }
       const incineration = rows.find(item => item.route === "energy_recovery");
-      assert.equal(incineration?.cells[0], "미확보");
-      assert.notEqual(incineration?.cells[1], "미확보");
-      assert.equal(incineration?.cells[3], "미확보");
+      assert.equal(incineration?.cells[0], "값 없음");
+      assert.notEqual(incineration?.cells[1], "값 없음");
+      assert.equal(incineration?.cells[3], "값 없음");
       for (const [index, suffix] of ["/report", "/report?purpose=research"].entries()) {
         assert.equal(await (await env.app(new Request(origin + env.path + suffix))).text(), reports[index]);
       }
@@ -183,10 +183,10 @@ test("native dual form retains blank versus zero and an unused optional company 
       .transform(response.clone()).text();
     assert.equal(zero, "0"); assert.equal(blank, "");
     assert.deepEqual(provenance, ["1"]);
-    assert.match(headings, /업체 B.*회신 금액 없음 · 기준 모델값/);
+    assert.match(headings, /업체 B.*회신 금액 없음 · 기준값 사용/);
     const dual = await readRows(response);
     assert.equal(dual[0]?.cells.length, 5);
-    assert.deepEqual(dual.find(item => item.route === "energy_recovery")?.cells.slice(3), ["미확보", "미산정"]);
+    assert.deepEqual(dual.find(item => item.route === "energy_recovery")?.cells.slice(3), ["값 없음", "미산정"]);
     const recycling = env.context.calculations.results.find(item => item.route_id === "recycling");
     assert.ok(recycling?.display.net_cost_krw);
     assert.deepEqual(dual.find(item => item.route === "recycling")?.cells.slice(3),
@@ -197,14 +197,14 @@ test("native dual form retains blank versus zero and an unused optional company 
     const explicitHtml = await explicitZero.clone().text();
     assert.match(explicitHtml, /data-reply-provenance="2"/);
     assert.match(explicitHtml, /name="second_amount_f_rec" min="0" step="any" value="0"/);
-    assert.doesNotMatch(explicitHtml, /회신 금액 없음 · 기준 모델값/);
+    assert.doesNotMatch(explicitHtml, /회신 금액 없음 · 기준값 사용/);
     const variant = buildCalculationVariant(env.context, [{ inputId: "f_rec", value: 0 }], "HTTP test hypothesis");
     for (const row of await readRows(explicitZero)) {
       const expected = variant.calculations.results.find(item => item.route_id === row.route);
       const baseline = env.context.calculations.results.find(item => item.route_id === row.route);
       assert.ok(expected && baseline);
-      assert.equal(row.cells[0], baseline.display.net_cost_krw ?? "미확보");
-      assert.equal(row.cells[3], expected.display.net_cost_krw ?? "미확보");
+      assert.equal(row.cells[0], baseline.display.net_cost_krw ?? "값 없음");
+      assert.equal(row.cells[3], expected.display.net_cost_krw ?? "값 없음");
       if (expected.display.net_cost_krw === null || baseline.display.net_cost_krw === null) {
         assert.match(row.cells[4] ?? "", /^미산정/);
       } else {
@@ -215,7 +215,7 @@ test("native dual form retains blank versus zero and an unused optional company 
     form.set("amount_f_inc", "");
     const reversed = await submit();
     const reversedHtml = await reversed.clone().text();
-    assert.match(reversedHtml, /업체 A[^<]*회신 금액 없음 · 기준 모델값/);
+    assert.match(reversedHtml, /업체 A[^<]*회신 금액 없음 · 기준값 사용/);
     assert.doesNotMatch(reversedHtml, /data-reply-provenance="1"/);
     const reversedRows = await readRows(reversed);
     assert.deepEqual(reversedRows.find(item => item.route === "recycling")?.cells.slice(1, 3),

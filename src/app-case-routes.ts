@@ -7,7 +7,7 @@ import { matchesPhotoConsent } from "./photo-execution.ts";
 import { revision } from "./o-validation.ts";
 import { renderReport } from "./report.ts";
 import { HttpFailure, body, caseBody, idPattern, redirect, response, sessionFailures, versionOf } from "./app-http.ts";
-import { caseInputSummary, form, nativeAnswer } from "./app-views.ts";
+import { caseInputSummary, form, inputPage, nativeAnswer } from "./app-views.ts";
 import { photoUI, photoRoute } from "./app-photo-routes.ts";
 import { readCaseResearchCatalog } from "./o-case-research.ts";
 import { buildPublicInputScenario, publicScenarioEligibility } from "./o-input-public-scenario.ts";
@@ -27,12 +27,12 @@ export async function caseRoute(services: RouteServices, context: RouteRequest):
   const { dependencies, caseStore, maxBodyBytes, origin, now, cancelLease } = services;
   const { request, url, signal, privateGuard, owner, actor, sessionDeadline, caseMatch, photoMatch } = context;
   const preparer = dependencies.preparer;
-  if (!preparer) throw new HttpFailure(503, "입력 연결을 사용할 수 없습니다.");
+  if (!preparer) throw new HttpFailure(503, "입력 연결이 끊겼습니다. 잠시 후 다시 제출해 주세요.");
   const caseId = caseMatch?.[1];
   const suffix = caseMatch?.[2];
-  if (suffix === "inquiry-reply" && !actor) throw new HttpFailure(403, "회신 가정 비교는 인증된 소유자만 사용할 수 있습니다.");
+  if (suffix === "inquiry-reply" && !actor) throw new HttpFailure(403, "회신 가정 비교는 로그인한 사례 소유자가 사용할 수 있습니다.");
   if (request.method === "GET" && suffix === "report" && url.searchParams.get("purpose") === "research" && !actor) {
-    throw new HttpFailure(403, "연구용 보고서는 인증된 비공개 사례에서만 확인할 수 있습니다.");
+    throw new HttpFailure(403, "연구용 보고서는 로그인한 소유자의 비공개 사례에서 열립니다.");
   }
 
   const id = caseId ?? photoMatch?.[1];
@@ -49,7 +49,7 @@ export async function caseRoute(services: RouteServices, context: RouteRequest):
     };
     let raw: unknown;
     if (request.method === "POST") {
-      if (request.headers.get("origin") !== origin || request.headers.get("sec-fetch-site") === "cross-site") throw new HttpFailure(403, "같은 앱에서 제출해 주세요.");
+      if (request.headers.get("origin") !== origin || request.headers.get("sec-fetch-site") === "cross-site") throw new HttpFailure(403, "이 앱 화면에서 다시 제출해 주세요.");
       raw = await body(request, maxBodyBytes, signal);
       assertUnchanged();
       if (typeof raw !== "object" || raw === null || !("baseVersion" in raw) || !("inputRevision" in raw)
@@ -88,12 +88,12 @@ export async function caseRoute(services: RouteServices, context: RouteRequest):
         });
       } catch (error) {
         if (error instanceof InquiryReplyInputError) throw new HttpFailure(400, error.message);
-        if (error instanceof Invalid && error.code === "E_FINITE") throw new HttpFailure(400, "금액이 계산 가능한 범위를 초과했습니다.");
+        if (error instanceof Invalid && error.code === "E_FINITE") throw new HttpFailure(400, "금액이 너무 큽니다. 단위와 자릿수를 확인해 주세요.");
         throw error;
       }
     }
     const result = response(renderInquiryReply({ caseId, version: snapshot.version, inputRevision, options,
-      blockedReason: context ? null : "보류·유해 접촉 미확인·사진 포함·과거 평가·권한 변경 또는 계산 문맥 미확보 사례에는 수치 비교·최적성·추천을 표시하지 않습니다. 회신은 실제 실행 승인이 아닙니다.",
+      blockedReason: context ? null : "수치 비교는 보류가 없고 유해 접촉 없음이 확인됐으며, 사진·권한 변경이 없고 계산 문맥이 연결된 현재 평가에만 표시합니다. 회신은 실행 승인이 아닙니다. 실행은 현장 담당자 승인 후 진행하세요.",
       replies, ...(context && variants.some(Boolean) ? { comparison: { baseline: context, variants } } : {}),
     }));
     assertUnchanged();
@@ -120,8 +120,8 @@ export async function caseRoute(services: RouteServices, context: RouteRequest):
     }
     const ticket = dependencies.photoExecution?.current() ?? null;
     const stored = snapshot.assessment;
-    const notice = snapshot.permissionChanged ? '<p id="permission-change-warning" class="notice">사진 권한이 변경되었습니다. 이전 보고서는 과거 평가입니다. 이미 전송된 사진을 회수하지 않습니다. 사진 없이 다시 평가할 수 있습니다.</p>' : "";
-    const selection = `<input type="hidden" name="photoSelection" value="explicit">${snapshot.photos.map(photo => `<label class="consent"><input type="checkbox" name="photo_${photo.photoRef}" value="yes" ${matchesPhotoConsent(photo.consent, ticket) && photo.expiresAt > now() && !snapshot.denied.includes(photo.photoRef) ? "" : "disabled"}>다음 평가에 이 사진 선택</label>`).join("")}`;
+    const notice = snapshot.permissionChanged ? '<p id="permission-change-warning" class="notice">사진 권한이 바뀌어 이전 보고서는 과거 평가가 되었습니다. 이미 전송된 사진은 회수되지 않습니다. 사진 없이 다시 평가하세요.</p>' : "";
+    const selection = `<input type="hidden" name="photoSelection" value="explicit">${snapshot.photos.map(photo => `<label class="consent"><input type="checkbox" name="photo_${photo.photoRef}" value="yes" ${matchesPhotoConsent(photo.consent, ticket) && photo.expiresAt > now() && !snapshot.denied.includes(photo.photoRef) ? "" : "disabled"}>다음 평가에 이 사진 사용</label>`).join("")}`;
     const privateAudience = actor && (suffix !== "report" || url.searchParams.get("purpose") === "research");
     const publicScenario = privateAudience && !report?.research && snapshot.evaluated.revision === revision(snapshot.input)
       ? buildPublicInputScenario({ actorId: actor, input: snapshot.input, inputRevision: snapshot.evaluated.revision },
@@ -142,12 +142,12 @@ export async function caseRoute(services: RouteServices, context: RouteRequest):
     const editDeadline = Math.min(snapshot.editUntil, sessionDeadline ?? Infinity);
     const optionalMass = snapshot.input.massKg === null && editable
       ? stored.decision.state === "compared"
-        ? '<p class="screen-only"><a class="primary-action secondary-action" href="#answer-fields">질량을 입력하면 비용·탄소를 계산해요</a> (선택)</p><p>견적·탄소 계수 등 근거가 있는 항목부터 계산합니다. 자료가 없으면 필요한 내용을 알려드려요.</p>'
-        : '<p class="screen-only"><a class="primary-action secondary-action" href="#answer-fields">선택 정보: 질량을 입력할 수 있습니다</a></p><p>질량 입력은 선택 사항이며 보류 사유를 해제하거나 비용·탄소 계산을 보장하지 않습니다.</p>' : "";
-    const actions = suffix === "report" ? "" : `<p class="cluster screen-only"><a href="/cases/${id}/report">상업용 보고서</a>${actor ? `<a href="/cases/${id}/report?purpose=research">비공개 연구용 보고서</a>` : ""}<a href="/cases/${id}/input">정확한 입력 내보내기</a><a href="/cases">내 사례</a></p>`;
-    const editing = suffix === "report" ? "" : `${editable && stored.decision.state !== "compared" ? caseInputSummary(snapshot.input) : ""}<p>버전 ${snapshot.version}</p>${editable
-      ? `<p>수정 가능 기한 (UTC): ${new Date(editDeadline).toISOString()}</p>${form(`/cases/${id}/answers`, true, snapshot.version, selection, snapshot.input)}`
-      : '<p class="notice">수정 기한이 지났습니다. 보관 중인 보고서와 입력은 확인할 수 있습니다. 다시 평가하려면 <a href="/">새 사례를 입력하세요</a>.</p>'}${photoUI(snapshot, ticket, services)}`;
+        ? '<p class="screen-only"><a class="primary-action secondary-action" href="#answer-fields">질량을 입력하고 비용·탄소 계산하기</a> (선택)</p><p>견적·탄소 계수가 있는 항목을 계산하고, 빠진 자료는 목록으로 알려 드립니다.</p>'
+        : '<p class="screen-only"><a class="primary-action secondary-action" href="#answer-fields">질량 입력하기 (선택)</a></p><p>보류 사유는 질량과 별도로 해결해야 합니다. 비용·탄소는 근거 자료가 있는 항목만 계산됩니다.</p>' : "";
+    const actions = suffix === "report" ? "" : `<p class="cluster screen-only"><a href="/cases/${id}/report">상업용 보고서</a>${actor ? `<a href="/cases/${id}/report?purpose=research">비공개 연구용 보고서</a>` : ""}<a href="/cases/${id}/input">입력 원본 내보내기</a><a href="/cases">내 사례</a></p>`;
+    const editing = suffix === "report" ? "" : `<p>버전 ${snapshot.version}</p>${editable
+      ? `<p>수정 기한 (UTC): ${new Date(editDeadline).toISOString()}</p>${form(`/cases/${id}/answers`, true, snapshot.version, selection, snapshot.input)}`
+      : '<p class="notice">수정 기한이 지났습니다. 보고서와 입력은 계속 열람할 수 있습니다. 다시 평가하려면 <a href="/">새 사례를 입력하세요</a>.</p>'}${photoUI(snapshot, ticket, services)}`;
     const result = response(renderReport(stored.decision, {
       ...snapshot.presentation, mode: snapshot.presentation?.mode ?? "live", review: snapshot.review,
       historical: snapshot.evaluated.revision !== revision(snapshot.input),
@@ -155,6 +155,7 @@ export async function caseRoute(services: RouteServices, context: RouteRequest):
       ...(privateAudience && stored.modelAudit ? { modelAudit: stored.modelAudit } : {}),
       ...(privateAudience && stored.verificationPlan ? { verificationPlan: stored.verificationPlan } : {}),
     }, audience, { notice, actions, editing, answerPrompt: suffix === "report" ? "" : optionalMass,
+      inputSummary: caseInputSummary(snapshot.input, suffix !== "report" && editable ? "#answer-fields" : undefined),
       researchNavigation: !!privateAudience && suffix === "report",
       ...(suffix === "report" && audience.audience === "commercial" ? { caseReturnTarget: `/cases/${caseId}` } : {}),
       ...(snapshot.evaluated.revision === revision(snapshot.input) ? { evaluatedInput: snapshot.input } : {}),
@@ -170,14 +171,14 @@ export async function caseRoute(services: RouteServices, context: RouteRequest):
     if (result) return result;
   }
   if (request.method === "POST" && (url.pathname === "/cases" || (caseId && suffix === "answers"))) {
-    if (request.headers.get("origin") !== origin || request.headers.get("sec-fetch-site") === "cross-site") throw new HttpFailure(403, "같은 앱에서 제출해 주세요.");
-    if (!owner) throw new HttpFailure(403, "입력 화면에서 세션을 시작해 주세요.");
+    if (request.headers.get("origin") !== origin || request.headers.get("sec-fetch-site") === "cross-site") throw new HttpFailure(403, "이 앱 화면에서 다시 제출해 주세요.");
+    if (!owner) throw new HttpFailure(403, "입력 화면에서 시작해 주세요.");
     const { raw, format } = await caseBody(request, dependencies.maxBodyBytes, signal);
     privateGuard();
     if (snapshot && snapshot.editUntil <= now()) throw new HttpFailure(sessionFailures["case-not-found"].status, sessionFailures["case-not-found"].message);
     let payload = raw, expected: number | null = null;
     if (snapshot) {
-      if (typeof raw !== "object" || raw === null || Array.isArray(raw)) throw new HttpFailure(400, "수정 입력은 JSON 객체여야 합니다.");
+      if (typeof raw !== "object" || raw === null || Array.isArray(raw)) throw new HttpFailure(400, "수정 입력은 JSON 객체로 보내 주세요.");
       const fields: Record<string, unknown> = Object.fromEntries(Object.entries(raw));
       const { baseVersion, ...rest } = fields;
       expected = versionOf(baseVersion, actor ? undefined : snapshot.version);
@@ -199,11 +200,11 @@ export async function caseRoute(services: RouteServices, context: RouteRequest):
           if (Object.keys(rest).length !== 1 || typeof rest["answers"] !== "string") throw new HttpFailure(400, "수정 입력을 확인해 주세요.");
           try { patch = JSON.parse(rest["answers"]); }
           catch (error) {
-            if (error instanceof SyntaxError) throw new HttpFailure(400, "JSON 입력을 확인해 주세요.");
+            if (error instanceof SyntaxError) throw new HttpFailure(400, "JSON 형식을 확인해 주세요.");
             throw error;
           }
         }
-        if (typeof patch !== "object" || patch === null || Array.isArray(patch) || Object.hasOwn(patch, "photoRefs")) throw new HttpFailure(400, "사례 필드를 입력하고 사진은 선택란에서 지정해 주세요.");
+        if (typeof patch !== "object" || patch === null || Array.isArray(patch) || Object.hasOwn(patch, "photoRefs")) throw new HttpFailure(400, "사례 필드를 입력하고, 사진은 사진 선택란에서 고르세요.");
         payload = { ...patch, photoRefs: selected };
       } else payload = rest["answerMode"] === "fields" ? nativeAnswer(rest) : rest;
     }
@@ -218,12 +219,20 @@ export async function caseRoute(services: RouteServices, context: RouteRequest):
           (key === "photoSelection" || key.startsWith("photo_")) && typeof value === "string")
           .map(([key, value]) => `<input type="hidden" name="${escapeHtml(key)}" value="${escapeHtml(String(value))}">`).join("");
         privateGuard();
-        return response(page("입력 확인", `<h1>입력을 확인해 주세요</h1><p role="alert">${error.issues.map(issue => escapeHtml(issue.message)).join(" ")} 입력 초안을 유지했습니다. 저장된 사례는 변경되지 않았습니다.</p>${form(url.pathname, !!snapshot, snapshot?.version, selection, snapshot?.input, draft)}`), 400);
+        return response(page("입력 확인", `<h1>입력을 확인해 주세요</h1><p role="alert">${error.issues.map(issue => escapeHtml(issue.message)).join(" ")} 작성한 내용은 그대로 남겨 두었고 저장된 사례도 그대로입니다.</p>${form(url.pathname, !!snapshot, snapshot?.version, selection, snapshot?.input, draft)}`), 400);
       }
       throw error;
     }
     const outside = unsupportedScope(input);
-    if (outside) { privateGuard(); return response(unsupportedScopePage(outside, snapshot?.input.caseId), 422); }
+    if (outside) {
+      privateGuard();
+      if (url.pathname === "/cases" && format === "form" && typeof raw === "object" && raw !== null && !Array.isArray(raw)) {
+        return response(inputPage({
+          authenticated: !!actor, localAuth: !!dependencies.localAuth, connected: dependencies.reviewConfigured ?? !!dependencies.adapter, photoEnabled: services.photoEnabled,
+        }, { material: outside, draft: Object.fromEntries(Object.entries(raw)) }), 422);
+      }
+      return response(unsupportedScopePage(outside, snapshot?.input.caseId), 422);
+    }
     const authority = dependencies.photoExecution;
     const ticket = input.photoRefs.length ? authority?.current() : undefined;
     if (input.photoRefs.length && (input.photoRefs.length > 3 || !ticket || !snapshot || !caseStore.eligible(snapshot, input, ticket))) throw new HttpFailure(sessionFailures.provider.status, sessionFailures.provider.message);
@@ -232,16 +241,16 @@ export async function caseRoute(services: RouteServices, context: RouteRequest):
     signal.addEventListener("abort", cancel, { once: true });
     try {
       const output = await caseStore.run(lease, input, async runSignal => {
-        const output = await preparer.evaluate(structuredClone(input), runSignal);
+        const output = await preparer.evaluate(structuredClone(input), runSignal, context.reportProgress);
         privateGuard();
         caseStore.stagePresentation({ mode: dependencies.presentationMode ?? "live", ...(dependencies.runtime ? { runtime: dependencies.runtime } : {}) });
         return output;
       }, ticket ?? undefined, privateGuard);
       privateGuard();
       const captured: unknown = structuredClone(output);
-      if (Buffer.byteLength(JSON.stringify(captured), "utf8") > 524288) throw new HttpFailure(502, "검토 결과 크기 제한을 초과했습니다.");
+      if (Buffer.byteLength(JSON.stringify(captured), "utf8") > 524288) throw new HttpFailure(502, "검토 결과가 너무 커서 저장하지 못했습니다. 담당자에게 알려 주세요.");
       const parsed = parseAssessment(captured);
-      if (parsed.decision.caseId !== input.caseId || !idPattern.test(parsed.decision.caseId)) throw new HttpFailure(502, "사례 식별 정보를 확인할 수 없습니다.");
+      if (parsed.decision.caseId !== input.caseId || !idPattern.test(parsed.decision.caseId)) throw new HttpFailure(502, "검토 결과의 사례 번호가 맞지 않습니다. 다시 제출해 주세요.");
       const owned = structuredClone(parsed);
       const result = redirect(`/cases/${input.caseId}`);
       caseStore.commit(lease, owned, () => {

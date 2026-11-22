@@ -158,7 +158,7 @@ test("default launcher uses subscription and returns clean 503 when SDK credenti
     const { caseId: _id, ...fields } = input;
     const response = await fetch(origin + "/cases", { method: "POST", headers: { origin, cookie, "content-type": "application/json" }, body: JSON.stringify(fields) });
     assert.equal(response.status, 503);
-    assert.match(await response.text(), /실행 연결이 구성되지 않았습니다/);
+    assert.match(await response.text(), /모델 연결이 설정되지 않았습니다/);
     const readiness = await fetch(origin + "/operations/readiness");
     const body: unknown = await readiness.json();
     assert.ok(typeof body === "object" && body !== null && "mode" in body);

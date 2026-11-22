@@ -11,25 +11,29 @@ const input: CaseInput = {
   hazardousContact: "no", massKg: 180, region: "경기", assessmentDate: "2026-11-22",
 };
 
-test("input workspace keeps one native form with every field and reachable region anchors", async () => {
-  const html = inputPage({ authenticated: true, localAuth: true, connected: true, photoEnabled: false, runner: "subscription" });
-  const regions: string[] = [], targets: string[] = [], controls: string[] = [], forms: string[] = [];
+test("one-page intake has three visible sections and a native submit in the summary", async () => {
+  const html = inputPage({ authenticated: true, localAuth: true, connected: true, photoEnabled: false });
+  const steps: string[] = [], targets: string[] = [], controls: string[] = [], forms: string[] = [];
   await new HTMLRewriter()
-    .on(".workspace-nav a", { element(el) { targets.push(el.getAttribute("href") ?? ""); } })
-    .on(".input-workspace > [id]", { element(el) {
-      regions.push("#" + el.getAttribute("id"));
-      assert.equal(el.getAttribute("tabindex"), "-1");
+    .on("[data-intake-start]", { element(el) { targets.push(el.getAttribute("href") ?? ""); } })
+    .on("#case-intake fieldset[data-intake-section]", { element(el) {
+      steps.push(el.getAttribute("data-intake-section") ?? "");
+      assert.equal(el.hasAttribute("hidden"), false);
     } })
-    .on(".case-editor form", { element(el) {
+    .on("#case-intake form", { element(el) {
       forms.push(el.getAttribute("action") ?? "");
       assert.equal(el.getAttribute("method"), "post");
     } })
-    .on(".case-editor [name]", { element(el) { controls.push(el.getAttribute("name") ?? ""); } })
+    .on("#case-intake form [name]", { element(el) { controls.push(el.getAttribute("name") ?? ""); } })
+    .on("#case-intake form [data-intake-summary] button[type=submit]", { element(el) {
+      assert.equal(el.hasAttribute("hidden"), false);
+      targets.push("native submit");
+    } })
     .transform(new Response(html)).text();
-  assert.deepEqual(regions, ["#input-overview", "#case-editor"]);
-  assert.deepEqual(targets, ["#case-editor", "#input-overview"]);
+  assert.deepEqual(steps, ["material", "source", "state"]);
+  assert.deepEqual(targets, ["#case-intake", "native submit"]);
   assert.deepEqual(forms, ["/cases"]);
-  assert.deepEqual(controls, ["description", "process", "polymer", "contamination", "hazardousContact", "massKg", "region", "assessmentDate"]);
+  assert.deepEqual(controls, ["polymer", "description", "process", "region", "contamination", "hazardousContact", "massKg", "assessmentDate"]);
 });
 
 for (const hazardousContact of ["no", "yes", "unknown"] as const) {
@@ -44,11 +48,14 @@ for (const hazardousContact of ["no", "yes", "unknown"] as const) {
     });
     const order: string[] = [], actions: string[] = [], versions: string[] = [], selected: string[] = [];
     const controls = new Map<string, string>();
-    const leading: string[] = [], targets: string[] = [];
+    const leading: string[] = [], targets: string[] = [], mobileEdits: (string | null)[] = [];
+    let editTarget = 0;
     await new HTMLRewriter()
       .on(".report-workspace > div, .report-workspace > aside", { element(el) { order.push(el.getAttribute("class") ?? ""); } })
-      .on("#report-results > #decision-summary, #report-results > #next-action", { element(el) { leading.push(el.getAttribute("id") ?? ""); } })
+      .on("#report-results > .result-overview > #decision-summary, #report-results > .result-overview > #next-action", { element(el) { leading.push(el.getAttribute("id") ?? ""); } })
       .on(".workspace-nav a", { element(el) { targets.push(el.getAttribute("href") ?? ""); } })
+      .on(".result-actions.screen-only .mobile-edit-shortcut", { element(el) { mobileEdits.push(el.getAttribute("href")); } })
+      .on(".case-editor #answer-fields", { element(el) { if (el.getAttribute("tabindex") === "-1") editTarget++; } })
       .on(".case-editor form", { element(el) {
         actions.push(el.getAttribute("action") ?? "");
         assert.equal(el.getAttribute("method"), "post");
@@ -60,6 +67,8 @@ for (const hazardousContact of ["no", "yes", "unknown"] as const) {
     assert.deepEqual(order, ["report-results", "case-editor", "report-records"]);
     assert.deepEqual(leading, ["decision-summary", "next-action"]);
     assert.deepEqual(targets, ["#case-editor", "#report-results"]);
+    assert.deepEqual(mobileEdits, decision.state === "compared" ? ["#answer-fields"] : []);
+    assert.equal(editTarget, 1);
     assert.deepEqual(actions, [action, action]);
     assert.deepEqual(versions, ["7", "7"]);
     assert.deepEqual(selected, [hazardousContact]);

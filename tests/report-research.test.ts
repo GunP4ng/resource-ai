@@ -41,18 +41,18 @@ for (const sourceCaseId of ["OYS-20261110-001", "OYS-20261110-002", "OYS-2026111
       assert.ok(rowText.includes(row.activity));
       assert.ok(rowText.includes(row.wasteScope));
       assert.ok(rowText.includes(row.address));
-      assert.ok(rowText.includes("인수 의사 미확인"));
-      assert.ok(rowText.includes("적합성 미확인"));
+      assert.ok(rowText.includes("인수 의사는 문의로 확인"));
+      assert.ok(rowText.includes("확인 필요: 현재 허가·영업 상태, 사례 지역·운송·재질·품목·오염 조건 적합성"));
     }
     assert.match(html, /공개 자료 기반 계산값\(관측값 아님\)/);
-    assert.match(html, /권리 미확인/);
-    assert.match(html, /소각 등재는 에너지 회수 확인/);
-    assert.match(html, /기계적 재활용 시설 근거 없음/);
+    assert.match(html, /상업 이용·재배포 권리가 확인되지 않아/);
+    assert.match(html, /소각 등재 업체의 에너지 회수 여부와 실제 시설 위치는 업체에 확인/);
+    assert.match(html, /기계적 재활용 시설 근거가 아직 없어/);
     const directoryDate = attachment.processors.source.sourceDate;
     assert.ok(directoryDate);
     assert.doesNotMatch(html, new RegExp(`등재일\\s*${directoryDate}`), "the dataset date is not a company's registration date");
     assert.ok(html.includes(`명부 기준일 ${directoryDate}`));
-    assert.match(html, /업체별 등재·갱신일 미확인/);
+    assert.match(html, /업체별 등재·갱신일 없음/);
     let provenanceText = "";
     await new HTMLRewriter()
       .on("#research-calculations > details", { text(chunk) { provenanceText += chunk.text; } })
@@ -60,7 +60,7 @@ for (const sourceCaseId of ["OYS-20261110-001", "OYS-20261110-002", "OYS-2026111
     assert.ok(provenanceText.includes(attachment.calculations.cases[0].material_mapping_assumption), "original assumption remains in research provenance");
     for (const limitation of attachment.calculations.limitations) assert.ok(provenanceText.includes(limitation), "original limitation remains in research provenance");
     assert.match(html, /2026-11-10/);
-    if (sourceCaseId.endsWith("003")) assert.match(html, /질량 미확보/);
+    if (sourceCaseId.endsWith("003")) assert.match(html, /질량 없음/);
     if (sourceCaseId.endsWith("002")) assert.match(html, /generic PE/);
     const commercial = renderReport(decision, { mode: "offline" });
     assert.doesNotMatch(commercial, /data-research-result|data-directory-row|data-recycling-directory-row|WARM|Wonju|private-actor/);

@@ -53,8 +53,8 @@ test("issue #109 editable native held page offers mass separately without releas
       const html = await page.text();
       assert.equal(page.status, 200);
       assert.equal(html.includes(massQuestion), false);
-      assert.match(html, /href="#answer-fields">선택 정보: 질량을 입력할 수 있습니다/);
-      assert.match(html, /질량 입력은 선택 사항이며 보류 사유를 해제하거나 비용·탄소 계산을 보장하지 않습니다/);
+      assert.match(html, /href="#answer-fields">질량 입력하기 \(선택\)/);
+      assert.match(html, /보류 사유는 질량과 별도로 해결해야 합니다\. 비용·탄소는 근거 자료가 있는 항목만 계산됩니다/);
       const order: string[] = [];
       await new HTMLRewriter()
         .on("#case-reasons", { element() { order.push("reasons"); } })
@@ -67,7 +67,7 @@ test("issue #109 editable native held page offers mass separately without releas
       const supplied = await app.fetch(new Request(origin + path, { headers: { cookie } }));
       const suppliedHtml = await supplied.text();
       assert.equal(supplied.status, 200);
-      assert.doesNotMatch(suppliedHtml, /선택 정보: 질량을 입력할 수 있습니다/);
+      assert.doesNotMatch(suppliedHtml, /질량 입력하기 \(선택\)/);
       assert.match(suppliedHtml, /검토 필요 · 실행 보류/);
       const reasons = (value: string) => value.match(/<section id="case-reasons">([\s\S]*?)<\/section>/)?.[1];
       assert.ok(reasons(html));

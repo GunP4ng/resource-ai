@@ -60,11 +60,11 @@ for (const state of ["compared", "needs-review", "needs-information"] as const) 
       } })
       .transform(new Response(renderReport(result, { mode: "offline", historical: true }))).text();
     assert.equal(summaries, 1);
-    assert.match(conclusion, state === "compared" ? /우선 검토/ : state === "needs-review" ? /보류/ : /정보가 부족/);
-    assert.match(action, /다음 행동:/);
+    assert.match(conclusion, state === "compared" ? /먼저 검토/ : state === "needs-review" ? /보류/ : /정보가 부족/);
+    assert.match(action, /다음 할 일:/);
     assert.match(unavailable, /비용/);
     assert.match(unavailable, /탄소/);
-    assert.match(unavailable, state === "compared" ? /미산정/ : /비교 미수행/);
+    assert.match(unavailable, state === "compared" ? /미산정/ : /실행 보류로 비교하지 않음/);
     assert.deepEqual(locations, result.evidence.slice(0, 3).map((item, index) => `[${index + 1}] ${item.title} · ${item.locator}`));
     assert.deepEqual(targets, result.evidence.slice(0, 3).map((_, index) => `evidence-${index + 1}`));
     assert.equal(evidenceIndex, "#evidence");
@@ -127,8 +127,8 @@ test("commercial summary distinguishes absent and unavailable estimates from an 
     let status = "";
     await new HTMLRewriter().on("#summary-unavailable li", { text(chunk) { status += chunk.text; } })
       .transform(new Response(renderReport(result, fixture.presentation))).text();
-    assert.match(status, kind === "zero" ? /비용: 판정 상세의 계산값 확인/
-      : kind === "unavailable" ? /비용: 2개 비교값 중 2개 미산정/ : /비용: 비교값 미확보/);
+    assert.match(status, kind === "zero" ? /비용: 판정 상세에 계산값 있음/
+      : kind === "unavailable" ? /비용: 2개 비교값 중 2개 미산정/ : /비용: 비교값 없음/);
     assert.deepEqual(result, before);
   }
 });
@@ -146,7 +146,7 @@ test("commercial detail views retain controls without a standalone summary, even
       .on("form, .notice", { text(chunk) { editing += chunk.text; } })
       .transform(new Response(renderReport(result, { mode: "offline" }, { audience: "commercial" }, view))).text();
     assert.equal(summaries, 0);
-    assert.match(fallback, /현장 담당자의 별도 검토와 승인/);
+    assert.match(fallback, /현장 담당자 검토와 승인 후/);
     assert.match(editing, view.answerTarget ? /답변/ : /수정 기한이 지났습니다/);
   }
   let evidence = "", reason = "";
@@ -172,10 +172,10 @@ test("safety-held reports subordinate citation shortage without losing reason an
     .on('#case-reasons li[id]', { element(el) { allIds.push(el.getAttribute("id") ?? ""); } })
     .on('a[href^="#case-reason-"]', { element(el) { links.push((el.getAttribute("href") ?? "").slice(1)); } })
     .transform(new Response(html)).text();
-  assert.ok(primary.join("").includes(safetyReasons.materialTreatment));
+  assert.ok(primary.join("").includes(readableReason(safetyReasons.materialTreatment)));
   assert.ok(!primary.join("").includes("인용 부족"));
   assert.ok(secondary.join("").includes("인용 부족"));
-  assert.ok(html.indexOf(safetyReasons.materialTreatment) < html.indexOf('class="supporting-reasons"'));
+  assert.ok(html.indexOf(readableReason(safetyReasons.materialTreatment)) < html.indexOf('class="supporting-reasons"'));
   assert.equal(new Set(allIds).size, allIds.length);
   assert.equal(allIds.length, result.reasons.length);
   assert.ok(links.every(id => allIds.includes(id)));

@@ -245,7 +245,7 @@ for (const kind of ["synthetic", "field"] as const) test(`saved ${kind} declarat
   await writeFile(join(directory, revision(exported.value) + ".json"), JSON.stringify(artifact), { mode: 0o600 });
   assert.equal((await app.fetch(post(path + "/answers", f.cookie, { baseVersion: 1, patch: { massKg: exported.value.massKg } }))).status, 303);
   const saved = f.cases.read(`actor:${f.actorId}`, exported.value.caseId); assert.equal(saved?.review?.hash, artifact.sha256); assert.equal(saved?.review?.origin.kind, kind);
-  const html = await (await app.fetch(get(path + "/report", f.cookie))).text(); assert.ok(html.includes(artifact.sha256)); assert.match(html, kind === "synthetic" ? /합성 자료 · 현장 근거 아님/ : /현장 자료로 선언된 검토 아티팩트 · 인간·법적 승인 아님/);
+  const html = await (await app.fetch(get(path + "/report", f.cookie))).text(); assert.ok(html.includes(artifact.sha256)); assert.match(html, kind === "synthetic" ? /예시용 자료입니다/ : /현장 자료로 등록된 검토 자료입니다\. 실행은 현장 담당자의 승인을 받은 뒤 진행하세요/);
   assert.equal((await app.fetch(post(path + "/answers", f.cookie, { baseVersion: 2, patch: { massKg: 2001 } }))).status, 303);
   assert.equal(f.cases.read(`actor:${f.actorId}`, exported.value.caseId)?.review, null);
 });
