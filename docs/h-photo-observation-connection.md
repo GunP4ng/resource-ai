@@ -43,17 +43,17 @@
 
 같은 파일의 운영 앱 검사는 기존 O fixture의 격리된 합성 계정·비공개 저장소·SQLite·사진 authority·정확한 입력 grant·영속 journal·기존 `createOperatorRuntime`을 사용한다. 전체 디코딩/정제된 사진의 SHA가 SDK 첨부와 일치하고, HTTP303 뒤 후보 질문이 기존 보고서에 보인다. 잘못된 관찰 응답의 HTTP502 뒤 이전 입력·보고서·revision이 그대로인지 검사한다. 인증된 수정 요청의 baseVersion 계약을 그대로 사용한다. 합성 관측은 실제 현장이나 모델의 시각 성능 증거가 아니다.
 
-검증 환경은 Linux x64 로컬 파일시스템, Node24/Bun1.4.2와 고정 lock의 기존 의존성이다. `RESOURCE_MODEL_RUNNER=local`, 임시 합성 agent/auth 경로와 주입 transport만 사용한다. 실제 계정/인증정보·외부 모델·승인되지 않은 외부 사진에는 접근하지 않는다.
+검증 환경은 Linux x64 로컬 파일시스템, Node24/Bun1.4.2와 고정 lock의 기존 의존성이다. 임시 합성 agent/auth 경로와 주입 transport만 사용한다. 실제 계정/인증정보·외부 모델·승인되지 않은 외부 사진에는 접근하지 않는다.
 
 ```sh
-RESOURCE_MODEL_RUNNER=local bun test --timeout 30000 tests/photo-observations*.test.ts
-RESOURCE_MODEL_RUNNER=local bun run typecheck
-RESOURCE_MODEL_RUNNER=local bun run typecheck:o-tests
-RESOURCE_MODEL_RUNNER=local bun node_modules/typescript/bin/tsc --noEmit -p tests/tsconfig.h.json
-RESOURCE_MODEL_RUNNER=local bun run build
-RESOURCE_MODEL_RUNNER=local bun run build:app
-RESOURCE_MODEL_RUNNER=local bun test --timeout 30000
-RESOURCE_MODEL_RUNNER=local bun run smoke
+bun test --timeout 30000 tests/photo-observations*.test.ts
+bun run typecheck
+bun run typecheck:o-tests
+bun node_modules/typescript/bin/tsc --noEmit -p tests/tsconfig.h.json
+bun run build
+bun run build:app
+bun test --timeout 30000
+bun run smoke
 ```
 
 전체 검증의 실제 수치와 최종 Git SHA는 PR 본문의 실행 기록에 남긴다. 별도 H tsc는 기존 H 테스트 목록을 검사하며, 새 테스트 두 파일은 공통 `typecheck`의 Node 테스트 구성에 포함된다.

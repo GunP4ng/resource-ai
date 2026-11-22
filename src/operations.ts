@@ -55,14 +55,14 @@ function requestDeadline(clock: OperationalClock, end: number, parent: AbortSign
 }
 const requestBudgets = new AsyncLocalStorage<ReturnType<typeof requestDeadline>>();
 
-/** H/O composition used by the launcher. Without operations or a runner, assessment is local.
+/** H/O composition used by the launcher. Without operations or a runner, assessment is unavailable.
  * Identity verification and storage policy are injected by the server owner.
  * No environment variable can enable inference here; readiness never claims live verification.
  */
 export function createOperationalApp(options: {
   readonly origin: string;
   readonly operations?: OperationalRunnerOptions | SubscriptionOperationalRunnerOptions;
-  /** Local launcher integration; mutually exclusive with request-gated operations. */
+  /** Host-owned runner integration; mutually exclusive with request-gated operations. */
   readonly runner?: CaseRunner;
   readonly resources?: ResourceProvider;
   readonly timeoutMs?: number;
@@ -132,7 +132,7 @@ export function createOperationalApp(options: {
           if (forwarded.method === "GET" && url.origin === new URL(options.origin).origin && url.pathname === "/operations/readiness") {
             try { options.localAuth?.resolve(forwarded, budget.signal); }
             catch { budget.check(); return Response.json({ app: "unavailable", identity: "local-operator", storage: "unavailable" }, { status: 503, headers: { "cache-control": "no-store" } }); }
-            return Response.json({ mode: enabled ? "request-gated" : runner ? "model-runner" : "local-only", azure: "not-verified",
+            return Response.json({ mode: enabled ? "request-gated" : runner ? "model-runner" : "unconfigured", azure: "not-verified",
               authorization: enabled ? "required-per-request" : "disabled", photos: binding && enabled ? "server-bound" : "reference-only",
               identity: options.localAuth ? "local-operator" : options.actorForRequest ? "server-resolver" : "anonymous-session", privatePhotoStorage: !!((options.actorForRequest || options.localAuth) && options.photoStore && options.photoPolicy),
               ...(options.runtime ? { runtime: options.runtime } : {}),

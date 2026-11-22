@@ -11,13 +11,13 @@ import { createResourceDomain } from "../src/domain.ts";
 import { createPhotoStore } from "../src/photos.ts";
 import { createSubscriptionPhotoExecutionAuthority } from "../src/photo-execution.ts";
 import { SUBSCRIPTION_ENDPOINT } from "../src/subscription-configuration.ts";
-import { createResourceApp, createSubscriptionRunner, openCaseSession } from "../src/session.ts";
+import { createSubscriptionRunner, openCaseSession } from "../src/session.ts";
+import { createSyntheticResourceApp as createResourceApp } from "./synthetic-runtime.ts";
 import { revision } from "../src/o-validation.ts";
-import { candidatePath, loadHCandidates, sha256 } from "./h-candidates.ts";
+import { candidatePath, loadHCandidates, sha256 } from "../scripts/h-candidates.ts";
 
 // Deliberately use the real SDK serializer with an in-memory fake credential and
 // injected SSE transport. No real auth store, login or network model request.
-assert.equal(process.env["RESOURCE_MODEL_RUNNER"], "local", "Set RESOURCE_MODEL_RUNNER=local for offline verification");
 const root = await mkdtemp(join(tmpdir(), "resource-h-photo-offline-"));
 const output = resolve(process.argv[2] ?? "artifacts/h-photo-offline.json");
 let transportCalls = 0;

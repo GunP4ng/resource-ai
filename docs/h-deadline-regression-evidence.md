@@ -27,10 +27,10 @@
 
 ## 실행과 증거 범위
 
-지원 환경은 Linux x64 로컬 파일시스템, Node24, 고정 Bun1.4.2와 기존 lock 의존성이다. 합성 설정·응답과 격리된 임시 agent 경로를 사용하고 `RESOURCE_MODEL_RUNNER=local`을 명시한다. 실제 계정 인증 파일·로그인·외부 모델/사진은 접근하지 않는다. 기존 Azure 명칭의 fixture는 합성 provider 경계 검사이며 기본 구독 모델 설정 변경이 아니다.
+지원 환경은 Linux x64 로컬 파일시스템, Node24, 고정 Bun1.4.2와 기존 lock 의존성이다. 합성 설정·응답과 격리된 임시 agent 경로, tests 전용 주입 runner를 사용한다. 실제 계정 인증 파일·로그인·외부 모델/사진은 접근하지 않는다. 기존 Azure 명칭의 fixture는 합성 provider 경계 검사이며 기본 구독 모델 설정 변경이 아니다.
 
 ```sh
-export RESOURCE_MODEL_RUNNER=local
+# Tests inject their own synthetic runner; no model-runner environment switch is needed.
 bun test --timeout 30000 tests/operations.test.ts
 bun run typecheck
 bun run typecheck:o-tests

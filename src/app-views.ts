@@ -64,7 +64,7 @@ export function form(action: string, answers = false, version?: number, selectio
     <textarea id="answers" name="answers" aria-describedby="answers-help" required maxlength="${caseFormTextLimits.answers}"></textarea>${selection}<button type="submit">사례 필드 수정 제출</button></form></details>`;
 }
 
-const runners = { local: "로컬", subscription: "구독 경로 모델 실행", azure: "Azure 연결", unspecified: "미지정" } as const;
+const runners = { local: null, subscription: "구독 경로 모델 실행", azure: "Azure 연결", unspecified: "미지정" } as const;
 export interface InputView {
   readonly authenticated: boolean;
   readonly localAuth: boolean;
@@ -80,13 +80,18 @@ export function caseListPage(rows: string, localAuth: boolean, deadlineLabel: st
 }
 export function inputPage(options: InputView): string {
   const { authenticated, localAuth, connected, photoEnabled, runner } = options;
-  const runnerLabel = runner ? runners[runner] : "미제공";
+  const runnerLabel = runner ? runners[runner] : null;
   const purpose = "<p>공정에서 나온 폐플라스틱·금속 스크랩·폐목재·종이 및 복합 포장재의 재사용·재활용·처리 대안을 검토합니다. 재질과 오염 상태를 입력하면 조건별 대안, 공개 근거와 다음 확인할 일을 보여 줍니다.</p><p>정보가 부족하거나 위험이 의심되면 실행을 보류하고, 어떤 조건을 확인해야 다음 대안을 검토할 수 있는지 안내합니다.</p>";
-  if (authenticated && localAuth) return page("사례 입력", `<h1>폐자원 조건부 검토</h1>${exampleStart}${purpose}<p class="notice">로그인한 담당자 · 사례 보관 최대 1시간 · 검토 방식 ${runnerLabel} · 실행 성공은 평가 후 확인</p><p>입력은 미검토 자료입니다. 로그인은 자료나 법적 승인을 뜻하지 않습니다.</p><p><a href="/cases">내 사례·복구</a></p>${form("/cases")}<p>사진: ${photoEnabled ? "비공개 저장 전용" : "저장 비활성"}</p><p><a href="/demo/normal">합성 비교 데모</a></p>`);
-  return page("사례 입력", `<h1>폐자원 조건부 검토</h1>
-          ${exampleStart}${purpose}<p class="notice">${connected ? "입력을 받아 검토할 준비가 됐습니다. 제출 후 결과를 확인하세요." : "사례 검토 연결을 준비 중입니다. 지금 제출하면 준비 상태를 안내합니다."}</p>
+  const account = authenticated && localAuth
+    ? `<p class="notice">로그인한 담당자 · 사례 보관 최대 1시간${runnerLabel ? ` · 검토 방식 ${runnerLabel} · 실행 성공은 평가 후 확인` : ""}</p><p>입력은 미검토 자료입니다. 로그인은 자료나 법적 승인을 뜻하지 않습니다.</p>`
+    : `<p class="notice">${connected ? "입력을 받아 검토할 준비가 됐습니다. 제출 후 결과를 확인하세요." : "사례 검토 연결을 준비 중입니다. 지금 제출하면 준비 상태를 안내합니다."}</p>
           <p>실제 자료와 합성 데모를 구분합니다. 설명·사진만으로 법적 코드나 처리 허가를 확정하지 않습니다.</p>
-          <p>${authenticated ? "서버 인증 사용자" : "익명 임시 세션 · 재시작하면 사례를 복구할 수 없습니다."}${runner ? ` 구성된 실행기 ${runnerLabel} · 실행 성공은 평가 후 확인하세요.` : ""}</p>
-          <p><a href="/cases">내 사례·복구</a></p>
-          ${form("/cases")}<p>사진 저장: ${photoEnabled ? "인증된 사례에서 사용 가능" : "인증된 비공개 사진 저장소를 사용할 수 없습니다."}</p><p><a href="/demo/review">합성 위험·검토 예시 보기</a></p>`);
+          <p>${authenticated ? "서버 인증 사용자" : "익명 임시 세션 · 재시작하면 사례를 복구할 수 없습니다."}${runnerLabel ? ` 구성된 실행기 ${runnerLabel} · 실행 성공은 평가 후 확인하세요.` : ""}</p>`;
+  const support = authenticated && localAuth
+    ? `<p>사진: ${photoEnabled ? "비공개 저장 전용" : "저장 비활성"}</p><p><a href="/demo/normal">합성 비교 데모</a></p>`
+    : `<p>사진 저장: ${photoEnabled ? "인증된 사례에서 사용 가능" : "인증된 비공개 사진 저장소를 사용할 수 없습니다."}</p><p><a href="/demo/review">합성 위험·검토 예시 보기</a></p>`;
+  return page("사례 입력", `<nav class="workspace-nav" aria-label="작업 영역"><a href="#case-editor">사례 입력</a><a href="#input-overview">검토 안내</a></nav>
+    <div class="input-workspace"><div class="input-overview" id="input-overview" tabindex="-1"><h1>폐자원 조건부 검토</h1>${exampleStart}${purpose}${account}<p><a href="/cases">내 사례·복구</a></p></div>
+    <aside class="case-editor" id="case-editor" aria-label="사례 입력" tabindex="-1"><div class="case-editor-body"><h2 class="workspace-heading">사례 입력</h2>${form("/cases")}</div></aside>
+    <div class="input-support">${support}</div></div>`, "workspace");
 }

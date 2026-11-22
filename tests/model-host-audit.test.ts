@@ -6,6 +6,7 @@ import { createResourceDomain } from "../src/domain.ts";
 import { parseAssessment } from "../src/o-case-store.ts";
 import { revision } from "../src/o-validation.ts";
 import { syntheticCase, syntheticReviewed } from "./h-fixtures.ts";
+import { syntheticRunner } from "./synthetic-runtime.ts";
 
 const input = { ...syntheticCase, caseId: "model-host-audit" };
 const signal = () => new AbortController().signal;
@@ -101,7 +102,7 @@ test("rejected route remains identifiable from the host catalogue even when the 
 });
 
 test("no proposal produces no audit even with a request ID or a runner supplied forged audit", async () => {
-  for (const runner of [undefined, async () => ({ execution: { traceId: "unverified-request" },
+  for (const runner of [syntheticRunner, async () => ({ execution: { traceId: "unverified-request" },
     modelAudit: { validation: { status: "validation-passed" }, independentContribution: "confirmed" } })]) {
     const result = await evaluate(runner);
     assert.equal(result.modelAudit, undefined);

@@ -4,6 +4,7 @@ import { Readable } from "node:stream";
 import { isAbsolute, join, resolve } from "node:path";
 import { createOperationalApp } from "../src/operations.ts";
 import { createAzureRunner, createSubscriptionRunner } from "../src/session.ts";
+import type { CaseRunner } from "../src/session.ts";
 import { createMemoryRuntimeDatabase, openRuntimeDatabase } from "../src/o-runtime-db.ts";
 import { createCaseStore } from "../src/o-case-store.ts";
 import type { CleanupCursor } from "../src/o-case-store.ts";
@@ -93,12 +94,14 @@ export function createPhotoCleanupWorker(runtime: RuntimeDatabase, caseStore: Re
 }
 
 export async function startApp(injection: { readonly transport?: FetchFunction;
+  readonly runner?: CaseRunner;
   readonly suppliers?: { readonly configuration: Readonly<HOperationalConfiguration>; readonly open: OpenOperatorSuppliers } } = {}) {
 const port = Number(process.env["PORT"] ?? 3000);
 if (!Number.isInteger(port) || port < 1 || port > 65535) throw new RangeError("Invalid PORT");
 const origin = `http://localhost:${port}`;
 const mode = process.env["RESOURCE_MODEL_RUNNER"] ?? "subscription";
-if (mode !== "subscription" && mode !== "azure" && mode !== "local" && mode !== "operational") throw new RangeError("Invalid RESOURCE_MODEL_RUNNER");
+if (mode !== "subscription" && mode !== "azure" && mode !== "operational") throw new RangeError("Invalid RESOURCE_MODEL_RUNNER");
+if (injection.runner && mode === "operational") throw new RangeError("Operational mode owns its runner");
 const authMode = process.env["RESOURCE_APP_AUTH"] ?? "anonymous";
 const state = process.env["RESOURCE_STATE_DIR"], resourcesRoot = process.env["RESOURCE_RESOURCES_DIR"];
 const privatePhotos = process.env["RESOURCE_PRIVATE_PHOTOS"] ?? "off";
@@ -133,13 +136,13 @@ const route = subscriptionRoute(process.env["RESOURCE_SUBSCRIPTION_ROUTE"]);
 const subscription = mode === "subscription" && route === "siwc" ? checkedSubscriptionConfiguration({ provider: "chatgpt-subscription", route,
   modelId: process.env["RESOURCE_MODEL_ID"] ?? "gpt-6-sol", authPath: process.env["RESOURCE_AUTH_PATH"] ?? "",
   accountIdSha256: process.env["RESOURCE_ACCOUNT_ID_SHA256"] ?? "", credentialSlot: process.env["RESOURCE_CREDENTIAL_SLOT"] }) : undefined;
-const runner = mode === "subscription"
+const runner = injection.runner ?? (mode === "subscription"
   ? createSubscriptionRunner({ enabled: true, modelId: process.env["RESOURCE_MODEL_ID"], authPath: process.env["RESOURCE_AUTH_PATH"], route, subscription, transport: injection.transport })
-  : mode === "azure" ? createAzureRunner({ enabled: true, modelId: process.env["RESOURCE_MODEL_ID"], transport: injection.transport }) : undefined;
+  : mode === "azure" ? createAzureRunner({ enabled: true, modelId: process.env["RESOURCE_MODEL_ID"], transport: injection.transport }) : undefined);
 const app = operator?.app ?? createOperationalApp({ origin, runner, resources, localAuth, caseStore, photoStore,
-  presentationMode: mode === "local" ? "offline" : "live",
+  presentationMode: injection.runner ? "synthetic" : "live",
   photoPolicy: photoStore ? { retentionMs } : undefined,
-  runtime: { identity: localAuth ? "local-operator" : "anonymous", storage: localAuth ? "sqlite" : "ephemeral", runner: mode === "operational" ? "subscription" : mode }, timeoutMs: 10000 });
+  runtime: { identity: localAuth ? "local-operator" : "anonymous", storage: localAuth ? "sqlite" : "ephemeral", runner: injection.runner ? "unspecified" : mode === "operational" ? "subscription" : mode }, timeoutMs: 10000 });
 const cleanup = photoStore ? createPhotoCleanupWorker(runtime, caseStore, photoStore) : undefined;
 await cleanup?.run();
 const cleanupTimer = cleanup ? setInterval(() => { void cleanup.run(); }, 30000) : undefined;
@@ -186,7 +189,7 @@ server.once("error", () => {
   shutdown(1);
 });
 try {
-  server.listen(port, "127.0.0.1", () => console.log(`Re:Source app: ${origin} (auth=${authMode}; runner=${mode}; resources=${operator || resources ? "configured-review-required" : "unavailable"}; photos=${privatePhotos}; live provider not verified)`));
+  server.listen(port, "127.0.0.1", () => console.log(`Re:Source app: ${origin} (auth=${authMode}; runner=${injection.runner ? "synthetic" : mode}; resources=${operator || resources ? "configured-review-required" : "unavailable"}; photos=${privatePhotos}; live provider not verified)`));
 } catch (error) {
   shutdown(1);
   if (error instanceof Error) {

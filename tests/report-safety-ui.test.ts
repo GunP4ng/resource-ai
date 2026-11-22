@@ -3,7 +3,7 @@ import { test } from "node:test";
 import type { CaseInput, DecisionResult } from "../src/contracts.ts";
 import { createResourceDomain } from "../src/domain.ts";
 import { renderReport } from "../src/report.ts";
-import { createResourceApp } from "../src/session.ts";
+import { createSyntheticResourceApp as createResourceApp } from "./synthetic-runtime.ts";
 import { safetyReasons } from "../src/o-safety-reasons.ts";
 import { readableReason } from "../src/report-evidence.ts";
 import { demo } from "../src/o-demo.ts";

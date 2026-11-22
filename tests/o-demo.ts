@@ -4,7 +4,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { randomBytes } from "node:crypto";
 import { createApp } from "../src/app.ts";
-import { createOperationalApp } from "../src/operations.ts";
+import { createSyntheticOperationalApp as createOperationalApp } from "./synthetic-runtime.ts";
 import { openRuntimeDatabase } from "../src/o-runtime-db.ts";
 import { createCaseStore } from "../src/o-case-store.ts";
 import { createLocalAuth } from "../src/o-auth.ts";
@@ -31,7 +31,7 @@ async function runtime() {
   const db = await openRuntimeDatabase(join(temporary, "state"));
   const cases = createCaseStore(Date.now, undefined, db), auth = createLocalAuth(db, { origin });
   const app = createOperationalApp({ origin, localAuth: auth, caseStore: cases,
-    runtime: { identity: "local-operator", storage: "sqlite", runner: "local" } });
+    runtime: { identity: "local-operator", storage: "sqlite", runner: "unspecified" } });
   return { db, cases, auth, app, async close() { app.dispose(); await app.close(); cases.dispose(); db.close(); } };
 }
 let current = await runtime();
@@ -52,6 +52,6 @@ try {
   const recovered = await current.auth.login("demo", secret, new AbortController().signal);
   const after = await current.app.fetch(new Request(origin + path + "/report", { headers: { cookie: recovered.setCookie.split(";")[0] ?? "" } }));
   assert.equal(after.status, 200); assert.equal(await after.text(), before);
-  console.log("HELD_NATIVE_PASS create=303 correction=303 export=200 restart=200 runner=local resources=unavailable");
+  console.log("HELD_NATIVE_PASS create=303 correction=303 export=200 restart=200 runner=synthetic resources=unavailable");
   console.log("Demo outputs are generated handler HTML, not actual HTTP/browser QA or a recording. Normal: 3-minute synthetic calculation track; held: 2-minute native correction/recovery track.");
 } finally { await current.close(); await rm(temporary, { recursive: true, force: true }); }

@@ -6,7 +6,8 @@ import { fileURLToPath } from "node:url";
 import type { CaseInput } from "../src/contracts.ts";
 import { parseCaseInput } from "../src/input.ts";
 import { assessCase } from "../src/assessment.ts";
-import { createAssessmentAdapter } from "../src/session.ts";
+import { createResourceDomain } from "../src/domain.ts";
+import { presentAssessmentDecision } from "../src/o-verification-plan-candidates.ts";
 
 // This is a private reproduction-file shape, not a new application input contract.
 interface Candidate {
@@ -51,30 +52,28 @@ export async function loadHCandidates(): Promise<{ version: string; entries: Can
   return { version: pack.version, entries: pack.entries, manifestSha256: sha256(bytes) };
 }
 
-/** Actual H public APIs, with no runner/authentication/model or external URLs. */
+/** Deterministic host engine measurement; no runner/authentication/model or external URLs. */
 export async function verifyHCandidates() {
-  const pack = await loadHCandidates(), adapter = createAssessmentAdapter();
+  const pack = await loadHCandidates();
   const results = [];
-  try {
-    for (const item of pack.entries) {
-      const before = structuredClone(item.input), assessment = assessCase(item.input);
-      const output = await adapter.evaluate(item.input, new AbortController().signal);
-      assert.deepEqual(item.input, before);
-      assert.equal(assessment.candidates.photoInference, "not-performed");
-      assert.ok(assessment.routes.every(route => route.eligibility.state === "unknown"));
-      if (output.decision.state === "compared") {
-        assert.equal(output.decision.humanApproval, "pending");
-        assert.ok(output.decision.recommendations?.every(item => item.grade === "public-conditional"));
-        assert.ok(output.decision.routes.some(route => route.eligibility.state === "conditional"));
-      }
-      results.push({ candidateId: item.candidateId, stratum: item.stratum,
-        input: item.input, duplicateGroupId: item.duplicateGroupId,
-        photoSha256: item.photo.sha256, source: item.photo.sourceSnapshot,
-        questions: assessment.questions, candidates: assessment.candidates,
-        legalIssues: assessment.legal.issues, pendingLegal: assessment.pendingLegal,
-        output, assessment });
+  for (const item of pack.entries) {
+    const before = structuredClone(item.input), assessment = assessCase(item.input);
+    const output = { decision: presentAssessmentDecision(await createResourceDomain(item.input).decide()) };
+    assert.deepEqual(item.input, before);
+    assert.equal(assessment.candidates.photoInference, "not-performed");
+    assert.ok(assessment.routes.every(route => route.eligibility.state === "unknown"));
+    if (output.decision.state === "compared") {
+      assert.equal(output.decision.humanApproval, "pending");
+      assert.ok(output.decision.recommendations?.every(item => item.grade === "public-conditional"));
+      assert.ok(output.decision.routes.some(route => route.eligibility.state === "conditional"));
     }
-  } finally { adapter.dispose(); await adapter.settled(); }
+    results.push({ candidateId: item.candidateId, stratum: item.stratum,
+      input: item.input, duplicateGroupId: item.duplicateGroupId,
+      photoSha256: item.photo.sha256, source: item.photo.sourceSnapshot,
+      questions: assessment.questions, candidates: assessment.candidates,
+      legalIssues: assessment.legal.issues, pendingLegal: assessment.pendingLegal,
+      output, assessment });
+  }
   const sourceHashes = Object.fromEntries(await Promise.all([
     "src/input.ts", "src/assessment.ts", "src/domain.ts", "src/session.ts",
     "src/evidence.ts", "src/evidence-registry.ts", "scripts/h-candidates.ts",

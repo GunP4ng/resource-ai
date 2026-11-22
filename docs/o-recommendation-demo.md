@@ -38,11 +38,11 @@ printf '%s\n' "$QA_SECRET" |
     --username demo-operator --stdin-secret
 unset QA_SECRET
 
-RESOURCE_MODEL_RUNNER=local RESOURCE_APP_AUTH=local-operator \
-RESOURCE_PRIVATE_PHOTOS=on PORT=4842 bun scripts/app.ts
+RESOURCE_MODEL_RUNNER=subscription RESOURCE_APP_AUTH=local-operator \
+RESOURCE_PRIVATE_PHOTOS=on PORT=4842 bun run app
 ```
 
-로컬 모드는 외부 모델을 실행하지 않는다. 로그인은 자료의 진위·소속·법적 승인을 인증하지 않는다. 사진 저장 동의와 모델 전송 동의·권한은 별개이며 이 데모는 사진이나 모델 실행을 꾸며 넣지 않는다.
+실행 전 senpi에서 구독 계정에 로그인한다. 사례 검토는 실제 구독 모델을 사용한다. 사진은 저장 동의와 모델 전송 동의·권한을 각각 확인한다.
 
 ## 정확한 사례에 패키지 연결
 
@@ -94,7 +94,7 @@ J에는 원본 입력·평가일·법령·출처·권리·전제·정제 계보�
 
 정상 3분:
 
-1. 0–30초: 원본 입력과 kg·평가일을 보여주고 합성 전제·로컬 모드임을 설명한다.
+1. 0–30초: 원본 입력과 kg·평가일을 보여주고 합성 전제·테스트 전용 runner임을 설명한다.
 2. 30–90초: **자료 반영해 다시 평가하기**를 누른다. 추천 1순위와 낮은 확신도, 연구 계산·업체 문의 후보의 한계를 설명한다.
 3. 90–140초: **근거 확인하기**에서 법령 위치·시행본·원문 링크를 보여준다. PDF는 발행 서버가 첨부 다운로드로 보낼 수 있으므로 표시한 쪽수도 함께 확인한다.
 4. 140–180초: **실행 전 확인하기**에서 허가·인수·실측·견적·현장 승인 항목으로 마친다.
@@ -123,7 +123,7 @@ PP 질문 상태에서는 **답변 입력하기**가 질량 공란을 첫 입력
 
 추천·질문·보류 × 1440/390 × 밝음/어두움 12개 실제 화면에서 상태·실제 크기·연구 행 수·넘침을 확인했다. 탐지 결과는 모두 0건이었다. 별도 QA는 44px 대상, 본문 대비 4.5:1 이상, 키보드 본문 건너뛰기, 동작 줄이기, 처리 중·중복 제출·오류 복구·`null≠0`을 다룬다.
 
-재현 명령은 `bun run typecheck`, `bun run typecheck:o-tests`, `bun test --timeout 30000 ./tests`, `bun run build`, `bun run build:app`, `RESOURCE_MODEL_RUNNER=local bun run smoke`다. 연구 계산 검증은 `bun scripts/o-public-calculations.ts validate --dataset data/o-public-calculations/2026-11-15 --root "$PWD"`를 사용한다.
+재현 명령은 `bun run typecheck`, `bun run typecheck:o-tests`, `bun test --timeout 30000 ./tests`, `bun run build`, `bun run build:app`, `bun run smoke`다. 연구 계산 검증은 `bun scripts/o-public-calculations.ts validate --dataset data/o-public-calculations/2026-11-15 --root "$PWD"`를 사용한다.
 
 확인된 기존 제약: 기준 커밋의 개발 평가 스크립트는 이름 있는 Git worktree의 공통 refs를 찾지 못해 평가 테스트 4개가 실패한다. 같은 기준 코드에서 별도 재현했다. 새 입력 UI 회귀와 구분하며 평가 결과를 조작하거나 테스트를 제외하지 않는다.
 

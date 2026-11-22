@@ -31,7 +31,7 @@ bun run typecheck:o-tests
 bun run build
 bun run build:app
 mkdir -m 700 /absolute/private/sdk-smoke-cache
-RESOURCE_MODEL_RUNNER=local OMO_CODING_AGENT_DIR=/absolute/private/sdk-smoke-cache SENPI_CODING_AGENT_DIR=/absolute/private/sdk-smoke-cache bun run smoke
+OMO_CODING_AGENT_DIR=/absolute/private/sdk-smoke-cache SENPI_CODING_AGENT_DIR=/absolute/private/sdk-smoke-cache bun run smoke
 ```
 
 The offline install checks the existing cache; on a new host install the locked
@@ -39,12 +39,12 @@ packages with `bun install --frozen-lockfile` before disconnecting the network.
 Neither installation command authorizes inference. Bundles retain external
 dependencies beside the package; they are not standalone executables.
 
-Provision an account and initial case with the local runner first:
+Provision an account and initial case with the subscription runner first:
 
 ```sh
 mkdir -m 700 /absolute/private/resource-artifacts
 bun scripts/o-account.ts create --state-dir /absolute/private/resource-state --username operator
-RESOURCE_MODEL_RUNNER=local RESOURCE_APP_AUTH=local-operator RESOURCE_STATE_DIR=/absolute/private/resource-state RESOURCE_RESOURCES_DIR=/absolute/private/resource-artifacts bun scripts/app.ts
+RESOURCE_APP_AUTH=local-operator RESOURCE_STATE_DIR=/absolute/private/resource-state RESOURCE_RESOURCES_DIR=/absolute/private/resource-artifacts bun scripts/app.ts
 ```
 
 Log in through `/login`, create a case, and export `/cases/CASE_ID/input`.
@@ -188,8 +188,9 @@ Use `RESOURCE_PRIVATE_PHOTOS=on` when enabling the explicit photo mapping.
 variables must be **unset**, including empty values. Invalid operational
 configuration stops before listen; it never selects a direct runner, anonymous
 identity or memory database. Config-file presence in another mode does not
-enable inference. Legacy modes retain their previous selection behavior;
-always explicitly select `RESOURCE_MODEL_RUNNER=local` for offline work.
+enable inference. The default direct runner uses actual subscription inference.
+`RESOURCE_MODEL_RUNNER=local` is rejected; offline work uses the
+[tests-only injected launcher](../tests/README.md), with synthetic presentation.
 
 For component verification, `createOperatorRuntime({... , transport})` accepts
 an injected synthetic HTTP transport and optional `openCaseSession` seam. Any
@@ -324,7 +325,7 @@ absent; this implementation does not manufacture them.
 
 ## Demonstrations
 
-Run `RESOURCE_MODEL_RUNNER=local bun run demo:o` for generated synthetic
+Run `bun tests/o-demo.ts` for generated synthetic
 normal/held/review artifacts and the disk-backed native handler demo. For a
 live browser on a capable host, launch the local command above and log in.
 
@@ -345,8 +346,8 @@ independent evaluation labels. The lead owns recordings and integrated acceptanc
 ## Verification ownership
 
 ```sh
-RESOURCE_MODEL_RUNNER=local bun test tests/o-operation-journal.test.ts tests/o-operational-runtime.test.ts tests/o-operational-photos.test.ts tests/o-runtime.test.ts tests/operations.test.ts tests/subscription-operations.test.ts
-RESOURCE_MODEL_RUNNER=local bun test tests/o-operational-suppliers.test.ts tests/operational-handoff.test.ts tests/operational-audit-store.test.ts
+bun test tests/o-operation-journal.test.ts tests/o-operational-runtime.test.ts tests/o-operational-photos.test.ts tests/o-runtime.test.ts tests/operations.test.ts tests/subscription-operations.test.ts
+bun test tests/o-operational-suppliers.test.ts tests/operational-handoff.test.ts tests/operational-audit-store.test.ts
 bun run typecheck
 bun run typecheck:o-tests
 bun run build:app
@@ -437,8 +438,8 @@ For reproducible checks of all supported focused scenarios in this sandbox,
 after separately recording the unfiltered loopback failures:
 
 ```sh
-RESOURCE_MODEL_RUNNER=local bun test tests/o-operational-suppliers.test.ts tests/o-operational-runtime.test.ts tests/o-operational-photos.test.ts tests/o-operation-journal.test.ts tests/o-runtime.test.ts tests/operational-handoff.test.ts tests/operational-audit-store.test.ts tests/operations.test.ts tests/subscription-operations.test.ts -t '^(?!.*(?:HTTP launcher|HTTP bridge|packaged local operator launcher)).*$'
-RESOURCE_MODEL_RUNNER=local bun test tests/processors.test.ts tests/comparison.test.ts tests/carbon.test.ts tests/report.test.ts tests/app.test.ts
+bun test tests/o-operational-suppliers.test.ts tests/o-operational-runtime.test.ts tests/o-operational-photos.test.ts tests/o-operation-journal.test.ts tests/o-runtime.test.ts tests/operational-handoff.test.ts tests/operational-audit-store.test.ts tests/operations.test.ts tests/subscription-operations.test.ts -t '^(?!.*(?:HTTP launcher|HTTP bridge|packaged local operator launcher)).*$'
+bun test tests/processors.test.ts tests/comparison.test.ts tests/carbon.test.ts tests/report.test.ts tests/app.test.ts
 ```
 
 Observed results (all counts refer to this working tree, not historical PR totals):

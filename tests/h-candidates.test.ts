@@ -32,9 +32,9 @@ test("H candidate handoff preserves ten explicit inputs, photos, source/rights h
 test("offline CLI preserves legacy evidence and carries synthetic SDK observations into host questions and gates", { timeout: 120000 }, async () => {
   const root = await mkdtemp(join(tmpdir(), "h-offline-cli-test-")), output = join(root, "evidence.json");
   try {
-    const child = promisify(execFile)(process.execPath, ["scripts/h-photo-offline.ts", output], {
+    const child = promisify(execFile)(process.execPath, ["tests/h-photo-offline.ts", output], {
       cwd: fileURLToPath(new URL("..", import.meta.url)), timeout: 110000,
-      env: { ...process.env, RESOURCE_MODEL_RUNNER: "local",
+      env: { ...process.env,
         BUN_RUNTIME_TRANSPILER_CACHE_PATH: process.env["BUN_RUNTIME_TRANSPILER_CACHE_PATH"],
         BUN_INSTALL_CACHE_DIR: process.env["BUN_INSTALL_CACHE_DIR"], TMPDIR: process.env["TMPDIR"] },
     });

@@ -4,7 +4,7 @@ import type { CaseInput } from "../src/contracts.ts";
 import { createResourceDomain } from "../src/domain.ts";
 import { lookupLegalEvidence } from "../src/evidence.ts";
 import { createApp } from "../src/app.ts";
-import { createAssessmentAdapter } from "../src/session.ts";
+import { createSyntheticAssessmentAdapter as createAssessmentAdapter } from "./synthetic-runtime.ts";
 import { createCaseStore } from "../src/o-case-store.ts";
 
 const input: CaseInput = { caseId: "synthetic-111", description: "사출 스크랩", process: "사출",

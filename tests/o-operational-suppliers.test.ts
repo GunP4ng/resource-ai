@@ -234,7 +234,7 @@ test("typed H launcher injection rejects environment journal configuration and i
   const previous = { mode: process.env["RESOURCE_MODEL_RUNNER"], config: process.env["RESOURCE_OPERATIONAL_CONFIG"] };
   const f = await fixture(t), h = await supplierFixture(f.root); t.after(() => h.dispose());
   try {
-    process.env["RESOURCE_MODEL_RUNNER"] = "local";
+    process.env["RESOURCE_MODEL_RUNNER"] = "subscription";
     await assert.rejects(startApp({ suppliers: { configuration: hConfiguration(f.config), open: h.open } }));
     process.env["RESOURCE_MODEL_RUNNER"] = "operational"; process.env["RESOURCE_OPERATIONAL_CONFIG"] = "/unopened-config";
     await assert.rejects(startApp({ suppliers: { configuration: hConfiguration(f.config), open: h.open } }));

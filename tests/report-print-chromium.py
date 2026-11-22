@@ -40,9 +40,9 @@ def local_operator():
             sock.bind(("127.0.0.1", 0))
             port = sock.getsockname()[1]
         origin = f"http://localhost:{port}"
-        env.update(PORT=str(port), RESOURCE_MODEL_RUNNER="local", RESOURCE_APP_AUTH="local-operator",
+        env.update(PORT=str(port), RESOURCE_MODEL_RUNNER="subscription", RESOURCE_APP_AUTH="local-operator",
                    RESOURCE_STATE_DIR=state, RESOURCE_PRIVATE_PHOTOS="off")
-        process = subprocess.Popen(["bun", "scripts/app.ts"], cwd=REPO, env=env)
+        process = subprocess.Popen(["bun", "tests/synthetic-app.ts"], cwd=REPO, env=env)
         try:
             http = build_opener(ProxyHandler({}))
             for _ in range(100):

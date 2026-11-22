@@ -30,10 +30,10 @@ Bun 1.4.2 이상이 필요하다(Linux x64에서 확인). senpi SDK는 Node 24 �
 
 ```sh
 bun install --frozen-lockfile --ignore-scripts
-RESOURCE_MODEL_RUNNER=local bun run app
+bun run app
 ```
 
-브라우저에서 `http://localhost:3000`을 연다. 포트는 `PORT`로 바꾼다.
+senpi에서 구독 계정에 로그인한 뒤 브라우저에서 `http://localhost:3000`을 연다. 포트는 `PORT`로 바꾼다.
 
 검사와 평가 재현:
 
@@ -54,8 +54,8 @@ bun scripts/measure-guidance.ts --out /absolute/path/to/new-evidence-directory
 | `RESOURCE_MODEL_RUNNER` | 동작 |
 |---|---|
 | `subscription` (기본값) | senpi 로그인(`chatgpt-subscription`)으로 구독 모델을 부른다. 인증이 없으면 제출이 HTTP 503으로 끝난다. `RESOURCE_AUTH_PATH`, `RESOURCE_MODEL_ID`로 인증 파일과 모델을 고른다. |
-| `local` | 모델 없이 같은 판단 규칙으로 돌린다. 데모와 QA에 쓴다. |
 | `azure` | Azure OpenAI runner를 쓴다. `.env.example`의 키, endpoint, deployment 설정이 필요하다. |
+| `operational` | 인증된 운영자의 요청별 권한·한도·감사 설정을 사용한다. [운영 설정](docs/o-operational-handoff.md)이 필요하다. |
 
 모델은 제안하고 앱이 검증한다. 판정, 인용, 계산은 앱 규칙이 확인하고, 모델 제안과 앱이 받아들이거나 막은 내용은 단계별 기록으로 남는다.
 
@@ -65,7 +65,7 @@ bun scripts/measure-guidance.ts --out /absolute/path/to/new-evidence-directory
 
 ```sh
 bun scripts/o-account.ts create --state-dir /absolute/path/resource-state --username operator
-RESOURCE_MODEL_RUNNER=local RESOURCE_APP_AUTH=local-operator RESOURCE_STATE_DIR=/absolute/path/resource-state bun run app
+RESOURCE_APP_AUTH=local-operator RESOURCE_STATE_DIR=/absolute/path/resource-state bun run app
 ```
 
 `/login`에서 로그인하면 `/cases`에서 사례를 다시 연다. 연구용 계산과 모델 검증 기록은 로그인한 연구 화면에서 본다. 사진을 모델로 보내는 기능은 기본으로 꺼져 있다. 자세한 설정은 [런타임 통합 문서](docs/o-runtime-integration.md)와 [사진 실행 범위](docs/photo-execution-scope.md)에 있다.
@@ -80,7 +80,7 @@ RESOURCE_MODEL_RUNNER=local RESOURCE_APP_AUTH=local-operator RESOURCE_STATE_DIR=
        ├─ 재질·위험 표현 해석 (src/material-context.ts)
        ├─ 법령 근거 조회 (src/evidence.ts ← data/reference/legal)
        ├─ 업체·비용·탄소 계산 (data/reference, 공개 시나리오)
-       └─ 모델 runner: subscription | local | azure (senpi SDK 세션)
+       └─ 모델 runner: subscription | azure | operational (senpi SDK 세션)
 ```
 
 설계 비교는 [아키텍처 문서](docs/architecture.md)에 있다.

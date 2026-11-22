@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { createResourceDomain } from "../src/domain.ts";
 import { massQuestion } from "../src/input.ts";
 import { renderReport } from "../src/report.ts";
-import { createResourceApp } from "../src/session.ts";
+import { createSyntheticResourceApp as createResourceApp } from "./synthetic-runtime.ts";
 
 const origin = "http://localhost:3000";
 const baseFields = {

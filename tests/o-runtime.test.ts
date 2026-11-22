@@ -14,7 +14,8 @@ import { createInterface } from "node:readline";
 import { randomInt, randomUUID } from "node:crypto";
 import { createPhotoCleanupWorker } from "../scripts/app.ts";
 import { createApp } from "../src/app.ts";
-import { createOperationalApp, type OperationalClock } from "../src/operations.ts";
+import type { OperationalClock } from "../src/operations.ts";
+import { createSyntheticOperationalApp as createOperationalApp } from "./synthetic-runtime.ts";
 import { createCaseStore } from "../src/o-case-store.ts";
 import { createLocalAuth } from "../src/o-auth.ts";
 import { openRuntimeDatabase } from "../src/o-runtime-db.ts";
@@ -28,7 +29,7 @@ import { syntheticCase } from "./h-fixtures.ts";
 import { processTimeArguments, processTimeEnvironment, runWithProcessTime } from "./o-process-time.ts";
 
 const origin = "http://localhost:3000", secret = "integration-only long password";
-const localRuntime = { identity: "local-operator", storage: "sqlite", runner: "local" } as const;
+const localRuntime = { identity: "local-operator", storage: "sqlite", runner: "unspecified" } as const;
 const signal = () => new AbortController().signal;
 function pixels() {
   const image = new PhotonImage(new Uint8Array([255, 0, 0, 255]), 1, 1);
@@ -190,7 +191,7 @@ test("abort under a real SQLite writer lock stays contained and leases recover o
     import assert from 'node:assert/strict';
     import {openRuntimeDatabase} from ${moduleURL("../src/o-runtime-db.ts")};
     import {createCaseStore,CASE_LEASE_MS} from ${moduleURL("../src/o-case-store.ts")};
-    import {createResourceApp} from ${moduleURL("../src/session.ts")};
+    import {createSyntheticResourceApp as createResourceApp} from ${moduleURL("./synthetic-runtime.ts")};
     import {syntheticCase} from ${moduleURL("./h-fixtures.ts")};
     const db=await openRuntimeDatabase(${JSON.stringify(join(root, "state"))});
     const writer=await openRuntimeDatabase(${JSON.stringify(join(root, "state"))});
@@ -268,7 +269,7 @@ test("packaged account CLI provisions from an unrelated working directory", { ti
   const secretPath = join(f.root, "stdin-secret"); await writeFile(secretPath, secret + "\n", { mode: 0o600 });
   const fd = openSync(secretPath, "r");
   try {
-    const child = spawn(process.execPath, [join(root, "dist/app/o-account.js"), "create", "--state-dir", join(f.root, "packaged-state"), "--username", "packaged", "--stdin-secret"], { cwd: tmpdir(), timeout: 10000, env: { ...process.env, RESOURCE_MODEL_RUNNER: "local" }, stdio: [fd, "ignore", "pipe"] });
+    const child = spawn(process.execPath, [join(root, "dist/app/o-account.js"), "create", "--state-dir", join(f.root, "packaged-state"), "--username", "packaged", "--stdin-secret"], { cwd: tmpdir(), timeout: 10000, env: process.env, stdio: [fd, "ignore", "pipe"] });
     let diagnostic = ""; child.stderr?.on("data", chunk => { diagnostic += String(chunk); });
     const [code] = await once(child, "exit"); assert.equal(code, 0, diagnostic);
   } finally { closeSync(fd); }
@@ -318,7 +319,7 @@ test("packaged local operator launcher serves actual HTTP and exits cleanly", { 
   await new Promise<void>((done, reject) => { reservation.once("error", reject); reservation.listen(0, "127.0.0.1", done); });
   const address = reservation.address(); assert.ok(address && typeof address !== "string");
   await new Promise<void>((done, reject) => reservation.close(error => error ? reject(error) : done()));
-  const child = spawn(process.execPath, [...processTimeArguments, join(root, "dist/app/app.js")], { cwd: tmpdir(), timeout: 10000, env: { ...processTimeEnvironment(), PORT: String(address.port), RESOURCE_APP_AUTH: "local-operator", RESOURCE_STATE_DIR: join(f.root, "state"), RESOURCE_MODEL_RUNNER: "local", RESOURCE_PRIVATE_PHOTOS: "on" }, stdio: ["ignore", "pipe", "pipe"] });
+  const child = spawn(process.execPath, [...processTimeArguments, join(root, "tests/synthetic-app.ts"), join(root, "dist/app/app.js")], { cwd: tmpdir(), timeout: 10000, env: { ...processTimeEnvironment(), PORT: String(address.port), RESOURCE_APP_AUTH: "local-operator", RESOURCE_STATE_DIR: join(f.root, "state"), RESOURCE_MODEL_RUNNER: "subscription", RESOURCE_PRIVATE_PHOTOS: "on" }, stdio: ["ignore", "pipe", "pipe"] });
   child.stderr.on("data", () => {});
   const exited = once(child, "exit"), lines = createInterface({ input: child.stdout });
   try {
@@ -357,8 +358,8 @@ for (const placement of ["same-owner", "other-owner"] as const) test(`launcher s
   assert.deepEqual(queued(), obligations); await access(healthyPath);
   const { RESOURCE_RESOURCES_DIR: _resourcesRoot, ...environment } = process.env;
   const port = randomInt(40000, 60000);
-  const child = spawn(process.execPath, [fileURLToPath(new URL("../scripts/app.ts", import.meta.url))], { cwd: tmpdir(), timeout: 10000,
-    env: { ...environment, PORT: String(port), RESOURCE_APP_AUTH: "local-operator", RESOURCE_STATE_DIR: state, RESOURCE_PRIVATE_PHOTOS: "on", RESOURCE_MODEL_RUNNER: "local" }, stdio: ["ignore", "pipe", "pipe"] });
+  const child = spawn(process.execPath, [fileURLToPath(new URL("./synthetic-app.ts", import.meta.url))], { cwd: tmpdir(), timeout: 10000,
+    env: { ...environment, PORT: String(port), RESOURCE_APP_AUTH: "local-operator", RESOURCE_STATE_DIR: state, RESOURCE_PRIVATE_PHOTOS: "on", RESOURCE_MODEL_RUNNER: "subscription" }, stdio: ["ignore", "pipe", "pipe"] });
   let diagnostic = ""; child.stderr.on("data", chunk => { diagnostic += String(chunk); });
   const exited = once(child, "exit"), lines = createInterface({ input: child.stdout });
   try {
@@ -407,8 +408,8 @@ for (const scenario of ["renewed-case", "failed-association-orphan"] as const) t
   assert.ok(photo.receipt.expiresAt < Date.now()); await access(photo.path);
   assert.deepEqual(f.cases.pendingCleanup(photo.owner), []);
   const port = randomInt(40000, 60000), { RESOURCE_RESOURCES_DIR: _resources, ...environment } = process.env;
-  const child = spawn(process.execPath, [fileURLToPath(new URL("../scripts/app.ts", import.meta.url))], { cwd: tmpdir(), timeout: 10000,
-    env: { ...environment, PORT: String(port), RESOURCE_APP_AUTH: "local-operator", RESOURCE_STATE_DIR: f.state, RESOURCE_PRIVATE_PHOTOS: "on", RESOURCE_MODEL_RUNNER: "local" }, stdio: ["ignore", "pipe", "pipe"] });
+  const child = spawn(process.execPath, [fileURLToPath(new URL("./synthetic-app.ts", import.meta.url))], { cwd: tmpdir(), timeout: 10000,
+    env: { ...environment, PORT: String(port), RESOURCE_APP_AUTH: "local-operator", RESOURCE_STATE_DIR: f.state, RESOURCE_PRIVATE_PHOTOS: "on", RESOURCE_MODEL_RUNNER: "subscription" }, stdio: ["ignore", "pipe", "pipe"] });
   let diagnostic = ""; child.stderr.on("data", chunk => { diagnostic += String(chunk); });
   const exited = once(child, "exit"), lines = createInterface({ input: child.stdout });
   try {
