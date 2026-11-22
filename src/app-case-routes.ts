@@ -223,7 +223,14 @@ export async function caseRoute(services: RouteServices, context: RouteRequest):
       throw error;
     }
     const outside = unsupportedScope(input);
-    if (outside) { privateGuard(); return response(unsupportedScopePage(outside, snapshot?.input.caseId), 422); }
+    if (outside) {
+      const draft = url.pathname === "/cases" && !snapshot && format === "form"
+        && typeof raw === "object" && raw !== null && !Array.isArray(raw)
+        ? Object.fromEntries(Object.entries(raw))
+        : undefined;
+      privateGuard();
+      return response(unsupportedScopePage(outside, snapshot?.input.caseId, draft), 422);
+    }
     const authority = dependencies.photoExecution;
     const ticket = input.photoRefs.length ? authority?.current() : undefined;
     if (input.photoRefs.length && (input.photoRefs.length > 3 || !ticket || !snapshot || !caseStore.eligible(snapshot, input, ticket))) throw new HttpFailure(sessionFailures.provider.status, sessionFailures.provider.message);

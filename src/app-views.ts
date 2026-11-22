@@ -42,7 +42,7 @@ function fields(input?: CaseInput, editing = false, draft?: Readonly<Record<stri
     const id = prefix + field;
     const value = supplied(field, input?.[field] ?? "");
     return `<label for="${id}">${label}${field !== "description" && field !== "assessmentDate" ? " (미상은 공란)" : ""}</label>
-      ${field === "description" ? `<textarea id="${id}" name="${id}" required maxlength="${caseFormTextLimits.description}">${escapeHtml(value)}</textarea>` : `<input id="${id}" name="${id}" ${field === "assessmentDate" ? 'type="date" required' : `maxlength="${caseFormTextLimits[field]}"`} value="${escapeHtml(value)}">`}`;
+      ${field === "description" ? `<textarea id="${id}" name="${id}" required maxlength="${caseFormTextLimits.description}">${/^[\r\n]/u.test(value) ? "\n" : ""}${escapeHtml(value)}</textarea>` : `<input id="${id}" name="${id}" ${field === "assessmentDate" ? 'type="date" required' : `maxlength="${caseFormTextLimits[field]}"`} value="${escapeHtml(value)}">`}`;
   });
   const hazardous = `<label for="${prefix}hazardousContact">유해물질 접촉</label><select id="${prefix}hazardousContact" name="${prefix}hazardousContact">
      ${([["unknown", "미상"], ["yes", "있음"], ["no", "없음"]] as const).map(([value, label]) => `<option value="${value}" ${supplied("hazardousContact", input?.hazardousContact ?? "unknown") === value ? "selected" : ""}>${label}</option>`).join("")}</select>`;
