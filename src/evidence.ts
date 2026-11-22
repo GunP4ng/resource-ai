@@ -154,7 +154,7 @@ const registry = loadEvidenceRegistry(registryJson);
 export function lookupLegalEvidence(input: CaseInput, candidates?: readonly EvidenceCandidate[], options?: { readonly intendedUse?: "general-resin" | "food-container"; readonly includeWeakContext?: boolean }): EvidenceLookup {
   if (!validDate(input.assessmentDate)) return { evidence: [], citations: [], reviewRequirements: [], issues: [{ kind: "invalid-date", sourceId: null }] };
   const family = materialFamily(input);
-  const contaminationContext = family !== null && isDeclaredCleanMaterial(input.contamination, family)
+  const contaminationContext = family !== null && isDeclaredCleanMaterial(input, family)
     ? "없음" : input.contamination;
   const selected = (candidates ?? registry.candidates).filter(candidate =>
     ((candidates !== undefined && candidate.materialFamily === undefined) || (family === null ? candidate.materialFamily === undefined

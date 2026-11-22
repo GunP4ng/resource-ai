@@ -93,6 +93,240 @@ for (const { issue, code, input } of cases) {
   });
 }
 
+const treatmentDenials = ["오일 안 묻음", "방부 미처리", "무도장", "미도장", "오일 미사용", "방부제 미사용"];
+const verticalBoundaries = ["\n", "\r\n", "\r", "\v", "\f", "\u0085", "\u2028", "\u2029"];
+const horizontalVariants = ["오일\t안  묻음", "방부\u3000미처리", "오일\u3000미사용"];
+const denialFixtures = cases.filter(({ issue }) => issue === 121);
+const copper = cases[0]!.input;
+const wood = cases[1]!.input;
+const plainWood = { ...wood, polymer: "목재", description: "제재소에서 나온 목재 자투리", contamination: "방부 미처리" };
+const historyQuestion = "목재의 도장·접착·방부·오일 처리가 없다는 이력 자료가 있나요? 오염 없음만으로 무처리 목재를 확정하지 않습니다.";
+const originQuestion = "원목 제재·가공 부산물인지 사용한 포장재·가구·건설 목재인지 알려 주세요. 도장·접착·방부·오일 처리 이력도 확인해 주세요.";
+
+function cleanVariants(denial: string): string[] {
+  return [denial, ...[", ", ...verticalBoundaries.slice(0, 3)].flatMap(separator =>
+    [`오염 없음${separator}${denial}`, `${denial}${separator}오염 없음`])];
+}
+
+for (const { input, code } of denialFixtures) {
+  test(`#137 ${input.caseId} complete denials preserve the full conditional decision`, async () => {
+    const control = await createResourceDomain({ ...input, contamination: "없음" }).decide();
+    assert.equal(control.state, "compared");
+    assert.equal(control.humanApproval, "pending");
+    const route = control.routes.find(item => item.route === "mechanical-recycling");
+    assert.equal(route?.eligibility.state, "conditional");
+    assert.match(route.eligibility.conditions.join(" "), new RegExp(`${code}.*${code === "51-20-22" ? "R-3-4" : "R-3-3"}`));
+    for (const contamination of [
+      "오일 없음", "오일 없다", ...treatmentDenials.flatMap(cleanVariants), ...horizontalVariants,
+      "오일 안 묻음, 방부 미처리, 무도장",
+    ]) {
+      const facts = { ...input, contamination };
+      const original = structuredClone(facts);
+      assert.deepEqual(await createResourceDomain(facts).decide(), control, JSON.stringify(contamination));
+      assert.deepEqual(facts, original);
+    }
+  });
+}
+
+type NativeDenialCase = {
+  readonly label: string;
+  readonly input: CaseInput;
+  readonly outcome: "clear" | "review" | "unknown";
+  readonly terms?: readonly string[];
+  readonly treatment?: boolean;
+  readonly questions?: readonly string[];
+  readonly code?: string;
+};
+
+const nativeDenials: NativeDenialCase[] = [];
+for (const { input, code } of denialFixtures) {
+  for (const contamination of [...treatmentDenials.flatMap(cleanVariants), ...horizontalVariants, "오일 없음", "오일 없다"]) {
+    nativeDenials.push({ label: `${input.caseId} clear ${JSON.stringify(contamination)}`,
+      input: { ...input, contamination }, outcome: "clear", code });
+  }
+  for (const [denial, positive, term] of [
+    ["오일 안 묻음", "도료 묻음", "도료"],
+    ["오일 미사용", "오일 사용", "오일"],
+    ["미도장", "도장됨", "도장"],
+    ["방부 미처리", "방부 처리됨", "방부"],
+    ["무도장", "도료 일부 남음", "도료"],
+    ["방부제 미사용", "오일이 묻은 상태", "오일"],
+  ] as const) {
+    const variants = [
+      { contamination: `${denial}, ${positive}` }, { contamination: `${positive}, ${denial}` },
+      ...(["description", "process", "polymer"] as const).map(field =>
+        ({ contamination: denial, [field]: `${input[field]}, ${positive}` })),
+    ];
+    for (const variant of variants) {
+      nativeDenials.push({ label: `${input.caseId} ${JSON.stringify(variant)}`,
+        input: { ...input, ...variant }, outcome: "review", terms: [term] });
+    }
+  }
+  for (const [term, values] of [
+    ["도장", ["무도장, 아님", "추정, 무도장", "미도장\n확인 예정", "무도장\n여부 미상",
+      "무도장,\n\n여부 미상", "무도장재", "미도장품", "무도장이 아님", "무 도장", "무도장; 오염 없음"]],
+    ["방부", ["방부 미처리 여부 미확인", "방부 미처리된 것으로 추정", "방부 미 처리", "방부 미\r\n처리"]],
+    ["오일", ["오일, 미사용", "오일,\n미사용", "오일 안 묻음?", "오일 미사용량",
+      "오일 묻음", "미사용 오일 묻음", "미사용 설비에서 오일 사용", "오일 사용 후 안 묻음",
+      ...verticalBoundaries.map(separator => `오일 안${separator}묻음`)]],
+  ] as const) {
+    for (const contamination of values) {
+      nativeDenials.push({ label: `${input.caseId} dirty ${JSON.stringify(contamination)}`,
+        input: { ...input, contamination }, outcome: "review", terms: [term] });
+    }
+  }
+  for (const contamination of ["미사용", "미처리 여부 모름"]) {
+    nativeDenials.push({ label: `${input.caseId} incomplete ${contamination}`,
+      input: { ...input, contamination }, outcome: "unknown", questions: [safetyReasons.contaminationUnknown] });
+  }
+  for (const hazardousContact of ["yes", "unknown"] as const) {
+    nativeDenials.push(
+      { label: `${input.caseId} contact ${hazardousContact}`,
+        input: { ...input, hazardousContact, contamination: "무도장" },
+        outcome: hazardousContact === "yes" ? "review" : "unknown" },
+      { label: `${input.caseId} contact ${hazardousContact} with oil`,
+        input: { ...input, hazardousContact, contamination: "무도장", description: `${input.description}, 오일 사용\r없음` },
+        outcome: "review", terms: ["오일"] },
+    );
+  }
+}
+
+// Round 1 exposed the plain-wood paperwork path and incorrect mixed term attribution.
+for (const suffix of ["전표 미처리", "목재 미처리 여부 확인서 발급 요청", "원목 상태 확인서 미제출", "원목 상태 미확인",
+  "추정, 목재 미처리", "목재 미처리, 여부 미확인", "원목 상태", "방부 미처리", "미처리 원목", "원목 미처리", "untreated wood"]) {
+  nativeDenials.push({ label: `plain wood process ${suffix}`, input: { ...plainWood, process: `${wood.process}, ${suffix}` },
+    outcome: "review", terms: ["방부"], questions: [originQuestion, historyQuestion] });
+}
+for (const contamination of ["방부 미처리", "오염 없음, 무도장", "무도장, 원목 상태", "방부 미처리, 원목 상태 미확인",
+  "방부 미처리, 원목 미처리 여부 확인서 발급 요청", "무도장, 추정, 원목 미처리", "방부 미처리, 무처리 원목 상태"]) {
+  nativeDenials.push({ label: `plain wood contamination ${contamination}`, input: { ...plainWood, contamination },
+    outcome: "review", terms: [contamination.includes("방부") ? "방부" : "도장"], questions: [originQuestion, historyQuestion] });
+}
+for (const positive of ["도료 있음", "도료 일부 있음"]) {
+  for (const contamination of [`오일 안 묻음, ${positive}`, `${positive}, 오일 안 묻음`]) {
+    nativeDenials.push({ label: `mixed paint ${contamination}`, input: { ...copper, contamination },
+      outcome: "review", terms: ["도료"] });
+  }
+}
+nativeDenials.push(
+  { label: "mixed paint with complete adhesive denial",
+    input: { ...copper, contamination: "오일 안 묻음, 도료 있음, 접착제 없음" }, outcome: "review", terms: ["도료"] },
+  { label: "mixed paint with punctuated adhesive denial",
+    input: { ...copper, contamination: "오일 안 묻음, 도료 있음, 접착제 없음." }, outcome: "review", terms: ["도료"] },
+  ...["...", "…"].map(suffix => ({
+    label: `mixed paint with an opaque ellipsis ${suffix}`,
+    input: { ...copper, contamination: `오일 안 묻음, 도료 있음, ${suffix}` },
+    outcome: "review" as const, terms: ["오일", "도료"],
+  })),
+  { label: "legacy oil denial beside paint", input: { ...copper, contamination: "오일 없음, 도료 일부 있음" },
+    outcome: "review", terms: ["도료"] },
+  { label: "paint denial between split oil assertions", input: { ...copper, contamination: "오일 사용\n무도장\n없음" },
+    outcome: "review", terms: ["오일"] },
+  { label: "plain wood with preservative denial in process",
+    input: { ...plainWood, process: `${wood.process}, 방부 미처리`, contamination: "무도장" },
+    outcome: "review", terms: ["방부"], questions: [originQuestion, historyQuestion] },
+  { label: "plain wood with unknown condition in description",
+    input: { ...plainWood, description: `${plainWood.description}, 원목 상태 미확인`, contamination: "방부 미처리, 무처리 원목 상태" },
+    outcome: "review", terms: ["방부"], questions: [originQuestion, historyQuestion] },
+  { label: "untreated label without a supported wood stream",
+    input: { ...wood, process: "사업장일반폐기물 포장 공정", contamination: "무도장" },
+    outcome: "unknown", questions: [originQuestion, safetyReasons.contaminationUnknown] },
+);
+
+// Rounds 2 and 3 reproduced split oil across fields and line endings.
+for (const separator of verticalBoundaries) {
+  for (const field of ["description", "process", "polymer"] as const) {
+    nativeDenials.push({ label: `split oil in ${field} at ${JSON.stringify(separator)}`,
+      input: { ...copper, [field]: `${copper[field]}, 오일 사용${separator}없음`, contamination: "무도장" },
+      outcome: "review", terms: ["오일"] });
+  }
+  for (const qualifier of ["", ", 추정"]) {
+    nativeDenials.push({ label: `mixed split oil ${JSON.stringify(separator)}${qualifier}`,
+      input: { ...copper, contamination: `오일 사용${separator}없음, 무도장${qualifier}` },
+      outcome: "review", terms: qualifier ? ["오일", "도장"] : ["오일"] });
+  }
+}
+
+for (const punctuation of [" ", ", "]) {
+  nativeDenials.push({ label: `plain wood qualified process origin ${JSON.stringify(punctuation)}`,
+    input: { ...plainWood, process: `사업장일반폐기물${punctuation}원목 제재 가공 부산물, 원목 미처리`,
+      description: `${plainWood.description}, 공정란의 원목 미처리는 확인서 발급 요청 문구` },
+    outcome: "review", terms: ["방부"], questions: [originQuestion, historyQuestion] });
+}
+const coated = { ...copper, process: `${copper.process}, PP 코팅 있음` };
+nativeDenials.push(
+  { label: "ordinary none with bare coating", input: { ...coated, contamination: "없음" }, outcome: "clear", code: "51-29-02" },
+  { label: "denial with bare coating", input: { ...coated, contamination: "무도장" }, outcome: "review", treatment: true },
+  { label: "exact unplated exemption", input: { ...copper, description: "무도금 구리판 절단편", contamination: "무도장" },
+    outcome: "clear", code: "51-29-02" },
+  { label: "qualified unplated still holds", input: { ...copper, description: "무도금 구리판 절단편, 추정", contamination: "무도장" },
+    outcome: "review", terms: ["도금"] },
+  { label: "keep the whole-field hazard veto alongside line scans",
+    input: { ...copper, description: "구리 절단편, 오일 없음\r도료 없음", contamination: "무도장" },
+    outcome: "review", terms: ["오일", "도료"] },
+);
+
+for (const [residue, separator] of [["슬러지 잔류", "\n"], ["분진 잔류", "\r"], ["잔류막", "\n"]] as const) {
+  const description = `${copper.description}, ${residue}${separator}없음`;
+  const label = JSON.stringify(`${residue}${separator}없음`);
+  nativeDenials.push(
+    { label: `denial with independent residue ${label}`, input: { ...copper, description, contamination: "무도장" },
+      outcome: "unknown", questions: [safetyReasons.contaminationUnknown] },
+    { label: `ordinary none with ${label}`, input: { ...copper, description, contamination: "없음" },
+      outcome: "clear", code: "51-29-02" },
+    { label: `denial with same-line absence ${residue}`,
+      input: { ...copper, description: `${copper.description}, ${residue} 없음`, contamination: "무도장" },
+      outcome: "clear", code: "51-29-02" },
+  );
+}
+
+for (const field of ["description", "process", "polymer"] as const) {
+  nativeDenials.push({ label: `new forms are contamination-only (${field})`,
+    input: { ...copper, [field]: `${copper[field]}, 무도장`, contamination: "없음" },
+    outcome: "review", terms: ["도장"], code: field === "polymer" ? undefined : "51-29-02" });
+}
+nativeDenials.push({ label: "paper keeps its legacy treatment hold",
+  input: { ...cases[2]!.input, contamination: "무도장" }, outcome: "review", terms: ["도장"] });
+
+const headings = { clear: "기계적 재활용 추천", review: "검토 필요", unknown: "추가 정보 필요" } as const;
+for (const { label, input, outcome, terms = [], treatment = terms.length > 0, questions = [], code } of nativeDenials) {
+  test(`#137 native ${label}`, async () => {
+    const origin = "http://localhost:3000";
+    const app = createResourceApp({ origin });
+    try {
+      const cookie = (await app.fetch(new Request(origin))).headers.get("set-cookie")?.split(";")[0];
+      assert.ok(cookie);
+      const { caseId: _caseId, photoRefs, massKg, ...fields } = input;
+      const created = await app.fetch(new Request(origin + "/cases", { method: "POST",
+        headers: { origin, cookie, "content-type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams(Object.entries({ ...fields, massKg }).map(([key, value]) => [key, String(value ?? "")])) }));
+      assert.equal(created.status, 303);
+      const path = created.headers.get("location");
+      assert.ok(path);
+      const exported = await app.fetch(new Request(origin + path + "/input", { headers: { cookie } }));
+      assert.equal(exported.status, 200);
+      assert.deepEqual(await exported.json(), { ...fields, caseId: path.split("/").at(-1), massKg, photoRefs });
+      for (const suffix of ["", "/report"]) {
+        const response = await app.fetch(new Request(origin + path + suffix, { headers: { cookie } }));
+        assert.equal(response.status, 200);
+        const html = await response.text();
+        const observed = {
+          heading: html.match(/<h1>([^<]*)<\/h1>/u)?.[1],
+          terms: html.match(/class="detected-hazard-terms">입력에서 감지한 표현: ([^.]+)\./u)?.[1]?.split(" · ") ?? [],
+          treatment: html.includes(safetyReasons.materialTreatment),
+          contact: html.includes(safetyReasons.contactClassification),
+          unknownContact: html.includes(safetyReasons.contactUnknown),
+          codes: ["51-29-02", "51-20-22", "51-28-02"].filter(value => html.includes(value)),
+          missingQuestions: questions.filter(question => !html.includes(question)),
+        };
+        assert.deepEqual(observed, { heading: headings[outcome], terms, treatment,
+          contact: input.hazardousContact === "yes", unknownContact: input.hazardousContact === "unknown",
+          codes: code ? [code] : [], missingQuestions: [] }, suffix || "detail");
+      }
+    } finally { await app.close(); }
+  });
+}
+
 test("#121 and #122 incomplete denials and contradictory list items never declare a clean case", async () => {
   for (const { issue, input } of cases) {
     const values = issue === 121
