@@ -200,7 +200,14 @@ export function materialQuestions(input: CaseInput): readonly string[] {
   const unresolvedHistory = [input.description, input.process].some(value => {
     const remainder = maskMaterialDenials(value)
       .replace(/(?:무처리|미처리|\buntreated\b)(?![^,;.\n]*(?:미상|미확인|불명|모름|추정|아님|아닌|unknown))/giu, "");
-    return unresolvedMaterialHistory.test(remainder);
+    if (unresolvedMaterialHistory.test(remainder)) return true;
+    const observation = /^(?:(.+?)[ \t]*,[ \t]*)?잔여[ \t]+물질[ \t]+있음$/u
+      .exec((value ?? "").normalize("NFKC").trim());
+    if (observation === null) return false;
+    const fullPrefix = observation[1];
+    if (fullPrefix === undefined || canonicalMaterial(fullPrefix) !== null) return true;
+    const base = /^(.+?)[ \t]+스크랩$/u.exec(fullPrefix);
+    return base !== null && canonicalMaterial(base[1]) !== null;
   });
   if ((unresolvedHistory || (input.contamination?.trim() && !isDeclaredCleanMaterial(input.contamination, family)))
     && materialHazardReasons(input).length === 0) questions.push(safetyReasons.contaminationUnknown);

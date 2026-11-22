@@ -192,6 +192,19 @@ const nativeCases = [
   ["합성 구리 스크랩, 얼룩 없음", "기계적 재활용 추천"],
   ["합성 구리 스크랩, 얼룩 없음, 끈적한 막", "추가 정보 필요"],
   ["구리 스크랩, 잔여물 있음", "추가 정보 필요"],
+  ["구리 스크랩, 잔류 물질 있음", "추가 정보 필요"],
+  ["구리 스크랩, 잔여 물질 있음", "추가 정보 필요"],
+  ["비철 스크랩, 잔여 물질 있음", "추가 정보 필요"],
+  ["비철 금속, 잔여 물질 있음", "추가 정보 필요"],
+  ["잔여 물질 있음", "추가 정보 필요"],
+  ["구리 스크랩, 잔여 물질 없음", "기계적 재활용 추천"],
+  ["구리 스크랩, 잔여물은 없음", "추가 정보 필요"],
+  ["구리 스크랩, 잔여 물질 있으면 분리", "기계적 재활용 추천"],
+  ["세척하면, 잔여 물질 있음", "기계적 재활용 추천"],
+  ["구리 스크랩, 잔여 물질 있음?", "기계적 재활용 추천"],
+  ["구리 스크랩, 잔여 물질 있음, 추정", "기계적 재활용 추천"],
+  ["구리 스크랩, 잔여 물질 있음, 납 검출", "검토 필요"],
+  ["납 검출, 구리 스크랩, 잔여 물질 있음", "검토 필요"],
   ["구리판, 얼룩 없음", "기계적 재활용 추천"],
   ["합성 구리 스크랩", "기계적 재활용 추천", "막·잔여물·이물 없음"],
   ...ambiguousUnplatedDescriptions.map(description => [description, "검토 필요"] as const),
@@ -223,7 +236,7 @@ for (const [description, heading, contamination = "없음"] of nativeCases) {
         const html = await report.text();
         assert.equal(html.match(/<h1>([^<]*)<\/h1>/)?.[1], heading);
         assert.equal(html.includes(safetyReasons.materialTreatment), heading === "검토 필요");
-        if (heading === "추가 정보 필요") assert.ok(html.includes(safetyReasons.contaminationUnknown));
+        assert.equal(html.includes(safetyReasons.contaminationUnknown), heading === "추가 정보 필요");
       }
     } finally { await app.close(); }
   });
