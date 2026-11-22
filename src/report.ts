@@ -47,6 +47,7 @@ export interface ReportView {
   readonly caseReturnTarget?: string;
   readonly inquiryTarget?: string;
   readonly researchFirst?: boolean;
+  readonly researchNavigation?: boolean;
 }
 export const routeNames = { reuse: "재사용", "mechanical-recycling": "기계적 재활용", "other-recovery": "기타 회수", disposal: "처분" } as const;
 function recommendationSummary(result: Extract<DecisionResult, { state: "compared" }>, references: EvidenceReferences): string {
@@ -121,17 +122,17 @@ function executionMetadata(presentation: ReportPresentation, calculation: {
   readonly publicSource: string | null;
 }): string {
   const runtime = presentation.runtime;
-  const missingExecution = runtime?.runner === "local" ? "로컬 실행 · 외부 모델 호출 없음"
+  const missingExecution = runtime?.runner === "local" ? "외부 모델 호출 없음"
     : `${runtime?.runner === "azure" ? "Azure" : runtime?.runner === "subscription" ? "구독 경로 모델 실행" : "실행"} 성공 미검증`;
   const execution = presentation.execution
     ? `<p>실행 추적 ${escapeHtml(presentation.execution.traceId)} · 사용량 ${escapeHtml(presentation.execution.usage ?? "미제공")}</p><p>실행기가 보고한 사용량입니다. 추적 식별자는 제공자 요청 ID를 보증하지 않습니다. 청구 비용 미제공.</p>`
     : presentation.mode === "live" ? `<p>모델 실행 정보 미제공 · ${missingExecution}</p>` : "<p>실행 사용량 미제공</p>";
   const identities = { anonymous: "익명 세션", trusted: "서버 인증 사용자", "local-operator": "로컬 운영자" } as const;
-  const runners = { local: "로컬", subscription: "구독 경로 모델 실행", azure: "Azure 연결", unspecified: "미지정" } as const;
+  const runners = { local: null, subscription: "구독 경로 모델 실행", azure: "Azure 연결", unspecified: "미지정" } as const;
   return `<p>사례별 검증 계산: ${calculation.verified ? "판정 상세의 계산표 참조" : "없음"}. ${calculation.publicModel ? "가정 계산은 위 공개 비교표에 별도로 표시했습니다." : "연결된 공개 가정 계산도 없습니다."}</p>
     <p>평가 기록의 계산 버전 ${escapeHtml(presentation.calculationVersion ?? "미기록")} · 출처 버전 ${escapeHtml(presentation.sourceVersion ?? "미기록")}</p>
     ${calculation.publicModel ? `<p>공개 가정 계산 버전 ${escapeHtml(calculation.publicModel)} · 준비 데이터 ${escapeHtml(calculation.publicSource ?? "미확보")}</p>` : ""}
-    ${runtime ? `<p>평가 당시: ${identities[runtime.identity]} · ${runtime.storage === "sqlite" ? "SQLite 보관" : "임시 보관"} · 구성된 실행기 ${runners[runtime.runner]} (실행 성공과 별개)</p>` : "<p>평가 당시 인증·저장·실행기 설정 미제공</p>"}
+    ${runtime ? `<p>평가 당시: ${identities[runtime.identity]} · ${runtime.storage === "sqlite" ? "SQLite 보관" : "임시 보관"}${runners[runtime.runner] ? ` · 구성된 실행기 ${runners[runtime.runner]} (실행 성공과 별개)` : ""}</p>` : "<p>평가 당시 인증·저장·실행기 설정 미제공</p>"}
     ${execution}<p>사용량은 청구·비용 증빙이 아닙니다. 사진 실행은 설정이나 실행 식별자만으로 확인되지 않습니다.</p>`;
 }
 export function renderReport(result: DecisionResult, presentation: ReportPresentation, context: ReportContext = { audience: "commercial" }, view: ReportView = {}): string {
@@ -150,7 +151,7 @@ export function renderReport(result: DecisionResult, presentation: ReportPresent
       break;
   }
   const modes = { synthetic: presentation.execution ? "합성 응답 주입 · 실제 제공자 호출 없음" : "합성 데모 · 모델 호출 없음", offline: "오프라인 계산 · 모델 호출 없음", live: "저장된 실행 결과 · 제공자 성공은 실행 기록으로 별도 확인", recording: "사전 녹화 · 원평가 실행 증빙 별도 확인" } as const;
-  const mode = presentation.runtime?.runner === "local" ? "로컬 실행 · 외부 모델 호출 없음" : modes[presentation.mode];
+  const mode = presentation.runtime?.runner === "local" ? "외부 모델 호출 없음" : modes[presentation.mode];
   const data = presentation.review
     ? `<p>${presentation.review.origin.kind === "synthetic" ? "합성 자료 · 현장 근거 아님" : "현장 자료로 선언된 검토 아티팩트 · 인간·법적 승인 아님"}</p>`
     : presentation.mode === "synthetic" ? "<p>합성 입력·계산 예시 · 현장 근거 아님</p>" : "<p>미검토 사용자 입력 · 입력에 결합된 검토 자료 없음 · 운영 자료 미제공</p>";
@@ -198,16 +199,16 @@ export function renderReport(result: DecisionResult, presentation: ReportPresent
   const hypotheticalSummary = guidance ? guidanceScenarioConclusion(guidance, names) : undefined;
   const directories = context.audience === "authenticated-research"
     ? research ? researchDirectory(research, view.inquiryTarget, view.caseRegion) : publicRecyclingDirectory(view.inquiryTarget, view.caseRegion) : "";
-  return page("조건부 보고서", `${commercialSummary ? '<section id="commercial-summary" aria-label="상업용 보고서 요약">' : ""}${conclusion(result, guidance ? guidanceConclusion(guidance, names) : undefined)}${view.notice ?? ""}
+  return page("조건부 보고서", `${view.editing ? '<nav class="workspace-nav" aria-label="작업 영역"><a href="#case-editor">답변·사례 수정</a><a href="#report-results">검토 결과</a></nav><div class="report-workspace"><div class="report-results" id="report-results" tabindex="-1">' : ""}${commercialSummary ? '<section id="commercial-summary" aria-label="상업용 보고서 요약">' : ""}${conclusion(result, guidance ? guidanceConclusion(guidance, names) : undefined)}${view.notice ?? ""}
     ${presentation.historical ? '<p class="notice">과거 평가: 현재 입력과 평가 당시 입력이 다릅니다. 명시적으로 다시 평가해 주세요.</p>' : ""}
     ${hypotheticalSummary ? `<p id="hypothetical-summary"><strong>가정 계산:</strong> ${escapeHtml(hypotheticalSummary)}</p>` : ""}
     <p id="next-action"><strong>다음 행동:</strong> ${escapeHtml(nextAction)}</p>
     <p class="screen-only"><a class="primary-action" href="${answerAction ?? "#checks"}">${answerAction ? result.state === "needs-information" ? "답변 입력하기" : "입력 다시 확인하기" : "실행 전 확인하기"}</a>${view.caseReturnTarget ? ` <a href="${escapeHtml(view.caseReturnTarget)}">사례로 돌아가기</a>` : ""}</p>
     ${commercialSummary ? `${data}
       ${heldReasons.length ? `<p><a href="#case-reasons">보류 사유와 필요한 확인 ${heldReasons.length}개</a> · 전체 사유는 다음 상세에 있습니다.</p>` : ""}
-      <div id="summary-evidence"><h2>근거 위치</h2>${result.evidence.length ? `<ul>${result.evidence.slice(0, 3).map((item, index) => `<li><a href="#evidence-${index + 1}">[${index + 1}] ${escapeHtml(item.title)} · ${escapeHtml(item.locator)}</a></li>`).join("")}</ul>` : "<p>연결된 근거 없음</p>"}</div>
-      <p><a href="#evidence">전체 ${result.evidence.length}개 출처와 원문 위치 확인하기</a></p>
-      <div id="summary-unavailable"><h2>미확보값과 계산 상태</h2>${list(unavailable)}<p><a href="#decision-detail">미산정 사유와 계산 조건 확인하기</a></p></div>
+      <div class="commercial-summary-cards"><div id="summary-evidence"><h2>근거 위치</h2>${result.evidence.length ? `<ul>${result.evidence.slice(0, 3).map((item, index) => `<li><a href="#evidence-${index + 1}">[${index + 1}] ${escapeHtml(item.title)} · ${escapeHtml(item.locator)}</a></li>`).join("")}</ul>` : "<p>연결된 근거 없음</p>"}
+      <p><a href="#evidence">전체 ${result.evidence.length}개 출처와 원문 위치 확인하기</a></p></div>
+      <div id="summary-unavailable"><h2>미확보값과 계산 상태</h2>${list(unavailable)}<p><a href="#decision-detail">미산정 사유와 계산 조건 확인하기</a></p></div></div>
       <p><a href="#checks">실행 전 확인 ${checks.length ? `${checks.length}개 전체` : "안내"} 보기</a> · 모든 확인과 별도 승인이 필요합니다.</p>
       </section>` : ""}
     ${result.state === "compared" ? view.answerPrompt ?? "" : ""}
@@ -227,7 +228,8 @@ export function renderReport(result: DecisionResult, presentation: ReportPresent
     ${guidance ? guidanceProgress(guidance, presentation, names) + guidanceOneFact(guidance, names) : view.progress ? publicCaseProgress(view.progress) : ""}
     ${context.audience === "authenticated-research" && view.publicScenarioMissing?.length
       ? `<section id="public-scenario-unavailable"><h2>공개 비용·탄소 비교가 없는 이유</h2>${list(view.publicScenarioMissing)}<p>추천은 기존 공개 근거에 따른 검토 순서입니다. 비교 부재를 비용 0이나 재활용 불가로 해석하지 않습니다.</p></section>` : ""}
-    <p class="screen-only"><a href="/reference#material-purchase-prices">철스크랩·폐지의 공식 참고 매입가격 보기</a> · 실제 견적이나 이 사례의 적용 가격이 아닙니다.</p>
+    ${context.audience === "authenticated-research" && view.researchNavigation ? `<nav class="screen-only" aria-label="연구 자료"><a href="/demo/normal?purpose=research">합성 비교 데모</a><a href="/demo/held">합성 추가 정보 데모</a><a href="/demo/review">합성 위험·검토 예시</a><a href="/reference">실자료 현황</a></nav>
+    <p class="screen-only"><a href="/reference#material-purchase-prices">철스크랩·폐지의 공식 참고 매입가격 보기</a> · 실제 견적이나 이 사례의 적용 가격이 아닙니다.</p>` : ""}
     ${publicScenario ? publicInputCalculations(publicScenario) : ""}${view.researchFirst ? researchSections : ""}
     ${guidance ? guidanceStability(guidance, names) : ""}
     ${sensitivity ? guidanceSensitivity(sensitivity, names) : ""}
@@ -241,7 +243,7 @@ export function renderReport(result: DecisionResult, presentation: ReportPresent
     <section id="checks"><h2>실행 전 확인사항</h2>${checks.length ? `<h3>지금 할 ${Math.min(3, checks.length)}개</h3>
       <p>기존 확인 순서입니다. 나머지를 포함한 모든 항목을 실행 전에 확인하세요.</p>${list(checks.slice(0, 3))}
       ${checks.length > 3 ? `<details id="remaining-checks"><summary>나머지 ${checks.length - 3}개 확인사항 펼치기</summary>${list(checks.slice(3))}</details>` : ""}` : "<p>질문에 답하고 실제 질량·물질·접촉 이력을 확인하세요. 반출·계약·처리는 현장 담당자의 별도 검토와 승인이 필요합니다.</p>"}</section>
-    ${view.editing ?? ""}
+    ${view.editing ? `</div><aside class="case-editor" id="case-editor" aria-label="답변·사례 수정" tabindex="-1"><div class="case-editor-body">${view.editing}</div></aside><div class="report-records">` : ""}
     ${audit ? `<h2>비용·탄소 상세 감사</h2><details class="screen-only"><summary>계산 조건·비용 항목·탄소 활동과 계수 펼치기</summary>${audit}</details><div class="print-only">${audit}</div>` : ""}
     <details id="advanced"><summary>실행 기록·사례·자료 식별자 확인하기</summary><p>사례 ${escapeHtml(result.caseId)}</p>
     ${presentation.review ? `<p>자료 선언 ${escapeHtml(presentation.review.origin.reference)} · 아티팩트 SHA-256 ${escapeHtml(presentation.review.hash)} · 결합 입력 ${escapeHtml(presentation.review.caseRevision)}</p>` : ""}
@@ -250,5 +252,5 @@ export function renderReport(result: DecisionResult, presentation: ReportPresent
       publicModel: calculationContext?.calculations.model_version ?? null,
       publicSource: calculationContext ? calculationContext.purpose === "research-display" ? calculationContext.calculations.fixtureSha256
         : calculationContext.provenance.derivedDatasetSha256 : null,
-    })}</details>`);
+    })}</details>${view.editing ? "</div></div>" : ""}`, commercialSummary ? "commercial" : "workspace");
 }

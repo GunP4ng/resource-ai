@@ -40,9 +40,9 @@ def local_operator():
             sock.bind(("127.0.0.1", 0))
             port = sock.getsockname()[1]
         origin = f"http://localhost:{port}"
-        env.update(PORT=str(port), RESOURCE_MODEL_RUNNER="local", RESOURCE_APP_AUTH="local-operator",
+        env.update(PORT=str(port), RESOURCE_MODEL_RUNNER="subscription", RESOURCE_APP_AUTH="local-operator",
                    RESOURCE_STATE_DIR=state, RESOURCE_PRIVATE_PHOTOS="off")
-        process = subprocess.Popen(["bun", "scripts/app.ts"], cwd=REPO, env=env)
+        process = subprocess.Popen(["bun", "tests/synthetic-app.ts"], cwd=REPO, env=env)
         try:
             http = build_opener(ProxyHandler({}))
             for _ in range(100):
@@ -142,16 +142,16 @@ class ChromiumPrintTest(unittest.TestCase):
                 self.assert_report_ending(pages, footer_text)
 
         self.assertTrue(footer.is_visible())
-        disclosure.locator("summary").click()
+        disclosure.locator("summary").press("Enter")
         self.assertTrue(usage.is_visible())
-        disclosure.locator("summary").click()
+        disclosure.locator("summary").press("Enter")
         self.assertFalse(usage.is_visible())
-        page.locator("#result-context > summary").click()
+        page.locator("#result-context > summary").press("Enter")
         opened_states = details.evaluate_all("elements => elements.map(el => el.open)")
         self.assertNotEqual(opened_states, states)
         self.assertEqual(" ".join(self.pdf_pages(page)), default_text)
         self.assertEqual(details.evaluate_all("elements => elements.map(el => el.open)"), opened_states)
-        page.locator("#result-context > summary").click()
+        page.locator("#result-context > summary").press("Enter")
 
         markers = [f"PRINT-MARKER-{index:03d}" for index in range(65)]
         paragraphs = [f"{marker} " + "Synthetic wrapping paragraph text. " * 12 for marker in markers]
@@ -208,7 +208,7 @@ class ChromiumPrintTest(unittest.TestCase):
                 page.goto(origin + "/login")
                 page.locator('[name="username"]').fill("print-qa")
                 page.locator('[name="password"]').fill(password)
-                page.get_by_role("button", name="로그인").click()
+                page.get_by_role("button", name="로그인").press("Enter")
                 page.wait_for_url(origin + "/cases")
                 page.goto(origin + "/")
                 url = self.submit(page, origin, DESCRIPTION)

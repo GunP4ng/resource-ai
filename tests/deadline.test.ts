@@ -3,7 +3,7 @@ import { test } from "node:test";
 import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { createOperationalApp } from "../src/operations.ts";
+import { createSyntheticOperationalApp as createOperationalApp } from "./synthetic-runtime.ts";
 import type { OperationalRunnerOptions, OperationalAudit } from "../src/operations.ts";
 import { createPhotoStore } from "../src/photos.ts";
 import { syntheticCase } from "./h-fixtures.ts";

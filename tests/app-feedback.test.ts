@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { runInNewContext } from "node:vm";
 import { createApp } from "../src/app.ts";
-import { createResourceApp } from "../src/session.ts";
+import { createSyntheticResourceApp as createResourceApp } from "./synthetic-runtime.ts";
 import { createCaseStore } from "../src/o-case-store.ts";
 import { feedbackPath, feedbackScript } from "../src/app-feedback.ts";
 import { demo } from "../src/o-demo.ts";
@@ -120,8 +120,8 @@ test("primary answer links resolve on fixed demos and legacy adapter cases", asy
   try {
     const held = await navigation(await app(new Request(origin + "/demo/held")));
     assert.equal(held.answerId, null);
-    assert.equal(held.links[0], "#checks");
-    assert.match(held.nextAction, /아래 보류 사유에서 누락된 정보를 확인하고 필요한 자료를 준비하세요\./);
+    assert.equal(held.links[0], "#answer-fields");
+    assert.match(held.nextAction, /누락된 사례 정보를 확인해 답변란에 입력하세요\./);
     await navigation(await app(new Request(origin + "/demo/review")));
     const home = await app(new Request(origin));
     const cookie = home.headers.get("set-cookie")?.split(";")[0];

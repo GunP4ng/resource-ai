@@ -213,7 +213,8 @@ export function createAssessmentAdapter(options: { readonly runner?: CaseRunner;
       const result = await boundedRun(async (value, runSignal) => {
         const resources = structuredClone(await options.resources?.(structuredClone(value), runSignal) ?? {});
         runSignal.throwIfAborted();
-        const proposed = await options.runner?.(structuredClone(value), runSignal, structuredClone(resources)) ?? {};
+        if (!options.runner) throw new SessionFailure("not-configured");
+        const proposed = await options.runner(structuredClone(value), runSignal, structuredClone(resources));
         runSignal.throwIfAborted();
         const domain = createResourceDomain(value, resources, proposed.photoObservations);
         const proposal = structuredClone(proposed.proposal);

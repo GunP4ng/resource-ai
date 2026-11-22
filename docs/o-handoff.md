@@ -27,7 +27,7 @@ const app = createOperationalApp({
 });
 ```
 
-`qa-o4.ts` is a task-local harness with explicitly synthetic fixed identity, real local sanitized storage, and no runner/provider calls. The desktop/mobile owner may run `bun qa-o4.ts` at port 3001. It was not started by this implementation track. Its fixed identity must never be deployed as production authentication.
+`tests/qa-o4.ts` is a test harness with a synthetic fixed identity, real local sanitized storage, and no provider calls. Run `bun tests/qa-o4.ts` for loopback QA at port 3001. Its fixed identity must never be deployed as production authentication.
 
 Create a text case first; its native page then exposes `POST /cases/:id/photos` (one PNG/JPEG, 5 MiB source plus 16 KiB multipart overhead), `GET /cases/:id/photos/:ref` (private no-store PNG), and `POST .../withdraw-model` / `.../withdraw-storage`. Storage consent, model consent and visible-content confirmation are separate unchecked labeled controls. Consent record IDs/expiry and provider/purpose scope are server generated. Preview uses storage permission only. Upload never evaluates a case. Duplicate/unknown fields, forged consent metadata, extra files, MIME/pixel errors and oversize streams fail before association. Failed association revokes the newly stored file; expiry cleanup remains necessary if cleanup itself fails.
 
@@ -55,7 +55,7 @@ Astra xhigh initially found two request races: a delayed body could combine an o
 
 The photo section was inspected at 390px and 1440px in both themes. Live Chrome snapshots passed the frontend detector with zero errors/warnings in 22 views: stored-photo cases at 320/390/768/1024/1440px in both themes, plus input, post-withdrawal case and print routes at 390/1440px in both themes. The only advisory was the absent pre-navigation script-error probe; the app has no client scripts. The detector's standalone renderer failed with a syntax error, so its supported `collectPageSnapshot`/`lintSnapshot` path was used on the actual browser instead. Captures and machine results are retained under `/tmp/o4-final-photo-*.png`, `/tmp/o4-detect-live.json` and `/tmp/o4-browser-qa-evidence.json`. No Lighthouse or comprehensive accessibility certification is claimed. Browser history below predates this follow-up.
 
-The `qa-o4.ts` entry is included in the regular strict typecheck. Its private `.qa-o4-photos/` directory is ignored by Git; the constant synthetic identity is for loopback QA only.
+The `tests/qa-o4.ts` entry is included in the strict test typecheck. Its private `.qa-o4-photos/` directory is ignored by Git; the constant synthetic identity is for loopback QA only.
 
 ## Remaining print pagination — lead check pending
 
@@ -222,7 +222,7 @@ bun run build
 bun run build:app
 bun run test:o
 bun test tests/sources.test.ts tests/evidence.test.ts
-bun run demo:o
+bun tests/o-demo.ts
 # Historical smoke results below; do not rerun during correction review.
 ```
 

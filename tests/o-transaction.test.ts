@@ -3,7 +3,7 @@ import { test } from "node:test";
 import { spyOn } from "bun:test";
 import * as fs from "node:fs/promises";
 import assert from "node:assert/strict";
-import { createOperationalApp } from "../src/operations.ts";
+import { createSyntheticOperationalApp as createOperationalApp } from "./synthetic-runtime.ts";
 import type { OperationalClock } from "../src/operations.ts";
 import { syntheticCase } from "./h-fixtures.ts";
 import { createCaseStore } from "../src/o-case-store.ts";
@@ -19,7 +19,7 @@ import { revision } from "../src/o-validation.ts";
 import { createApp } from "../src/app.ts";
 import { createPhotoExecutionAuthority, type ScopeMapping } from "../src/photo-execution.ts";
 import { decideCase } from "../src/assessment.ts";
-import { createResourceApp } from "../src/session.ts";
+import { createSyntheticResourceApp as createResourceApp } from "./synthetic-runtime.ts";
 
 const origin = "http://localhost:3000";
 test("default store merges cleanup notices queued during a private evaluation", async () => {

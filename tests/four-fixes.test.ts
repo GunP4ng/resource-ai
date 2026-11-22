@@ -8,7 +8,7 @@ import { createResourceDomain } from "../src/domain.ts";
 import { lookupLegalEvidence } from "../src/evidence.ts";
 import { createCaseStore } from "../src/o-case-store.ts";
 import { safetyReasons } from "../src/o-safety-reasons.ts";
-import { createAssessmentAdapter } from "../src/session.ts";
+import { createSyntheticAssessmentAdapter as createAssessmentAdapter } from "./synthetic-runtime.ts";
 
 const origin = "http://localhost:3000";
 const start = Date.UTC(2026, 10, 25);

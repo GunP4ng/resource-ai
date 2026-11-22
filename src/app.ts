@@ -2,7 +2,7 @@ import { randomBytes } from "node:crypto";
 import type { AppDependencies, StoredAssessment } from "./app-types.ts";
 export type { AppDependencies, AssessmentAdapter, AssessmentEnvelope } from "./app-types.ts";
 import { HttpFailure, bounded, body, caseBody, defaultBodyBytes, errorResponse, idPattern, redirect, response } from "./app-http.ts";
-import { form, loginPage, caseListPage, inputPage } from "./app-views.ts";
+import { caseInputSummary, form, loginPage, caseListPage, inputPage } from "./app-views.ts";
 import { caseRoute } from "./app-case-routes.ts";
 import { demo } from "./o-demo.ts";
 import { referencePage } from "./o-reference.ts";
@@ -97,7 +97,8 @@ export function createApp(dependencies: AppDependencies) {
         let validUntil = Infinity;
         let assertCurrent: (() => void) | undefined;
         const normalDemo = request.method === "GET" && url.pathname === "/demo/normal";
-        if ((dependencies.localAuth || dependencies.actorForRequest) && (url.pathname === "/" || url.pathname.startsWith("/cases") || normalDemo)) {
+        const reportDemo = request.method === "GET" && /^\/demo\/(?:normal|held|review)$/.test(url.pathname);
+        if ((dependencies.localAuth || dependencies.actorForRequest) && (url.pathname === "/" || url.pathname.startsWith("/cases") || reportDemo)) {
           try {
             const identity = dependencies.localAuth ? dependencies.localAuth.resolve(request, signal) : await dependencies.actorForRequest?.(request, signal);
             actor = typeof identity === "string" ? identity : identity?.actorId ?? null;
@@ -112,7 +113,7 @@ export function createApp(dependencies: AppDependencies) {
             throw new HttpFailure(503, "인증 서비스를 사용할 수 없습니다.");
           }
           guard(signal);
-          if ((!actor && !normalDemo) || (actor && !/^[A-Za-z0-9_-]{1,128}$/.test(actor)) || validUntil <= now() || Number.isNaN(validUntil)) throw new HttpFailure(403, "인증이 필요합니다.");
+          if ((!actor && !reportDemo) || (actor && !/^[A-Za-z0-9_-]{1,128}$/.test(actor)) || validUntil <= now() || Number.isNaN(validUntil)) throw new HttpFailure(403, "인증이 필요합니다.");
         }
         const identityGuard = () => {
           guard(signal);
@@ -140,6 +141,17 @@ export function createApp(dependencies: AppDependencies) {
         };
         const owner = actor ? `actor:${actor}` : cookie && session ? `session:${cookie}` : undefined;
         const reports = actor ? actorReports.get(actor)?.cases : session?.cases;
+        const anonymousPage = (html: string) => {
+          if (session === undefined && sessions.size >= 1000) throw new HttpFailure(503, "현재 새 세션을 열 수 없습니다.");
+          const token = cookie !== undefined && session !== undefined ? cookie : randomBytes(32).toString("hex");
+          const at = now();
+          const cookieDeadline = session?.deadline ?? at + sessionLifetimeMs;
+          const maxAge = Math.max(0, Math.floor((cookieDeadline - at) / 1000));
+          const result = response(html, 200, { "set-cookie": `resource_session=${token}; HttpOnly; SameSite=Strict; Path=/; Max-Age=${maxAge}${secure ? "; Secure" : ""}` });
+          privateGuard();
+          if (session === undefined) sessions.set(token, { deadline: cookieDeadline, cases: new Map() });
+          return result;
+        };
         if (request.method === "GET" && url.pathname === "/cases" && preparer) {
           if (!owner) throw new HttpFailure(403, "인증이 필요합니다.");
           const deadlineLabel = actor ? "보관 만료 (UTC)" : "조회 가능 기한 (UTC)";
@@ -162,15 +174,7 @@ export function createApp(dependencies: AppDependencies) {
             privateGuard();
             return result;
           }
-          if (session === undefined && sessions.size >= 1000) throw new HttpFailure(503, "현재 새 세션을 열 수 없습니다.");
-          const token = cookie !== undefined && session !== undefined ? cookie : randomBytes(32).toString("hex");
-          const at = now();
-          const cookieDeadline = session?.deadline ?? at + sessionLifetimeMs;
-          const maxAge = Math.max(0, Math.floor((cookieDeadline - at) / 1000));
-          const homeResponse = response(inputPage({ authenticated: !!actor, localAuth: !!dependencies.localAuth, connected: !!dependencies.adapter, photoEnabled, runner: dependencies.runtime?.runner }), 200, { "set-cookie": `resource_session=${token}; HttpOnly; SameSite=Strict; Path=/; Max-Age=${maxAge}${secure ? "; Secure" : ""}` });
-          privateGuard();
-          if (session === undefined) sessions.set(token, { deadline: cookieDeadline, cases: new Map() });
-          return homeResponse;
+          return anonymousPage(inputPage({ authenticated: !!actor, localAuth: !!dependencies.localAuth, connected: !!dependencies.adapter, photoEnabled, runner: dependencies.runtime?.runner }));
         }
         if (request.method === "GET" && url.pathname === "/reference") return response(referencePage());
         const fixtureMatch = /^\/demo\/([A-Za-z0-9_-]+)$/.exec(url.pathname);
@@ -188,8 +192,8 @@ export function createApp(dependencies: AppDependencies) {
           let actions = "";
           if (normalDemo) {
             if (url.searchParams.get("purpose") === "research" && !actor) throw new HttpFailure(403, "연구 계산은 인증된 사용자만 확인할 수 있습니다.");
-            actions = '<nav class="cluster screen-only" aria-label="공개 시나리오 계산"><a href="/demo/normal?purpose=research">PET 비용·탄소</a><a href="/demo/normal?purpose=research&amp;material=HDPE">HDPE 비용·탄소</a><a href="/demo/normal?purpose=commercial">상업용 합성 데모</a></nav>';
             if (actor && url.searchParams.get("purpose") !== "commercial") {
+              actions = '<nav class="cluster screen-only" aria-label="공개 시나리오 계산"><a href="/demo/normal?purpose=research">PET 비용·탄소</a><a href="/demo/normal?purpose=research&amp;material=HDPE">HDPE 비용·탄소</a><a href="/demo/normal?purpose=commercial">상업용 합성 데모</a></nav>';
               const material = url.searchParams.get("material")?.trim().toUpperCase();
               if (material !== undefined && material !== "PET" && material !== "HDPE") {
                 recovery = actions;
@@ -212,12 +216,14 @@ export function createApp(dependencies: AppDependencies) {
               actions += `<p>공개 시나리오의 비용·탄소는 인증된 비공개 연구 화면에서 제공합니다.${dependencies.localAuth ? ' <a href="/login">운영자 로그인</a>' : ""}</p>`;
             }
           }
-          const result = response(renderReport(decision, presentation, context, {
+          const editor = fixture.input && (actor || (!dependencies.localAuth && !dependencies.actorForRequest)) ? fixture.input : undefined;
+          const html = renderReport(decision, presentation, context, {
             actions, researchFirst: normalDemo,
-            editing: '<p class="screen-only"><a href="/demo/review">합성 위험·검토 예시</a></p>',
-          }));
+            researchNavigation: context.audience === "authenticated-research",
+            ...(editor ? { answerTarget: "#answer-fields" as const, editing: `${caseInputSummary(editor)}<div class="screen-only"><h2 id="answer-fields" tabindex="-1">답변·사례 수정</h2><p>예시 입력을 바꿔 제출하면 새 사례로 검토합니다.</p>${form("/cases", false, undefined, "", editor)}</div>` } : {}),
+          });
           identityGuard();
-          return result;
+          return editor && !actor && !session ? anonymousPage(html) : response(html);
         }
         const caseMatch = /^\/cases\/([A-Za-z0-9_-]{1,100})(?:\/(answers|report|input|inquiry|inquiry-reply))?$/.exec(url.pathname);
         const caseId = caseMatch?.[1];

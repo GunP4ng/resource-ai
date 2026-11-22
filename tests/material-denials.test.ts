@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import type { CaseInput } from "../src/contracts.ts";
 import { createResourceDomain } from "../src/domain.ts";
-import { createResourceApp } from "../src/session.ts";
+import { createSyntheticResourceApp as createResourceApp } from "./synthetic-runtime.ts";
 import { safetyReasons } from "../src/o-safety-reasons.ts";
 
 const base = { photoRefs: [], hazardousContact: "no", assessmentDate: "2026-11-15" } as const;

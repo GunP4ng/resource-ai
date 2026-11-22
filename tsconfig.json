@@ -14,5 +14,5 @@
     "types": ["node", "bun-types/sqlite"],
     "skipLibCheck": false
   },
-  "include": ["src/**/*.ts", "scripts/**/*.ts", "qa-o4.ts"]
+  "include": ["src/**/*.ts", "scripts/**/*.ts"]
 }

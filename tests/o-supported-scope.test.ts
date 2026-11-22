@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { createResourceApp } from "../src/session.ts";
+import { createSyntheticResourceApp as createResourceApp } from "./synthetic-runtime.ts";
 import { createCaseStore } from "../src/o-case-store.ts";
 import { unsupportedScope } from "../src/o-supported-scope.ts";
 import originalRows from "../data/evaluation/rubric-followup-20261121/conditional-alternatives/results.json" with { type: "json" };

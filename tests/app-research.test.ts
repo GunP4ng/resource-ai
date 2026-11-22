@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { createResourceApp } from "../src/session.ts";
+import { createSyntheticResourceApp as createResourceApp } from "./synthetic-runtime.ts";
 import { createCaseStore } from "../src/o-case-store.ts";
 import type { CaseArtifact } from "../src/o-case-artifact.ts";
 import { prepareResearchCaseRecord, readCaseResearchCatalog } from "../src/o-case-research.ts";
@@ -17,7 +17,7 @@ const post = (path: string, raw: unknown) => new Request(origin + path, {
 async function decisionSurface(html: string) {
   const surface = { heading: "", recommendations: "", checks: "", caseIdentity: "" };
   await new HTMLRewriter()
-    .on("main > h1, #commercial-summary > h1", { text(chunk) { surface.heading += chunk.text; } })
+    .on("main > h1, #report-results > h1, #commercial-summary > h1", { text(chunk) { surface.heading += chunk.text; } })
     .on('section[aria-labelledby="recommendation-heading"]', { text(chunk) { surface.recommendations += chunk.text; } })
     .on("#checks", { text(chunk) { surface.checks += chunk.text; } })
     .on("#advanced > p:first-of-type", { text(chunk) { surface.caseIdentity += chunk.text; } })
@@ -46,12 +46,15 @@ test("permissionChanged warning stays outside disclosures near the conclusion", 
     for (const suffix of ["", "/report"]) {
       let visible = "", folded = "";
       const order: string[] = [];
+      const response = await app.fetch(new Request(origin + path + suffix));
+      const responseHtml = await response.text();
+      assert.equal(response.status, 200, responseHtml);
       const html = await new HTMLRewriter()
         .on("#decision-summary", { element() { order.push("conclusion"); } })
-        .on("main > #permission-change-warning, #commercial-summary > #permission-change-warning", { element() { order.push("notice"); }, text(chunk) { visible += chunk.text; } })
+        .on("main > #permission-change-warning, #report-results > #permission-change-warning, #commercial-summary > #permission-change-warning", { element() { order.push("notice"); }, text(chunk) { visible += chunk.text; } })
         .on("details #permission-change-warning", { text(chunk) { folded += chunk.text; } })
         .on("#next-action", { element() { order.push("next-action"); } })
-        .transform(await app.fetch(new Request(origin + path + suffix))).text();
+        .transform(new Response(responseHtml)).text();
       assert.match(visible, /사진 권한이 변경/);
       assert.match(visible, /과거 평가/);
       assert.match(visible, /이미 전송된 사진을 회수하지 않습니다/);
@@ -98,7 +101,9 @@ test("committed research uses one atomic report read and only explicit private r
     assert.ok(initial);
     staged = await prepareResearchCaseRecord({ actorId: "ui-private-actor", input: initial.input,
       inputRevision: revision(initial.input), codeRevision: "a".repeat(40), signal: new AbortController().signal }, "OYS-20261110-001", data);
-    const before = await (await app.fetch(new Request(origin + path))).text();
+    const beforeResponse = await app.fetch(new Request(origin + path));
+    const before = await beforeResponse.text();
+    assert.equal(beforeResponse.status, 200, before);
     assert.doesNotMatch(before, /data-research-result/);
     assert.match(before, /data-public-scenario-result/);
     assert.equal(store.readReport("actor:ui-private-actor", id)?.research, null);
@@ -106,10 +111,16 @@ test("committed research uses one atomic report read and only explicit private r
     assert.equal(reevaluated.status, 303);
     // When GET renders the committed pair through each output audience.
     reads = 0;
-    const normal = await (await app.fetch(new Request(origin + path))).text();
+    const normalResponse = await app.fetch(new Request(origin + path));
+    const normal = await normalResponse.text();
+    assert.equal(normalResponse.status, 200, normal);
     assert.equal(reads, 1);
-    const commercial = await (await app.fetch(new Request(origin + path + "/report"))).text();
-    const research = await (await app.fetch(new Request(origin + path + "/report?purpose=research"))).text();
+    const commercialResponse = await app.fetch(new Request(origin + path + "/report"));
+    const commercial = await commercialResponse.text();
+    assert.equal(commercialResponse.status, 200, commercial);
+    const researchResponse = await app.fetch(new Request(origin + path + "/report?purpose=research"));
+    const research = await researchResponse.text();
+    assert.equal(researchResponse.status, 200, research);
     const exported = await app.fetch(new Request(origin + path + "/input"));
     // Then commercial bytes and model inputs never receive the attachment.
     assert.match(normal, /data-research-result/);

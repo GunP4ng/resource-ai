@@ -7,7 +7,7 @@ import { ModelRuntime } from "@code-yeongyu/senpi";
 import { openRuntimeDatabase } from "../src/o-runtime-db.ts";
 import { createCaseStore } from "../src/o-case-store.ts";
 import { createLocalAuth } from "../src/o-auth.ts";
-import { createOperationalApp } from "../src/operations.ts";
+import { createSyntheticOperationalApp as createOperationalApp } from "./synthetic-runtime.ts";
 import { parseOperationalConfiguration } from "../src/o-operations-config.ts";
 import { syntheticCase } from "./h-fixtures.ts";
 import { revision } from "../src/o-validation.ts";

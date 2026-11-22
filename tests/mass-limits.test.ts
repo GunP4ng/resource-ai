@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { createResourceApp } from "../src/session.ts";
+import { createSyntheticResourceApp as createResourceApp } from "./synthetic-runtime.ts";
 import { createCaseStore } from "../src/o-case-store.ts";
 import { parseCaseInput } from "../src/input.ts";
 import { readCaseResearchCatalog } from "../src/o-case-research.ts";

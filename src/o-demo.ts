@@ -1,17 +1,21 @@
 import { Type } from "typebox";
 import { Value } from "typebox/value";
-import type { DecisionResult } from "./contracts.ts";
+import type { CaseInput, DecisionResult } from "./contracts.ts";
 import { createComparisonCalculator } from "./cost.ts";
 import { findProcessorsWithDiagnostics } from "./processors.ts";
 import { bindSynthetic, carbonFixture, sales, sq } from "./o-synthetic.ts";
 import { caseInput, documents, processorFixture, route } from "./o-synthetic-evidence.ts";
 import type { ReportPresentation } from "./report.ts";
 import type { ReviewedDocument } from "./o-validation.ts";
-export interface DemoOutput { readonly result: DecisionResult; readonly presentation: ReportPresentation; readonly documents?: readonly ReviewedDocument[]; }
+export interface DemoOutput { readonly result: DecisionResult; readonly presentation: ReportPresentation; readonly documents?: readonly ReviewedDocument[]; readonly input?: CaseInput; }
+const incompleteInput: CaseInput = {
+  caseId: "synthetic-held", description: "합성 예시: PP 사출 부산물", photoRefs: [], process: null, polymer: "PP",
+  contamination: null, hazardousContact: "unknown", massKg: null, region: "울산", assessmentDate: "2026-11-22",
+};
 export async function demo(fixtureId: string, origin = "http://localhost:3000"): Promise<DemoOutput | null> {
   const presentation: ReportPresentation = { mode: "synthetic", sourceVersion: "synthetic-v1", calculationVersion: "O-deterministic-v1 / synthetic-calculation-v1 / synthetic-registry-v1", scenarioLabels: ["견적 A · 항목별 청구", "견적 B · 일괄 청구"] };
-  if (fixtureId === "held") return { presentation, result: { state: "needs-information", caseId: "synthetic-held", questions: ["합성 보류 예시: 발생 공정과 오염 상태를 확인해 주세요.", "실측 질량과 유해물질 접촉 이력을 알려 주세요."], evidence: [] } };
-  if (fixtureId === "review") return { presentation, result: { state: "needs-review", caseId: "synthetic-review", reasons: ["합성 검토 예시: 유해 접촉 이력과 자료가 충돌합니다.", "허가 원문과 별표의 적용 행 확인 전 처리·계약을 진행할 수 없습니다."], evidence: [] } };
+  if (fixtureId === "held") return { presentation, input: incompleteInput, result: { state: "needs-information", caseId: incompleteInput.caseId, questions: ["합성 보류 예시: 발생 공정과 오염 상태를 확인해 주세요.", "실측 질량과 유해물질 접촉 이력을 알려 주세요."], evidence: [] } };
+  if (fixtureId === "review") return { presentation, input: { ...incompleteInput, caseId: "synthetic-review", description: "합성 예시: 유해물질 접촉 이력을 검토할 PP 사출 부산물", process: "사출", hazardousContact: "yes" }, result: { state: "needs-review", caseId: "synthetic-review", reasons: ["합성 검토 예시: 유해 접촉 이력과 자료가 충돌합니다.", "허가 원문과 별표의 적용 행 확인 전 처리·계약을 진행할 수 없습니다."], evidence: [] } };
   if (fixtureId !== "normal") return null;
   const a = carbonFixture(), processors = processorFixture();
   const allIn = { ...sales, quoteId: "synthetic-all-in-B", category: "treatment", basis: { kind: "total", amount: sq(250000, "KRW") }, revenueRecipient: "not-applicable" } as const;

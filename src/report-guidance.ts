@@ -76,7 +76,7 @@ export function guidanceProgress(guidance: CaseGuidance, presentation: ReportPre
       break;
     case "live":
       executionState = presentation.runtime?.runner === "local" ? "no-model" : presentation.execution ? "trace" : "none";
-      executionLabel = executionState === "no-model" ? "로컬 평가 · 외부 모델 호출 없음"
+      executionLabel = executionState === "no-model" ? "외부 모델 호출 없음"
         : executionState === "trace" ? "저장된 평가의 실행 추적 기록 있음" : "모델 실행 기록 없음";
       break;
   }

@@ -393,12 +393,12 @@ async function browser(app: ReturnType<typeof createOperationalApp>) {
   };
 }
 
-test("default app remains local-only; explicit incomplete operations yield O4 503 and strict JSON stays 400", async () => {
+test("disabled and incomplete operations yield O4 503 and strict JSON stays 400", async () => {
   const f = fixture(); const local = createOperationalApp({ origin, operations: { ...f.options, enabled: false } });
   try {
     const b = await browser(local), ready = await (await b.get("/operations/readiness")).json();
-    assert.equal(ready.mode, "local-only"); assert.equal(ready.authorization, "disabled"); assert.equal(ready.liveAzureVerified, false);
-    assert.equal((await b.post("/cases", submission)).status, 303); assert.equal(f.calls(), 0); assert.equal(f.records.length, 0);
+    assert.equal(ready.mode, "unconfigured"); assert.equal(ready.authorization, "disabled"); assert.equal(ready.liveAzureVerified, false);
+    assert.equal((await b.post("/cases", submission)).status, 503); assert.equal(f.calls(), 0); assert.equal(f.records.length, 0);
     assert.equal((await b.post("/cases", { ...submission, massKg: "2000" })).status, 400);
   } finally { local.dispose(); }
   const gated = createOperationalApp({ origin, operations: { ...f.options, configuration: async () => null } });

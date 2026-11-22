@@ -33,7 +33,7 @@ H 후보 10건과 사용자가 전달한 700개 이미지 ZIP은 별도 자료�
 ### 실제 로컬 실행 증거
 
 - `scripts/h-candidates.ts`: 공통 `parseCaseInput`과 실제 `assessCase`/adapter 실행, 입력 비변경·4개 경로 unknown·source/사진/라이선스 SHA·파싱 확인.
-- `scripts/h-photo-offline.ts`: 기존 `createSubscriptionRunner`/`openCaseSession`, `chatgpt-subscription`/`gpt-6-sol` 사용. 실제 저장소 디코딩과 기존 SDK의 zstd SSE 직렬화 바이트를 주입 transport에서 복원·해시 대조한다. 실제 credential store는 읽지 않고 메모리 합성 credential만 쓴다.
+- `tests/h-photo-offline.ts`: 기존 `createSubscriptionRunner`/`openCaseSession`, `chatgpt-subscription`/`gpt-6-sol` 사용. 실제 저장소 디코딩과 기존 SDK의 zstd SSE 직렬화 바이트를 주입 transport에서 복원·해시 대조한다. 실제 credential store는 읽지 않고 메모리 합성 credential만 쓴다.
 - 동일 사진의 공정·오염·접촉 조건 변화, 모델 동의 철회 뒤 모델 접근 거부/preview 보존, 저장 동의 철회 거부, 만료 삭제를 실행했다. 합성 과거 날짜 대조는 기존 J 확인 기한을 갱신하지 않는다.
 - 실제 loopback HTTP/HTML form의 제출303→질문 표시→답변303→해결된 질문 제거, 타 세션404를 확인했다. O 앱 코드는 수정하지 않았다.
 - 합성 인증·권한·응답·usage와 실제 바이트/HTTP 동작을 구분한다. 외부 모델 호출·실제 계정 로그인·현장 사진 접근은 0건이다.
@@ -55,7 +55,7 @@ J의 `docs/j2j3-evidence-20261110` head `84027ad728d212720c77788f39161086baa17ea
 
 ## H/O 운영 결합에서 아직 결정할 것
 
-현재 기본 공급자/모델은 `chatgpt-subscription`/`gpt-6-sol`이고 Azure는 선택 경로다. `RESOURCE_MODEL_RUNNER=local`은 실제 모델을 호출하지 않는다. 이 인계의 오프라인 스크립트는 기본 launcher의 실제 운영 승인/한도/감사 연결 완료를 뜻하지 않는다.
+현재 기본 공급자/모델은 `chatgpt-subscription`/`gpt-6-sol`이고 Azure는 선택 경로다. production launcher의 `local` 선택은 제거됐다. 모델 없는 QA는 `tests/synthetic-app.ts`의 명시적 주입을 사용한다. 이 인계의 오프라인 스크립트는 기본 launcher의 실제 운영 승인/한도/감사 연결 완료를 뜻하지 않는다.
 
 - main에 수용된 O PR34의 `createOperatorRuntime`은 같은 authority의 사례·사진·guarded runner와 자체 `openOperationJournal.authorizeDispatch/record/wrapTransport`를 조립한다. O의 requestAllowance는 요청 횟수 한도이며 금액 예산이 아니다.
 - main에 수용된 H PR33의 `createOperationalHandoff`/`createOperationalAuditStore`/recovery worker는 별도 구현이다. O launcher에 자동 연결된 것으로 보지 않는다. 두 경로를 무조건 중첩해 이중 예약·감사·정산하지 않는다. 운영 공급자 책임 선택은 H/O/팀장 검토가 필요하다.

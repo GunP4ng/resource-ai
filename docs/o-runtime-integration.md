@@ -89,10 +89,10 @@ fail startup; storage errors never select a memory fallback.
 | Setting | Values and constraint |
 | --- | --- |
 | `RESOURCE_APP_AUTH` | `anonymous` (default), `local-operator` |
-| `RESOURCE_STATE_DIR` | Required absolute, canonical private root in local mode; forbidden in anonymous mode |
-| `RESOURCE_RESOURCES_DIR` | Optional absolute curated root; local mode required; directories 0700 and files 0600 |
+| `RESOURCE_STATE_DIR` | Required absolute, canonical private root with `local-operator` authentication; forbidden in anonymous mode |
+| `RESOURCE_RESOURCES_DIR` | Optional absolute curated root; `local-operator` authentication required; directories 0700 and files 0600 |
 | `RESOURCE_PRIVATE_PHOTOS` | `off` (default), `on`; local authentication required; model use additionally needs the explicit operational mapping |
-| `RESOURCE_MODEL_RUNNER` | Existing `subscription` (default), `azure`, `local`; explicit `operational` requires the separate handoff contract |
+| `RESOURCE_MODEL_RUNNER` | `subscription` (default), `azure`; explicit `operational` requires the separate handoff contract. `local` is rejected. |
 | `RESOURCE_OPERATIONAL_CONFIG` | Required private absolute config only in operational mode; presence alone never enables execution |
 | `PORT` | Existing loopback port; default 3000 |
 
@@ -103,7 +103,7 @@ must satisfy the foundational private-path checks. No accounts are shipped.
 ```sh
 mkdir -m 700 /absolute/private/resource-artifacts
 bun scripts/o-account.ts create --state-dir /absolute/private/resource-state --username operator
-RESOURCE_MODEL_RUNNER=local RESOURCE_APP_AUTH=local-operator RESOURCE_STATE_DIR=/absolute/private/resource-state RESOURCE_RESOURCES_DIR=/absolute/private/resource-artifacts bun run app
+RESOURCE_APP_AUTH=local-operator RESOURCE_STATE_DIR=/absolute/private/resource-state RESOURCE_RESOURCES_DIR=/absolute/private/resource-artifacts bun run app
 ```
 
 The CLI conceals the password prompt. For managed stdin use `--stdin-secret`
@@ -115,13 +115,18 @@ bun scripts/o-account.ts reset-password --state-dir /absolute/private/resource-s
 bun scripts/o-account.ts disable --state-dir /absolute/private/resource-state --username operator
 bun run build:app
 bun /absolute/checkout/dist/app/o-account.js create --state-dir /absolute/private/another-state --username operator
-RESOURCE_MODEL_RUNNER=local RESOURCE_APP_AUTH=local-operator RESOURCE_STATE_DIR=/absolute/private/resource-state bun /absolute/checkout/dist/app/app.js
+RESOURCE_APP_AUTH=local-operator RESOURCE_STATE_DIR=/absolute/private/resource-state bun /absolute/checkout/dist/app/app.js
 ```
 
 Packaged entries work from an unrelated cwd while installed external dependencies
 remain available beside the checkout/package. Only public manifest assets are
 staged under `dist/data`; state, accounts, photos and curated artifacts are never
 copied. This is a Bun bundle with external packages, not a standalone executable.
+
+These commands use actual subscription inference. Missing inference configuration
+fails assessment rather than falling back to the deterministic engine. Local
+operator authentication and loopback HTTP remain independent of runner selection.
+For offline synthetic QA, use the [tests-only launcher](../tests/README.md).
 
 ## HTTP, recovery and exact artifact installation
 
@@ -285,7 +290,7 @@ Bun password operations retain native Argon2id and crypto limits. A typed
 `node:module` runtime boundary loads only that API; the Node compiler avoids
 Bun's global `fetch.preconnect` overload conflicting with the installed SDK.
 The existing Node/Bun test split includes the Bun auth tests, all new runtime
-tests, helpers, account CLI and `qa-o4.ts`, with no suppressed library checks.
+tests, helpers, account CLI and `tests/qa-o4.ts`, with no suppressed library checks.
 
 ## Timed demonstration and remaining acceptance
 
@@ -299,7 +304,7 @@ tests, helpers, account CLI and `qa-o4.ts`, with no suppressed library checks.
   questions/currentness hold and export (1:00–1:30), restart and recover through
   `/cases` (1:30–2:00). Current legal coverage remains an external J dependency.
 
-`RESOURCE_MODEL_RUNNER=local bun run demo:o` generates normal/held/review HTML,
+`bun tests/o-demo.ts` generates normal/held/review HTML,
 then drives a real temporary SQLite/native correction/restart handler flow with
 an ephemeral demonstration account. The state is removed afterwards. Generated
 HTML is neither actual network/browser QA nor a recording. O owns component

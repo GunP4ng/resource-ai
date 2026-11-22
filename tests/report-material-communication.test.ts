@@ -9,7 +9,7 @@ import { createCaseStore } from "../src/o-case-store.ts";
 import { createMemoryRuntimeDatabase } from "../src/o-runtime-db.ts";
 import { safetyReasons } from "../src/o-safety-reasons.ts";
 import { renderReport } from "../src/report.ts";
-import { createResourceApp } from "../src/session.ts";
+import { createSyntheticResourceApp } from "./synthetic-runtime.ts";
 
 const base: CaseInput = {
   caseId: "material-communication", description: "구리 절단 스크랩", photoRefs: [],
@@ -110,7 +110,7 @@ for (const [description, contamination, expected, state] of [
     const db = createMemoryRuntimeDatabase();
     const localAuth = createLocalAuth(db, { origin });
     const caseStore = createCaseStore(Date.now, undefined, db);
-    const app = createResourceApp({ origin, localAuth, caseStore, presentationMode: "offline" });
+    const app = createSyntheticResourceApp({ origin, localAuth, caseStore, presentationMode: "offline" });
     const fields = { description, contamination, polymer: "구리",
       process: state === "compared" ? "사업장일반폐기물 metal recycling & <batch>" : base.process ?? "",
       hazardousContact: "no" as const, massKg: "180", region: "경기", assessmentDate: base.assessmentDate };

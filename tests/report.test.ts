@@ -74,7 +74,7 @@ for (const [runner, label, missing] of [
   ["unspecified", "미지정", "실행 성공 미검증"],
   ["subscription", "구독 경로 모델 실행", "구독 경로 모델 실행 성공 미검증"],
   ["azure", "Azure 연결", "Azure 성공 미검증"],
-  ["local", "로컬", "로컬 실행 · 외부 모델 호출 없음"],
+  ["local", null, "외부 모델 호출 없음"],
 ] as const) test(`live report without execution uses saved runtime ${runner ?? "absent"} without claiming success`, () => {
   const html = renderReport({ state: "needs-information", caseId: "no-execution", questions: ["질량 확인"], evidence: [] }, {
     mode: "live", ...(runner ? { runtime: { identity: "local-operator", storage: "sqlite", runner } } : {}),
@@ -82,7 +82,10 @@ for (const [runner, label, missing] of [
   assert.match(html, /모델 실행 정보 미제공/);
   assert.ok(html.includes(`<p>모델 실행 정보 미제공 · ${missing}</p>`), `missing execution disclosure for ${runner ?? "absent"}`);
   if (label) assert.ok(html.includes(`구성된 실행기 ${label} (실행 성공과 별개)`), `configured label for ${runner}`);
-  else assert.match(html, /평가 당시 인증·저장·실행기 설정 미제공/);
+  else if (runner === "local") {
+    assert.match(html, /평가 당시: 로컬 운영자 · SQLite 보관/);
+    assert.doesNotMatch(html, /구성된 실행기|로컬 실행|로컬 평가/);
+  } else assert.match(html, /평가 당시 인증·저장·실행기 설정 미제공/);
   if (runner !== "azure") assert.ok(!html.includes("Azure"), "must not assume Azure");
   if (runner !== "local") assert.doesNotMatch(html, /모델 호출 없음/);
   assert.doesNotMatch(html, /추적 |SiWC|인증 성공/);

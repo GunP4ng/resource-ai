@@ -3,7 +3,7 @@ import { test } from "node:test";
 import type { CaseInput } from "../src/contracts.ts";
 import { createResourceDomain } from "../src/domain.ts";
 import { lookupLegalEvidence, loadEvidenceRegistry } from "../src/evidence.ts";
-import { createResourceApp } from "../src/session.ts";
+import { createSyntheticResourceApp as createResourceApp } from "./synthetic-runtime.ts";
 import { materialFamily } from "../src/material-context.ts";
 import { canonical } from "../src/o-validation.ts";
 import { hostVerificationOrder } from "../src/o-verification-plan.ts";

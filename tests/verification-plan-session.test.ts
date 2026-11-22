@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { Value } from "typebox/value";
 import type { CaseInput, DecisionResult } from "../src/contracts.ts";
-import { createAssessmentAdapter, createAzureRunner, SessionFailure, type CaseRunner } from "../src/session.ts";
+import { createAzureRunner, SessionFailure, type CaseRunner } from "../src/session.ts";
 import { createResourceDomain } from "../src/domain.ts";
 import { parseDecision } from "../src/o-decision.ts";
 import { parseAssessment } from "../src/o-case-store.ts";
@@ -10,6 +10,7 @@ import { VerificationCandidatesSchema, type VerificationCandidates } from "../sr
 import { createVerificationCandidates, presentAssessmentDecision } from "../src/o-verification-plan-candidates.ts";
 import { revision } from "../src/o-validation.ts";
 import { syntheticCase } from "./h-fixtures.ts";
+import { createSyntheticAssessmentAdapter } from "./synthetic-runtime.ts";
 
 const input = { ...syntheticCase, caseId: "verification-wire" };
 const signal = () => new AbortController().signal;
@@ -47,7 +48,7 @@ function wireRunner(final: (tool: ToolResult) => unknown): CaseRunner {
     } });
 }
 async function evaluate(runner?: CaseRunner, facts: CaseInput = input) {
-  const adapter = createAssessmentAdapter({ runner });
+  const adapter = createSyntheticAssessmentAdapter({ runner });
   try { return await adapter.evaluate(facts, signal()); }
   finally { adapter.dispose(); }
 }
@@ -120,7 +121,7 @@ test("tampered decision reference still fails the base runner contract", async (
   })), error => error instanceof SessionFailure && error.code === "invalid-model-output");
 });
 
-test("reference-only, direct legacy and local outputs never manufacture a plan", async () => {
+test("reference-only, direct legacy and empty runner outputs never manufacture a plan", async () => {
   for (const runner of [undefined, wireRunner(tool => ({ decisionReference: tool.reference })), wireRunner(tool => tool.decision)]) {
     const result = await evaluate(runner);
     assert.equal(result.verificationPlan, undefined);

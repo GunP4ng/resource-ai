@@ -7,7 +7,8 @@ import type { AssessmentAdapter } from "../src/app.ts";
 import type { DecisionResult } from "../src/contracts.ts";
 import { createHash } from "node:crypto";
 import { demo } from "../src/o-demo.ts";
-import { createAssessmentAdapter, createResourceApp, SessionFailure } from "../src/session.ts";
+import { SessionFailure } from "../src/session.ts";
+import { createSyntheticAssessmentAdapter as createAssessmentAdapter, createSyntheticResourceApp as createResourceApp } from "./synthetic-runtime.ts";
 import type { SessionFailureCode } from "../src/session.ts";
 import type { DomainResources } from "../src/domain.ts";
 import { syntheticCase, syntheticReviewed } from "./h-fixtures.ts";
@@ -32,10 +33,11 @@ function post(path: string, cookie: string, body = "{}", headers: Readonly<Recor
   return new Request(`${origin}${path}`, { method: "POST", headers: { cookie, origin, "content-type": "application/json", ...headers }, body });
 }
 for (const localAuth of [true, false]) for (const [runner, label] of [
-  ["subscription", "구독 경로 모델 실행"], ["azure", "Azure 연결"], ["local", "로컬"], ["unspecified", "미지정"],
+  ["subscription", "구독 경로 모델 실행"], ["azure", "Azure 연결"], ["local", null], ["unspecified", "미지정"],
 ] as const) test(`input page ${localAuth ? "local operator" : "session"} shows configured ${runner} without claiming successful execution`, () => {
   const html = inputPage({ authenticated: true, localAuth, connected: true, photoEnabled: false, runner });
-  assert.ok(html.includes(`${localAuth ? "검토 방식" : "구성된 실행기"} ${label} · 실행 성공은 평가 후 확인`), `configured ${runner} label and pending success`);
+  if (label) assert.ok(html.includes(`${localAuth ? "검토 방식" : "구성된 실행기"} ${label} · 실행 성공은 평가 후 확인`), `configured ${runner} label and pending success`);
+  else assert.doesNotMatch(html, /검토 방식|구성된 실행기|로컬/);
   assert.doesNotMatch(html, /SiWC|인증 성공|실행 성공 확인됨/);
   assert.match(html, /<form method="post" action="\/cases">/);
   assert.equal(html.includes("로그인한 담당자 · 사례 보관 최대 1시간"), localAuth);
@@ -453,9 +455,9 @@ test("O4 native corrections refresh missing questions and remain usable after re
     const visibleQuestions: string[] = [], hiddenQuestions: string[] = [];
     const answerLinks: (string | null)[] = [], hiddenAnswerLinks: (string | null)[] = [];
     await new HTMLRewriter()
-      .on("main > #case-reasons li", { text(chunk) { visibleQuestions.push(chunk.text); } })
+      .on("#report-results > #case-reasons li", { text(chunk) { visibleQuestions.push(chunk.text); } })
       .on("details #case-reasons li", { text(chunk) { hiddenQuestions.push(chunk.text); } })
-      .on('main > p > a.primary-action:not(.secondary-action)[href="#answer-fields"]', { element(element) { answerLinks.push(element.getAttribute("href")); } })
+      .on('#report-results > p > a.primary-action:not(.secondary-action)[href="#answer-fields"]', { element(element) { answerLinks.push(element.getAttribute("href")); } })
       .on('details a[href="#answer-fields"]', { element(element) { hiddenAnswerLinks.push(element.getAttribute("href")); } })
       .transform(new Response(before)).text();
     assert.match(visibleQuestions.join(""), /재질·품목/);
@@ -491,7 +493,7 @@ test("optional mass answer updates the same recommended case with supported cost
     assert.match(before, /질량을 입력하면 비용·탄소를 계산해요/);
     const massLinks: string[] = [], hiddenMassLinks: string[] = [], order: string[] = [];
     await new HTMLRewriter()
-      .on('main > p > a[href="#answer-fields"]', { text(chunk) { massLinks.push(chunk.text); } })
+      .on('#report-results > p > a[href="#answer-fields"]', { text(chunk) { massLinks.push(chunk.text); } })
       .on('details a[href="#answer-fields"]', { text(chunk) { hiddenMassLinks.push(chunk.text); } })
       .on('#next-action, a[href="#answer-fields"], #result-context', {
         element(element) { order.push(element.getAttribute("id") ?? "mass-link"); },
@@ -712,7 +714,7 @@ test("O4 source and packaged launchers reduce missing questions before review an
     const port = address.port;
     await new Promise<void>((resolve, reject) => reservation.close((error) => error ? reject(error) : resolve()));
     const directory = await mkdtemp(join(tmpdir(), "o4-launcher-"));
-    const child = spawn(process.execPath, [resolve(root, launcher)], { cwd: directory, env: { ...process.env, PORT: String(port), RESOURCE_MODEL_RUNNER: "local" }, stdio: ["ignore", "pipe", "pipe"] });
+    const child = spawn(process.execPath, [resolve(root, "tests/synthetic-app.ts"), resolve(root, launcher)], { cwd: directory, env: { ...process.env, PORT: String(port), RESOURCE_MODEL_RUNNER: "subscription" }, stdio: ["ignore", "pipe", "pipe"] });
     const exited = new Promise<{ code: number | null; signal: NodeJS.Signals | null }>((resolve, reject) => {
       child.once("error", reject);
       child.once("exit", (code, signal) => resolve({ code, signal }));
