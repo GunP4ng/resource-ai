@@ -18,6 +18,25 @@ const unresolvedMaterialHistory = new RegExp(`${residueTerms}|잔존|부착|묻[
 
 const unplatedFields = new Set(["무도금", "무도금 구리판", "무도금 구리판 절단편"]);
 const coatingSignal = /도금|코팅|도료|도장|페인트/u;
+const excludedStream = /건설폐기물|분진|슬러지|오니|배터리|축전지|폐전선|전자제품|광재/iu;
+const physicalLineBoundary = /\r\n|[\n\r\v\f\u0085\u2028\u2029]/u;
+const treatmentDenials = new Set(["오일 안 묻음", "방부 미처리", "무도장", "미도장", "오일 미사용", "방부제 미사용"]);
+const standaloneClean = /^(?:오염 ?)?없(?:음|습니다|다)$/u;
+
+function treatmentAssertions(value: string | null, family: MaterialFamily): readonly string[] | null {
+  if (family !== "metal" && family !== "wood") return null;
+  const assertions = (value ?? "").split(physicalLineBoundary).flatMap(line => line.split(","))
+    .map(assertion => assertion.replace(/[\p{Zs}\t]+/gu, " ").replace(/^ | $/gu, "")).filter(Boolean);
+  return assertions.some(assertion => treatmentDenials.has(assertion)) ? assertions : null;
+}
+
+function onlyCleanAssertions(assertions: readonly string[]): boolean {
+  return assertions.every(assertion => treatmentDenials.has(assertion) || standaloneClean.test(assertion));
+}
+
+function explicitlyUntreatedWood(material: string | null): boolean {
+  return material === "untreated-wood" || material === "untreated-wood-packaging";
+}
 
 /** Like maskExplicitHazardDenial, mask complete clauses in one field, never adjoining assertions. */
 function maskMaterialDenials(value: string | null): string {
@@ -27,8 +46,20 @@ function maskMaterialDenials(value: string | null): string {
 }
 
 /** Reported absence only. Unrecognized or affirmative remainder cannot establish clean context. */
-export function isDeclaredCleanMaterial(value: string | null, family: MaterialFamily): boolean {
-  const original = (value ?? "").normalize("NFKC");
+export function isDeclaredCleanMaterial(input: CaseInput, family: MaterialFamily): boolean {
+  const assertions = treatmentAssertions(input.contamination, family);
+  if (assertions !== null) {
+    if (!onlyCleanAssertions(assertions)) return false;
+    // A standalone absence on another line cannot clear a reported residue.
+    const factualLines = [input.process, input.description].flatMap(value => (value ?? "").split(physicalLineBoundary));
+    if (factualLines.some(line => excludedStream.test(maskMaterialDenials(line)) || hasUnresolvedMaterialHistory(line))) return false;
+    const stream = materialStream(input);
+    const supported = family === "wood"
+      ? explicitlyUntreatedWood(canonicalMaterial(input.polymer)) && (stream === "wood-byproduct" || stream === "wood-packaging")
+      : stream === "ferrous" || stream === "nonferrous";
+    return supported && stream === supportedMaterialStream(input, "없음") && !scanMaterialHazards(input).hold;
+  }
+  const original = (input.contamination ?? "").normalize("NFKC");
   const masked = maskMaterialDenials(original);
   return masked !== original && masked.split(/[,;.\n]/u).every(clause => {
     const text = clause.replace(/\s+/gu, "");
@@ -124,8 +155,12 @@ export function materialFamily(input: Pick<CaseInput, "polymer" | "description">
 }
 
 export function materialStream(input: CaseInput): MaterialStream | null {
+  return supportedMaterialStream(input, input.contamination);
+}
+
+function supportedMaterialStream(input: CaseInput, contamination: string | null): MaterialStream | null {
   if (isUnknownCaseText(input.polymer)) return null;
-  const reported = [input.polymer, input.description, input.process, input.contamination]
+  const reported = [input.polymer, input.description, input.process, contamination]
     .map(value => (value ?? "").normalize("NFKC"));
   if (!/사업장\s*일반|industrial general/iu.test(input.process ?? "")
     || /아님|아니|않|\b(?:not|no)\b/iu.test(input.process ?? "")) return null;
@@ -133,7 +168,7 @@ export function materialStream(input: CaseInput): MaterialStream | null {
     /(?:무처리|미처리|무코팅|비코팅)[^,.;\n]{0,12}(?:아님|아닌)|\bnot\s+(?:untreated|uncoated)\b/iu.test(value)
     || [...value.matchAll(/(?:무처리|미처리|무코팅|비코팅|처리\s*이력|코팅\s*이력|treatment\s+history|coating\s+history)\s*(?:여부|이력|유무)?\s*(?:은|는|이|가)?\s*[:：]?\s*([^,.;\n]+)/giu)]
       .some(match => isUnknownCaseText(match[1], "clause")))) return null;
-  if (/건설폐기물|분진|슬러지|오니|배터리|축전지|폐전선|전자제품|광재/iu.test([input.process, input.description].map(maskMaterialDenials).join(" "))) return null;
+  if (excludedStream.test([input.process, input.description].map(maskMaterialDenials).join(" "))) return null;
   const material = canonicalMaterial(input.polymer);
   if (material === null) return null;
   if (["paper", "cardboard", "paper-packaging", "uncoated-paper"].includes(material)) {
@@ -148,26 +183,57 @@ export function materialStream(input: CaseInput): MaterialStream | null {
   if (material === "ferrous") return "ferrous";
   if (["nonferrous", "aluminum", "copper"].includes(material)) return "nonferrous";
   if (materialFamily(input) !== "wood") return null;
-  if (!material.startsWith("untreated-") && !/무처리|미처리|\buntreated\b|원목\s*상태/iu.test([input.process, input.contamination].join(" "))) return null;
+  if (!explicitlyUntreatedWood(material) && (treatmentAssertions(contamination, "wood") !== null
+    || !/무처리|미처리|\buntreated\b|원목\s*상태/iu.test([input.process, contamination].join(" ")))) return null;
   if (/원목\s*(?:제재|가공)|제재소|sawmill|lumber mill/iu.test(input.process ?? "")) return "wood-byproduct";
   if (["wood-packaging", "untreated-wood-packaging"].includes(material)
     && /포장|팔레트/iu.test(input.process ?? "")) return "wood-packaging";
   return null;
 }
 
+function materialTerms(masked: string): string[] {
+  return [...masked.replace(/\b(?:unpainted|untreated|oil-free)\b/giu, "")
+    .matchAll(new RegExp(materialHazard.source, "giu"))].map(match => match[0]);
+}
+
 /** Keep affirmative risk in each field even when another field denies contact. */
 function scanMaterialHazards(input: CaseInput): { terms: readonly string[]; hold: boolean } {
-  if (materialFamily(input) === null) return { terms: [], hold: false };
-  const fields = [input.polymer, input.description, input.process, input.contamination];
+  const family = materialFamily(input);
+  if (family === null) return { terms: [], hold: false };
+  const assertions = treatmentAssertions(input.contamination, family);
+  const fields = [input.polymer, input.description, input.process];
+  if (assertions === null) fields.push(input.contamination);
   const unplated = fields.map(value => unplatedFields.has((value ?? "").normalize("NFKC").trim()));
   const hazardFields = fields.map((value, index) => unplated[index] ? "" : maskMaterialDenials(value));
-  const terms = [...new Set(hazardFields.flatMap(value =>
-    [...value.replace(/\b(?:unpainted|untreated|oil-free)\b/giu, "")
-      .matchAll(new RegExp(materialHazard.source, "giu"))].map(match => match[0])))];
-  // Bare and PP coating keep the treatment hold alongside an exact unplated field,
-  // even when the coating contributes no display term.
-  const hold = terms.length > 0 || (unplated.includes(true) && hazardFields.some(value => coatingSignal.test(value)));
-  return { terms, hold };
+  if (assertions === null) {
+    const terms = [...new Set(hazardFields.flatMap(materialTerms))];
+    // Coating can keep a treatment hold alongside an exact unplated field without a display term.
+    const hold = terms.length > 0 || (unplated.includes(true) && hazardFields.some(value => coatingSignal.test(value)));
+    return { terms, hold };
+  }
+
+  // Keep the whole-field veto and recover assertions that the old mask joins across lines.
+  const factualTexts = hazardFields.flatMap((whole, index) => unplated[index] ? [] :
+    [whole, ...(fields[index] ?? "").split(physicalLineBoundary).map(maskMaterialDenials)]);
+  const factualTerms = factualTexts.flatMap(materialTerms);
+  const factualHold = factualTerms.length > 0 || factualTexts.some(value => coatingSignal.test(value));
+  const mixed = !onlyCleanAssertions(assertions);
+  const material = canonicalMaterial(input.polymer);
+  const plainWood = material === "wood" || material === "wood-packaging";
+  const scanned = assertions.map(assertion => {
+    const masked = maskMaterialDenials(assertion);
+    const fullyMasked = masked !== assertion.normalize("NFKC") && /^[,;.\s]*$/u.test(masked);
+    return { denial: treatmentDenials.has(assertion), clean: standaloneClean.test(assertion) || fullyMasked,
+      terms: materialTerms(masked), coating: coatingSignal.test(masked) };
+  });
+  // An opaque assertion may qualify a denial. A separately reported hazard has its own display terms.
+  const opaque = scanned.some(({ denial, clean, terms, coating }) => !denial && !clean && terms.length === 0 && !coating);
+  const retainDenialTerms = opaque || (plainWood && !mixed && !factualHold);
+  const contaminationTerms = scanned.flatMap(({ denial, terms }) => denial && !retainDenialTerms ? [] : terms);
+  return {
+    terms: [...new Set([...factualTerms, ...contaminationTerms])],
+    hold: mixed || plainWood || factualHold,
+  };
 }
 
 export function materialHazardTerms(input: CaseInput): readonly string[] {
@@ -176,6 +242,19 @@ export function materialHazardTerms(input: CaseInput): readonly string[] {
 
 export function materialHazardReasons(input: CaseInput): readonly string[] {
   return scanMaterialHazards(input).hold ? [safetyReasons.materialTreatment] : [];
+}
+
+function hasUnresolvedMaterialHistory(value: string | null): boolean {
+  const remainder = maskMaterialDenials(value)
+    .replace(/(?:무처리|미처리|\buntreated\b)(?![^,;.\n]*(?:미상|미확인|불명|모름|추정|아님|아닌|unknown))/giu, "");
+  if (unresolvedMaterialHistory.test(remainder)) return true;
+  const observation = /^(?:(.+?)[ \t]*,[ \t]*)?잔여[ \t]+물질[ \t]+있음$/u
+    .exec((value ?? "").normalize("NFKC").trim());
+  if (observation === null) return false;
+  const fullPrefix = observation[1];
+  if (fullPrefix === undefined || canonicalMaterial(fullPrefix) !== null) return true;
+  const base = /^(.+?)[ \t]+스크랩$/u.exec(fullPrefix);
+  return base !== null && canonicalMaterial(base[1]) !== null;
 }
 
 export function materialQuestions(input: CaseInput): readonly string[] {
@@ -189,13 +268,15 @@ export function materialQuestions(input: CaseInput): readonly string[] {
   if (family === "metal" && !["ferrous", "nonferrous", "aluminum", "copper"].includes(canonicalMaterial(material) ?? "")) {
     questions.push("철·비철 구분과 정확한 금속 품목을 알려 주세요. 금속캔·용기, 분진·슬러지 또는 혼합물은 별도 분류 근거가 필요합니다.");
   }
-  if (family === "metal" && /건설폐기물|분진|슬러지|오니|배터리|축전지|폐전선|전자제품|광재/iu.test([input.process, input.description].map(maskMaterialDenials).join(" "))) {
+  if (family === "metal" && excludedStream.test([input.process, input.description].map(maskMaterialDenials).join(" "))) {
     questions.push("별도 분류 대상 발생물의 구체적 발생원·성분·유해성을 확인해 주세요. 일반 금속 스크랩 코드로 추정하지 않습니다.");
   }
   if (family === "wood" && materialStream(input) === null) {
     questions.push("원목 제재·가공 부산물인지 사용한 포장재·가구·건설 목재인지 알려 주세요. 도장·접착·방부·오일 처리 이력도 확인해 주세요.");
   }
-  if (family === "wood" && !/무처리|미처리|\buntreated\b|원목\s*상태/iu.test([material, input.process, input.contamination].join(" "))) {
+  if (family === "wood" && (treatmentAssertions(input.contamination, family) !== null
+    ? !explicitlyUntreatedWood(canonicalMaterial(material))
+    : !/무처리|미처리|\buntreated\b|원목\s*상태/iu.test([material, input.process, input.contamination].join(" ")))) {
     questions.push("목재의 도장·접착·방부·오일 처리가 없다는 이력 자료가 있나요? 오염 없음만으로 무처리 목재를 확정하지 않습니다.");
   }
   if (family === "paper" && materialStream(input) === null) {
@@ -207,19 +288,8 @@ export function materialQuestions(input: CaseInput): readonly string[] {
   if (materialStream(input) !== "carton" && /혼합|복합|합판|MDF|파티클|particle|plywood|\bmixed\b/iu.test(material)) {
     questions.push("구성 재질·접착제·코팅과 분리 가능 여부를 확인해 주세요. 혼합·가공 재료를 깨끗한 단일 재질로 간주하지 않습니다.");
   }
-  const unresolvedHistory = [input.description, input.process].some(value => {
-    const remainder = maskMaterialDenials(value)
-      .replace(/(?:무처리|미처리|\buntreated\b)(?![^,;.\n]*(?:미상|미확인|불명|모름|추정|아님|아닌|unknown))/giu, "");
-    if (unresolvedMaterialHistory.test(remainder)) return true;
-    const observation = /^(?:(.+?)[ \t]*,[ \t]*)?잔여[ \t]+물질[ \t]+있음$/u
-      .exec((value ?? "").normalize("NFKC").trim());
-    if (observation === null) return false;
-    const fullPrefix = observation[1];
-    if (fullPrefix === undefined || canonicalMaterial(fullPrefix) !== null) return true;
-    const base = /^(.+?)[ \t]+스크랩$/u.exec(fullPrefix);
-    return base !== null && canonicalMaterial(base[1]) !== null;
-  });
-  if ((unresolvedHistory || (input.contamination?.trim() && !isDeclaredCleanMaterial(input.contamination, family)))
+  const unresolvedHistory = [input.description, input.process].some(hasUnresolvedMaterialHistory);
+  if ((unresolvedHistory || (input.contamination?.trim() && !isDeclaredCleanMaterial(input, family)))
     && materialHazardReasons(input).length === 0) questions.push(safetyReasons.contaminationUnknown);
   return questions;
 }
