@@ -9,6 +9,7 @@ import { renderVerificationPlan } from "./report-verification-plan.ts";
 import { resultConclusion, resultMetrics, guidanceScenarioConclusion, guidanceProgress, guidanceStability, guidanceOneFact, guidanceSensitivity, publicCaseProgress } from "./report-guidance.ts";
 import { buildScenarioSensitivity } from "./o-scenario-sensitivity.ts";
 import { escapeHtml, list, page, reportFooter } from "./report-html.ts";
+import { koreanSourceDate } from "./report-date.ts";
 import { evidenceSection, rawReasons, readableReason, readableReasons } from "./report-evidence.ts";
 import { massQuestion } from "./input.ts";
 import { isHostSafetyReason, safetyReasons } from "./o-safety-reasons.ts";
@@ -79,7 +80,7 @@ function processorCandidates(result: Extract<DecisionResult, { state: "compared"
   }
   return result.processors.map((processor) => `<h3>${escapeHtml(processor.name)}</h3>
     <p>${escapeHtml(processor.region)} · 인수 ${processor.acceptance === "confirmed" ? "확인" : "확인 필요"}</p>
-    <p>허가 근거 ${references(processor.permitEvidenceIds)} · 확인 ${escapeHtml(processor.verifiedAt ?? "확인 필요")} · 코드 ${escapeHtml(processor.acceptedWasteCodes.join(", "))}</p>`).join("");
+    <p>허가 근거 ${references(processor.permitEvidenceIds)} · 확인 ${escapeHtml(koreanSourceDate(processor.verifiedAt ?? "확인 필요"))} · 코드 ${escapeHtml(processor.acceptedWasteCodes.join(", "))}</p>`).join("");
 }
 
 function reasons(result: DecisionResult, references: EvidenceReferences, presentation: ReportPresentation): string {
@@ -116,8 +117,8 @@ function executionMetadata(presentation: ReportPresentation, calculation: {
   const identities = { anonymous: "익명 세션", trusted: "로그인 사용자", "local-operator": "운영자" } as const;
   const runners = { local: null, subscription: "구독 모델", azure: "Azure", unspecified: "미지정" } as const;
   return `<p>사례 계산: ${calculation.verified ? "판정 상세의 계산표 참조" : "없음"}. ${calculation.publicModel ? "가정 계산은 위 공개 비교표에 있습니다." : "연결된 공개 가정 계산은 없습니다."}</p>
-    <p>계산 버전 ${escapeHtml(presentation.calculationVersion ?? "미기록")} · 출처 버전 ${escapeHtml(presentation.sourceVersion ?? "미기록")}</p>
-    ${calculation.publicModel ? `<p>공개 가정 계산 버전 ${escapeHtml(calculation.publicModel)} · 준비 데이터 ${escapeHtml(calculation.publicSource ?? "미확보")}</p>` : ""}
+    <p class="print-only">계산 버전 ${escapeHtml(presentation.calculationVersion ?? "미기록")} · 출처 버전 ${escapeHtml(presentation.sourceVersion ?? "미기록")}</p>
+    ${calculation.publicModel ? `<p class="print-only">공개 가정 계산 버전 ${escapeHtml(calculation.publicModel)} · 준비 데이터 ${escapeHtml(calculation.publicSource ?? "미확보")}</p>` : ""}
     ${runtime ? `<p>평가 당시: ${identities[runtime.identity]} · ${runtime.storage === "sqlite" ? "SQLite 보관" : "임시 보관"}${runners[runtime.runner] ? ` · 검토 방식 ${runners[runtime.runner]} (설정값)` : ""}</p>` : "<p>평가 당시 설정 기록 없음</p>"}
     ${execution}<p>사용량은 청구·비용 증빙이 아닙니다. 사진 실행 여부는 설정이나 실행 식별자로 확인할 수 없습니다.</p>`;
 }
@@ -187,7 +188,7 @@ export function renderReport(result: DecisionResult, presentation: ReportPresent
     ? research ? researchDirectory(research, view.inquiryTarget, view.caseRegion) : publicRecyclingDirectory(view.inquiryTarget, view.caseRegion) : "";
   const progress = guidance ? guidanceProgress(guidance, presentation, names) : view.progress ? publicCaseProgress(view.progress) : "";
   const sidebar = !!view.editing || !!view.inputSummary;
-  return page("검토 결과", `${sidebar ? `<nav class="workspace-nav" aria-label="작업 영역"><a href="#case-editor">${view.editing ? "답변·사례 수정" : "현재 사례 입력"}</a><a href="#report-results">검토 결과</a></nav><div class="report-workspace"><div class="report-results" id="report-results" tabindex="-1">` : ""}${commercialSummary ? '<section id="commercial-summary" aria-label="상업용 보고서 요약">' : ""}<header class="result-overview">${resultConclusion(result)}${view.notice ?? ""}
+  return page("검토 결과", `${sidebar ? '<div class="report-workspace"><div class="report-results" id="report-results" tabindex="-1">' : ""}${commercialSummary ? '<section id="commercial-summary" aria-label="상업용 보고서 요약">' : ""}<header class="result-overview">${resultConclusion(result)}${view.notice ?? ""}
     ${presentation.historical ? '<p class="notice">과거 평가입니다. 입력이 바뀌었으니 다시 평가해 주세요.</p>' : ""}
     <p id="next-action"><strong>다음 할 일:</strong> ${escapeHtml(nextAction)}</p>
     <p class="result-actions screen-only"><a class="primary-action" href="${answerAction ?? (result.state === "compared" ? "#checks" : "#case-reasons")}">${answerAction ? result.state === "needs-information" ? "답변 수정" : "항목 확인·수정" : result.state === "compared" ? "실행 전 확인하기" : "보류 사유 확인하기"}</a>${result.state === "compared" && view.answerTarget ? ` <a class="mobile-edit-shortcut" href="${view.answerTarget}">입력 수정하기</a>` : ""}${view.caseReturnTarget ? ` <a href="${escapeHtml(view.caseReturnTarget)}">사례로 돌아가기</a>` : ""}</p>

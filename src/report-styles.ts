@@ -75,7 +75,7 @@ code{font-family:ui-monospace,monospace}
 .consent{display:flex;align-items:center;gap:var(--s12);min-height:var(--target)}
 .consent input{width:auto;flex:none}
 .private-photo{max-width:100%;max-height:240px;object-fit:contain}
-.workspace-nav,.workspace-heading{display:none}
+.workspace-heading{display:none}
 .case-input-summary dd{min-width:0}
 @media screen and (min-width:960px){
   main.commercial-shell,.primary-nav.commercial-shell{max-width:1160px;padding-inline:var(--s32)}
@@ -86,7 +86,6 @@ code{font-family:ui-monospace,monospace}
 .report-workspace,.input-workspace,.report-results,.report-records,.input-overview,.input-support,.case-editor,.case-editor-body{min-width:0}
 @media screen and (min-width:1280px){
   main.workspace-shell,.primary-nav.workspace-shell{max-width:var(--workspace-max);padding-inline:var(--s32)}
-  .workspace-nav{display:flex;margin-block:var(--s16);font-size:var(--secondary)}
   .workspace-heading{display:block}
   .report-workspace,.input-workspace{display:grid;grid-template-columns:minmax(var(--editor-min),var(--editor-max)) minmax(0,1fr);column-gap:var(--s32);align-items:start}
   .report-workspace{grid-template-areas:"editor results" "editor records"}

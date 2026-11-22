@@ -2,6 +2,7 @@ import { displayReason } from "./report-copy.ts";
 import type { CalculationContext, CalculationVariant } from "./o-calculation-variant.ts";
 import type { InquiryReply, ReplyAmountOption } from "./o-inquiry-reply.ts";
 import { escapeHtml, page } from "./report-html.ts";
+import { koreanSourceDate } from "./report-date.ts";
 
 export interface InquiryReplyView {
   readonly caseId: string;
@@ -56,7 +57,7 @@ export function renderInquiryReply(view: InquiryReplyView): string {
     ${view.blockedReason === null ? "" : `<p class="notice" role="alert" data-reply-blocked>${escapeHtml(view.blockedReason)}</p>`}
     ${replies.map((reply, index) => `<section aria-labelledby="reported-reply-${index}"><h2 id="reported-reply-${index}">업체 ${index + 1} 사용자 신고 회신 · 저장 안 함 · 미검증</h2>
       <dl><dt>업체명 (신고)</dt><dd>${escapeHtml(reply.companyName)}</dd><dt>반입 수락 (신고)</dt><dd>${acceptanceLabels[reply.acceptance]} · 실행은 현장 승인 후</dd>
-      <dt>허가 확인일 (신고)</dt><dd>${escapeHtml(reply.permitCheckDate || "미상")} · 허가증으로 확인 필요</dd>
+      <dt>허가 확인일 (신고)</dt><dd>${escapeHtml(koreanSourceDate(reply.permitCheckDate) || "미상")} · 허가증으로 확인 필요</dd>
       <dt>출처 메모</dt><dd>${escapeHtml(reply.sourceNote || "미기재")}</dd>
       ${reply.amounts.map(item => `<dt>${escapeHtml(item.label)} 가정 (${escapeHtml(item.inputId)})</dt><dd>${item.amount === null ? "미확보 · 0으로 채우지 않음" : `${escapeHtml(String(item.amount))} ${escapeHtml(unitName(item.unit))}`}</dd>`).join("")}</dl></section>`).join("")}
     ${comparison ? `<section aria-labelledby="reply-comparison"><h2 id="reply-comparison">공개 자료 모델과 회신 가정 비교</h2>

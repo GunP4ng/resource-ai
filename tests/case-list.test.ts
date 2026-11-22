@@ -6,17 +6,18 @@ import { createApp } from "../src/app.ts";
 import { createResourceDomain } from "../src/domain.ts";
 import { createSyntheticAssessmentAdapter } from "./synthetic-runtime.ts";
 
-const deadline = "2026-11-25T15:29:30.123Z";
+const deadline = Date.parse("2026-11-25T15:29:30.123Z");
 const rows: readonly CaseListRow[] = [
-  { caseId: "recommended", title: "<추천 & 사례>", version: 7, deadline, state: "compared" },
-  { caseId: "information", title: "질문 사례", version: 2, deadline, state: "needs-information" },
-  { caseId: "held", title: "보류 사례", version: 4, deadline, state: "needs-review" },
-  { caseId: "unknown/id", title: "상태 미상 사례", version: 9, deadline, state: "unknown" },
+  { caseId: "recommended", title: "<추천 & 사례>", deadline, state: "compared" },
+  { caseId: "information", title: "질문 사례", deadline, state: "needs-information" },
+  { caseId: "held", title: "보류 사례", deadline, state: "needs-review" },
+  { caseId: "unknown/id", title: "상태 미상 사례", deadline, state: "unknown" },
 ];
 
 async function inspect(html: string) {
   const ids: (string | null)[] = [], links: (string | null)[] = [], selected: (string | null)[] = [];
   const counts: string[] = [], headers: (string | null)[] = [], times: (string | null)[] = [];
+  const displayed: string[] = [];
   const cells: (string | null)[] = [], tables: (string | null)[] = [];
   await new HTMLRewriter()
     .on(".case-table", { element(el) { tables.push(el.getAttribute("role")); } })
@@ -26,9 +27,10 @@ async function inspect(html: string) {
     .on(".case-list a", { element(el) { links.push(el.getAttribute("href")); } })
     .on('.case-filters a[aria-current="page"]', { element(el) { selected.push(el.getAttribute("data-status")); } })
     .on(".case-counts strong", { element() { counts.push(""); }, text(chunk) { counts[counts.length - 1] += chunk.text; } })
-    .on(".case-table time", { element(el) { times.push(el.getAttribute("datetime")); } })
+    .on(".case-table time", { element(el) { times.push(el.getAttribute("datetime")); displayed.push(""); },
+      text(chunk) { displayed[displayed.length - 1] += chunk.text; } })
     .transform(new Response(html)).text();
-  return { ids, links, selected, counts, headers, times, cells, tables };
+  return { ids, links, selected, counts, headers, times, displayed, cells, tables };
 }
 
 for (const [status, ids] of [
@@ -41,7 +43,7 @@ for (const [status, ids] of [
   ["<invalid>", ["recommended", "information", "held", "unknown/id"]],
 ] as const) {
   test(`case status ${status} selects rows while counts retain all owned cases`, async () => {
-    const html = caseListPage(rows, false, { deadlineLabel: "열람 기한 (UTC)", status });
+    const html = caseListPage(rows, false, { deadlineLabel: "열람 기한", status });
     const result = await inspect(html);
     assert.deepEqual(result.ids, ids);
     assert.deepEqual(result.counts, ["4", "1", "1", "1"]);
@@ -50,22 +52,22 @@ for (const [status, ids] of [
   });
 }
 
-test("case table retains labeled columns, exact deadlines, versions and escaped titles", async () => {
-  const html = caseListPage(rows, true, { deadlineLabel: "보관 만료 (UTC)", status: null });
+test("case table keeps exact deadlines and displays the Korean date after midnight without a version column", async () => {
+  const html = caseListPage(rows, true, { deadlineLabel: "보관 기한", status: null });
   const result = await inspect(html);
   assert.deepEqual(result.tables, ["table"]);
-  assert.deepEqual(result.headers, Array.from({ length: 5 }, () => "col"));
-  assert.deepEqual(result.cells, rows.flatMap(() => ["case-title", "case-status", "case-version", "case-deadline", "case-actions"]));
-  assert.deepEqual(result.times, rows.map(() => deadline));
+  assert.deepEqual(result.headers, Array.from({ length: 4 }, () => "col"));
+  assert.deepEqual(result.cells, rows.flatMap(() => ["case-title", "case-status", "case-deadline", "case-actions"]));
+  assert.deepEqual(result.times, rows.map(() => "2026-11-25T15:29:30.123Z"));
+  assert.deepEqual(result.displayed, rows.map(() => "11월 26일 00:29까지"));
   assert.ok(html.includes("&lt;추천 &amp; 사례&gt;"));
-  for (const row of rows) assert.ok(html.includes(`data-label="버전">${row.version}</td>`));
   assert.ok(html.includes('action="/logout"'));
-  assert.ok(html.includes('data-label="보관 만료 (UTC)"'));
+  assert.ok(html.includes('data-label="보관 기한"'));
 });
 
 test("empty store and empty filtered result retain the filter navigation", async () => {
   for (const supplied of [[], rows.filter(row => row.state === "unknown")]) {
-    const html = caseListPage(supplied, false, { deadlineLabel: "열람 기한 (UTC)", status: "compared" });
+    const html = caseListPage(supplied, false, { deadlineLabel: "열람 기한", status: "compared" });
     const result = await inspect(html);
     assert.deepEqual(result.tables, []);
     assert.deepEqual(result.counts, [String(supplied.length), "0", "0", "0"]);

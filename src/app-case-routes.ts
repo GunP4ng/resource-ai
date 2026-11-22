@@ -6,6 +6,7 @@ import { CaseConflict, parseAssessment } from "./o-case-store.ts";
 import { matchesPhotoConsent } from "./photo-execution.ts";
 import { revision } from "./o-validation.ts";
 import { renderReport } from "./report.ts";
+import { koreanDeadline } from "./report-date.ts";
 import { HttpFailure, body, caseBody, idPattern, redirect, response, sessionFailures, versionOf } from "./app-http.ts";
 import { caseInputSummary, form, inputPage, nativeAnswer } from "./app-views.ts";
 import { photoUI, photoRoute } from "./app-photo-routes.ts";
@@ -145,8 +146,8 @@ export async function caseRoute(services: RouteServices, context: RouteRequest):
         ? '<p class="screen-only"><a class="primary-action secondary-action" href="#answer-fields">질량을 입력하고 비용·탄소 계산하기</a> (선택)</p><p>견적·탄소 계수가 있는 항목을 계산하고, 빠진 자료는 목록으로 알려 드립니다.</p>'
         : '<p class="screen-only"><a class="primary-action secondary-action" href="#answer-fields">질량 입력하기 (선택)</a></p><p>보류 사유는 질량과 별도로 해결해야 합니다. 비용·탄소는 근거 자료가 있는 항목만 계산됩니다.</p>' : "";
     const actions = suffix === "report" ? "" : `<p class="cluster screen-only"><a href="/cases/${id}/report">상업용 보고서</a>${actor ? `<a href="/cases/${id}/report?purpose=research">비공개 연구용 보고서</a>` : ""}<a href="/cases/${id}/input">입력 원본 내보내기</a><a href="/cases">내 사례</a></p>`;
-    const editing = suffix === "report" ? "" : `<p>버전 ${snapshot.version}</p>${editable
-      ? `<p>수정 기한 (UTC): ${new Date(editDeadline).toISOString()}</p>${form(`/cases/${id}/answers`, true, snapshot.version, selection, snapshot.input)}`
+    const editing = suffix === "report" ? "" : `${editable
+      ? `<p>수정 기한: ${koreanDeadline(editDeadline)}</p>${form(`/cases/${id}/answers`, true, snapshot.version, selection, snapshot.input)}`
       : '<p class="notice">수정 기한이 지났습니다. 보고서와 입력은 계속 열람할 수 있습니다. 다시 평가하려면 <a href="/">새 사례를 입력하세요</a>.</p>'}${photoUI(snapshot, ticket, services)}`;
     const result = response(renderReport(stored.decision, {
       ...snapshot.presentation, mode: snapshot.presentation?.mode ?? "live", review: snapshot.review,

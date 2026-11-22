@@ -8,11 +8,12 @@ export const caseListStyles = `
 .case-filters a:hover{background:var(--selection);text-decoration:underline}
 .case-filters a:active{color:var(--focus)}
 .case-table{table-layout:fixed;width:100%;margin-block:var(--s24)}
-.case-table th:nth-child(1){width:30%}
-.case-table th:nth-child(2){width:14%}
-.case-table th:nth-child(3){width:8%}
-.case-table th:nth-child(4){width:26%}
-.case-table th:nth-child(5){width:22%}
+@media screen and (min-width:769px){
+  #case-title{width:38%}
+  #case-status{width:14%}
+  #case-deadline{width:26%}
+  #case-actions{width:22%}
+}
 .case-table h2{margin:0;font-size:var(--h3);overflow-wrap:anywhere}
 .case-badge{display:inline-block;padding:var(--s8) var(--s12);border-radius:var(--radius);font-size:var(--secondary);font-weight:600}
 .case-badge-recommendation{background:var(--selection);color:var(--ink)}

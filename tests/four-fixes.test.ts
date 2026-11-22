@@ -181,7 +181,7 @@ for (const [field, label, reason] of [
     await assertStored(app, path, cookie, 2, blank);
 
     const detail = await readable(await app.get(path, cookie));
-    assert.match(detail, /<p>버전 2<\/p>/);
+    assert.match(detail, /<input type="hidden" name="baseVersion" value="2">/);
     const rows = privateRows(detail);
     assert.ok(rows.includes(reason));
 
@@ -327,14 +327,15 @@ test("late anonymous detail and list show the session deadline while storage ret
   const detail = await readable(await app.get(path, cookie));
   const list = await readable(await app.get("/cases", cookie));
   const labels: string[] = [], times: (string | null)[] = [], displayed: string[] = [];
-  await new HTMLRewriter().on('.case-table td[headers="case-version"], .case-table td[headers="case-deadline"]', {
+  await new HTMLRewriter().on('.case-table td[headers="case-deadline"]', {
     element(el) { labels.push(el.getAttribute("data-label") ?? ""); },
   }).on(".case-table time", { element(el) { times.push(el.getAttribute("datetime")); displayed.push(""); }, text(chunk) { displayed[displayed.length - 1] += chunk.text; } })
     .transform(new Response(list)).text();
-  assert.equal(detail.match(/수정 기한 \(UTC\): ([^<]+)/)?.[1], utc(60));
-  assert.deepEqual(labels, ["버전", "열람 기한 (UTC)"]);
+  assert.deepEqual(detail.match(/수정 기한: <time datetime="([^"]+)">([^<]+)/)?.slice(1), [utc(60), "11월 25일 10:00까지"]);
+  assert.doesNotMatch(detail, /<p>버전 \d+<\/p>/u);
+  assert.deepEqual(labels, ["열람 기한"]);
   assert.deepEqual(times, [utc(60)]);
-  assert.deepEqual(displayed, [utc(60)]);
+  assert.deepEqual(displayed, ["11월 25일 10:00까지"]);
 });
 
 test("anonymous read and edit controls include the last session instant, then isolate the replacement session", async t => {
@@ -382,7 +383,7 @@ test("an early anonymous case stops editing at its stored cutoff while it remain
   const path = await created(await app.create(cookie));
   app.setTime(at(30) - 1);
   const editable = await readable(await app.get(path, cookie));
-  assert.equal(editable.match(/수정 기한 \(UTC\): ([^<]+)/)?.[1], utc(30));
+  assert.equal(editable.match(/수정 기한: <time datetime="([^"]+)"/)?.[1], utc(30));
   app.setTime(at(30));
   assert.doesNotMatch(await readable(await app.get(path, cookie)), /action="[^"]+\/answers"/);
   assert.equal((await app.edit(path, cookie, "polymer", "PP")).status, 404);
@@ -393,13 +394,13 @@ test("an actor retains case deadlines with a shorter credential and an anonymous
   const { cookie } = await app.home();
   app.setTime(at(55));
   const path = await created(await app.create(cookie));
-  assert.equal((await readable(await app.get(path, cookie))).match(/수정 기한 \(UTC\): ([^<]+)/)?.[1], utc(85));
+  assert.equal((await readable(await app.get(path, cookie))).match(/수정 기한: <time datetime="([^"]+)"/)?.[1], utc(85));
   const deadlines: string[] = [], times: (string | null)[] = [];
-  await new HTMLRewriter().on('.case-table td[headers="case-version"], .case-table td[headers="case-deadline"]', {
+  await new HTMLRewriter().on('.case-table td[headers="case-deadline"]', {
     element(el) { deadlines.push(el.getAttribute("data-label") ?? ""); },
   }).on(".case-table time", { element(el) { times.push(el.getAttribute("datetime")); } })
     .transform(new Response(await readable(await app.get("/cases", cookie)))).text();
-  assert.deepEqual(deadlines, ["버전", "보관 만료 (UTC)"]);
+  assert.deepEqual(deadlines, ["보관 기한"]);
   assert.deepEqual(times, [utc(115)]);
   app.setTime(at(60) + 1);
   assert.equal((await app.get(path + "/input", cookie)).status, 200);
@@ -466,7 +467,7 @@ for (const [bare, polymer] of [
     const { cookie } = await app.home();
     const path = await created(await app.create(cookie, { polymer: bare }));
     assert.equal(await created(await app.edit(path, cookie, "polymer", polymer)), path);
-    assert.match(await readable(await app.get(path, cookie)), /<p>버전 2<\/p>/);
+    assert.match(await readable(await app.get(path, cookie)), /<input type="hidden" name="baseVersion" value="2">/);
     assert.equal((await app.get(path + "/report", cookie)).status, 200);
     assert.equal((await exported(app, path, cookie)).polymer, polymer);
   });
@@ -477,7 +478,7 @@ async function assertMissingResin(app: ReturnType<typeof fixture>, path: string,
   const detail = await readable(await app.get(path, cookie));
   assert.match(detail, /<h1>추가 정보 필요<\/h1>/);
   assert.ok(detail.includes("확인된 재질·품목과 그 근거 자료(라벨·재질 명세·발생 이력 등)가 있나요?"));
-  assert.ok(detail.includes(`<p>버전 ${version}</p>`));
+  assert.ok(detail.includes(`<input type="hidden" name="baseVersion" value="${version}">`));
 }
 
 for (const description of [fields.description, paperLabel, "PC 하우징 파쇄품, 금속 나사 제거", "하우징 파쇄품, 금속 나사 제거"]) {

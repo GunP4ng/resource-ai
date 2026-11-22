@@ -118,6 +118,10 @@ export const intakeScript = `
         let value = field.value.trim();
         if (field instanceof HTMLSelectElement) value = field.selectedOptions[0].textContent;
         if (name === "massKg" && value) value += " kg";
+        if (name === "assessmentDate" && value) {
+          const [year, month, day] = value.split("-");
+          value = year + "년 " + Number(month) + "월 " + Number(day) + "일";
+        }
         const text = value || "입력 전";
         if (node.textContent !== text) node.textContent = text;
       });
@@ -137,8 +141,8 @@ export const intakeScript = `
         material.value = button.dataset.intakeValue;
         material.dispatchEvent(new Event("input", { bubbles: true }));
       } else if (button.hasAttribute("data-intake-example")) {
-        const now = new Date();
-        const date = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+        const today = new Intl.DateTimeFormat("en", { timeZone: "Asia/Seoul", year: "numeric", month: "2-digit", day: "2-digit" }).formatToParts();
+        const date = ["year", "month", "day"].map(type => today.find(part => part.type === type).value).join("-");
         let filled = false;
         for (const [name, value] of Object.entries({ polymer: "PP", description: "예시: 사출 성형 뒤 선별한 PP 부품",
           process: "사출 성형 후 선별", region: "울산", contamination: "", hazardousContact: "unknown", massKg: "", assessmentDate: date })) {

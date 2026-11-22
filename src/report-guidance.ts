@@ -6,6 +6,7 @@ import type { ScenarioSensitivity } from "./o-scenario-sensitivity.ts";
 import { escapeHtml, list, safeLink } from "./report-html.ts";
 import { rawReasons, readableReason, readableReasons } from "./report-evidence.ts";
 import { renderModelHostAudit } from "./report-model-audit.ts";
+import { koreanSourceDate } from "./report-date.ts";
 
 type Names = Readonly<Record<string, string>>;
 const number = (value: number, digits: number) => value.toLocaleString("ko-KR", { maximumFractionDigits: digits });
@@ -57,14 +58,16 @@ export function resultMetrics(result: DecisionResult, context: ReportContext): s
   const href = source ? safeLink(source.url) : null;
   const canCompare = comparison?.actualSecondAvailable && comparison.firstRouteId !== null && comparison.secondRouteId !== null;
   const rows = [
-    { key: "cost", name: "실제 비용 차이", value: canCompare ? comparison.costAdvantageKrw : null, unit: "원", target: "#guidance-stage-5" },
-    { key: "carbon", name: "실제 탄소 차이", value: canCompare ? comparison.carbonAdvantageKgCo2e : null, unit: "kgCO2e", target: "#guidance-stage-5" },
+    { key: "cost", name: "실제 비용 차이", value: canCompare ? comparison.costAdvantageKrw : null, unit: "원",
+      missing: "비교할 견적이 부족해요. 두 처리 경로의 업체 견적을 같은 조건으로 받아 주세요." },
+    { key: "carbon", name: "실제 탄소 차이", value: canCompare ? comparison.carbonAdvantageKgCo2e : null, unit: "kgCO2e",
+      missing: "두 경로를 비교할 배출 자료가 부족해요. 처리량과 공정별 배출계수를 확인해 주세요." },
   ];
   return `<section class="result-metrics screen-only" aria-label="비용·탄소와 참고가격">${rows.map(row => `<article data-result-metric="${row.key}"><h2>${row.name}</h2><p class="metric-value">${row.value == null ? "비교 자료 필요" : `${number(row.value, row.key === "cost" ? 0 : 2)} <span>${row.unit}</span>`}</p>
-    <p>${row.value == null ? result.state === "compared" ? "같은 조건의 실제 1·2순위 비교 자료를 확보하세요." : "보류 조건을 먼저 확인하세요." : "실제 2순위 − 1순위 · 양수이면 1순위가 낮습니다."}</p>
-    <a href="${row.value == null ? result.state === "compared" ? "#decision-detail" : "#case-reasons" : row.target}">${row.value == null ? "필요한 자료 보기" : "비교 조건 보기"}</a></article>`).join("")}
+    <p>${row.value == null ? result.state === "compared" ? row.missing : "검토가 보류돼 아직 비교할 수 없어요. 아래 질문과 보류 사유를 먼저 확인해 주세요." : "실제 2순위 − 1순위 · 양수이면 1순위가 낮습니다."}</p>
+    <a href="${row.value == null ? result.state === "compared" ? "#decision-detail" : "#case-reasons" : "#guidance-stage-5"}">${row.value == null ? "필요한 자료 보기" : "비교 조건 보기"}</a></article>`).join("")}
     <article data-result-metric="price"><h2>참고 매각가격</h2><p class="metric-value">${reference?.source_value != null && source && href ? `${number(reference.source_value, 3)} <span>${escapeHtml(reference.source_unit ?? reference.unit)}</span>` : "참고 단가 없음"}</p>
-    ${reference?.source_value != null && source && href ? `<p>${escapeHtml(material ?? "")} · ${escapeHtml(reference.geography)} · ${escapeHtml(reference.period)}<br>공개 참고값 · 사례 견적은 업체에 확인하세요.</p><details><summary>가격 출처와 적용 범위</summary><a href="${href}" rel="noreferrer">${escapeHtml(source.title)}</a><p>${escapeHtml(source.locator)} · ${escapeHtml(reference.quality_grade)} · VAT ${escapeHtml(reference.tax_basis)}</p></details>` : '<p>현재 사례에 연결된 참고가격을 확보하세요.</p><a href="#decision-detail">산정 조건 보기</a>'}</article></section>`;
+    ${reference?.source_value != null && source && href ? `<p>${escapeHtml(material ?? "")} · ${escapeHtml(reference.geography)} · ${escapeHtml(koreanSourceDate(reference.period))}<br>공개 참고값 · 사례 견적은 업체에 확인하세요.</p><details><summary>가격 출처와 적용 범위</summary><a href="${href}" rel="noreferrer">${escapeHtml(source.title)}</a><p>${escapeHtml(source.locator)} · ${escapeHtml(reference.quality_grade)} · VAT ${escapeHtml(reference.tax_basis)}</p></details>` : '<p>이 사례에 표시할 공개 단가가 없어요. 실제 매각가는 재질과 등급을 알려 주고 업체에 문의해 주세요.</p><a href="#decision-detail">산정 조건 보기</a>'}</article></section>`;
 }
 
 export function publicCaseProgress(stages: readonly Pick<GuidanceStage, "stage" | "name" | "status" | "reasons">[] = ([1, 2, 3, 4, 5, 6] as const).map(stage => ({ stage, name: stageNames[stage - 1] ?? "", status: "missing", reasons: ["단계별 자료를 연결하면 진행 상태를 확인할 수 있습니다."] }))): string {
