@@ -42,20 +42,20 @@ for (const state of ["compared", "needs-review", "needs-information"] as const) 
     const before: DecisionResult = structuredClone(result);
     let summaries = 0, conclusion = "", action = "", unavailable = "", evidenceIndex = "";
     const locations: string[] = [], targets: string[] = [], ids: string[] = [], evidenceText = new Map<string, string>();
-    const evidenceTitles: string[] = [];
     await new HTMLRewriter()
       .on("main > #commercial-summary", { element() { summaries++; } })
       .on("#commercial-summary #decision-summary", { text(chunk) { conclusion += chunk.text; } })
       .on("#commercial-summary #next-action", { text(chunk) { action += chunk.text; } })
       .on("#summary-unavailable", { text(chunk) { unavailable += chunk.text; } })
-      .on("#summary-evidence li", { element() { locations.push(""); }, text(chunk) { locations[locations.length - 1] += chunk.text; } })
-      .on('#summary-evidence li a[href^="#"]', { element(el) { targets.push((el.getAttribute("href") ?? "").slice(1)); } })
+      .on('#summary-evidence li a[href^="#"]', {
+        element(el) {
+          locations.push("");
+          targets.push((el.getAttribute("href") ?? "").slice(1));
+        },
+        text(chunk) { locations[locations.length - 1] += chunk.text; },
+      })
       .on("#summary-evidence > p > a", { element(el) { evidenceIndex = el.getAttribute("href") ?? ""; } })
       .on("[id]", { element(el) { ids.push(el.getAttribute("id") ?? ""); } })
-      .on("#evidence > section > h3", {
-        element() { evidenceTitles.push(""); },
-        text(chunk) { evidenceTitles[evidenceTitles.length - 1] += chunk.text; },
-      })
       .on('#evidence > section', { element(el) {
         const id = el.getAttribute("id") ?? "";
         evidenceText.set(id, "");
@@ -70,9 +70,12 @@ for (const state of ["compared", "needs-review", "needs-information"] as const) 
     assert.match(unavailable, /비용/);
     assert.match(unavailable, /탄소/);
     assert.match(unavailable, state === "compared" ? /미산정/ : /실행 보류로 비교하지 않음/);
-    assert.deepEqual(locations, result.evidence.slice(0, 3).map((item, index) =>
-      `${evidenceTitles[index]?.replace(/ · 원문 열기$/u, "")} · ${item.locator}`));
-    if (state === "compared") assert.ok(locations.some(location => location.includes("비철금속 스크랩")));
+    const expectedLocations = ["[1] 폐기물관리법 시행규칙 · 제4조의2 제1항"];
+    if (state === "compared") expectedLocations.push(
+      "[2] 폐기물관리법 시행규칙 별표 4 비철금속 스크랩 발췌 · 별표4 제2호 51-29-02, PDF 11쪽",
+      "[3] 폐기물관리법 시행규칙 별표 4-2 비철금속 스크랩 발췌 · 별표4의2 제2호가목3), PDF 1쪽",
+    );
+    assert.deepEqual(locations, expectedLocations);
     assert.deepEqual(targets, result.evidence.slice(0, 3).map((_, index) => `evidence-${index + 1}`));
     assert.equal(evidenceIndex, "#evidence");
     for (const [index, target] of targets.entries()) {
@@ -84,6 +87,30 @@ for (const state of ["compared", "needs-review", "needs-information"] as const) 
     assert.deepEqual(result, before);
   });
 }
+
+test("commercial summary collapses equal localized labels and escapes distinct labels", async () => {
+  const decision = await createResourceDomain(input).decide();
+  const source = decision.evidence[0];
+  assert.ok(source);
+  const result: DecisionResult = {
+    ...decision,
+    evidence: [
+      source,
+      { ...source, sourceId: "summary-localized", title: "CSV 2행 · metal/iron 열", locator: "CSV row 2, column 철 스크랩" },
+      { ...source, sourceId: "summary-escaped", title: '표 <b> & "인용"', locator: "행 > 1 & '위치'" },
+    ],
+  };
+  const links: string[] = [];
+  await new HTMLRewriter().on("#summary-evidence li a", {
+    element() { links.push(""); },
+    text(chunk) { links[links.length - 1] += chunk.text; },
+  }).transform(new Response(renderReport(result, { mode: "offline" }))).text();
+  assert.deepEqual(links, [
+    "[1] 폐기물관리법 시행규칙 · 제4조의2 제1항",
+    "[2] CSV 2행 · 철 스크랩 열",
+    "[3] 표 &lt;b&gt; &amp; &quot;인용&quot; · 행 &gt; 1 &amp; &#39;위치&#39;",
+  ]);
+});
 
 test("native commercial report alone gets the summary while detail retains editing and research separation", async () => {
   const origin = "http://localhost:3000";

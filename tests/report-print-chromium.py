@@ -118,6 +118,15 @@ class ChromiumPrintTest(unittest.TestCase):
         self.assertTrue(pages[-1].endswith(f"{USAGE} {footer}"),
                         f"Page {len(pages)} ends with {pages[-1][-200:]!r}")
 
+    def assert_summary_evidence(self, first_page):
+        block = re.search(r"근거 위치 (.*?) 전체 \d+개 출처와 원문 위치 보기", first_page)
+        self.assertIsNotNone(block, "First page must contain the commercial summary evidence block")
+        self.assertEqual(block.group(1), " ".join([
+            "[1] 폐기물관리법 시행규칙 · 제4조의2 제1항",
+            "[2] 별표 4 제2호 51-03-01, PDF 6쪽",
+            "[3] 별표 4의2 제2호가목3), PDF 1쪽",
+        ]))
+
     def assert_substantive_last_page(self, pages, footer, label):
         self.assert_report_ending(pages, footer)
         ending = f"{USAGE} {footer}"
@@ -155,6 +164,8 @@ class ChromiumPrintTest(unittest.TestCase):
         self.assertFalse(usage.is_visible())
 
         self.assert_substantive_last_page(default_pages, footer_text, "authenticated-pet")
+        with self.subTest(summary_evidence="PET"):
+            self.assert_summary_evidence(default_pages[0])
         last_checks = [normalized(item) for item in page.locator("#checks li").all_text_contents()][-3:]
         self.assertEqual(len(last_checks), 3)
         for check in last_checks:
@@ -211,6 +222,9 @@ class ChromiumPrintTest(unittest.TestCase):
         footer = normalized(page.locator("main footer").inner_text())
         pages = self.pdf_pages(page, artifact=label)
         self.assert_substantive_last_page(pages, footer, label)
+        if label == "authenticated-pp":
+            with self.subTest(summary_evidence="PP"):
+                self.assert_summary_evidence(pages[0])
 
     def check_inquiry(self, page, url, footer, description=None):
         self.assertEqual(page.goto(url + "/inquiry").status, 200)

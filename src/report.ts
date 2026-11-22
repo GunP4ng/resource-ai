@@ -198,7 +198,11 @@ export function renderReport(result: DecisionResult, presentation: ReportPresent
     ${resultMetrics(result, context)}
     ${commercialSummary ? `<details class="result-disclosure"><summary>요약 근거와 계산 상태</summary>${data}
       ${heldReasons.length ? `<p><a href="#case-reasons">보류 사유와 필요한 확인 ${heldReasons.length}개</a> · 전체 사유는 아래에 있습니다.</p>` : ""}
-      <div class="commercial-summary-cards"><div id="summary-evidence"><h2>근거 위치</h2>${result.evidence.length ? `<ul>${result.evidence.slice(0, 3).map((item, index) => `<li><a href="#evidence-${index + 1}">[${index + 1}] ${escapeHtml(displayLawTitle(item.title))} · ${escapeHtml(displayLocator(item.locator))}</a></li>`).join("")}</ul>` : "<p>연결된 근거 없음</p>"}
+      <div class="commercial-summary-cards"><div id="summary-evidence"><h2>근거 위치</h2>${result.evidence.length ? `<ul>${result.evidence.slice(0, 3).map((item, index) => {
+        const title = displayLawTitle(item.title);
+        const locator = displayLocator(item.locator);
+        return `<li><a href="#evidence-${index + 1}">[${index + 1}] ${escapeHtml(title === locator ? title : title + " · " + locator)}</a></li>`;
+      }).join("")}</ul>` : "<p>연결된 근거 없음</p>"}
       <p><a href="#evidence">전체 ${result.evidence.length}개 출처와 원문 위치 보기</a></p></div>
       <div id="summary-unavailable"><h2>빈 값과 계산 상태</h2>${list(unavailable)}<p><a href="#decision-detail">미산정 사유와 계산 조건 보기</a></p></div></div>
       <p><a href="#checks">실행 전 확인 ${checks.length ? `${checks.length}개 전체` : "안내"} 보기</a> · 모든 항목을 확인하고 현장 담당자 승인을 받으세요.</p>
