@@ -158,12 +158,295 @@ export function materialStream(input: CaseInput): MaterialStream | null {
   return supportedMaterialStream(input, input.contamination);
 }
 
+type ReportedOrigin = "affirmed" | "denied" | "unconfirmed";
+type OriginClause = { subject: "category"; answer: ReportedOrigin }
+  | { subject: "implicit"; answer: ReportedOrigin }
+  | { subject: "independent" }
+  | { subject: "other" };
+
+// Subject and answer vocabularies describe classification, not generating processes.
+const koreanCaseParticle = "(?:(?:에서|에|(?:으)?로(?:서|써)?)(?:까지|부터)?(?:만|도)?(?:은|는)?|은|는|이|가|만|도)";
+const koreanFraming = "(?:아직(?:도|은)?|현재(?:로서는|는)?|지금(?:까지|은)?|당장은|일단|[가-힣]{1,12}적으로)";
+const koreanOriginSubject = String.raw`(?:${koreanFraming} ){0,2}(?:폐기물 ?)?(?:해당 ?여부|여부|분류(?: ?상태)?|종류|해당 ?상태|발생 ?구분)${koreanCaseParticle}?(?=$|[ :])`;
+const finiteBe = "(?:am|is|are|was|were)";
+const perfectAuxiliary = "(?:has|have|had)";
+const remain = "remain(?:s|ed)?";
+const statusAdverb = "(?:currently|still|already|now|previously|just)";
+const originLinkVerb = `(?:${finiteBe}|${remain}|${perfectAuxiliary}(?: (?:${statusAdverb}|not|never|yet)){0,3} (?:been|remained))`;
+const framedOriginLink = `(?:${statusAdverb} ){0,2}${originLinkVerb}`;
+const finalClassificationSubject = String.raw`final classification(?: status)?(?= *:| ${framedOriginLink}\b|$)`;
+const englishOriginSubject = String.raw`(?:(?:currently|still|now|[a-z]{2,20}ly) ){0,2}(?:(?:the|its|this|that|their|our) )?(?:(?:current|waste|origin|category|legal) )?(?:${finalClassificationSubject}|classification(?: status)?|applicability|category|designation|origin status)\b`;
+const namedOrigin = `(?:${koreanOriginSubject}|${englishOriginSubject})`;
+const originSubject = new RegExp(`^${namedOrigin}(?: *: *)? *`, "u");
+const originAnswer: Record<ReportedOrigin, RegExp> = {
+  affirmed: /^(?:(?:해당|확인|분류)(?:됨|입니다|이다|됩니다|(?:되었|됐)(?:음|습니다|다)|으로 확인됨)?|맞(?:음|습니다|다)|예|네|(?:yes|applicable|confirmed|verified|classified|completed?))$/u,
+  denied: /^(?:(?:비해당|해당 ?없음)(?:입니다|이다)?|해당(?:하지|되지) ?않(?:음|습니다|다)|아(?:님|니다|닙니다|니라고 ?확인됨|니요)|(?:no|not applicable|does not apply|denied))$/u,
+  unconfirmed: /^(?:(?:미확인|미상|불명|미정|미분류|모름|추정|가정|확인 중|확인 필요|확인 전|확인되지 않음|대기)(?:입니다|이다|임|인 상태)?|(?:unknown|unconfirmed|unverified|uncertain|pending|undetermined|unclassified|not (?:yet )?(?:confirmed|verified)|awaiting (?:confirmation|verification)))$/u,
+};
+const independentSubject = /(?<![\p{L}\p{N}])(?:(?:작업 ?)?시간|시각|일정|교대|수거(?: ?일정)?|픽업|오염(?: ?여부)?|(?:표면 )?(?:약제 )?(?:처리|코팅) ?이력)(?:은|는|이|가)?(?=$|[ :])|\b(?:(?:work|production) (?:time|schedule)|time|shift|pickup|collection|contamination)(?: status)?\b/u;
+const implicitOriginCue = /^(?:[:?/]|또는|혹은|아닌|만약|가정|추정|분류|확인|해당|비해당|(?:or|either|if|whether|may|might|possibly|probably|maybe|presumed|assumed|suspected|tentatively|unconfirmed|unverified|unknown|uncertain|pending|undetermined|unclassified|awaiting|under review|for review|questionable|not (?:yet )?(?:confirmed|verified)|classified)\b)|(?:인지|맞는지|인 경우|라고 가정)(?: |$)|(?:^| )(?:미확인|미상|불명|미정)(?:입니다|임|이다)?(?: |$)/u;
+const tentative = "(?:possibly|probably|maybe|presumed|assumed|suspected|tentatively)";
+const fixedPassiveModifier = "(?:not|never|already|ever|still|yet|first|then|soon|now|again|more|less|just|even|also|maybe|presumed|assumed|suspected)";
+const passiveModifier = `(?:${fixedPassiveModifier}|[a-z]{2,20}ly)`;
+const passiveModifiers = `(?: ${passiveModifier}){0,4}`;
+const finiteModal = "(?:may|might|can|could|must|should|shall|will|would|cannot)";
+const modal = `(?:${finiteModal}|to)`;
+const passiveAuxiliary = String.raw`\b(?:(?:${tentative} )?(?:(?<modal>${modal})${passiveModifiers} (?:be|have${passiveModifiers} been)|(?<finite>${finiteBe}|${perfectAuxiliary}${passiveModifiers} been))|${passiveModifier}${passiveModifiers} (?:be|been))${passiveModifiers}`;
+const participle = "[a-z]+(?:-[a-z]+)*";
+const infinitivalPassive = String.raw`to${passiveModifiers} (?:be|have${passiveModifiers} been)\b`;
+const finitePredicate = String.raw`(?:${finiteBe}|${perfectAuxiliary}|${remain}|${finiteModal}${passiveModifiers} (?:be|have))\b`;
+// A prepositional complement ends at the next auxiliary or embedded passive.
+const prepositionalComplement = String.raw`(?: (?!${infinitivalPassive})(?:at|in|on|near|inside|outside|within|under|by|from|to|for|with|without|after|before|during|about|against|of|over|through)(?: (?!${finitePredicate}|${infinitivalPassive})${participle})+)?`;
+const participialPredicate = `${participle}(?: [a-z]{2,20}ly){0,2}${prepositionalComplement}`;
+const localPassive = new RegExp(`${passiveAuxiliary}$`, "u");
+const sharedPassive = new RegExp(`${passiveAuxiliary}(?= ${participialPredicate}$)`, "u");
+const participleTail = new RegExp(`(?:^| )${participialPredicate}$`, "u");
+const trailingPassiveModifiers = new RegExp(String.raw`\b${passiveModifier}${passiveModifiers}$`, "u");
+const modifiersBeforeAuxiliary = new RegExp(`^${fixedPassiveModifier}(?: ${fixedPassiveModifier}){0,3}$`, "u");
+const uncertainCompletion = new RegExp(String.raw`\b(?:${tentative}|never)\b|\bnot (?:[a-z]+ ){0,3}(?:yet|already)\b`, "u");
+const legacyOriginNegation = /아님|아니|않|\b(?:not|no)\b/iu;
+const koreanCategoryParticle = new RegExp(
+  String.raw`^${koreanCaseParticle}(?=$|[ :?]|아(?:님|닙니다|니)|분류|해당|여부|확인|미상)`, "u");
+const originPredicatePrefix = new RegExp(
+  String.raw`^(?:${framedOriginLink}(?: |$))?(?:(?:${statusAdverb}|${koreanFraming})(?: |$)){0,2}`, "u");
+const statusLabel = /^status *: */u;
+const explicitFactSubject = `(?=${namedOrigin}|${independentSubject.source})`;
+const koreanAdversative = `이나 +${explicitFactSubject}`;
+const leadingKoreanAdversative = new RegExp(`^${koreanAdversative}`, "u");
+const coordinatedFacts = new RegExp(
+  String.raw` +(?:and|및) +|(?:^| +)but +${explicitFactSubject}|(?:^|(?<=[가-힣]))${koreanAdversative}`, "u");
+const namedPredicateMarker = new RegExp(`(?::|[가-힣]${koreanCaseParticle})$`, "u");
+const classificationConjunction = / +(and|but|or)(?: +|$)/u;
+const clauseVerb = new RegExp(String.raw`\b(?:${finitePredicate}|${infinitivalPassive})`, "u");
+const scopedSubject = /^(?:if|whether|not all|no|not any)\b/u;
+
+function isSubjectConjunct(predicates: string[], index: number): boolean {
+  const previous = predicates[index - 2]?.trim();
+  return Boolean(previous && predicates[index - 1] !== "but" && !clauseVerb.test(previous)
+    && !previous.includes(":"));
+}
+
+function passiveSubjectHead(predicate: string, auxiliary: RegExpExecArray | null): string {
+  // Before an auxiliary, an -ly ending alone cannot distinguish a noun from a modifier.
+  if (auxiliary) {
+    const head = predicate.slice(0, auxiliary.index).trim();
+    return modifiersBeforeAuxiliary.test(head) ? "" : head;
+  }
+  const head = predicate.replace(participleTail, "").trim();
+  return trailingPassiveModifiers.exec(head)?.index === 0 ? "" : head;
+}
+
+function passiveSubject(predicates: string[], index: number, subject: string): string {
+  // A conjunct with its own auxiliary can still inherit the preceding subject.
+  while (!subject && index >= 2) {
+    index -= 2;
+    const predicate = predicates[index]!.trim();
+    const auxiliary = sharedPassive.exec(predicate);
+    subject = passiveSubjectHead(predicate, auxiliary);
+  }
+  // Before that predicate, coordinated nouns can extend the same subject.
+  while (!scopedSubject.test(subject) && isSubjectConjunct(predicates, index)) {
+    subject = `${predicates[index - 2]!.trim()} ${predicates[index - 1]} ${subject}`;
+    index -= 2;
+  }
+  return subject;
+}
+
+function readPassiveClassification(predicates: string[]): { answer: ReportedOrigin; completed?: boolean } {
+  if (/^(?:if|whether)\b/u.test(predicates[0]!)) return { answer: "unconfirmed" };
+
+  const local = predicates.length - 1;
+  let modifiers = "";
+  // Look for the closest auxiliary. Cross a conjunction only through a bare
+  // participial predicate that can share it with "classified".
+  for (let index = local; index >= 0; index -= 2) {
+    const predicate = predicates[index]!.trim();
+    const auxiliary = (index === local ? localPassive : sharedPassive).exec(predicate);
+    const head = index === local ? predicate : predicate.replace(participleTail, "");
+    const trailing = auxiliary ?? trailingPassiveModifiers.exec(head);
+    if (trailing) modifiers = `${trailing[0]} ${modifiers}`.trimEnd();
+    const ownSubject = auxiliary ? passiveSubjectHead(predicate, auxiliary) : "";
+    const alternative = predicates[index - 1] === "or" && !(ownSubject && isSubjectConjunct(predicates, index));
+    if (auxiliary?.groups?.["modal"] || uncertainCompletion.test(modifiers) || alternative) {
+      return { answer: "unconfirmed" };
+    }
+    if (auxiliary) {
+      const subject = passiveSubject(predicates, index, ownSubject);
+      if (/^(?:if|whether|not all)\b/u.test(subject)) return { answer: "unconfirmed" };
+      if (/^(?:no|not any)\b/u.test(subject) || /\bnot\b/u.test(modifiers)) return { answer: "denied" };
+      return { answer: "affirmed", completed: Boolean(auxiliary.groups?.["finite"]) };
+    }
+    if (head && trailing?.index !== 0) break;
+  }
+  return { answer: /\bnot\b/u.test(modifiers) ? "denied" : "affirmed" };
+}
+
+function isOriginLabel(text: string): boolean {
+  return originSubject.exec(text)?.[0] === text;
+}
+
+function readOriginAnswer(text: string): ReportedOrigin | undefined {
+  const prefix = originPredicatePrefix.exec(text)?.[0] ?? "";
+  if (/\b(?:not|never)\b/u.test(prefix)) return "unconfirmed";
+  const predicate = text.slice(prefix.length);
+  for (const answer of ["affirmed", "denied", "unconfirmed"] as const) {
+    if (originAnswer[answer].test(predicate)) return answer;
+  }
+}
+
+function readOriginClause(clause: string, coordinated = false): OriginClause {
+  const question = clause.endsWith("?");
+  const body = clause.replace(/\?$/u, "").trim();
+  const text = body.replace(statusLabel, "");
+  const named = originSubject.exec(text);
+  if (named) {
+    const predicate = text.slice(named[0].length);
+    const answer = readOriginAnswer(predicate);
+    // A category noun can also start an unrelated phrase such as "classification audit".
+    if (coordinated && !answer && !question && predicate && !namedPredicateMarker.test(named[0].trimEnd())
+      && predicate === predicate.replace(originPredicatePrefix, "")
+      && !implicitOriginCue.test(predicate)) return { subject: "other" };
+    return { subject: "category", answer: question ? "unconfirmed" : answer ?? "unconfirmed" };
+  }
+
+  // English allows an answer before the subject. Validate the entire subject in that order.
+  for (const space of text.matchAll(/ /gu)) {
+    const answer = readOriginAnswer(text.slice(0, space.index));
+    if (answer && isOriginLabel(text.slice(space.index + 1))) {
+      return { subject: "category", answer: question ? "unconfirmed" : answer };
+    }
+    // Answers are short. Do not repeatedly scan arbitrary source prose.
+    if (space.index >= 32) break;
+  }
+
+  const independent = independentSubject.exec(text);
+  if (independent) {
+    const before = text.slice(0, independent.index).trim();
+    const after = text.slice(independent.index + independent[0].length).trim().replace(/^: */u, "");
+    const mentionsCategory = /\b(?:classification|applicability|designation|origin status)\b|폐기물 ?분류/u.test(after);
+    const answerAfter = readOriginAnswer(after);
+    if (!before && !mentionsCategory) {
+      return { subject: "independent" };
+    }
+    if (!mentionsCategory && !coordinatedFacts.test(after)
+      && (readOriginAnswer(before) || before === "awaiting")) return { subject: "independent" };
+    if (answerAfter && !implicitOriginCue.test(before)) return { subject: "independent" };
+  }
+
+  const answer = readOriginAnswer(text.replace(/^: */u, ""));
+  if (answer || question || text !== body || implicitOriginCue.test(text.replace(originPredicatePrefix, ""))) {
+    return { subject: "implicit", answer: question ? "unconfirmed" : answer ?? "unconfirmed" };
+  }
+  return { subject: "other" };
+}
+
+function readOriginClauses(clause: string): OriginClause[] {
+  return readOriginParts(clause.split(coordinatedFacts));
+}
+
+function readOriginParts(parts: string[], coordinated = parts.length > 1): OriginClause[] {
+  // Bare predicates continue the preceding subject within the coordinated clause.
+  let subject: Exclude<OriginClause["subject"], "implicit"> | undefined;
+  const facts = parts.flatMap<OriginClause>(part => {
+    const fact = readOriginClause(part, coordinated);
+    if (fact.subject !== "implicit") {
+      subject = fact.subject;
+      return [fact];
+    }
+    if (subject === "category") return [{ ...fact, subject }];
+    return subject === undefined ? [fact] : [];
+  });
+  return facts.every(fact => fact.subject === "other") ? [{ subject: "other" }] : facts;
+}
+
+function reportedMaterialOrigin(process: string | null): ReportedOrigin {
+  const text = (process ?? "").normalize("NFKC").toLowerCase()
+    .replace(/[\p{Zs}\t]+/gu, " ").replace(/ *:(?: *[\r\n\v\f\u0085\u2028\u2029])+ */gu, ": ")
+    .replace(/。/gu, ".");
+  const category = /(?<![\p{L}\p{N}_])(?:사업장 ?일반 ?폐기물|industrial general waste(?![\p{L}\p{N}_]))/gu;
+  const declaration = category.exec(text);
+  if (!declaration || category.exec(text)) return "unconfirmed";
+
+  const clauses = [...text.matchAll(/[^,;.()[\]\r\n\v\f\u0085\u2028\u2029]+/gu)].filter(clause => clause[0].trim());
+  const index = clauses.findIndex(clause =>
+    declaration.index >= clause.index && declaration.index < clause.index + clause[0].length);
+  const clause = clauses[index];
+  if (!clause) return "unconfirmed";
+  const offset = declaration.index - clause.index;
+  const prefix = clause[0].slice(0, offset).trim();
+  const tail = clause[0].slice(offset + declaration[0].length);
+  let suffix = tail.trim();
+  const korean = declaration[0].startsWith("사업장");
+  const particle = korean ? koreanCategoryParticle.exec(suffix)?.[0] : undefined;
+  if (particle) suffix = suffix.slice(particle.length).trim();
+  if (/^[\p{L}\p{N}_]/u.test(tail) && !particle &&
+    !(korean && (/^(?:여부|해당|인지|인 경우|이라고|입니다|이다)(?=$|[ :?])/u.test(suffix)
+      || leadingKoreanAdversative.test(suffix)))) return "unconfirmed";
+  suffix = suffix.replace(/^(?:입니다|이다)(?=$|[ ?])/u, "해당");
+
+  const answers: ReportedOrigin[] = [];
+  let processForLegacyDenial = text;
+  const classified = /(?:^| )classified as$/u.exec(prefix);
+  if (classified) {
+    const predicates = prefix.slice(0, classified.index).split(classificationConjunction);
+    const { answer, completed } = readPassiveClassification(predicates);
+    if (answer === "unconfirmed") return answer;
+    if (answer === "denied") answers.push(answer);
+    const earlier = predicates.slice(0, -1).filter((_, index) => index % 2 === 0);
+    for (const qualifier of readOriginParts(earlier, true)) {
+      if (qualifier.subject === "category") answers.push(qualifier.answer);
+    }
+    // The passive reader binds subject and auxiliary polarity. Earlier named
+    // category answers are checked below, independently of source prose.
+    if (completed) processForLegacyDenial = text.slice(declaration.index);
+  } else if (prefix === "not") {
+    answers.push("denied");
+  } else if (prefix && !(prefix.endsWith(":") && isOriginLabel(prefix)) &&
+    !/^(?:산출 ?품목|폐기물 ?종류|분류) *:$/u.test(prefix) &&
+    !(korean && prefix.endsWith("발생한") && readOriginAnswer(suffix) === "affirmed")) {
+    return "unconfirmed";
+  }
+
+  const previous = clauses[index - 1];
+  if (previous) {
+    const preceding = previous[0].trim();
+    const between = text.slice(previous.index + previous[0].length, clause.index);
+    if (/\( *$/u.test(between) && !/[,;.\r\n]/u.test(between)) return "unconfirmed";
+    if (/^(?:만약|if|possibly|probably|maybe)$|(?:또는|혹은|\bor)$/u.test(preceding)) return "unconfirmed";
+  }
+
+  for (const preceding of clauses.slice(0, index)) {
+    for (const qualifier of readOriginClauses(preceding[0].trim())) {
+      if (qualifier.subject === "category") answers.push(qualifier.answer);
+    }
+  }
+
+  const direct = readOriginClauses(suffix);
+  for (const qualifier of direct) {
+    if (qualifier.subject === "category" || qualifier.subject === "implicit") answers.push(qualifier.answer);
+  }
+  // Only a nearby unlabeled answer refers back to the declaration. A named
+  // category qualifier can still qualify it after a separate factual clause.
+  let adjacent = !direct.some(qualifier => qualifier.subject === "independent" ||
+    (direct.length > 1 && qualifier.subject === "other"));
+  for (const following of clauses.slice(index + 1)) {
+    for (const qualifier of readOriginClauses(following[0].trim())) {
+      if (qualifier.subject === "category" || (adjacent && qualifier.subject === "implicit")) {
+        answers.push(qualifier.answer);
+      } else {
+        adjacent = false;
+      }
+    }
+  }
+  if (answers.includes("unconfirmed") || (answers.includes("affirmed") && answers.includes("denied"))) return "unconfirmed";
+  return answers.includes("denied") || legacyOriginNegation.test(processForLegacyDenial) ? "denied" : "affirmed";
+}
+
 function supportedMaterialStream(input: CaseInput, contamination: string | null): MaterialStream | null {
   if (isUnknownCaseText(input.polymer)) return null;
   const reported = [input.polymer, input.description, input.process, contamination]
     .map(value => (value ?? "").normalize("NFKC"));
-  if (!/사업장\s*일반|industrial general/iu.test(input.process ?? "")
-    || /아님|아니|않|\b(?:not|no)\b/iu.test(input.process ?? "")) return null;
+  if (reportedMaterialOrigin(input.process) !== "affirmed") return null;
   if (reported.some(value =>
     /(?:무처리|미처리|무코팅|비코팅)[^,.;\n]{0,12}(?:아님|아닌)|\bnot\s+(?:untreated|uncoated)\b/iu.test(value)
     || [...value.matchAll(/(?:무처리|미처리|무코팅|비코팅|처리\s*이력|코팅\s*이력|treatment\s+history|coating\s+history)\s*(?:여부|이력|유무)?\s*(?:은|는|이|가)?\s*[:：]?\s*([^,.;\n]+)/giu)]
@@ -280,7 +563,7 @@ export function materialQuestions(input: CaseInput): readonly string[] {
   if (family === null) return [];
   const questions: string[] = [];
   const material = input.polymer?.trim() ?? "";
-  if (!/사업장\s*일반|industrial general/iu.test(input.process ?? "")) {
+  if (reportedMaterialOrigin(input.process) === "unconfirmed") {
     questions.push("발생 공정 입력란에 사업장일반폐기물 해당 여부와 실제 발생원을 알려 주세요. 생활·건설·지정폐기물 여부에 따라 분류가 달라집니다.");
   }
   if (family === "metal" && !["ferrous", "nonferrous", "aluminum", "copper"].includes(canonicalMaterial(material) ?? "")) {
