@@ -27,6 +27,7 @@ import { completedSubscriptionResponse } from "./subscription-response.ts";
 import { createModelHostAudit, type ModelHostAudit, type HostProposalObservation } from "./o-model-audit.ts";
 import { createVerificationPlan } from "./o-verification-plan.ts";
 import { presentAssessmentDecision } from "./o-verification-plan-candidates.ts";
+import { inputSafetyBlockers } from "./recommendation.ts";
 
 export type SessionFailureCode = "cancelled" | "timeout" | "authentication" | "rate-limit" | "provider" | "not-configured" | "invalid-model-output" | "case-not-found" | "case-busy" | "capacity" | "turn-limit";
 export class SessionFailure extends Error {
@@ -214,6 +215,10 @@ export function createAssessmentAdapter(options: { readonly runner?: CaseRunner;
         reportProgress?.("evidence");
         const resources = structuredClone(await options.resources?.(structuredClone(value), runSignal) ?? {});
         runSignal.throwIfAborted();
+        if (inputSafetyBlockers(value).length > 0) {
+          reportProgress?.("routes");
+          return { proposal: await createResourceDomain(value, resources).decide() };
+        }
         if (!options.runner) throw new SessionFailure("not-configured");
         const proposed = await options.runner(structuredClone(value), runSignal, structuredClone(resources));
         runSignal.throwIfAborted();

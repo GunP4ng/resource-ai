@@ -98,7 +98,13 @@ export async function startApp(injection: { readonly transport?: FetchFunction;
   readonly suppliers?: { readonly configuration: Readonly<HOperationalConfiguration>; readonly open: OpenOperatorSuppliers } } = {}) {
 const port = Number(process.env["PORT"] ?? 3000);
 if (!Number.isInteger(port) || port < 1 || port > 65535) throw new RangeError("Invalid PORT");
-const origin = `http://localhost:${port}`;
+const configuredOrigin = process.env["RESOURCE_PUBLIC_ORIGIN"];
+const publicOrigin = configuredOrigin === undefined ? null : URL.parse(configuredOrigin);
+if (configuredOrigin !== undefined && (publicOrigin?.protocol !== "https:"
+  || (configuredOrigin !== publicOrigin.origin && configuredOrigin !== `${publicOrigin.origin}/`))) {
+  throw new RangeError("RESOURCE_PUBLIC_ORIGIN must be an HTTPS origin");
+}
+const origin = publicOrigin?.origin ?? `http://localhost:${port}`;
 const mode = process.env["RESOURCE_MODEL_RUNNER"] ?? "subscription";
 if (mode !== "subscription" && mode !== "azure" && mode !== "operational") throw new RangeError("Invalid RESOURCE_MODEL_RUNNER");
 if (injection.runner && mode === "operational") throw new RangeError("Operational mode owns its runner");

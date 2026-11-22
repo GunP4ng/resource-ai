@@ -67,8 +67,8 @@ test("evidence conflict identifies the failed gate without marking later route c
   assert.equal(JSON.stringify(result.modelAudit).includes("untrusted-secret-title"), false);
 });
 
-test("early safety holds record skipped validation even when the proposal equals the hold", async () => {
-  const facts = { ...input, hazardousContact: "yes" as const };
+test("a host hold outside the input safety short circuit skips validation of a matching model proposal", async () => {
+  const facts = { ...input, description: "합성 시험: 재질 표기 불일치" };
   const host = await createResourceDomain(facts).decide();
   const result = await evaluate(async () => ({ proposal: host }), facts);
   assert.deepEqual(result.decision, host);

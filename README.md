@@ -70,6 +70,8 @@ RESOURCE_APP_AUTH=local-operator RESOURCE_STATE_DIR=/absolute/path/resource-stat
 
 `/login`에서 로그인하면 `/cases`에서 사례를 다시 연다. 연구용 계산과 모델 검증 기록은 로그인한 연구 화면에서 본다. 사진을 모델로 보내는 기능은 기본으로 꺼져 있다. 자세한 설정은 [런타임 통합 문서](docs/o-runtime-integration.md)와 [사진 실행 범위](docs/photo-execution-scope.md)에 있다.
 
+HTTPS 프록시 뒤에 배포할 때는 `RESOURCE_PUBLIC_ORIGIN=https://resource-ai.o-r.kr`처럼 공개 출처를 지정한다. 앱은 루프백에 계속 바인딩하고, 브라우저 요청 출처와 `Secure` 세션 쿠키는 공개 HTTPS 주소를 기준으로 처리한다. 기존 운영자 세션은 한 번 다시 로그인한다.
+
 ## 구조
 
 ```text
