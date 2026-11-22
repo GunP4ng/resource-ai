@@ -41,7 +41,7 @@ function fixture(t: TestContext, requestControls: Pick<AppDependencies, "actorFo
   const post = (path: string, cookie: string, values: Record<string, string>) =>
     app(new Request(origin + path, { method: "POST", headers: { cookie, origin }, body: new URLSearchParams(values) }));
   const create = (cookie: string, patch: Record<string, string> = {}) => post("/cases", cookie, { ...fields, ...patch });
-  const edit = (path: string, cookie: string, field: "description" | "polymer" | "process" | "region", value: string, version = 1) =>
+  const edit = (path: string, cookie: string, field: "description" | "polymer" | "process" | "region" | "contamination", value: string, version = 1) =>
     post(path + "/answers", cookie, { baseVersion: String(version), answerMode: "fields", [`field_${field}`]: value });
   const home = async (cookie = "") => {
     const result = await get("/", cookie);
@@ -139,6 +139,92 @@ for (const [field, question] of [
       const html = await readable(await app.get(view, cookie));
       assert.equal(html.match(/<h1>([^<]*)<\/h1>/)?.[1], "기계적 재활용 추천", view);
       assert.match(html, /<li data-guidance-stage="1" data-state="available">/, view);
+    }
+  });
+}
+
+function stageOneRows(html: string, sectionAttributes: string): string[] {
+  const stage = html.match(new RegExp(`<section id="guidance-stage-1"${sectionAttributes}>([\\s\\S]*?)</section>`));
+  assert.ok(stage?.[1], "stage 1 section is present");
+  return [...stage[1].matchAll(/<li>([^<]*)<\/li>/g)].map(([, row]) => row!);
+}
+
+const guidanceActor = "synthetic-guidance-owner";
+for (const [field, label, reason] of [
+  ["region", "발생 지역", "발생 지역이 미확보입니다."],
+  ["contamination", "오염 상태", "오염 상태가 미확보입니다."],
+] as const) {
+  const prefix = `${label}: `;
+  const outputRows = (rows: string[]) => rows.filter(row => row.startsWith(prefix));
+  const privateRows = (html: string) => stageOneRows(html, ' data-stage-method="1"');
+
+  async function assertStored(app: ReturnType<typeof fixture>, path: string, cookie: string, version: number, raw: string | null) {
+    const snapshot = app.store.read(`actor:${guidanceActor}`, caseId(path));
+    assert.ok(snapshot);
+    assert.equal(snapshot.version, version);
+    assert.equal(snapshot.input[field], raw);
+    assert.equal((await exported(app, path, cookie))[field], raw);
+  }
+
+  test(`signed-in native ${field} edit shows 미확보 in stage 1 and exports the exact spaces`, async t => {
+    const app = fixture(t, { actorForRequest: async () => guidanceActor });
+    const { cookie } = await app.home();
+    const path = await created(await app.create(cookie));
+    const blank = "   ";
+    assert.equal(await created(await app.edit(path, cookie, field, blank)), path);
+    await assertStored(app, path, cookie, 2, blank);
+
+    const detail = await readable(await app.get(path, cookie));
+    assert.match(detail, /<p>버전 2<\/p>/);
+    const rows = privateRows(detail);
+    assert.ok(rows.includes(reason));
+
+    const blankPath = await created(await app.create(cookie, { [field]: blank }));
+    const commercial = await readable(await app.get(path + "/report", cookie));
+    const control = await readable(await app.get(blankPath + "/report", cookie));
+    const decisionHeading = /<h1>([^<]*)<\/h1>/;
+    const questions = /<section id="case-reasons">([\s\S]*?)<\/section>/;
+    assert.equal(control.match(decisionHeading)?.[1], "추가 정보 필요");
+    assert.equal(commercial.match(decisionHeading)?.[1], control.match(decisionHeading)?.[1]);
+    const controlQuestions = control.match(questions)?.[1];
+    assert.ok(controlQuestions);
+    assert.equal(commercial.match(questions)?.[1], controlQuestions);
+    const progress = commercial.match(/<section id="case-progress" data-progress-audience="public">([\s\S]*?)<\/details><\/section>/)?.[1];
+    assert.ok(progress);
+    assert.match(progress, /<li data-guidance-stage="1" data-state="partial">/);
+    const commercialRows = stageOneRows(progress, "");
+    assert.ok(commercialRows.includes(reason));
+    assert.deepEqual(outputRows(commercialRows), []);
+
+    const inquiry = await readable(await app.get(path + "/inquiry", cookie));
+    const reported = inquiry.match(/<dl class="inquiry-fields">([\s\S]*?)<\/dl>/)?.[1];
+    assert.ok(reported);
+    const values = [...reported.matchAll(/<dt>([^<]*)<\/dt><dd>([\s\S]*?)<\/dd>/g)];
+    assert.deepEqual(values.filter(([, name]) => name === `${label} (신고)`).map(([, , value]) => value), ["미상"]);
+
+    assert.deepEqual(outputRows(rows), [`${prefix}미확보`]);
+  });
+
+  test(`native ${field} blank creation and empty edit store null and retain nonblank reported text`, async t => {
+    const app = fixture(t, { actorForRequest: async () => guidanceActor });
+    const { cookie } = await app.home();
+    const blankPath = await created(await app.create(cookie, { [field]: "   " }));
+    await assertStored(app, blankPath, cookie, 1, null);
+    assert.deepEqual(outputRows(privateRows(await readable(await app.get(blankPath, cookie)))), [`${prefix}미확보`]);
+
+    const path = await created(await app.create(cookie));
+    assert.equal(await created(await app.edit(path, cookie, field, "")), path);
+    await assertStored(app, path, cookie, 2, null);
+    assert.deepEqual(outputRows(privateRows(await readable(await app.get(path, cookie)))), [`${prefix}미확보`]);
+
+    for (const [index, value] of [`  ${fields[field]}  `, "미상", " 미상 "].entries()) {
+      const version = index + 2;
+      assert.equal(await created(await app.edit(path, cookie, field, value, version)), path);
+      await assertStored(app, path, cookie, version + 1, value);
+      for (const view of [path, path + "/report?purpose=research"]) {
+        const rows = privateRows(await readable(await app.get(view, cookie)));
+        assert.deepEqual(outputRows(rows), [prefix + value], view);
+      }
     }
   });
 }
