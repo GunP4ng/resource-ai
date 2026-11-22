@@ -57,7 +57,8 @@ test("adapter absent: visible input, real 503, health readiness, allowlisted dem
   assert.equal(unavailable.status, 503);
   assert.ok((await unavailable.text()).includes("H1/H4"));
   const health = await app(new Request(`${origin}/health`));
-  assert.deepEqual(await health.json(), { app: "ready", backend: "unavailable", azure: "not-verified" });
+  assert.deepEqual(await health.json(), { app: "ready" });
+  assert.equal(health.headers.get("cache-control"), "no-store");
   for (const [path, content] of [["/demo/normal", "240,000 원"], ["/demo/held", "추가 정보 필요"], ["/demo/review", "검토 필요"], ["/reference", "허가 확인 필요"]]) {
     const result = await app(new Request(`${origin}${path}`));
     assert.equal(result.status, 200);

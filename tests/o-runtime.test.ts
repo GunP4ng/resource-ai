@@ -164,7 +164,10 @@ test("original request deadline includes delayed login body and cannot create a 
 
 test("unavailable auth storage makes private access and readiness 503 even without a cookie", async t => {
   const f = await fixture(t), app = f.app(); f.db.close();
-  for (const path of ["/", "/cases", "/health", "/operations/readiness"]) assert.equal((await app.fetch(get(path, ""))).status, 503);
+  for (const path of ["/", "/cases", "/operations/readiness"]) assert.equal((await app.fetch(get(path, ""))).status, 503);
+  const health = await app.fetch(get("/health", ""));
+  assert.equal(health.status, 503);
+  assert.deepEqual(await health.json(), { app: "unavailable" });
 });
 
 for (const stage of ["resources", "runner"] as const) test(`close drains underlying ${stage} work after the cancellation race`, { timeout: 10000 }, async t => {

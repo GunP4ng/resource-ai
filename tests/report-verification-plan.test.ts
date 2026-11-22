@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { createAssessmentAdapter } from "../src/session.ts";
 import { createResourceDomain } from "../src/domain.ts";
+import { createVerificationPlan } from "../src/o-verification-plan.ts";
 import { createVerificationCandidates, presentAssessmentDecision } from "../src/o-verification-plan-candidates.ts";
 import { buildCaseGuidance } from "../src/o-case-guidance.ts";
 import { renderReport } from "../src/report.ts";
@@ -13,15 +13,13 @@ const input: CaseInput = { caseId: "plan-view-case", description: "합성 PET", 
   polymer: "PET", process: "성형", contamination: "미확인", hazardousContact: "yes",
   massKg: 24, region: "경기도", assessmentDate: "2026-11-20" };
 
-test("held advisory selection preserves order through reason links and never replaces the full checks", async () => {
-  const adapter = createAssessmentAdapter({ runner: async facts => {
-    const proposal = await createResourceDomain(facts).decide();
-    const candidates = createVerificationCandidates(revision(facts), presentAssessmentDecision(proposal));
-    return { proposal, verificationPlan: { selectedIds: candidates.items.slice(0, 2).reverse().map(item => item.id) } };
-  } });
-  try {
-    const output = await adapter.evaluate(input, new AbortController().signal);
-    assert.ok(output.verificationPlan && output.decision.state === "needs-review");
+test("a previously audited safety hold preserves advisory order through reason links without replacing the full checks", async () => {
+    const decision = presentAssessmentDecision(await createResourceDomain(input).decide());
+    const candidates = createVerificationCandidates(revision(input), decision);
+    const output = { decision, verificationPlan: createVerificationPlan(input, decision, {
+      raw: { selectedIds: candidates.items.slice(0, 2).reverse().map(item => item.id) }, origin: "runner-output", baseMatches: true,
+    }) };
+    assert.ok(output.decision.state === "needs-review");
     const guidance = await buildCaseGuidance(input, output.decision);
     const presentation = { mode: "synthetic" as const, verificationPlan: output.verificationPlan };
     let body = "", rejected = 0, origin: string | null = null;
@@ -48,16 +46,14 @@ test("held advisory selection preserves order through reason links and never rep
         .transform(new Response(renderReport(output.decision, presentation, context))).text();
       assert.equal(plans, 0);
     }
-  } finally { adapter.dispose(); await adapter.settled(); }
 });
 
-test("an out-of-scope advisory selection has no ordered instructions and leaves the held reasons intact", async () => {
-  const adapter = createAssessmentAdapter({ runner: async facts => ({
-    proposal: await createResourceDomain(facts).decide(), verificationPlan: { selectedIds: ["outside-current-case"] },
-  }) });
-  try {
-    const output = await adapter.evaluate(input, new AbortController().signal);
-    assert.ok(output.verificationPlan && output.decision.state === "needs-review");
+test("a previously audited safety hold with an out-of-scope selection retains host instructions", async () => {
+    const decision = presentAssessmentDecision(await createResourceDomain(input).decide());
+    const output = { decision, verificationPlan: createVerificationPlan(input, decision, {
+      raw: { selectedIds: ["outside-current-case"] }, origin: "runner-output", baseMatches: true,
+    }) };
+    assert.ok(output.decision.state === "needs-review");
     const guidance = await buildCaseGuidance(input, output.decision);
     let status: string | null = null, proposedItems = 0, reasons = 0, safetyGroups = 0;
     await new HTMLRewriter().on("#verification-plan", { element(node) { status = node.getAttribute("data-plan-status"); } })
@@ -71,5 +67,4 @@ test("an out-of-scope advisory selection has no ordered instructions and leaves 
     assert.equal(proposedItems, 0);
     assert.equal(safetyGroups, 1);
     assert.equal(reasons, readableReasons(output.decision.reasons).length);
-  } finally { adapter.dispose(); await adapter.settled(); }
 });

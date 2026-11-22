@@ -43,26 +43,30 @@ test("actual recommendation and public scenario values occupy separate labeled s
   assert.equal(canonical({ decision, guidance, publicScenario }), before);
 });
 
-test("a held result retains every reason once while guidance and audit link to the canonical reasons", async () => {
+test("held reports retain canonical reasons and guidance with or without a model audit", async () => {
   const data = await catalog, source = data.calculations.data.cases[0];
   assert.ok(source);
-  const input: CaseInput = { ...source.original, hazardousContact: "yes" };
   const adapter = createAssessmentAdapter({ runner: async facts => ({ proposal: await createResourceDomain(facts).decide() }) });
   try {
-    const output = await adapter.evaluate(input, new AbortController().signal);
-    assert.ok(output.decision.state === "needs-review" && output.modelAudit);
-    const guidance = await buildCaseGuidance(input, output.decision);
-    let fullText = "", links = 0;
-    await new HTMLRewriter().on("main", { text(chunk) { fullText += chunk.text; } })
-      .on('a[href="#case-reasons"]', { element() { links++; } })
-      .transform(new Response(renderReport(output.decision, { mode: "synthetic", modelAudit: output.modelAudit }, {
-        audience: "authenticated-research", research: null, guidance,
-      }))).text();
-    for (const reason of readableReasons(output.decision.reasons)) {
-      assert.equal(fullText.split(reason).length - 1, 1, reason);
+    for (const { input, audited } of [
+      { input: { ...source.original, hazardousContact: "yes" }, audited: false },
+      { input: { ...source.original, description: `${source.original.description}, 재질 표기 불일치` }, audited: true },
+    ] satisfies readonly { readonly input: CaseInput; readonly audited: boolean }[]) {
+      const output = await adapter.evaluate(input, new AbortController().signal);
+      assert.equal(output.modelAudit !== undefined, audited);
+      assert.ok(output.decision.state === "needs-review");
+      const guidance = await buildCaseGuidance(input, output.decision);
+      let fullText = "", links = 0;
+      await new HTMLRewriter().on("main", { text(chunk) { fullText += chunk.text; } })
+        .on('a[href="#case-reasons"]', { element() { links++; } })
+        .transform(new Response(renderReport(output.decision, { mode: "synthetic", ...(output.modelAudit ? { modelAudit: output.modelAudit } : {}) }, {
+          audience: "authenticated-research", research: null, guidance,
+        }))).text();
+      for (const reason of readableReasons(output.decision.reasons)) {
+        assert.equal(fullText.split(reason).length - 1, 1, reason);
+      }
+      assert.ok(links > 0);
     }
-    assert.ok(links > 0);
-    assert.equal(output.decision.state, "needs-review");
   } finally { adapter.dispose(); await adapter.settled(); }
 });
 

@@ -10,6 +10,10 @@ import { ModelRuntime } from "@code-yeongyu/senpi";
 import { appendLoginSlot, listSlots, managedSentinelMaterial, pinSlot } from "@earendil-works/pi-ai/auth/pool/slots";
 import { createAssessmentAdapter, createSubscriptionRunner, openCaseSession, SessionFailure } from "../src/session.ts";
 import { decideCase } from "../src/assessment.ts";
+import { createResourceDomain } from "../src/domain.ts";
+import { presentAssessmentDecision } from "../src/o-verification-plan-candidates.ts";
+import { openRuntimeDatabase } from "../src/o-runtime-db.ts";
+import { createLocalAuth } from "../src/o-auth.ts";
 import type { CaseInput } from "../src/contracts.ts";
 
 const input: CaseInput = { caseId: "subscription-synthetic", description: "Synthetic subscription case",
@@ -135,6 +139,29 @@ for (const mode of ["cancelled", "timeout"] as const) {
   });
 }
 
+test("host-only safety holds preserve the rendered decision without dispatching to subscription transport", async () => {
+  const auth = await fixture();
+  let dispatches = 0;
+  const runner = createSubscriptionRunner({ enabled: true, authPath: auth.authPath, modelId: "gpt-6-sol",
+    transport: Object.assign(async () => { dispatches++; return new Response(null, { status: 503 }); }, { preconnect: () => {} }) });
+  const adapter = createAssessmentAdapter({ runner });
+  try {
+    for (const fields of [
+      { hazardousContact: "yes" as const },
+      { polymer: "구리", description: "구리 스크랩, 납으로 오염" },
+    ]) {
+      const hazard = { ...input, ...fields };
+      const baseline = await createResourceDomain(hazard).decide();
+      assert.equal(baseline.state, "needs-review");
+      const result = await adapter.evaluate(hazard, live());
+      assert.deepEqual(result.decision, presentAssessmentDecision(baseline));
+      assert.equal(result.execution, undefined);
+      assert.equal(result.modelAudit, undefined);
+    }
+    assert.equal(dispatches, 0);
+  } finally { adapter.dispose(); await adapter.settled(); await auth.close(); }
+});
+
 test("default launcher uses subscription and returns clean 503 when SDK credentials are missing", { timeout: 15000 }, async () => {
   const root = await mkdtemp(join(tmpdir(), "subscription-launcher-"));
   const reservation = createServer();
@@ -142,7 +169,7 @@ test("default launcher uses subscription and returns clean 503 when SDK credenti
   const address = reservation.address(); assert.ok(address && typeof address !== "string");
   await new Promise<void>((resolve, reject) => reservation.close((error) => error ? reject(error) : resolve()));
   const env: NodeJS.ProcessEnv = { ...process.env, PORT: String(address.port), RESOURCE_AUTH_PATH: join(root, "auth.json") };
-  delete env["RESOURCE_MODEL_RUNNER"]; delete env["RESOURCE_MODEL_ID"];
+  delete env["RESOURCE_MODEL_RUNNER"]; delete env["RESOURCE_MODEL_ID"]; delete env["RESOURCE_PUBLIC_ORIGIN"];
   const child = spawn(process.execPath, [fileURLToPath(new URL("../scripts/app.ts", import.meta.url))],
     { cwd: root, env, stdio: ["ignore", "pipe", "pipe"] });
   const exited = new Promise<number | null>((resolve, reject) => { child.once("exit", resolve); child.once("error", reject); });
@@ -166,6 +193,54 @@ test("default launcher uses subscription and returns clean 503 when SDK credenti
   } finally {
     child.kill("SIGTERM"); assert.equal(await exited, 0);
     await rm(root, { recursive: true, force: true });
+  }
+});
+
+test("launcher behind an HTTPS proxy uses the configured browser origin for operator login, logout and secure cookies", { timeout: 15000 }, async () => {
+  const root = await mkdtemp(join(tmpdir(), "subscription-public-origin-"));
+  const proxyOrigin = "https://resource.example.test";
+  const credentials = { username: "operator", password: "local synthetic public origin fixture" };
+  const db = await openRuntimeDatabase(root);
+  try { await createLocalAuth(db, { origin: proxyOrigin }).create(credentials.username, credentials.password); }
+  finally { db.close(); }
+  const reservation = createServer();
+  await new Promise<void>(resolve => reservation.listen(0, "127.0.0.1", resolve));
+  const address = reservation.address(); assert.ok(address && typeof address !== "string");
+  await new Promise<void>((resolve, reject) => reservation.close(error => error ? reject(error) : resolve()));
+  const loopback = `http://localhost:${address.port}`;
+  const child = spawn(process.execPath, [fileURLToPath(new URL("../scripts/app.ts", import.meta.url))], {
+    cwd: root, stdio: ["ignore", "pipe", "pipe"], env: {
+      PATH: process.env["PATH"], HOME: root, PORT: String(address.port), RESOURCE_PUBLIC_ORIGIN: proxyOrigin,
+      RESOURCE_APP_AUTH: "local-operator", RESOURCE_STATE_DIR: root, RESOURCE_AUTH_PATH: join(root, "missing-auth.json"),
+    },
+  });
+  const exited = new Promise<number | null>((resolve, reject) => { child.once("exit", resolve); child.once("error", reject); });
+  let output = "";
+  const ready = new Promise<void>(resolve => child.stdout.on("data", (chunk: Buffer) => {
+    output += chunk.toString(); if (output.includes("Re:Source app:")) resolve();
+  }));
+  try {
+    await Promise.race([ready, exited.then(() => { throw new Error("launcher exited before readiness"); })]);
+    const login = (origin: string) => fetch(loopback + "/login", { method: "POST", redirect: "manual",
+      headers: { origin, "content-type": "application/json" }, body: JSON.stringify(credentials) });
+    assert.equal((await login(loopback)).status, 403);
+    const logged = await login(proxyOrigin);
+    assert.equal(logged.status, 303);
+    const setCookie = logged.headers.get("set-cookie");
+    assert.ok(setCookie);
+    assert.match(setCookie, /^__Host-resource_operator=[a-f0-9]{64}; HttpOnly; SameSite=Strict; Path=\/; Max-Age=3600; Secure$/);
+    const cookie = setCookie.split(";", 1)[0]; assert.ok(cookie);
+    assert.equal((await fetch(loopback + "/cases", { headers: { cookie } })).status, 200);
+    const health = await fetch(loopback + "/health");
+    assert.equal(health.status, 200);
+    assert.deepEqual(await health.json(), { app: "ready" });
+    const logout = await fetch(loopback + "/logout", { method: "POST", redirect: "manual", headers: { origin: proxyOrigin, cookie } });
+    assert.equal(logout.status, 303);
+    assert.equal(logout.headers.get("set-cookie"), "__Host-resource_operator=; HttpOnly; SameSite=Strict; Path=/; Max-Age=0; Secure");
+    assert.equal((await fetch(loopback + "/cases", { headers: { cookie } })).status, 403);
+  } finally {
+    child.kill("SIGTERM");
+    try { assert.equal(await exited, 0); } finally { await rm(root, { recursive: true, force: true }); }
   }
 });
 

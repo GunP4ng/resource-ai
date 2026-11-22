@@ -55,7 +55,7 @@ async function evaluate(runner?: CaseRunner, facts: CaseInput = input) {
 
 for (const mode of ["reference", "direct", "held", "missing", "empty"] as const) {
   test(`real wire ${mode} selection preserves exact host safety and final revision`, async () => {
-    const facts = mode === "held" ? { ...input, hazardousContact: "yes" as const }
+    const facts = mode === "held" ? { ...input, description: "합성 시험: 재질 표기 불일치" }
       : mode === "missing" ? { ...input, polymer: null, process: null } : input;
     const host = await evaluate(undefined, facts);
     let expected: VerificationCandidates["items"] = [];

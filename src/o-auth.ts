@@ -104,7 +104,9 @@ export function createLocalAuth(runtime: RuntimeDatabase, options: { origin: str
     return a ? accountValid(a) : null;
   };
   const immediate = <T>(fn: () => T): T => protectedCall(() => { ready(); return db.transaction(fn).immediate(); });
-  const cookie = (token: string, clear = false) => `${LOCAL_AUTH_COOKIE}=${token}; HttpOnly; SameSite=Strict; Path=/; Max-Age=${clear ? 0 : 3600}${origin.protocol === "https:" ? "; Secure" : ""}`;
+  const secure = origin.protocol === "https:";
+  const cookieName = secure ? `__Host-${LOCAL_AUTH_COOKIE}` : LOCAL_AUTH_COOKIE;
+  const cookie = (token: string, clear = false) => `${cookieName}=${token}; HttpOnly; SameSite=Strict; Path=/; Max-Age=${clear ? 0 : 3600}${secure ? "; Secure" : ""}`;
   const tokenFrom = (request: Request): string | null => {
     if (new URL(request.url).origin !== origin.origin) return null;
     const raw = request.headers.get("cookie");
@@ -115,7 +117,7 @@ export function createLocalAuth(runtime: RuntimeDatabase, options: { origin: str
       if (equals < 1) return null;
       const name = field.slice(0, equals), value = field.slice(equals + 1);
       if (!/^[!#$%&'*+.^_`|~0-9A-Za-z-]+$/.test(name) || !/^[\x21\x23-\x2B\x2D-\x3A\x3C-\x5B\x5D-\x7E]*$/.test(value)) return null;
-      if (name === LOCAL_AUTH_COOKIE) {
+      if (name === cookieName) {
         if (found !== null || !/^[a-f0-9]{64}$/.test(value)) return null;
         found = value;
       }

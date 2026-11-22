@@ -42,8 +42,8 @@ function publicRecyclingEvidence(assessment: CaseAssessment): readonly string[] 
   return citations.filter(citation => required.some(suffix => citation.sourceId.endsWith(suffix))).map(citation => citation.sourceId);
 }
 
-/** Lookup excludes unusable citations; one rejected source does not veto other routes. */
-export function recommendationBlockers(facts: CaseInput, assessment: CaseAssessment, reviews?: RouteReviewContext): readonly string[] {
+/** Safety blockers established by the submitted facts alone, before any model observation. */
+export function inputSafetyBlockers(facts: CaseInput): readonly string[] {
   const { description, process, contamination } = facts;
   const maskedDescription = maskExplicitHazardDenial(description);
   const maskedContamination = maskExplicitHazardDenial(contamination);
@@ -56,6 +56,13 @@ export function recommendationBlockers(facts: CaseInput, assessment: CaseAssessm
     ...(designatedSuspected ? [safetyReasons.designatedSuspected] : []),
     ...(/유해물질\s*접촉\s*(?:있음|의심)|(?:suspected|confirmed)\s+hazardous\s+contact/iu.test(
       [maskedDescription, maskedContamination].join(" ")) ? [safetyReasons.contactSuspected] : []),
+  ];
+}
+
+/** Lookup excludes unusable citations; one rejected source does not veto other routes. */
+export function recommendationBlockers(facts: CaseInput, assessment: CaseAssessment, reviews?: RouteReviewContext): readonly string[] {
+  return [
+    ...inputSafetyBlockers(facts),
     ...assessment.reviewIssues,
     ...(assessment.legal.evidence.length === 0 || assessment.legal.citations.length === 0 ? ["검증된 법령 인용 없음"] : []),
     ...(assessment.questions.every(question => question === massQuestion) && publicRecyclingEvidence(assessment).length === 0

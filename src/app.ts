@@ -65,6 +65,16 @@ export function createApp(dependencies: AppDependencies) {
         };
         const url = new URL(request.url);
         if (url.origin !== origin) throw new HttpFailure(400, "앱 주소가 다릅니다. 앱 첫 화면에서 다시 시작해 주세요.");
+        if (request.method === "GET" && url.pathname === "/health") {
+          const headers = { "cache-control": "no-store" };
+          try { dependencies.localAuth?.resolve(request, signal); }
+          catch (error) {
+            guard(signal);
+            if (!(error instanceof LocalAuthError)) throw error;
+            return Response.json({ app: "unavailable" }, { status: 503, headers });
+          }
+          return Response.json({ app: "ready" }, { headers });
+        }
         if (request.method === "GET" && url.pathname === feedbackPath) return response(feedbackScript, 200, { "content-type": "text/javascript; charset=utf-8" });
         if (request.method === "GET" && url.pathname === themePath) return response(themeScript, 200, { "content-type": "text/javascript; charset=utf-8" });
         const sameOrigin = () => {
@@ -185,10 +195,6 @@ export function createApp(dependencies: AppDependencies) {
           const result = response(caseListPage(rows, !!dependencies.localAuth, { deadlineLabel, status: url.searchParams.get("status") }));
           privateGuard();
           return result;
-        }
-        if (request.method === "GET" && url.pathname === "/health") {
-          dependencies.localAuth?.resolve(request, signal);
-          return new Response(JSON.stringify({ app: "ready", backend: dependencies.adapter ? "adapter-connected" : "unavailable", azure: "not-verified", ...(dependencies.runtime ? { runtime: dependencies.runtime } : {}) }), { headers: { "content-type": "application/json", "cache-control": "no-store" } });
         }
         if (request.method === "GET" && url.pathname === "/") {
           const connected = dependencies.reviewConfigured ?? !!dependencies.adapter;
