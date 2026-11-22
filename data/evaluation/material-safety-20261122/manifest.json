@@ -1,6 +1,6 @@
 {
   "inputFile": "inputs.json",
-  "sourceHash": "11d08700509b6b35c045848859e729d67dfc0503fa0789ec8f201c4877a0106e",
+  "sourceHash": "33719f65dd9ee09e7182fc0799189b43234f892be68b0704f9bc3ff0facc0b14",
   "canonicalInputHash": "src/o-validation.ts revision",
   "cases": [
     {
@@ -242,6 +242,278 @@
     {
       "caseId": "MATSAFE-EDGE-10",
       "inputSha256": "3551db70a02222e0256fa36bb45243b15382acb9662f12b23f453f27d0a4f398"
+    },
+    {
+      "caseId": "RESIDUE-01-description-positive",
+      "inputSha256": "2e0a2c553d6295215da21887e23bd57fd6bb4105d284218ac7f1b7075d1ee234"
+    },
+    {
+      "caseId": "RESIDUE-01-description-denial",
+      "inputSha256": "c09380f1e008f8a98fd0aaa2c3d5078213a469f991afce23b08022ed1466e29c"
+    },
+    {
+      "caseId": "RESIDUE-01-process-positive",
+      "inputSha256": "0e833590a9e13961305cb2cdc93fe34d019765d7ed4414985f9475b76954febf"
+    },
+    {
+      "caseId": "RESIDUE-01-process-denial",
+      "inputSha256": "ee64c28dc9ef301e0929707c47f4888c2fa4e47e99e549340b5f466494016e47"
+    },
+    {
+      "caseId": "RESIDUE-01-contamination-positive",
+      "inputSha256": "fc1b19476ac7f79998004cfa2d7cbbbcfa54b99551b87d9a1ab2ca27ae7905ca"
+    },
+    {
+      "caseId": "RESIDUE-01-contamination-denial",
+      "inputSha256": "7df5b48ad0e14e71ded3521f012269d1fd8b6e13143c3b1055ad64b1a58483df"
+    },
+    {
+      "caseId": "RESIDUE-02-description-positive",
+      "inputSha256": "7e61fcbb9c824e26be9e1ad4925d252adcbad02172ba4e7bd952a5b6c0be02ff"
+    },
+    {
+      "caseId": "RESIDUE-02-description-denial",
+      "inputSha256": "6201b6fb0995e194842e28d8d364ae72c68e0d2d80327caf14efecde2a544841"
+    },
+    {
+      "caseId": "RESIDUE-02-process-positive",
+      "inputSha256": "d0873f21082a374c37c4eef10d0c520fa87b018e4a5b8b2faaa2484d37378835"
+    },
+    {
+      "caseId": "RESIDUE-02-process-denial",
+      "inputSha256": "9eb90afbc619b0f92bf03e49e7912774fb44d1cfd62c1412fb9c644098f53f89"
+    },
+    {
+      "caseId": "RESIDUE-02-contamination-positive",
+      "inputSha256": "394e01c52ffe2e1170ca30ef36ce752c66ee8cf00cd386cfd6fda0624e8bc796"
+    },
+    {
+      "caseId": "RESIDUE-02-contamination-denial",
+      "inputSha256": "ec77e98c3136a14c9580030ec8e4053160d897713a515ccb0506414491c1d5b8"
+    },
+    {
+      "caseId": "RESIDUE-03-description-positive",
+      "inputSha256": "4aa9bab3339de1fda2bfaf72a5ef03fd7a17f6323a4f615e8c7757837a13788d"
+    },
+    {
+      "caseId": "RESIDUE-03-description-denial",
+      "inputSha256": "3265a2671f390952a97b82e9fc60014e445142836bdbce4dd4be683493aca141"
+    },
+    {
+      "caseId": "RESIDUE-03-process-positive",
+      "inputSha256": "293b68335093e07a47719206345d96063d037dff30e03e005349be3dbb8a460e"
+    },
+    {
+      "caseId": "RESIDUE-03-process-denial",
+      "inputSha256": "6c1506ad8dc2c87c256062cf9292c964d0c4291a472ec3649c61a41110622168"
+    },
+    {
+      "caseId": "RESIDUE-03-contamination-positive",
+      "inputSha256": "80c05fe298f055b34d6af4dce3134b383351818e5b72c4346040d8cce1de7245"
+    },
+    {
+      "caseId": "RESIDUE-03-contamination-denial",
+      "inputSha256": "7ce075b339ed838d181a05af49f8408cf51cb2ea3974a9023d1b2ebb5edea4db"
+    },
+    {
+      "caseId": "RESIDUE-04-description-positive",
+      "inputSha256": "f3806675e9020475174527768551a853a65d3b6b27ddd727b6201a865d775bfc"
+    },
+    {
+      "caseId": "RESIDUE-04-description-denial",
+      "inputSha256": "075e928b628a43336bec1fcbc47a82c8f8245e31ecdd7dbd6e5b8832e680a080"
+    },
+    {
+      "caseId": "RESIDUE-04-process-positive",
+      "inputSha256": "ea9ee713ea804c2489e796765c3e953cc60d755e0926e0722095e99b7b15a1ac"
+    },
+    {
+      "caseId": "RESIDUE-04-process-denial",
+      "inputSha256": "9e435f4595c1bdbf22ecbc0a0b4ed6460f6856505a4e11159b0d7d75e21ac2cf"
+    },
+    {
+      "caseId": "RESIDUE-04-contamination-positive",
+      "inputSha256": "0b7826ce82ab4d685797fc6f31c8efa6e1ac65355adf488d5f9a65944ff9428b"
+    },
+    {
+      "caseId": "RESIDUE-04-contamination-denial",
+      "inputSha256": "2a320d6f0a1a5935b1fd09d40f8d5cd40a7dc9539a25a5d513768d2445bf6547"
+    },
+    {
+      "caseId": "RESIDUE-05-description-positive",
+      "inputSha256": "b76300875a18bcb7cb4a864dede83327b51c25c89e745750b72e5d936c44de47"
+    },
+    {
+      "caseId": "RESIDUE-05-description-denial",
+      "inputSha256": "15a565a3cf47a808274049aae7a539d0c849d1c527fa3c296098472fc0c78095"
+    },
+    {
+      "caseId": "RESIDUE-05-process-positive",
+      "inputSha256": "4bd6007bef63bb1a80b167dbc0d8497f46a3dde8530fc070f541033abcb54daf"
+    },
+    {
+      "caseId": "RESIDUE-05-process-denial",
+      "inputSha256": "ebccf9389382d465b8b68ac57963619abc08ba9a7a15804819ecd35215cd5607"
+    },
+    {
+      "caseId": "RESIDUE-05-contamination-positive",
+      "inputSha256": "5396d131378503281f353702a14e81d880b5a9130317a0935aef14c2fc919306"
+    },
+    {
+      "caseId": "RESIDUE-05-contamination-denial",
+      "inputSha256": "77442362a4e63823e4ae5bee1fe23c3cbfcb8d54702f3951f127c4c0a10863c6"
+    },
+    {
+      "caseId": "RESIDUE-06-description-positive",
+      "inputSha256": "2f73456ffb25a06604e558336aa03e9fe36080880860dae4563f349180154a30"
+    },
+    {
+      "caseId": "RESIDUE-06-description-denial",
+      "inputSha256": "ce7158d046c7ec477ff1537203020ef7dcd29b4b6d8f1a231d5b3b1cb5cb6ba0"
+    },
+    {
+      "caseId": "RESIDUE-06-process-positive",
+      "inputSha256": "c84c512172134226d223a720aacf2fa9bf26b14ddc51a6ad3fc0192df3181346"
+    },
+    {
+      "caseId": "RESIDUE-06-process-denial",
+      "inputSha256": "55d844541c7cf79ead4d71782e0c08d46563ee395b58b8c41bf34a03746f3037"
+    },
+    {
+      "caseId": "RESIDUE-06-contamination-positive",
+      "inputSha256": "917e0d9223c3be0b592d05b41dd18e587c31b9c8d33fb500123ff4e966dc0660"
+    },
+    {
+      "caseId": "RESIDUE-06-contamination-denial",
+      "inputSha256": "6ab4bfd9a380e7ce0e54f86e57f37b7c2f16c471eefc4e7419eab2d999ac2bcf"
+    },
+    {
+      "caseId": "RESIDUE-07-description-positive",
+      "inputSha256": "1d3ee1df5f37883d84cc0af5aa3ffab3f0c7ad470e633ff35533a31af2f99ab1"
+    },
+    {
+      "caseId": "RESIDUE-07-description-denial",
+      "inputSha256": "7072ede9a869e900ca95cc5d9c4b2b28078c541b487e8fb9baab50c8b518f07f"
+    },
+    {
+      "caseId": "RESIDUE-07-process-positive",
+      "inputSha256": "7d17407d6669c24641d76968441890ef84a0c7a0fc79e1f04810eb662b11b730"
+    },
+    {
+      "caseId": "RESIDUE-07-process-denial",
+      "inputSha256": "05198880afdd47bbf1186956ee72b5ebc591c40ac2ea4baf0f0d61ccd4ef1b46"
+    },
+    {
+      "caseId": "RESIDUE-07-contamination-positive",
+      "inputSha256": "ba24ce5bd39b91e838523b4eb18fc8390e3fd6e7841c0a97ccedcf474caddb4d"
+    },
+    {
+      "caseId": "RESIDUE-07-contamination-denial",
+      "inputSha256": "f2cc5670f57b484ee7ab1dd67123e6c1b59d2bcf34352c34df6e2c819a2662f7"
+    },
+    {
+      "caseId": "RESIDUE-08-description-positive",
+      "inputSha256": "5830a9185df0a8a8abe8b7719553205c8378be1c3a5b9cf4fbb208e3ac60c0e2"
+    },
+    {
+      "caseId": "RESIDUE-08-description-denial",
+      "inputSha256": "8cc20334d0942aa2c4a191b94ad69919065d41d600ad49b6b4228a0e24a8c652"
+    },
+    {
+      "caseId": "RESIDUE-08-process-positive",
+      "inputSha256": "8665fd6c5b797c8caf2aaef02c7fd7f8b46f5859e63d97eb135f7414f673ef12"
+    },
+    {
+      "caseId": "RESIDUE-08-process-denial",
+      "inputSha256": "a004dc7ca70fd853c56adcd5eac7b55c340610f0a28930259daed35749de5f21"
+    },
+    {
+      "caseId": "RESIDUE-08-contamination-positive",
+      "inputSha256": "159b175388964adebfd2ab6b8218553a4f7c5e45e50cc793491773d4ca173b5c"
+    },
+    {
+      "caseId": "RESIDUE-08-contamination-denial",
+      "inputSha256": "acb4ad001e8a8ba3329751d477f11163f212589d6aaca1b358a2a7e5085fcebd"
+    },
+    {
+      "caseId": "RESIDUE-09-description-positive",
+      "inputSha256": "574b51a0e851e8dae9f0ef30ff687aee540fcf0afc275570342c27417ecc717f"
+    },
+    {
+      "caseId": "RESIDUE-09-description-denial",
+      "inputSha256": "f03af8da278aadeb08d9f55c8bd367fbc19ea50e1c6711645cdf4c73cdb9253e"
+    },
+    {
+      "caseId": "RESIDUE-09-process-positive",
+      "inputSha256": "ff2544728e3e7c555ff1215bf79d01a9ce40b31c3fb55f1335158e168a6e5eeb"
+    },
+    {
+      "caseId": "RESIDUE-09-process-denial",
+      "inputSha256": "3a6c580d91f9473e38d78752ca5e86fffd843112e7325d2318f9abb7addf6b2c"
+    },
+    {
+      "caseId": "RESIDUE-09-contamination-positive",
+      "inputSha256": "bf894d9cfe340d50dbb01e0a85673da61ae241c16aad7873cc59e5ae3377fe04"
+    },
+    {
+      "caseId": "RESIDUE-09-contamination-denial",
+      "inputSha256": "19b348ec2cfe6b732649b3d83c6dd018c25e73f1c3e27178f97b22067f6e4495"
+    },
+    {
+      "caseId": "RESIDUE-10-description-positive",
+      "inputSha256": "606227cb1a03becba38ae74d59723446436b66479e472284cc58ec81ae4797cd"
+    },
+    {
+      "caseId": "RESIDUE-10-description-denial",
+      "inputSha256": "7d43228f910a16e15b9f4031f221e1200eebfbab185ca60c8cb37460b25ef019"
+    },
+    {
+      "caseId": "RESIDUE-10-process-positive",
+      "inputSha256": "b9a090b51584992c23f68fc8d934e4c302553a75b943b536ec4c4843f7d39746"
+    },
+    {
+      "caseId": "RESIDUE-10-process-denial",
+      "inputSha256": "845870267d01e7db127d0ff6400029c2262c7252c4b7afcaaaa0115566c9d5d1"
+    },
+    {
+      "caseId": "RESIDUE-10-contamination-positive",
+      "inputSha256": "c57042ea6afca01781ba2a20c549c597431bb395a8f579a4ea7223062e46db17"
+    },
+    {
+      "caseId": "RESIDUE-10-contamination-denial",
+      "inputSha256": "5e01abfc7c5ddf0efd909b279742af4d31634c4950890707699d7ea4449bcc71"
+    },
+    {
+      "caseId": "RESIDUE-STICKY-description",
+      "inputSha256": "a141af133030221df08135729e645072f401080e4647f882e2a7d18964ed26cd"
+    },
+    {
+      "caseId": "RESIDUE-STICKY-process",
+      "inputSha256": "45fc589d5f3bf1f87e2d88dc23b0d9ccc3f3a8565c340f9a83edc622ba2cf0a6"
+    },
+    {
+      "caseId": "RESIDUE-STICKY-contamination",
+      "inputSha256": "3b7256dc89c0de01ce28f8a87d086150b24d54dc7799da63c658487a3b8138ef"
+    },
+    {
+      "caseId": "RESIDUE-mixed-before",
+      "inputSha256": "9195ce084c6be6b665dd6807295eb38fbb72baa3581f022d1e8ce24fd5e3d17d"
+    },
+    {
+      "caseId": "RESIDUE-mixed-after",
+      "inputSha256": "0b80070f2b6cb3fdf5052f4f5829d847db138d7bc8ac4ec64458844741a54814"
+    },
+    {
+      "caseId": "RESIDUE-cross-field",
+      "inputSha256": "fecf1050876b0208bb7ebc7b2e5fa74d72e38ba9594a9499fc1d3ef5bb6a83ff"
+    },
+    {
+      "caseId": "RESIDUE-hazard-precedence",
+      "inputSha256": "600033c12874abd8aaa709bac9c94cddd28228b5c0f3811c536b1be6b3508725"
+    },
+    {
+      "caseId": "RESIDUE-ordinary-words",
+      "inputSha256": "7d5ada59c9519fd79bbfd62c173fb5f06f75c4ab5bd6ea2616c5e6e256c083aa"
     }
   ]
 }

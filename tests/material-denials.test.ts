@@ -143,13 +143,15 @@ test("unrecognized material contamination asks instead of relying on missing leg
   }
 });
 
-test("lead word boundaries preserve ordinary words while unresolved contamination asks", async () => {
+test("material word boundaries preserve ordinary words while unresolved contamination asks", async () => {
   const copper = cases[0]?.input;
   assert.ok(copper);
   for (const [description, state, reason] of [
     ["납품용 구리 자투리", "compared", null],
     ["납작한 구리 조각", "compared", null],
     ["수납용 부품의 구리 자투리", "compared", null],
+    ["구리 막대 절단편", "compared", null],
+    ["마지막 공정의 구리 자투리", "compared", null],
     ["구리 절단편, 수납으로 오염된 표면", "needs-information", safetyReasons.contaminationUnknown],
     ["구리 절단편, 납으로 오염된듯한 표면", "needs-review", safetyReasons.materialTreatment],
     ["구리 절단편, 납으로\n오염된 표면", "needs-review", safetyReasons.materialTreatment],
@@ -186,6 +188,9 @@ const nativeDescriptions = [
   ["무도금 구리판 절단편", "기계적 재활용 추천"],
   ["구리판 절단편, 도금 없음", "기계적 재활용 추천"],
   ["합성 구리 스크랩, 절삭유 다량 부착", "검토 필요"],
+  ["합성 구리 스크랩, 끈적한 막", "추가 정보 필요"],
+  ["합성 구리 스크랩, 얼룩 없음", "기계적 재활용 추천"],
+  ["합성 구리 스크랩, 얼룩 없음, 끈적한 막", "추가 정보 필요"],
   ...ambiguousUnplatedDescriptions.map(description => [description, "검토 필요"] as const),
 ] as const;
 
@@ -215,6 +220,7 @@ for (const [description, heading] of nativeDescriptions) {
         const html = await report.text();
         assert.equal(html.match(/<h1>([^<]*)<\/h1>/)?.[1], heading);
         assert.equal(html.includes(safetyReasons.materialTreatment), heading === "검토 필요");
+        if (heading === "추가 정보 필요") assert.ok(html.includes(safetyReasons.contaminationUnknown));
       }
     } finally { await app.close(); }
   });
