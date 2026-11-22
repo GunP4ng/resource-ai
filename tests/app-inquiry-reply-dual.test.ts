@@ -147,7 +147,7 @@ for (const material of ["PET", "HDPE"] as const) {
 async function nativeForm(env: Awaited<ReturnType<typeof setup>>) {
   const url = origin + env.path + "/inquiry-reply";
   const form = new URLSearchParams();
-  await new HTMLRewriter().on("input", { element(element) {
+  await new HTMLRewriter().on(`form[action="${env.path}/inquiry-reply"] input`, { element(element) {
     const name = element.getAttribute("name");
     if (name) form.set(name, element.getAttribute("value") ?? "");
   } }).transform(await env.app(new Request(url))).text();

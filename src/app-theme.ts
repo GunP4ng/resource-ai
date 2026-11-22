@@ -13,16 +13,18 @@ export const themeScript = `"use strict";
   html.dataset.theme = theme;
 
   document.addEventListener("DOMContentLoaded", () => {
-    const picker = document.querySelector("[data-theme-picker]");
-    if (!picker) return;
-    picker.value = theme;
-    picker.addEventListener("change", () => {
-      if (!valid(picker.value)) return;
-      theme = picker.value;
+    const control = document.querySelector("[data-theme-control]");
+    if (!control) return;
+    const selected = control.querySelector('input[value="' + theme + '"]');
+    if (selected) selected.checked = true;
+    control.addEventListener("change", event => {
+      const choice = event.target;
+      if (!(choice instanceof HTMLInputElement) || !choice.checked || !valid(choice.value)) return;
+      theme = choice.value;
       html.dataset.theme = theme;
       try { localStorage.setItem(key, theme); } catch { /* Keep the selection for this page. */ }
     });
-    picker.closest("[data-theme-control]").hidden = false;
+    control.hidden = false;
   }, { once: true });
 })();
 `;
