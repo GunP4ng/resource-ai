@@ -44,6 +44,7 @@ export interface ReportView {
   readonly actions?: string;
   readonly editing?: string;
   readonly answerTarget?: "#answer-fields" | "#answers";
+  readonly caseReturnTarget?: string;
   readonly inquiryTarget?: string;
   readonly researchFirst?: boolean;
 }
@@ -201,7 +202,7 @@ export function renderReport(result: DecisionResult, presentation: ReportPresent
     ${presentation.historical ? '<p class="notice">과거 평가: 현재 입력과 평가 당시 입력이 다릅니다. 명시적으로 다시 평가해 주세요.</p>' : ""}
     ${hypotheticalSummary ? `<p id="hypothetical-summary"><strong>가정 계산:</strong> ${escapeHtml(hypotheticalSummary)}</p>` : ""}
     <p id="next-action"><strong>다음 행동:</strong> ${escapeHtml(nextAction)}</p>
-    <p class="screen-only"><a class="primary-action" href="${answerAction ?? "#checks"}">${answerAction ? result.state === "needs-information" ? "답변 입력하기" : "입력 다시 확인하기" : "실행 전 확인하기"}</a></p>
+    <p class="screen-only"><a class="primary-action" href="${answerAction ?? "#checks"}">${answerAction ? result.state === "needs-information" ? "답변 입력하기" : "입력 다시 확인하기" : "실행 전 확인하기"}</a>${view.caseReturnTarget ? ` <a href="${escapeHtml(view.caseReturnTarget)}">사례로 돌아가기</a>` : ""}</p>
     ${commercialSummary ? `${data}
       ${heldReasons.length ? `<p><a href="#case-reasons">보류 사유와 필요한 확인 ${heldReasons.length}개</a> · 전체 사유는 다음 상세에 있습니다.</p>` : ""}
       <div id="summary-evidence"><h2>근거 위치</h2>${result.evidence.length ? `<ul>${result.evidence.slice(0, 3).map((item, index) => `<li><a href="#evidence-${index + 1}">[${index + 1}] ${escapeHtml(item.title)} · ${escapeHtml(item.locator)}</a></li>`).join("")}</ul>` : "<p>연결된 근거 없음</p>"}</div>
