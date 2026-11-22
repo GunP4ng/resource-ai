@@ -2,6 +2,7 @@ import type { CaseResearchReport } from "./o-case-research-schema.ts";
 import type { PublicInputScenario } from "./o-input-public-scenario.ts";
 import { escapeHtml, list, safeLink } from "./report-html.ts";
 import recyclingDirectory from "../data/reference/public-recycling-candidates-20261121.json" with { type: "json" };
+import { koreanSourceDate } from "./report-date.ts";
 import domestic from "../data/reference/domestic-scenario-context-20261121.json" with { type: "json" };
 
 const routeNames = { recycling: "재활용 시나리오", landfill: "매립 시나리오", energy_recovery: "에너지 회수 시나리오" } as const;
@@ -45,7 +46,7 @@ function domesticContext(material: string, inputs: PublicInputScenario["calculat
     <details><summary>국내 계수 출처와 미산정 사유</summary>
       ${originalLink(electricity.url, electricity.title)}<p>${escapeHtml(electricity.locator)} · ${escapeHtml(electricity.boundary)} ${escapeHtml(electricity.missing)}</p>
       ${originalLink(waste.url, waste.title)}<p>${escapeHtml(waste.locator)} · ${escapeHtml(waste.boundary)} ${escapeHtml(waste.missing)}</p>
-      <p>조회 ${domestic.retrievedAt} · 전력 원본 SHA-256 ${electricity.sha256} · 소각 매개변수 원본 SHA-256 ${waste.sha256}</p></details>
+      <p>조회 ${escapeHtml(koreanSourceDate(domestic.retrievedAt))} · 전력 원본 SHA-256 ${electricity.sha256} · 소각 매개변수 원본 SHA-256 ${waste.sha256}</p></details>
     <details><summary>소각 처리비가 빈 이유와 공개 반입요금</summary>
       <p>사업장 폐플라스틱 소각비 자료를 확보해야 합니다. ${escapeHtml(fee.missing)}</p>
       <p>참고: 인천 생활폐기물 ${fee.value.toLocaleString("ko-KR")} ${fee.unit} (${fee.announcedEffectiveFrom} 공표 적용일). ${escapeHtml(fee.boundary)}</p>
@@ -64,7 +65,7 @@ export function publicInputCalculations(scenario: PublicInputScenario): string {
       ${scenario.material === "HDPE" ? "<p>HDPE 가격은 일반 PE 참고가격을 썼습니다.</p>" : ""}
       ${c.cases.map(item => `<p>원본 템플릿: ${escapeHtml(item.original.description)} · 원본 질량 ${item.original.massKg} kg.</p>`).join("")}
       ${c.inputs.map(input => `<p>${escapeHtml(input.input_id)}: ${input.value === null ? `값 없음 (${escapeHtml(input.missing_reason ?? "값 없음")})` : `${input.value} ${escapeHtml(input.unit)}`} · ${escapeHtml(input.assumption_reason ?? input.transform)}</p>`).join("")}
-      ${c.sources.map(source => `<p>${originalLink(source.url, source.title)} · ${escapeHtml(source.published_or_period)} · ${escapeHtml(source.locator)} · ${escapeHtml(source.boundary)}</p>`).join("")}
+      ${c.sources.map(source => `<p>${originalLink(source.url, source.title)} · ${escapeHtml(koreanSourceDate(source.published_or_period))} · ${escapeHtml(source.locator)} · ${escapeHtml(source.boundary)}</p>`).join("")}
       <p>입력 연결 ${escapeHtml(scenario.binding.inputRevision)} · 파생 데이터 ${scenario.provenance.derivedDatasetSha256} · 파생 전제 ${scenario.provenance.derivedProvenanceSha256}</p>
       <p>원본 고정 입력 ${scenario.provenance.parentFixtureSha256} · 원본 파일 ${scenario.provenance.parentOriginalSha256}. 파생 데이터는 이 화면에서 새로 계산한 값입니다.</p>
       <p>WARM·Wonju 자료는 상업 이용·재배포 권리가 확인되지 않아 로그인한 연구 화면에만 표시하고, 상업용 보고서와 모델 전송에서 뺍니다.</p>
@@ -99,12 +100,12 @@ export function researchCalculations(research: CaseResearchReport): string {
     <h3>자료에 기록된 가정·한계 원문</h3>
     ${list(c.cases.map(item => item.material_mapping_assumption))}${list(c.limitations)}
     ${c.sources.map(source => `<section><h3>${escapeHtml(source.title)}</h3>${originalLink(source.url, "계산 출처 원문 열기")}
-      <p>${escapeHtml(source.agency)} · ${escapeHtml(source.published_or_period)} · ${escapeHtml(source.locator)}</p>
+      <p>${escapeHtml(source.agency)} · ${escapeHtml(koreanSourceDate(source.published_or_period))} · ${escapeHtml(source.locator)}</p>
       <p>지역 ${escapeHtml(source.geography)} · GWP ${escapeHtml(source.gwp)} · 경계 ${escapeHtml(source.boundary)}</p>
       <p>${escapeHtml(source.rights_notice_summary)}</p>${originalLink(source.rights_url, "사용권 안내 열기")}
-      <p>출처 ${escapeHtml(source.source_id)} · SHA-256 ${escapeHtml(source.raw_sha256)} · 조회 ${escapeHtml(source.retrieved_at)}</p>${list(source.limitations)}</section>`).join("")}
+      <p>출처 ${escapeHtml(source.source_id)} · SHA-256 ${escapeHtml(source.raw_sha256)} · 조회 ${escapeHtml(koreanSourceDate(source.retrieved_at))}</p>${list(source.limitations)}</section>`).join("")}
     ${c.inputs.map(input => `<p><strong>${escapeHtml(input.input_id)}</strong>: ${input.value === null ? `자료 없음: ${escapeHtml(input.missing_reason ?? "값 없음")}` : `${escapeHtml(String(input.value))} ${escapeHtml(input.unit)}`} · ${input.kind === "assumed" ? "가정" : input.kind === "derived" ? "출처에서 변환" : "공개 참고값"}
-      · ${escapeHtml(input.assumption_reason ?? input.transform)} · ${escapeHtml(input.period)} · ${escapeHtml(input.geography)} · ${escapeHtml(input.tax_basis)}
+       · ${escapeHtml(input.assumption_reason ?? input.transform)} · ${escapeHtml(koreanSourceDate(input.period))} · ${escapeHtml(input.geography)} · ${escapeHtml(input.tax_basis)}
       · 의존 입력 ${escapeHtml(input.depends_on_input_ids.join(", ") || "없음")}</p>`).join("")}
     <p>원본 사례 ${escapeHtml(c.sourceCaseId)} · 원본 SHA-256 ${escapeHtml(c.originalSha256)} · provenance SHA-256 ${escapeHtml(c.provenanceSha256)} · manifest ${escapeHtml(c.provenanceManifestSha256)}</p>
     <p>고정 입력 ${escapeHtml(c.fixtureSha256)} · manifest ${escapeHtml(c.manifestSha256)} · 구현 ${escapeHtml(c.implementation.sha256)} · 모델 ${escapeHtml(c.model_version)}</p>
@@ -124,9 +125,9 @@ export function researchDirectory(research: CaseResearchReport, inquiryTarget?: 
   return `<section id="directory"><h2>처분 문의 후보</h2>
     <p>기계적 재활용 시설 근거가 아직 없어 처분 상담용 명부 행을 보여 줍니다. 허가·인수는 업체에 확인하세요. 같은 회사가 여러 행에 나올 수 있습니다.</p>
     <p>소각 등재 업체의 에너지 회수 여부와 실제 시설 위치는 업체에 확인하세요. 표시 주소는 사무실 기준입니다.</p>
-    ${originalLink(directory.source.url, directory.source.title)}<p>명부 기준일 ${escapeHtml(directory.source.sourceDate ?? "확인 필요")} · 업체별 등재·갱신일 없음 · 사용권 ${escapeHtml(directory.source.license ?? "확인 필요")}</p>
+    ${originalLink(directory.source.url, directory.source.title)}<p>명부 기준일 ${escapeHtml(koreanSourceDate(directory.source.sourceDate ?? "확인 필요"))} · 업체별 등재·갱신일 없음 · 사용권 ${escapeHtml(directory.source.license ?? "확인 필요")}</p>
     ${directory.rows.map(row => `<section data-directory-row="${row.listing.rowNumber}"><h3>${escapeHtml(row.listing.name)} · 명부 ${row.listing.rowNumber}행</h3>
-      <p>${escapeHtml(row.listing.description)} · 명부 기준일 ${escapeHtml(row.listing.sourceDate)} · ${escapeHtml(row.listing.district)}</p>
+      <p>${escapeHtml(row.listing.description)} · 명부 기준일 ${escapeHtml(koreanSourceDate(row.listing.sourceDate))} · ${escapeHtml(row.listing.district)}</p>
       <p>명부상 사무실 ${escapeHtml(row.listing.officeAddress)} · 영업권역 ${escapeHtml(row.listing.serviceArea || "확인 필요")}</p>
       ${regionComparison(caseRegion, row.listing.officeAddress)}
       <p>확인 필요: 허가 · 인수 · 폐기물 코드 · 시설 위치·거리</p>
@@ -139,14 +140,14 @@ export function researchDirectory(research: CaseResearchReport, inquiryTarget?: 
 export function publicRecyclingDirectory(inquiryTarget?: string, caseRegion?: string | null): string {
   return `<section id="recycling-directory"><h2>${escapeHtml(recyclingDirectory.label)}</h2>
     ${originalLink(recyclingDirectory.source.url, recyclingDirectory.source.title)}
-    <p>명부 기준일 ${escapeHtml(recyclingDirectory.source.sourceDate)} · 조회 ${escapeHtml(recyclingDirectory.source.retrievedAt)}
+    <p>명부 기준일 ${escapeHtml(koreanSourceDate(recyclingDirectory.source.sourceDate))} · 조회 ${escapeHtml(koreanSourceDate(recyclingDirectory.source.retrievedAt))}
       · 수집 근거 ${escapeHtml(recyclingDirectory.source.collectionBasis)} · 사용권 ${escapeHtml(recyclingDirectory.source.license)}</p>
     ${list(recyclingDirectory.limitations)}
     ${recyclingDirectory.rows.map(row => `<section data-recycling-directory-row="${row.rowNumber}"><h3>${escapeHtml(row.name)} · 원본 명부 ${row.rowNumber}행</h3>
       <p>업종 ${escapeHtml(row.activity)} · 대상폐기물 ${escapeHtml(row.wasteScope)}</p>
-      <p>명부상 소재지 ${escapeHtml(row.address)} · 행 기준일 ${escapeHtml(row.sourceDate)}</p>
+      <p>명부상 소재지 ${escapeHtml(row.address)} · 행 기준일 ${escapeHtml(koreanSourceDate(row.sourceDate))}</p>
       ${regionComparison(caseRegion, row.address)}
-      <p data-permit-listed>허가 공개자료 확인 · ${escapeHtml(row.sourceDate)} 기준 명부 등재</p>
+      <p data-permit-listed>허가 공개자료 확인 · ${escapeHtml(koreanSourceDate(row.sourceDate))} 기준 명부 등재</p>
       <p data-acceptance-unverified><strong>인수 의사는 문의로 확인</strong></p>
       <p>확인 필요: 현재 허가·영업 상태, 사례 지역·운송·재질·품목·오염 조건 적합성</p>
       ${inquiryTarget ? `<p class="screen-only"><a href="${escapeHtml(inquiryTarget)}?recipient=${encodeURIComponent(row.name)}">이 업체에 문의서 준비</a></p>` : ""}</section>`).join("")}

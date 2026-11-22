@@ -35,7 +35,7 @@ test("native reference route shows exactly three national purchase statistics wi
     [1, "PDF 물리 16쪽 / 인쇄 12쪽 · 2026.10 행, 전국 열"],
     [2, "PDF 물리 18쪽 / 인쇄 14쪽 · 2026.10 행, 전국 열"],
   ] as const) assert.ok(rows[index]?.[2]?.includes(locator), locator);
-  for (const field of ["2026-10", "2026-10-10", "2026-10-26", "2026-11-22", "전국", "VAT 포함", "물류비 제외", "NOT A QUOTE",
+  for (const field of ["기준월 2026년 10월", "조사 기준일 2026년 10월 10일", "공표일 2026년 10월 26일", "조회일 2026년 11월 22일", "전국", "VAT 포함", "물류비 제외", "NOT A QUOTE",
     "52df7721b44db3f3053bc2fc9f4bdd32f01e3ef8a59dcacee79f88d4bac9c1e0",
     "562bf85c2f9a2047649b52d9875da462fdb2ca14be36e21cfd1950ff976dfeb3"]) {
     assert.ok(section.includes(field), field);

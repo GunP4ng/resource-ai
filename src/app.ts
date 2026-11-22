@@ -164,7 +164,7 @@ export function createApp(dependencies: AppDependencies) {
         };
         if (request.method === "GET" && url.pathname === "/cases" && preparer) {
           if (!owner) throw new HttpFailure(403, "로그인해 주세요.");
-          const deadlineLabel = actor ? "보관 만료 (UTC)" : "열람 기한 (UTC)";
+          const deadlineLabel = actor ? "보관 기한" : "열람 기한";
           const rows = caseStore.list(owner).map(item => {
             const deadline = Math.min(item.expires, sessionDeadline ?? Infinity);
             const snapshot = caseStore.read(owner, item.caseId);
@@ -172,8 +172,7 @@ export function createApp(dependencies: AppDependencies) {
             return {
               caseId: item.caseId,
               title: snapshot?.input.description.trim() || item.caseId,
-              version: item.version,
-              deadline: new Date(deadline).toISOString(),
+              deadline,
               state,
             };
           });

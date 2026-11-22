@@ -4,6 +4,7 @@ import { loadEvidenceRegistry } from "./evidence-registry.ts";
 import { sourceManifest } from "./sources.ts";
 import type { DecisionResult } from "./contracts.ts";
 import { escapeHtml, safeLink } from "./report-html.ts";
+import { koreanSourceDate } from "./report-date.ts";
 
 const registry = loadEvidenceRegistry(registryJson).candidates;
 const reasons: Readonly<Record<string, string>> = {
@@ -61,7 +62,7 @@ export function evidenceSection(result: DecisionResult): string {
     return `<section id="evidence-${index + 1}"><h3>[${index + 1}] ${title}</h3>
       ${provenance ? `<blockquote>${escapeHtml(provenance.quote)}</blockquote>` : "<p>등록된 발췌가 없습니다. 아래 원문 위치에서 확인하세요.</p>"}
       <p>${escapeHtml(evidence.publisher)} · ${escapeHtml(evidence.locator)}</p>
-      <p>시행본 ${escapeHtml(evidence.datasetVersion)} · 조회 ${escapeHtml(evidence.retrievedAt)}</p>
+      <p>시행본 ${escapeHtml(evidence.datasetVersion)} · 조회 ${escapeHtml(koreanSourceDate(evidence.retrievedAt))}</p>
       <p>사용권 ${escapeHtml(evidence.license ?? "미확인")} · 확인 ${evidence.licenseVerified ? "예" : "아니오"}</p>
       <details><summary>근거 식별자와 원본 해시 보기</summary><p>출처 ID ${escapeHtml(evidence.sourceId)} · SHA-256 ${escapeHtml(evidence.sha256)}</p>
       ${provenance ? `<p>원본 ${escapeHtml(provenance.originalSourceId ?? "미확인")} · SHA-256 ${escapeHtml(provenance.originalSha256 ?? "미확인")}</p>` : ""}</details></section>`;

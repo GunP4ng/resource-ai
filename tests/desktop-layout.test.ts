@@ -66,7 +66,7 @@ for (const hazardousContact of ["no", "yes", "unknown"] as const) {
       .transform(new Response(html)).text();
     assert.deepEqual(order, ["report-results", "case-editor", "report-records"]);
     assert.deepEqual(leading, ["decision-summary", "next-action"]);
-    assert.deepEqual(targets, ["#case-editor", "#report-results"]);
+    assert.deepEqual(targets, []);
     assert.deepEqual(mobileEdits, decision.state === "compared" ? ["#answer-fields"] : []);
     assert.equal(editTarget, 1);
     assert.deepEqual(actions, [action, action]);

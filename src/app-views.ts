@@ -3,6 +3,7 @@ import { MAX_CASE_MASS_KG } from "./contracts.ts";
 import { escapeHtml, page } from "./report-html.ts";
 import { caseFormTextLimits, HttpFailure } from "./app-http.ts";
 import { intakeForm } from "./intake-form.ts";
+import { koreanDeadline, koreanSourceDate } from "./report-date.ts";
 
 const contactLabels = { unknown: "미상", yes: "있음", no: "없음" } as const;
 const textFields = [
@@ -56,7 +57,7 @@ export function caseInputSummary(input: CaseInput, editTarget?: string): string 
   const values: readonly (readonly [string, string | null])[] = [
     ["발생 공정", input.process], ["재질·품목", input.polymer], ["오염 상태", input.contamination],
     ["유해물질 접촉", contactLabels[input.hazardousContact]], ["질량", input.massKg === null ? null : `${input.massKg.toLocaleString("ko-KR")} kg`],
-    ["발생 지역", input.region], ["평가 기준일", input.assessmentDate],
+    ["발생 지역", input.region], ["평가 기준일", koreanSourceDate(input.assessmentDate)],
   ];
   return `<div class="case-input-summary screen-only"><h2>현재 사례 입력</h2><p>${escapeHtml(input.description)}</p><dl>${values.map(([label, value]) =>
     `<dt>${label}</dt><dd>${escapeHtml(value || "미상")}</dd>`).join("")}</dl>${editTarget ? `<a href="${escapeHtml(editTarget)}">입력 수정하기</a>` : ""}</div>`;
@@ -86,8 +87,7 @@ export function loginPage(): string {
 export interface CaseListRow {
   readonly caseId: string;
   readonly title: string;
-  readonly version: number;
-  readonly deadline: string;
+  readonly deadline: number;
   readonly state: "compared" | "needs-information" | "needs-review" | "unknown";
 }
 export function caseListPage(rows: readonly CaseListRow[], localAuth: boolean, options: { readonly deadlineLabel: string; readonly status: string | null }): string {
@@ -110,14 +110,13 @@ export function caseListPage(rows: readonly CaseListRow[], localAuth: boolean, o
     const casePath = `/cases/${encodeURIComponent(row.caseId)}`;
     return `<tr role="row" data-case-id="${escapeHtml(row.caseId)}"><td role="cell" headers="case-title" data-label="사례"><h2>${escapeHtml(row.title)}</h2></td>
       <td role="cell" headers="case-status" data-label="상태"><span class="case-badge case-badge-${kind}">${label}</span></td>
-      <td role="cell" headers="case-version" data-label="버전">${row.version}</td>
-      <td role="cell" headers="case-deadline" data-label="${escapeHtml(deadlineLabel)}"><time datetime="${escapeHtml(row.deadline)}">${escapeHtml(row.deadline)}</time></td>
+      <td role="cell" headers="case-deadline" data-label="${escapeHtml(deadlineLabel)}">${koreanDeadline(row.deadline)}</td>
       <td role="cell" headers="case-actions" data-label="열기"><div class="case-card-links"><a href="${casePath}">사례 상세</a><a href="${casePath}/report">보고서</a></div></td></tr>`;
   }).join("");
   const countCards = filters.map(([value, label]) => `<li data-status="${value}">${label} <strong>${counts[value]}</strong></li>`).join("");
   const filterLinks = filters.map(([value, label]) => `<a data-status="${value}" href="${value === "all" ? "/cases" : `/cases?status=${value}`}"${selected === value ? ' aria-current="page"' : ""}>${label}</a>`).join("");
   const table = `<table class="case-table" role="table" aria-label="내 사례 목록"><thead role="rowgroup"><tr role="row">
-    <th id="case-title" scope="col" role="columnheader">사례</th><th id="case-status" scope="col" role="columnheader">상태</th><th id="case-version" scope="col" role="columnheader">버전</th><th id="case-deadline" scope="col" role="columnheader">${escapeHtml(deadlineLabel)}</th><th id="case-actions" scope="col" role="columnheader">열기</th>
+    <th id="case-title" scope="col" role="columnheader">사례</th><th id="case-status" scope="col" role="columnheader">상태</th><th id="case-deadline" scope="col" role="columnheader">${escapeHtml(deadlineLabel)}</th><th id="case-actions" scope="col" role="columnheader">열기</th>
     </tr></thead><tbody role="rowgroup">${tableRows}</tbody></table>`;
   return page("내 사례", `<h1>내 사례</h1><p><a class="primary-action" href="/">새 사례 입력</a></p>
     <section aria-label="사례 판정 건수"><ul class="case-counts">${countCards}</ul></section>

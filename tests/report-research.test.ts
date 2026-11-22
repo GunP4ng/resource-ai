@@ -29,8 +29,7 @@ for (const sourceCaseId of ["OYS-20261110-001", "OYS-20261110-002", "OYS-2026111
     assert.equal((html.match(/data-directory-row=/g) ?? []).length, 8);
     assert.equal((html.match(/data-recycling-directory-row=/g) ?? []).length, 4);
     assert.ok(html.includes(recyclingDirectory.source.url));
-    assert.ok(html.includes(recyclingDirectory.source.sourceDate));
-    assert.ok(html.includes(recyclingDirectory.source.retrievedAt));
+    assert.ok(html.includes("명부 기준일 2025년 11월 21일 · 조회 2026년 11월 21일 01:05"));
     assert.ok(html.includes(recyclingDirectory.source.rawSha256));
     for (const row of recyclingDirectory.rows) {
       let rowText = "";
@@ -48,8 +47,8 @@ for (const sourceCaseId of ["OYS-20261110-001", "OYS-20261110-002", "OYS-2026111
     assert.match(html, /상업 이용·재배포 권리가 확인되지 않아/);
     assert.match(html, /소각 등재 업체의 에너지 회수 여부와 실제 시설 위치는 업체에 확인/);
     assert.match(html, /기계적 재활용 시설 근거가 아직 없어/);
-    const directoryDate = attachment.processors.source.sourceDate;
-    assert.ok(directoryDate);
+    assert.equal(attachment.processors.source.sourceDate, "2025-12-22");
+    const directoryDate = "2025년 12월 22일";
     assert.doesNotMatch(html, new RegExp(`등재일\\s*${directoryDate}`), "the dataset date is not a company's registration date");
     assert.ok(html.includes(`명부 기준일 ${directoryDate}`));
     assert.match(html, /업체별 등재·갱신일 없음/);
