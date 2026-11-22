@@ -5,7 +5,7 @@ import { createResourceDomain } from "../src/domain.ts";
 import { createVerificationCandidates, presentAssessmentDecision } from "../src/o-verification-plan-candidates.ts";
 import { buildCaseGuidance } from "../src/o-case-guidance.ts";
 import { renderReport } from "../src/report.ts";
-import { readableReasons } from "../src/report-evidence.ts";
+import { readableReason, readableReasons } from "../src/report-evidence.ts";
 import { revision } from "../src/o-validation.ts";
 import type { CaseInput } from "../src/contracts.ts";
 
@@ -24,15 +24,15 @@ test("held advisory selection preserves order through reason links and never rep
     assert.ok(output.verificationPlan && output.decision.state === "needs-review");
     const guidance = await buildCaseGuidance(input, output.decision);
     const presentation = { mode: "synthetic" as const, verificationPlan: output.verificationPlan };
-    let body = "", checks = 0, rejected = 0, origin: string | null = null;
-    const links: string[] = [], originalLinks: string[] = [];
+    let body = "", rejected = 0, origin: string | null = null;
+    const links: string[] = [], originalLinks: string[] = [], checks: string[] = [];
     await new HTMLRewriter().on("main", { text(chunk) { body += chunk.text; } })
       .on("#verification-plan", { element(node) {
         origin = node.getAttribute("data-plan-origin");
         if (node.getAttribute("data-plan-status") === "rejected") rejected++;
       } }).on("[data-effective-verification-order] a", { element(node) { links.push(node.getAttribute("href") ?? ""); } })
       .on("[data-model-original-order] a", { element(node) { originalLinks.push(node.getAttribute("href") ?? ""); } })
-      .on("#checks li", { element() { checks++; } })
+      .on("#checks li", { element() { checks.push(""); }, text(chunk) { checks[checks.length - 1] += chunk.text; } })
       .transform(new Response(renderReport(output.decision, presentation, {
         audience: "authenticated-research", research: null, guidance,
       }))).text();
@@ -40,7 +40,7 @@ test("held advisory selection preserves order through reason links and never rep
     assert.equal(rejected, 0);
     assert.deepEqual(links, ["#case-reason-1", "#case-reason-2"]);
     assert.deepEqual(originalLinks, ["#case-reason-2", "#case-reason-1"]);
-    assert.equal(checks, readableReasons(output.decision.preExecutionChecks ?? []).length);
+    assert.deepEqual(checks, (output.decision.preExecutionChecks ?? []).map(readableReason));
     for (const reason of readableReasons(output.decision.reasons)) assert.equal(body.split(reason).length - 1, 1);
     for (const context of [{ audience: "commercial" as const }, { audience: "authenticated-research" as const, research: null }]) {
       let plans = 0;

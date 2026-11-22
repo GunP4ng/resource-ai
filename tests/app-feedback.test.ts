@@ -58,7 +58,9 @@ test("inquiry print control invokes window.print without submitting and ignores 
 
 test("beforeprint reveals actual decision sections and afterprint restores disclosure state", async () => {
   const fixture = await demo("normal");
-  assert.ok(fixture);
+  assert.ok(fixture && fixture.result.state === "compared");
+  const checks = ["허가 범위를 확인하세요.", "인수 가능 여부를 확인하세요.", "분류 자료를 확인하세요.",
+    "현장 담당자의 승인을 확인하세요.", "운송 조건을 확인하세요."];
   const details: { open: boolean }[] = [], ancestors: { open: boolean }[] = [];
   const segments: { text: string; ancestors: { open: boolean }[] }[] = [];
   await new HTMLRewriter()
@@ -68,13 +70,14 @@ test("beforeprint reveals actual decision sections and afterprint restores discl
       element.onEndTag(() => { ancestors.pop(); });
     } })
     .on("main", { text(chunk) { segments.push({ text: chunk.text, ancestors: [...ancestors] }); } })
-    .transform(new Response(renderReport(fixture.result, fixture.presentation))).text();
+    .transform(new Response(renderReport({ ...fixture.result, preExecutionChecks: checks }, fixture.presentation))).text();
   assert.ok(details.length >= 2);
   details[0]!.open = true; // Keep the disclosure the reader had already opened.
   const original = details.map(detail => detail.open);
   const visible = () => segments.filter(segment => segment.ancestors.every(detail => detail.open)).map(segment => segment.text).join("");
   const sections = ["대안 비교 요약", "서버 후보 우선순위", "경로와 조건", "사례별 업체 근거", "제약과 다음 확보 항목",
-    "사용량은 청구·비용 증빙이 아닙니다. 사진 실행은 설정이나 실행 식별자만으로 확인되지 않습니다."];
+    "사용량은 청구·비용 증빙이 아닙니다. 사진 실행은 설정이나 실행 식별자만으로 확인되지 않습니다.", ...checks.slice(3)];
+  for (const check of checks.slice(0, 3)) assert.equal(visible().split(check).length - 1, 1);
   for (const section of sections) assert.equal(visible().includes(section), false);
   const events = new Map<string, () => void>();
   runInNewContext(feedbackScript, {
@@ -91,6 +94,7 @@ test("beforeprint reveals actual decision sections and afterprint restores discl
   assert.ok(before); assert.ok(after);
   before(); before(); // Some print pipelines notify more than once.
   for (const section of sections) assert.ok(visible().includes(section), `${section} must be available to printing`);
+  for (const check of checks) assert.equal(visible().split(check).length - 1, 1);
   after(); after();
   assert.deepEqual(details.map(detail => detail.open), original);
   for (const section of sections) assert.equal(visible().includes(section), false);

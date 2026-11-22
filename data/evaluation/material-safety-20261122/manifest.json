@@ -1,0 +1,247 @@
+{
+  "inputFile": "inputs.json",
+  "sourceHash": "11d08700509b6b35c045848859e729d67dfc0503fa0789ec8f201c4877a0106e",
+  "canonicalInputHash": "src/o-validation.ts revision",
+  "cases": [
+    {
+      "caseId": "MATSAFE-FE-01",
+      "inputSha256": "500c2b5c9b803ed7b6f48869b412b5cdafe28f535f4ce3ffa12e85b66d11865b"
+    },
+    {
+      "caseId": "MATSAFE-FE-02",
+      "inputSha256": "f785e54321a33a8a729b7e948235a13cdceecb28417eac429a01042c73249c93"
+    },
+    {
+      "caseId": "MATSAFE-FE-03",
+      "inputSha256": "62fc67cf240a7fab141bcc84ae66bf2139a2c9cb38754eb6f35a3a3296ac076d"
+    },
+    {
+      "caseId": "MATSAFE-FE-04",
+      "inputSha256": "2b20d40296f431b1ac196e91c87d17b7eedf1b5719fb722d9701dcb6bbcb3b82"
+    },
+    {
+      "caseId": "MATSAFE-FE-05",
+      "inputSha256": "5752f9a14302b9b1fefaea6bb5f9802949f407b64f32712a0ca09aad7d6ef041"
+    },
+    {
+      "caseId": "MATSAFE-FE-06",
+      "inputSha256": "566247728766703f9d4566f21f91b3fca23c47a47bd2db78f426ad70e6ab5117"
+    },
+    {
+      "caseId": "MATSAFE-FE-07",
+      "inputSha256": "d58d26356322c269089458e2e4cd4a7ac283f35fafc5159b0cbc5df32243f9d3"
+    },
+    {
+      "caseId": "MATSAFE-FE-08",
+      "inputSha256": "f5ffe62d3722c5d00645ed04fb90a065c52d40ff91f32c9ebc39af5ce3857aa6"
+    },
+    {
+      "caseId": "MATSAFE-FE-09",
+      "inputSha256": "2a10ce26175c4350f6dd7ffed181267a91f1334622e79a1c426a19356cdbc9de"
+    },
+    {
+      "caseId": "MATSAFE-FE-10",
+      "inputSha256": "97dd5b844fbdfcdf1e1a5f11f2a149be9c340d566960705c0a10bb49c3175d77"
+    },
+    {
+      "caseId": "MATSAFE-NF-01",
+      "inputSha256": "91a30c744cf14a005c949914e1cb8f1a1b17d1a1319101f70e06224ad2d791bd"
+    },
+    {
+      "caseId": "MATSAFE-NF-02",
+      "inputSha256": "08e23d8f685a8d3499027674355425bd1dffa0fd7613fa5b384d72476261688b"
+    },
+    {
+      "caseId": "MATSAFE-NF-03",
+      "inputSha256": "3061f7e7d62f62a3cb1c1a8647d31c874b16e4a9b8e526bc835aef5d2d219a07"
+    },
+    {
+      "caseId": "MATSAFE-NF-04",
+      "inputSha256": "9ec83eeb9f3fd0e71239b703a8e62b4e358b01bc3128648bfb0851ff46f01c22"
+    },
+    {
+      "caseId": "MATSAFE-NF-05",
+      "inputSha256": "5777e957341619872a8c3313242954d63725269ba46f49da2f168ea11af355f5"
+    },
+    {
+      "caseId": "MATSAFE-NF-06",
+      "inputSha256": "ffdae5c308514527c685fd2161056b93a8b012cc2b79f29cea8a12c0c540f519"
+    },
+    {
+      "caseId": "MATSAFE-NF-07",
+      "inputSha256": "c51d86852777624af24675816cfae00c70678fbffeae71c1113dc232296fca2a"
+    },
+    {
+      "caseId": "MATSAFE-NF-08",
+      "inputSha256": "1d174568de08ec12680c944573743d1ed6f262a8cac4cf99b586aa306ce039b1"
+    },
+    {
+      "caseId": "MATSAFE-NF-09",
+      "inputSha256": "727e3e96db48a074f09f5b08c481e38ad2b951a56f685e51a287179e6ae1dc02"
+    },
+    {
+      "caseId": "MATSAFE-NF-10",
+      "inputSha256": "17fa86203afd7949c02bfabe7fe4ef9097a1c212432f86bc93de251decb6379d"
+    },
+    {
+      "caseId": "MATSAFE-WD-01",
+      "inputSha256": "5518a17b3eaba45f647297ea333360c83bc2e550fc26c24fb947771b234c7940"
+    },
+    {
+      "caseId": "MATSAFE-WD-02",
+      "inputSha256": "a683733344d2d90ca3f78275cb6d9393bb9a19d8af68489d83635ae0a88acd0b"
+    },
+    {
+      "caseId": "MATSAFE-WD-03",
+      "inputSha256": "e6bb5435d05489cad5c381327861dcf1645eda330242f31622e366de2679900a"
+    },
+    {
+      "caseId": "MATSAFE-WD-04",
+      "inputSha256": "78abaaf00962c30d16132ac7615255e3fd25bd24feb007109f9671beaf9a84c5"
+    },
+    {
+      "caseId": "MATSAFE-WD-05",
+      "inputSha256": "4d74e0d39b98451408c604364388387b244bbdd0fcb039e0965df50aadf36aed"
+    },
+    {
+      "caseId": "MATSAFE-WD-06",
+      "inputSha256": "22cc41714798ad1d61ee395f45712af6db92f7eea948830dba9bd29cd3bc9a18"
+    },
+    {
+      "caseId": "MATSAFE-WD-07",
+      "inputSha256": "cb0075b8c220396589955eba436d8875ab3952fa6d27759528fc7b6aa774d278"
+    },
+    {
+      "caseId": "MATSAFE-WD-08",
+      "inputSha256": "d03dea974ff353369d9400740e001beba1f4da09619c788fc74038b8f214b2c7"
+    },
+    {
+      "caseId": "MATSAFE-WD-09",
+      "inputSha256": "835285cee96e8a6f41a680fd114d259b37b2ef9b86070ab03f952cd6b0718583"
+    },
+    {
+      "caseId": "MATSAFE-WD-10",
+      "inputSha256": "fd22b8aba9a90bcfc894883024a622da8a48e445f1fb52e5c0c3009249a75ebd"
+    },
+    {
+      "caseId": "MATSAFE-PA-01",
+      "inputSha256": "83e3860aa85c9dee55ef84e29c8a9086cd0b7ac7d9b1481c29f6c631202bcf37"
+    },
+    {
+      "caseId": "MATSAFE-PA-02",
+      "inputSha256": "f993ab1f8b9554641856c6cd924a058959150c647a86165eadd3601fb42f169d"
+    },
+    {
+      "caseId": "MATSAFE-PA-03",
+      "inputSha256": "ac8292e717f3aa15027e8a82fee93ef9465b938f58c162320a74fe9cf430afb3"
+    },
+    {
+      "caseId": "MATSAFE-PA-04",
+      "inputSha256": "b55183e969562e44297fb7328d3532917ef599e187e62ba1b44f23a37bc25e62"
+    },
+    {
+      "caseId": "MATSAFE-PA-05",
+      "inputSha256": "257a77fa1f8783697d55a5c53227d166f6635711e7b04a762ae5fc9bfd1c04b2"
+    },
+    {
+      "caseId": "MATSAFE-PA-06",
+      "inputSha256": "f28a79a58792355d58aa6f6279206b0807e53f1c0c40b8abdede131f1c44fbcc"
+    },
+    {
+      "caseId": "MATSAFE-PA-07",
+      "inputSha256": "3e1d2a96820ac65daaa0710292215429b071c87f5fcf3660cdf66b9fef146a32"
+    },
+    {
+      "caseId": "MATSAFE-PA-08",
+      "inputSha256": "e087a7d04f86f8cb31c160cf1c3689c919f8c5929e8a61c78fd2ab73d3bb376e"
+    },
+    {
+      "caseId": "MATSAFE-PA-09",
+      "inputSha256": "e6921acb2e9502fb3093e55a9187414a5b6a5f25549d233e46f59ad738656061"
+    },
+    {
+      "caseId": "MATSAFE-PA-10",
+      "inputSha256": "61bc440a18bd01fce4f9e5879cf3c0635f0a277953437d044670250b2b1cd875"
+    },
+    {
+      "caseId": "MATSAFE-CP-01",
+      "inputSha256": "01f0e2496f9951a41115a301d84c72b5116b9a5b4f3e5567ba225c3bafa2120f"
+    },
+    {
+      "caseId": "MATSAFE-CP-02",
+      "inputSha256": "3e21282e2fa6af2609fb649ef39bd38515c0bfb7ab20922efbbed357747b3a06"
+    },
+    {
+      "caseId": "MATSAFE-CP-03",
+      "inputSha256": "6d9600d4d91d43101a82f81962d7b26c1708c909cb2e717ad22c84093e998317"
+    },
+    {
+      "caseId": "MATSAFE-CP-04",
+      "inputSha256": "7f1039a98f58c2eb6c3f36ea0178df0f0825eff138ca9b845508f58d525b180a"
+    },
+    {
+      "caseId": "MATSAFE-CP-05",
+      "inputSha256": "e5a7df0e5428cff968334890d22050049152584ab824e19b6f383022af3e52de"
+    },
+    {
+      "caseId": "MATSAFE-CP-06",
+      "inputSha256": "47ef607f5b3d9cf581c421774b8b41cb06ccd8a165057423610ec52d312920ca"
+    },
+    {
+      "caseId": "MATSAFE-CP-07",
+      "inputSha256": "64b030715abbec07d0b42d4a99bcea6ea3fc756c9a1f4fd39be616847fa9bb4b"
+    },
+    {
+      "caseId": "MATSAFE-CP-08",
+      "inputSha256": "111f726b174166a9909d018ac04d51dc13b3f857add808ede2fb0db573318039"
+    },
+    {
+      "caseId": "MATSAFE-CP-09",
+      "inputSha256": "aa0111bff6f3a7dbff550d8ef6087b5af07f146ac4ea9f4d3b098c3e3bb82f85"
+    },
+    {
+      "caseId": "MATSAFE-CP-10",
+      "inputSha256": "f1c50d38629056396deaea4015f056dfae239903a603d17605e25feac7542194"
+    },
+    {
+      "caseId": "MATSAFE-EDGE-01",
+      "inputSha256": "82b0ce3eb979adcedbfae69ca626eaaeb41901380f1bb1225c7dd6ead1a53bcb"
+    },
+    {
+      "caseId": "MATSAFE-EDGE-02",
+      "inputSha256": "e31abf398fbae21bf38160e0a4df3b724451da234526f0f2b0049f3ab15f51b2"
+    },
+    {
+      "caseId": "MATSAFE-EDGE-03",
+      "inputSha256": "b6ccd6920d0147dc1a0f239e14896935866dc955d37d554fabd998fa6a8453aa"
+    },
+    {
+      "caseId": "MATSAFE-EDGE-04",
+      "inputSha256": "42cbddc23c5890efbd625a4f2b1f2c330af146044bf7eed31679168b78b63404"
+    },
+    {
+      "caseId": "MATSAFE-EDGE-05",
+      "inputSha256": "139fde0ab8697fcc6c0094b60db96728b6e9baf30728a1be7d66d41bb876445e"
+    },
+    {
+      "caseId": "MATSAFE-EDGE-06",
+      "inputSha256": "4c168ce9f01281c7701e5fcc099b60fbbd30e09b4b1521b05395a0e4b84fcf2d"
+    },
+    {
+      "caseId": "MATSAFE-EDGE-07",
+      "inputSha256": "4a8fd65938dd42828e3ba46ca15885165a5a3e2e383688b5ba14d1f362b6084a"
+    },
+    {
+      "caseId": "MATSAFE-EDGE-08",
+      "inputSha256": "b2860da0142796896a9d5fd514715fbac32a1242090c38cbd599ce3e52fd41a9"
+    },
+    {
+      "caseId": "MATSAFE-EDGE-09",
+      "inputSha256": "8cb15a3e50c4233a00c4380f4d72c2d5d63ece7e4a3ad832533bf568d25f1eaf"
+    },
+    {
+      "caseId": "MATSAFE-EDGE-10",
+      "inputSha256": "3551db70a02222e0256fa36bb45243b15382acb9662f12b23f453f27d0a4f398"
+    }
+  ]
+}

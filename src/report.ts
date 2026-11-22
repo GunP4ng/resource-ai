@@ -9,7 +9,7 @@ import { renderVerificationPlan } from "./report-verification-plan.ts";
 import { guidanceConclusion, guidanceScenarioConclusion, guidanceProgress, guidanceStability, guidanceOneFact, guidanceSensitivity, publicCaseProgress } from "./report-guidance.ts";
 import { buildScenarioSensitivity } from "./o-scenario-sensitivity.ts";
 import { escapeHtml, list, page } from "./report-html.ts";
-import { evidenceSection, readableReasons } from "./report-evidence.ts";
+import { evidenceSection, readableReason, readableReasons } from "./report-evidence.ts";
 import { massQuestion } from "./input.ts";
 import { isHostSafetyReason } from "./o-safety-reasons.ts";
 import { researchCalculations, researchDirectory, publicInputCalculations, publicRecyclingDirectory, publicScenarioNames } from "./report-research.ts";
@@ -151,7 +151,17 @@ export function renderReport(result: DecisionResult, presentation: ReportPresent
   const data = presentation.review
     ? `<p>${presentation.review.origin.kind === "synthetic" ? "합성 자료 · 현장 근거 아님" : "현장 자료로 선언된 검토 아티팩트 · 인간·법적 승인 아님"}</p>`
     : presentation.mode === "synthetic" ? "<p>합성 입력·계산 예시 · 현장 근거 아님</p>" : "<p>미검토 사용자 입력 · 입력에 결합된 검토 자료 없음 · 운영 자료 미제공</p>";
-  const checks = "preExecutionChecks" in result ? result.preExecutionChecks ?? [] : [];
+  const checks = "preExecutionChecks" in result ? (result.preExecutionChecks ?? []).map(readableReason) : [];
+  // Native and legacy detail callers supply editing content, including expired cases.
+  const commercialSummary = context.audience === "commercial" && !view.editing && !view.answerTarget && !view.inquiryTarget;
+  const unavailable = result.state === "compared"
+    ? (["cost", "carbon"] as const).map(metric => {
+      const label = metric === "cost" ? "비용" : "탄소";
+      const values = [...(result.recommendations ?? []).map(item => item[metric].value !== null),
+        ...result.scenarios.map(item => (metric === "cost" ? item.netCost : item.netEmissions).state === "available")];
+      const missing = values.filter(available => !available).length;
+      return `${label}: ${values.length === 0 ? "비교값 미확보" : missing ? `${values.length}개 비교값 중 ${missing}개 미산정` : "판정 상세의 계산값 확인"}`;
+    }) : ["비용·탄소: 비교 미수행 · 실행 보류"];
   const heldReasons = result.state === "needs-review" ? readableReasons(result.reasons.filter(reason => reason !== massQuestion))
     : result.state === "needs-information" ? readableReasons(result.questions.filter(question => question !== massQuestion)) : [];
   const supportingReasons = result.state === "needs-review" && result.reasons.some(isHostSafetyReason)
@@ -182,17 +192,24 @@ export function renderReport(result: DecisionResult, presentation: ReportPresent
   const hypotheticalSummary = guidance ? guidanceScenarioConclusion(guidance, names) : undefined;
   const directories = context.audience === "authenticated-research"
     ? research ? researchDirectory(research, view.inquiryTarget, view.caseRegion) : publicRecyclingDirectory(view.inquiryTarget, view.caseRegion) : "";
-  return page("조건부 보고서", `${conclusion(result, guidance ? guidanceConclusion(guidance, names) : undefined)}${view.notice ?? ""}
+  return page("조건부 보고서", `${commercialSummary ? '<section id="commercial-summary" aria-label="상업용 보고서 요약">' : ""}${conclusion(result, guidance ? guidanceConclusion(guidance, names) : undefined)}${view.notice ?? ""}
+    ${presentation.historical ? '<p class="notice">과거 평가: 현재 입력과 평가 당시 입력이 다릅니다. 명시적으로 다시 평가해 주세요.</p>' : ""}
     ${hypotheticalSummary ? `<p id="hypothetical-summary"><strong>가정 계산:</strong> ${escapeHtml(hypotheticalSummary)}</p>` : ""}
     <p id="next-action"><strong>다음 행동:</strong> ${escapeHtml(nextAction)}</p>
     <p class="screen-only"><a class="primary-action" href="${answerAction ?? "#checks"}">${answerAction ? result.state === "needs-information" ? "답변 입력하기" : "입력 다시 확인하기" : "실행 전 확인하기"}</a></p>
+    ${commercialSummary ? `${data}
+      ${heldReasons.length ? `<p><a href="#case-reasons">보류 사유와 필요한 확인 ${heldReasons.length}개</a> · 전체 사유는 다음 상세에 있습니다.</p>` : ""}
+      <div id="summary-evidence"><h2>근거 위치</h2>${result.evidence.length ? `<ul>${result.evidence.slice(0, 3).map((item, index) => `<li><a href="#evidence-${index + 1}">[${index + 1}] ${escapeHtml(item.title)} · ${escapeHtml(item.locator)}</a></li>`).join("")}</ul>` : "<p>연결된 근거 없음</p>"}</div>
+      <p><a href="#evidence">전체 ${result.evidence.length}개 출처와 원문 위치 확인하기</a></p>
+      <div id="summary-unavailable"><h2>미확보값과 계산 상태</h2>${list(unavailable)}<p><a href="#decision-detail">미산정 사유와 계산 조건 확인하기</a></p></div>
+      <p><a href="#checks">실행 전 확인 ${checks.length ? `${checks.length}개 전체` : "안내"} 보기</a> · 모든 확인과 별도 승인이 필요합니다.</p>
+      </section>` : ""}
     ${result.state === "compared" ? view.answerPrompt ?? "" : ""}
     ${heldReasons.length ? `<section id="case-reasons"><h2>보류 사유와 필요한 확인</h2><ul>${primaryReasons.map(reasonItem).join("")}</ul>
       ${supportingReasons.length ? `<div class="supporting-reasons" role="group" aria-label="추가 근거 확인"><p class="muted">추가 근거 확인</p><ul>${supportingReasons.map(reasonItem).join("")}</ul></div>` : ""}</section>` : ""}
     ${result.state !== "compared" ? view.answerPrompt ?? "" : ""}
     ${guidance ? renderVerificationPlan(presentation.verificationPlan, result) : ""}
-    ${presentation.historical ? '<p class="notice">과거 평가: 현재 입력과 평가 당시 입력이 다릅니다. 명시적으로 다시 평가해 주세요.</p>' : ""}
-    <details id="result-context"><summary>판단 이유·자료 범위 확인하기</summary><p>${mode}</p>${data}
+    <details id="result-context"><summary>판단 이유·자료 범위 확인하기</summary><p>${mode}</p>${commercialSummary ? "" : data}
     ${result.state === "compared" && result.confidence ? `<p><strong>확신도: ${result.confidence.level === "medium" ? "중간" : "낮음"}</strong></p>${list(readableReasons(result.confidence.reasons))}` : ""}
     <p><a class="primary-action secondary-action" href="#evidence">근거 확인하기</a> <a class="primary-action secondary-action" href="#checks">실행 전 확인하기</a></p>${view.actions ?? ""}</details>
     ${guidance ? `<details id="output-legend"><summary>범례: 추천 · 조건부 최적 · 가설 · 참고값 · 미확보</summary>
@@ -214,7 +231,9 @@ export function renderReport(result: DecisionResult, presentation: ReportPresent
     ${directories}
     ${evidenceSection(result)}
     ${view.inquiryTarget ? `<p class="screen-only"><a class="primary-action secondary-action" href="${escapeHtml(view.inquiryTarget)}">업체 문의서 1장 준비</a></p>` : ""}
-    <section id="checks"><h2>실행 전 확인사항</h2>${checks.length ? list(readableReasons(checks)) : "<p>질문에 답하고 실제 질량·물질·접촉 이력을 확인하세요. 반출·계약·처리는 현장 담당자의 별도 검토와 승인이 필요합니다.</p>"}</section>
+    <section id="checks"><h2>실행 전 확인사항</h2>${checks.length ? `<h3>지금 할 ${Math.min(3, checks.length)}개</h3>
+      <p>기존 확인 순서입니다. 나머지를 포함한 모든 항목을 실행 전에 확인하세요.</p>${list(checks.slice(0, 3))}
+      ${checks.length > 3 ? `<details id="remaining-checks"><summary>나머지 ${checks.length - 3}개 확인사항 펼치기</summary>${list(checks.slice(3))}</details>` : ""}` : "<p>질문에 답하고 실제 질량·물질·접촉 이력을 확인하세요. 반출·계약·처리는 현장 담당자의 별도 검토와 승인이 필요합니다.</p>"}</section>
     ${view.editing ?? ""}
     ${audit ? `<h2>비용·탄소 상세 감사</h2><details class="screen-only"><summary>계산 조건·비용 항목·탄소 활동과 계수 펼치기</summary>${audit}</details><div class="print-only">${audit}</div>` : ""}
     <details id="advanced"><summary>실행 기록·사례·자료 식별자 확인하기</summary><p>사례 ${escapeHtml(result.caseId)}</p>

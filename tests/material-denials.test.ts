@@ -143,12 +143,38 @@ test("unrecognized material contamination asks instead of relying on missing leg
   }
 });
 
-test("lead detection does not mistake ordinary Korean words for the substance 납", async () => {
+test("lead word boundaries preserve ordinary words while unresolved contamination asks", async () => {
   const copper = cases[0]?.input;
   assert.ok(copper);
-  for (const description of ["납품용 구리 자투리", "납작한 구리 조각", "수납용 부품의 구리 자투리",
-    "구리 절단편, 수납으로 오염된 표면", "구리 절단편, 납으로 오염된듯한 표면", "구리 절단편, 납으로\n오염된 표면"]) {
-    assert.equal((await createResourceDomain({ ...copper, description }).decide()).state, "compared", description);
+  for (const [description, state, reason] of [
+    ["납품용 구리 자투리", "compared", null],
+    ["납작한 구리 조각", "compared", null],
+    ["수납용 부품의 구리 자투리", "compared", null],
+    ["구리 절단편, 수납으로 오염된 표면", "needs-information", safetyReasons.contaminationUnknown],
+    ["구리 절단편, 납으로 오염된듯한 표면", "needs-review", safetyReasons.materialTreatment],
+    ["구리 절단편, 납으로\n오염된 표면", "needs-review", safetyReasons.materialTreatment],
+  ] as const) {
+    const result = await createResourceDomain({ ...copper, description }).decide();
+    assert.equal(result.state, state, description);
+    if (reason !== null) {
+      assert.ok(result.state !== "compared");
+      const reasons: readonly string[] = result.state === "needs-review" ? result.reasons : result.questions;
+      assert.ok(reasons.includes(reason), description);
+    }
+  }
+});
+
+test("residual history questions keep complete denials and untreated controls local to their field", async () => {
+  for (const { input } of cases) {
+    for (const field of ["description", "process"] as const) {
+      for (const denial of ["잔류물 없음", "오염 없음", "약제 없음", "표면처리 없음"]) {
+        assert.equal((await createResourceDomain({ ...input, [field]: `${input[field]}, ${denial}` }).decide()).state, "compared");
+        const result = await createResourceDomain({ ...input,
+          [field]: `${input[field]}, ${denial}, 성분 모를 잔류막` }).decide();
+        assert.equal(result.state, "needs-information");
+        assert.ok(result.questions.includes(safetyReasons.contaminationUnknown));
+      }
+    }
   }
 });
 

@@ -6,6 +6,8 @@ import { createHash } from "node:crypto";
 import manifest from "../data/evaluation/development.json" with { type: "json" };
 import baseline from "../data/evaluation/material-expansion-20261122/results.json" with { type: "json" };
 import round3 from "../data/evaluation/round3-20261121/results.json" with { type: "json" };
+import materialSafetyInputs from "../data/evaluation/material-safety-20261122/inputs.json" with { type: "json" };
+import materialSafetyManifest from "../data/evaluation/material-safety-20261122/manifest.json" with { type: "json" };
 import { parseCaseInput } from "../src/input.ts";
 import { createResourceDomain } from "../src/domain.ts";
 import { createVerificationCandidates, presentAssessmentDecision } from "../src/o-verification-plan-candidates.ts";
@@ -16,6 +18,7 @@ import { buildPublicInputScenario, publicScenarioEligibility } from "../src/o-in
 import { buildCaseGuidance } from "../src/o-case-guidance.ts";
 import { buildScenarioSensitivity } from "../src/o-scenario-sensitivity.ts";
 import { unsupportedScope } from "../src/o-supported-scope.ts";
+import { safetyReasons } from "../src/o-safety-reasons.ts";
 
 const root = fileURLToPath(new URL("..", import.meta.url));
 const args = process.argv.slice(2);
@@ -110,6 +113,39 @@ const rows = await Promise.all(manifest.cases.map(async item => {
 }));
 assert.equal(rows.length, 18);
 assert.equal(revision(catalog), catalogBefore);
+const safetyInputPath = "data/evaluation/material-safety-20261122/inputs.json";
+const safetyInputHash = createHash("sha256").update(await readFile(resolve(root, safetyInputPath))).digest("hex");
+assert.equal(safetyInputHash, materialSafetyManifest.sourceHash, "material safety input bytes");
+assert.deepEqual(materialSafetyInputs.cases.map(row => ({
+  caseId: row.input.caseId, inputSha256: revision(row.input),
+})), materialSafetyManifest.cases, "material safety input identities");
+assert.equal(new Set(materialSafetyManifest.cases.map(row => row.caseId)).size, materialSafetyManifest.cases.length);
+const materialSafetyRows = await Promise.all(materialSafetyInputs.cases.map(async item => {
+  const parsed = parseCaseInput(item.input);
+  assert.ok(parsed.ok, item.input.caseId + ": material safety input");
+  const inputHash = revision(parsed.value);
+  const decision = await createResourceDomain(parsed.value).decide();
+  const expectedReason = item.expected.reasonKey === null ? null
+    : Object.entries(safetyReasons).find(([key]) => key === item.expected.reasonKey)?.[1];
+  assert.ok(expectedReason !== undefined, item.input.caseId + ": declared reason");
+  const reasons = decision.state === "needs-review" ? decision.reasons
+    : decision.state === "needs-information" ? decision.questions : [];
+  assert.equal(revision(parsed.value), inputHash, item.input.caseId + ": input preserved");
+  return {
+    caseId: item.input.caseId, family: item.family, condition: item.condition,
+    inputSha256: inputHash, expectedState: item.expected.state, state: decision.state,
+    expectedReason, reasons, decisionSha256: revision(decision),
+    passed: decision.state === item.expected.state && (expectedReason === null || reasons.includes(expectedReason)),
+  };
+}));
+const materialSafety = {
+  scope: materialSafetyInputs.kind, limitations: materialSafetyInputs.limitations,
+  inputPath: safetyInputPath, sourceHash: safetyInputHash, cases: materialSafetyRows.length,
+  passed: materialSafetyRows.filter(row => row.passed).length,
+  failed: materialSafetyRows.filter(row => !row.passed).length,
+  states: Object.fromEntries(["compared", "needs-information", "needs-review"].map(state =>
+    [state, materialSafetyRows.filter(row => row.state === state).length])),
+};
 const implementation = await Promise.all([
   "src/o-case-guidance.ts", "src/o-scenario-guidance.ts", "src/o-supported-scope.ts", "src/o-input-public-scenario.ts",
   "src/o-calculation-variant.ts", "src/o-scenario-sensitivity.ts", "src/o-inquiry-reply.ts", "src/report-inquiry-reply.ts",
@@ -119,7 +155,7 @@ const implementation = await Promise.all([
   "src/app-types.ts", "src/o-case-record-validation.ts",
   "src/o-verification-plan.ts", "src/o-verification-plan-schema.ts", "src/o-verification-plan-candidates.ts",
   "src/extension.ts", "src/report-verification-plan.ts", "src/report-evidence.ts",
-  "src/o-safety-reasons.ts", "src/input.ts", "src/assessment.ts", "src/recommendation.ts",
+  "src/o-safety-reasons.ts", "src/material-context.ts", "src/input.ts", "src/assessment.ts", "src/recommendation.ts",
   "src/report-research.ts", "src/report-styles.ts",
   "scripts/measure-guidance.ts",
   "data/reference/domestic-scenario-context-20261121.json",
@@ -131,6 +167,7 @@ const summary = {
   states: Object.fromEntries(["compared", "needs-information", "needs-review"].map(state =>
     [state, rows.filter(row => row.state === state).length])),
   stateChanges: 0,
+  materialSafety,
   automaticPublicScenarios: rows.filter(row => row.automaticPublicScenario).length,
   conditionalOptima: rows.filter(row => row.conditionalOptimum).length,
   actualSeconds: rows.filter(row => row.actualSecondAvailable).length,
@@ -172,4 +209,6 @@ const summary = {
 await writeFile(resolve(output, "results.json"), JSON.stringify(rows, null, 2) + "\n");
 await writeFile(resolve(output, "summary.json"), JSON.stringify(summary, null, 2) + "\n");
 await writeFile(resolve(output, "compact.json"), JSON.stringify(rows.map(({ guidance: _g, sensitivity: _s, verificationCandidates: _v, ...row }) => row), null, 2) + "\n");
+await writeFile(resolve(output, "material-safety.json"), JSON.stringify(materialSafetyRows, null, 2) + "\n");
 console.log(JSON.stringify(summary));
+assert.equal(materialSafety.failed, 0, "material safety expectations; see material-safety.json");

@@ -1,0 +1,1207 @@
+{
+  "kind": "exposed-synthetic-development",
+  "baseCommit": "f06281ee28e6a4675633c1685c3ed468af437286",
+  "limitations": "Fixed synthetic cases with predeclared safety expectations; not an unseen dataset, legal classification or field accuracy measurement.",
+  "cases": [
+    {
+      "family": "ferrous",
+      "condition": "clean",
+      "expected": {
+        "state": "compared",
+        "reasonKey": null
+      },
+      "input": {
+        "caseId": "MATSAFE-FE-01",
+        "description": "분리 수거된 철 스크랩",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 금속 절단",
+        "polymer": "고철",
+        "contamination": "없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "ferrous",
+      "condition": "hazard-positive",
+      "expected": {
+        "state": "needs-review",
+        "reasonKey": "materialTreatment"
+      },
+      "input": {
+        "caseId": "MATSAFE-FE-02",
+        "description": "분리 수거된 철 스크랩, 도금된 철 조각 혼입",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 금속 절단",
+        "polymer": "고철",
+        "contamination": "없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "ferrous",
+      "condition": "explicit-denial",
+      "expected": {
+        "state": "compared",
+        "reasonKey": null
+      },
+      "input": {
+        "caseId": "MATSAFE-FE-03",
+        "description": "분리 수거된 철 스크랩",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 금속 절단",
+        "polymer": "고철",
+        "contamination": "도금 없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "ferrous",
+      "condition": "mixed-positive-first",
+      "expected": {
+        "state": "needs-review",
+        "reasonKey": "materialTreatment"
+      },
+      "input": {
+        "caseId": "MATSAFE-FE-04",
+        "description": "분리 수거된 철 스크랩, 도금된 철 조각 혼입, 도금 없음",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 금속 절단",
+        "polymer": "고철",
+        "contamination": "도금 없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "ferrous",
+      "condition": "mixed-denial-first",
+      "expected": {
+        "state": "needs-review",
+        "reasonKey": "materialTreatment"
+      },
+      "input": {
+        "caseId": "MATSAFE-FE-05",
+        "description": "분리 수거된 철 스크랩, 도금 없음, 도금된 철 조각 혼입",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 금속 절단",
+        "polymer": "고철",
+        "contamination": "도금 없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "ferrous",
+      "condition": "unknown-contamination",
+      "expected": {
+        "state": "needs-information",
+        "reasonKey": "contaminationUnknown"
+      },
+      "input": {
+        "caseId": "MATSAFE-FE-06",
+        "description": "분리 수거된 철 스크랩",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 금속 절단",
+        "polymer": "고철",
+        "contamination": "푸른 잔류막",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "ferrous",
+      "condition": "unknown-description",
+      "expected": {
+        "state": "needs-information",
+        "reasonKey": "contaminationUnknown"
+      },
+      "input": {
+        "caseId": "MATSAFE-FE-07",
+        "description": "분리 수거된 철 스크랩, 푸른 잔류막",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 금속 절단",
+        "polymer": "고철",
+        "contamination": "도금 없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "ferrous",
+      "condition": "unknown-process",
+      "expected": {
+        "state": "needs-information",
+        "reasonKey": "contaminationUnknown"
+      },
+      "input": {
+        "caseId": "MATSAFE-FE-08",
+        "description": "분리 수거된 철 스크랩",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 금속 절단, 푸른 잔류막",
+        "polymer": "고철",
+        "contamination": "도금 없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "ferrous",
+      "condition": "unknown-treatment-description",
+      "expected": {
+        "state": "needs-information",
+        "reasonKey": "contaminationUnknown"
+      },
+      "input": {
+        "caseId": "MATSAFE-FE-09",
+        "description": "분리 수거된 철 스크랩, 성분을 모르는 보호액으로 처리한 표면",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 금속 절단",
+        "polymer": "고철",
+        "contamination": "도금 없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "ferrous",
+      "condition": "unknown-treatment-process",
+      "expected": {
+        "state": "needs-information",
+        "reasonKey": "contaminationUnknown"
+      },
+      "input": {
+        "caseId": "MATSAFE-FE-10",
+        "description": "분리 수거된 철 스크랩",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 금속 절단, 표면 약제 처리 이력 미상",
+        "polymer": "고철",
+        "contamination": "도금 없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "nonferrous",
+      "condition": "clean",
+      "expected": {
+        "state": "compared",
+        "reasonKey": null
+      },
+      "input": {
+        "caseId": "MATSAFE-NF-01",
+        "description": "동관 절단 공정의 구리 오프컷",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 동관 절단 가공 공정",
+        "polymer": "구리",
+        "contamination": "없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "nonferrous",
+      "condition": "hazard-positive",
+      "expected": {
+        "state": "needs-review",
+        "reasonKey": "materialTreatment"
+      },
+      "input": {
+        "caseId": "MATSAFE-NF-02",
+        "description": "동관 절단 공정의 구리 오프컷, 표면이 납으로 오염된 구리 절단편",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 동관 절단 가공 공정",
+        "polymer": "구리",
+        "contamination": "없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "nonferrous",
+      "condition": "explicit-denial",
+      "expected": {
+        "state": "compared",
+        "reasonKey": null
+      },
+      "input": {
+        "caseId": "MATSAFE-NF-03",
+        "description": "동관 절단 공정의 구리 오프컷",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 동관 절단 가공 공정",
+        "polymer": "구리",
+        "contamination": "납 없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "nonferrous",
+      "condition": "mixed-positive-first",
+      "expected": {
+        "state": "needs-review",
+        "reasonKey": "materialTreatment"
+      },
+      "input": {
+        "caseId": "MATSAFE-NF-04",
+        "description": "동관 절단 공정의 구리 오프컷, 표면이 납으로 오염된 구리 절단편, 납 없음",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 동관 절단 가공 공정",
+        "polymer": "구리",
+        "contamination": "납 없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "nonferrous",
+      "condition": "mixed-denial-first",
+      "expected": {
+        "state": "needs-review",
+        "reasonKey": "materialTreatment"
+      },
+      "input": {
+        "caseId": "MATSAFE-NF-05",
+        "description": "동관 절단 공정의 구리 오프컷, 납 없음, 표면이 납으로 오염된 구리 절단편",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 동관 절단 가공 공정",
+        "polymer": "구리",
+        "contamination": "납 없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "nonferrous",
+      "condition": "unknown-contamination",
+      "expected": {
+        "state": "needs-information",
+        "reasonKey": "contaminationUnknown"
+      },
+      "input": {
+        "caseId": "MATSAFE-NF-06",
+        "description": "동관 절단 공정의 구리 오프컷",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 동관 절단 가공 공정",
+        "polymer": "구리",
+        "contamination": "푸른 잔류막",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "nonferrous",
+      "condition": "unknown-description",
+      "expected": {
+        "state": "needs-information",
+        "reasonKey": "contaminationUnknown"
+      },
+      "input": {
+        "caseId": "MATSAFE-NF-07",
+        "description": "동관 절단 공정의 구리 오프컷, 푸른 잔류막",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 동관 절단 가공 공정",
+        "polymer": "구리",
+        "contamination": "납 없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "nonferrous",
+      "condition": "unknown-process",
+      "expected": {
+        "state": "needs-information",
+        "reasonKey": "contaminationUnknown"
+      },
+      "input": {
+        "caseId": "MATSAFE-NF-08",
+        "description": "동관 절단 공정의 구리 오프컷",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 동관 절단 가공 공정, 푸른 잔류막",
+        "polymer": "구리",
+        "contamination": "납 없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "nonferrous",
+      "condition": "unknown-treatment-description",
+      "expected": {
+        "state": "needs-information",
+        "reasonKey": "contaminationUnknown"
+      },
+      "input": {
+        "caseId": "MATSAFE-NF-09",
+        "description": "동관 절단 공정의 구리 오프컷, 성분을 모르는 보호액으로 처리한 표면",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 동관 절단 가공 공정",
+        "polymer": "구리",
+        "contamination": "납 없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "nonferrous",
+      "condition": "unknown-treatment-process",
+      "expected": {
+        "state": "needs-information",
+        "reasonKey": "contaminationUnknown"
+      },
+      "input": {
+        "caseId": "MATSAFE-NF-10",
+        "description": "동관 절단 공정의 구리 오프컷",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 동관 절단 가공 공정, 표면 약제 처리 이력 미상",
+        "polymer": "구리",
+        "contamination": "납 없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "wood",
+      "condition": "clean",
+      "expected": {
+        "state": "compared",
+        "reasonKey": null
+      },
+      "input": {
+        "caseId": "MATSAFE-WD-01",
+        "description": "무처리 원목 자투리와 대패밥",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 원목 제재 가공 부산물",
+        "polymer": "무처리 원목",
+        "contamination": "없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "wood",
+      "condition": "hazard-positive",
+      "expected": {
+        "state": "needs-review",
+        "reasonKey": "materialTreatment"
+      },
+      "input": {
+        "caseId": "MATSAFE-WD-02",
+        "description": "무처리 원목 자투리와 대패밥, 방부목 조각 혼입",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 원목 제재 가공 부산물",
+        "polymer": "무처리 원목",
+        "contamination": "없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "wood",
+      "condition": "explicit-denial",
+      "expected": {
+        "state": "compared",
+        "reasonKey": null
+      },
+      "input": {
+        "caseId": "MATSAFE-WD-03",
+        "description": "무처리 원목 자투리와 대패밥",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 원목 제재 가공 부산물",
+        "polymer": "무처리 원목",
+        "contamination": "방부 처리 없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "wood",
+      "condition": "mixed-positive-first",
+      "expected": {
+        "state": "needs-review",
+        "reasonKey": "materialTreatment"
+      },
+      "input": {
+        "caseId": "MATSAFE-WD-04",
+        "description": "무처리 원목 자투리와 대패밥, 방부목 조각 혼입, 방부 처리 없음",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 원목 제재 가공 부산물",
+        "polymer": "무처리 원목",
+        "contamination": "방부 처리 없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "wood",
+      "condition": "mixed-denial-first",
+      "expected": {
+        "state": "needs-review",
+        "reasonKey": "materialTreatment"
+      },
+      "input": {
+        "caseId": "MATSAFE-WD-05",
+        "description": "무처리 원목 자투리와 대패밥, 방부 처리 없음, 방부목 조각 혼입",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 원목 제재 가공 부산물",
+        "polymer": "무처리 원목",
+        "contamination": "방부 처리 없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "wood",
+      "condition": "unknown-contamination",
+      "expected": {
+        "state": "needs-information",
+        "reasonKey": "contaminationUnknown"
+      },
+      "input": {
+        "caseId": "MATSAFE-WD-06",
+        "description": "무처리 원목 자투리와 대패밥",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 원목 제재 가공 부산물",
+        "polymer": "무처리 원목",
+        "contamination": "푸른 잔류막",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "wood",
+      "condition": "unknown-description",
+      "expected": {
+        "state": "needs-information",
+        "reasonKey": "contaminationUnknown"
+      },
+      "input": {
+        "caseId": "MATSAFE-WD-07",
+        "description": "무처리 원목 자투리와 대패밥, 푸른 잔류막",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 원목 제재 가공 부산물",
+        "polymer": "무처리 원목",
+        "contamination": "방부 처리 없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "wood",
+      "condition": "unknown-process",
+      "expected": {
+        "state": "needs-information",
+        "reasonKey": "contaminationUnknown"
+      },
+      "input": {
+        "caseId": "MATSAFE-WD-08",
+        "description": "무처리 원목 자투리와 대패밥",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 원목 제재 가공 부산물, 푸른 잔류막",
+        "polymer": "무처리 원목",
+        "contamination": "방부 처리 없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "wood",
+      "condition": "unknown-treatment-description",
+      "expected": {
+        "state": "needs-information",
+        "reasonKey": "contaminationUnknown"
+      },
+      "input": {
+        "caseId": "MATSAFE-WD-09",
+        "description": "무처리 원목 자투리와 대패밥, 성분을 모르는 보호액으로 처리한 표면",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 원목 제재 가공 부산물",
+        "polymer": "무처리 원목",
+        "contamination": "방부 처리 없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "wood",
+      "condition": "unknown-treatment-process",
+      "expected": {
+        "state": "needs-information",
+        "reasonKey": "contaminationUnknown"
+      },
+      "input": {
+        "caseId": "MATSAFE-WD-10",
+        "description": "무처리 원목 자투리와 대패밥",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 원목 제재 가공 부산물, 표면 약제 처리 이력 미상",
+        "polymer": "무처리 원목",
+        "contamination": "방부 처리 없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "paper",
+      "condition": "clean",
+      "expected": {
+        "state": "compared",
+        "reasonKey": null
+      },
+      "input": {
+        "caseId": "MATSAFE-PA-01",
+        "description": "제품 포장 후 분리한 무코팅 골판지 상자",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 제품 포장 및 박스 조립",
+        "polymer": "무코팅 골판지",
+        "contamination": "없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "paper",
+      "condition": "hazard-positive",
+      "expected": {
+        "state": "needs-review",
+        "reasonKey": "materialTreatment"
+      },
+      "input": {
+        "caseId": "MATSAFE-PA-02",
+        "description": "제품 포장 후 분리한 무코팅 골판지 상자, PCB 함유 잔류막",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 제품 포장 및 박스 조립",
+        "polymer": "무코팅 골판지",
+        "contamination": "없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "paper",
+      "condition": "explicit-denial",
+      "expected": {
+        "state": "compared",
+        "reasonKey": null
+      },
+      "input": {
+        "caseId": "MATSAFE-PA-03",
+        "description": "제품 포장 후 분리한 무코팅 골판지 상자",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 제품 포장 및 박스 조립",
+        "polymer": "무코팅 골판지",
+        "contamination": "PCB 없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "paper",
+      "condition": "mixed-positive-first",
+      "expected": {
+        "state": "needs-review",
+        "reasonKey": "materialTreatment"
+      },
+      "input": {
+        "caseId": "MATSAFE-PA-04",
+        "description": "제품 포장 후 분리한 무코팅 골판지 상자, PCB 함유 잔류막, PCB 없음",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 제품 포장 및 박스 조립",
+        "polymer": "무코팅 골판지",
+        "contamination": "PCB 없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "paper",
+      "condition": "mixed-denial-first",
+      "expected": {
+        "state": "needs-review",
+        "reasonKey": "materialTreatment"
+      },
+      "input": {
+        "caseId": "MATSAFE-PA-05",
+        "description": "제품 포장 후 분리한 무코팅 골판지 상자, PCB 없음, PCB 함유 잔류막",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 제품 포장 및 박스 조립",
+        "polymer": "무코팅 골판지",
+        "contamination": "PCB 없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "paper",
+      "condition": "unknown-contamination",
+      "expected": {
+        "state": "needs-information",
+        "reasonKey": "contaminationUnknown"
+      },
+      "input": {
+        "caseId": "MATSAFE-PA-06",
+        "description": "제품 포장 후 분리한 무코팅 골판지 상자",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 제품 포장 및 박스 조립",
+        "polymer": "무코팅 골판지",
+        "contamination": "푸른 잔류막",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "paper",
+      "condition": "unknown-description",
+      "expected": {
+        "state": "needs-information",
+        "reasonKey": "contaminationUnknown"
+      },
+      "input": {
+        "caseId": "MATSAFE-PA-07",
+        "description": "제품 포장 후 분리한 무코팅 골판지 상자, 푸른 잔류막",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 제품 포장 및 박스 조립",
+        "polymer": "무코팅 골판지",
+        "contamination": "PCB 없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "paper",
+      "condition": "unknown-process",
+      "expected": {
+        "state": "needs-information",
+        "reasonKey": "contaminationUnknown"
+      },
+      "input": {
+        "caseId": "MATSAFE-PA-08",
+        "description": "제품 포장 후 분리한 무코팅 골판지 상자",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 제품 포장 및 박스 조립, 푸른 잔류막",
+        "polymer": "무코팅 골판지",
+        "contamination": "PCB 없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "paper",
+      "condition": "unknown-treatment-description",
+      "expected": {
+        "state": "needs-information",
+        "reasonKey": "contaminationUnknown"
+      },
+      "input": {
+        "caseId": "MATSAFE-PA-09",
+        "description": "제품 포장 후 분리한 무코팅 골판지 상자, 성분을 모르는 보호액으로 처리한 표면",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 제품 포장 및 박스 조립",
+        "polymer": "무코팅 골판지",
+        "contamination": "PCB 없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "paper",
+      "condition": "unknown-treatment-process",
+      "expected": {
+        "state": "needs-information",
+        "reasonKey": "contaminationUnknown"
+      },
+      "input": {
+        "caseId": "MATSAFE-PA-10",
+        "description": "제품 포장 후 분리한 무코팅 골판지 상자",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 제품 포장 및 박스 조립, 표면 약제 처리 이력 미상",
+        "polymer": "무코팅 골판지",
+        "contamination": "PCB 없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "composite-packaging",
+      "condition": "clean",
+      "expected": {
+        "state": "compared",
+        "reasonKey": null
+      },
+      "input": {
+        "caseId": "MATSAFE-CP-01",
+        "description": "식품 음료용 PE 적층 종이팩",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 음료 포장재 사용",
+        "polymer": "복합 종이팩",
+        "contamination": "없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "composite-packaging",
+      "condition": "hazard-positive",
+      "expected": {
+        "state": "needs-review",
+        "reasonKey": "materialTreatment"
+      },
+      "input": {
+        "caseId": "MATSAFE-CP-02",
+        "description": "식품 음료용 PE 적층 종이팩, 냉각수 잔류",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 음료 포장재 사용",
+        "polymer": "복합 종이팩",
+        "contamination": "없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "composite-packaging",
+      "condition": "explicit-denial",
+      "expected": {
+        "state": "compared",
+        "reasonKey": null
+      },
+      "input": {
+        "caseId": "MATSAFE-CP-03",
+        "description": "식품 음료용 PE 적층 종이팩",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 음료 포장재 사용",
+        "polymer": "복합 종이팩",
+        "contamination": "냉각수 없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "composite-packaging",
+      "condition": "mixed-positive-first",
+      "expected": {
+        "state": "needs-review",
+        "reasonKey": "materialTreatment"
+      },
+      "input": {
+        "caseId": "MATSAFE-CP-04",
+        "description": "식품 음료용 PE 적층 종이팩, 냉각수 잔류, 냉각수 없음",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 음료 포장재 사용",
+        "polymer": "복합 종이팩",
+        "contamination": "냉각수 없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "composite-packaging",
+      "condition": "mixed-denial-first",
+      "expected": {
+        "state": "needs-review",
+        "reasonKey": "materialTreatment"
+      },
+      "input": {
+        "caseId": "MATSAFE-CP-05",
+        "description": "식품 음료용 PE 적층 종이팩, 냉각수 없음, 냉각수 잔류",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 음료 포장재 사용",
+        "polymer": "복합 종이팩",
+        "contamination": "냉각수 없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "composite-packaging",
+      "condition": "unknown-contamination",
+      "expected": {
+        "state": "needs-information",
+        "reasonKey": "contaminationUnknown"
+      },
+      "input": {
+        "caseId": "MATSAFE-CP-06",
+        "description": "식품 음료용 PE 적층 종이팩",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 음료 포장재 사용",
+        "polymer": "복합 종이팩",
+        "contamination": "푸른 잔류막",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "composite-packaging",
+      "condition": "unknown-description",
+      "expected": {
+        "state": "needs-information",
+        "reasonKey": "contaminationUnknown"
+      },
+      "input": {
+        "caseId": "MATSAFE-CP-07",
+        "description": "식품 음료용 PE 적층 종이팩, 푸른 잔류막",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 음료 포장재 사용",
+        "polymer": "복합 종이팩",
+        "contamination": "냉각수 없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "composite-packaging",
+      "condition": "unknown-process",
+      "expected": {
+        "state": "needs-information",
+        "reasonKey": "contaminationUnknown"
+      },
+      "input": {
+        "caseId": "MATSAFE-CP-08",
+        "description": "식품 음료용 PE 적층 종이팩",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 음료 포장재 사용, 푸른 잔류막",
+        "polymer": "복합 종이팩",
+        "contamination": "냉각수 없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "composite-packaging",
+      "condition": "unknown-treatment-description",
+      "expected": {
+        "state": "needs-information",
+        "reasonKey": "contaminationUnknown"
+      },
+      "input": {
+        "caseId": "MATSAFE-CP-09",
+        "description": "식품 음료용 PE 적층 종이팩, 성분을 모르는 보호액으로 처리한 표면",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 음료 포장재 사용",
+        "polymer": "복합 종이팩",
+        "contamination": "냉각수 없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "composite-packaging",
+      "condition": "unknown-treatment-process",
+      "expected": {
+        "state": "needs-information",
+        "reasonKey": "contaminationUnknown"
+      },
+      "input": {
+        "caseId": "MATSAFE-CP-10",
+        "description": "식품 음료용 PE 적층 종이팩",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 음료 포장재 사용, 표면 약제 처리 이력 미상",
+        "polymer": "복합 종이팩",
+        "contamination": "냉각수 없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "nonferrous",
+      "condition": "lead-particle-treatment",
+      "expected": {
+        "state": "needs-review",
+        "reasonKey": "materialTreatment"
+      },
+      "input": {
+        "caseId": "MATSAFE-EDGE-01",
+        "description": "납으로 표면처리한 구리 절단편",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 동관 절단 가공 공정",
+        "polymer": "구리",
+        "contamination": "없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "nonferrous",
+      "condition": "lead-particle-residue",
+      "expected": {
+        "state": "needs-review",
+        "reasonKey": "materialTreatment"
+      },
+      "input": {
+        "caseId": "MATSAFE-EDGE-02",
+        "description": "동관 절단 공정의 구리 오프컷",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 동관 절단, 표면에 납으로 얼룩이 남음",
+        "polymer": "구리",
+        "contamination": "없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "nonferrous",
+      "condition": "solder",
+      "expected": {
+        "state": "needs-review",
+        "reasonKey": "materialTreatment"
+      },
+      "input": {
+        "caseId": "MATSAFE-EDGE-03",
+        "description": "동관 절단 공정의 구리 오프컷, 땜납 다량 부착",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 동관 절단 가공 공정",
+        "polymer": "구리",
+        "contamination": "없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "nonferrous",
+      "condition": "unplated-control",
+      "expected": {
+        "state": "compared",
+        "reasonKey": null
+      },
+      "input": {
+        "caseId": "MATSAFE-EDGE-04",
+        "description": "무도금 구리판 절단편",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 동관 절단 가공 공정",
+        "polymer": "구리",
+        "contamination": "없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "wood",
+      "condition": "treated-wood-denial",
+      "expected": {
+        "state": "compared",
+        "reasonKey": null
+      },
+      "input": {
+        "caseId": "MATSAFE-EDGE-05",
+        "description": "무처리 원목 자투리와 대패밥",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 원목 제재 가공 부산물",
+        "polymer": "무처리 원목",
+        "contamination": "방부목 없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "paper",
+      "condition": "pcb-fullwidth",
+      "expected": {
+        "state": "needs-review",
+        "reasonKey": "materialTreatment"
+      },
+      "input": {
+        "caseId": "MATSAFE-EDGE-06",
+        "description": "제품 포장 후 분리한 무코팅 골판지 상자",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 제품 포장, ＰＣＢ 함유 잔류물",
+        "polymer": "무코팅 골판지",
+        "contamination": "없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "ferrous",
+      "condition": "unknown-treatment-denial",
+      "expected": {
+        "state": "needs-information",
+        "reasonKey": "contaminationUnknown"
+      },
+      "input": {
+        "caseId": "MATSAFE-EDGE-07",
+        "description": "철 스크랩, 약제 처리 없음 추정",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 금속 절단",
+        "polymer": "고철",
+        "contamination": "없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "composite-packaging",
+      "condition": "unknown-composition",
+      "expected": {
+        "state": "needs-information",
+        "reasonKey": null
+      },
+      "input": {
+        "caseId": "MATSAFE-EDGE-08",
+        "description": "층별 구성 미상 포장재",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 음료 포장재 사용",
+        "polymer": "복합 포장재",
+        "contamination": "없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "nonferrous",
+      "condition": "clean-word-control",
+      "expected": {
+        "state": "compared",
+        "reasonKey": null
+      },
+      "input": {
+        "caseId": "MATSAFE-EDGE-09",
+        "description": "납품용 납작한 구리 자투리",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 동관 절단 가공 공정",
+        "polymer": "구리",
+        "contamination": "없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    },
+    {
+      "family": "wood",
+      "condition": "untreated-control",
+      "expected": {
+        "state": "compared",
+        "reasonKey": null
+      },
+      "input": {
+        "caseId": "MATSAFE-EDGE-10",
+        "description": "미처리 원목 절단 부산물",
+        "photoRefs": [],
+        "process": "사업장일반폐기물 원목 제재 가공 부산물",
+        "polymer": "무처리 원목",
+        "contamination": "없음",
+        "hazardousContact": "no",
+        "massKg": 100,
+        "region": "경기",
+        "assessmentDate": "2026-11-22"
+      }
+    }
+  ]
+}
