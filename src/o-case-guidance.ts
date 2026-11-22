@@ -254,10 +254,10 @@ function caseGuidanceContent(input: CaseInput, decision: DecisionResult, options
       status: !isUnknownCaseText(input.polymer) ? identificationGaps.length ? "partial" : "available" : "missing",
       outputs: [
         !isUnknownCaseText(input.polymer) ? `신고 재질: ${input.polymer}` : "신고 재질 미확보",
-        `발생 공정: ${isUnknownCaseText(input.process) ? "미확보" : input.process}`, `오염 상태: ${input.contamination ?? "미확보"}`,
+        `발생 공정: ${isUnknownCaseText(input.process) ? "미확보" : input.process}`, `오염 상태: ${input.contamination?.trim() ? input.contamination : "미확보"}`,
         `유해 접촉 신고: ${input.hazardousContact}`,
         `질량: ${input.massKg === null ? "미입력(정성 검토에는 선택)" : `${input.massKg} kg`}`,
-        `발생 지역: ${input.region ?? "미확보"}`, `평가 기준일: ${input.assessmentDate}`,
+        `발생 지역: ${input.region?.trim() ? input.region : "미확보"}`, `평가 기준일: ${input.assessmentDate}`,
       ],
       reasons: [...identificationGaps, "신고된 입력과 분류 검토 출력만 표시합니다. 사진·서술로 새로운 재질이나 폐기물 종류를 제안하지 않습니다."] },
     { stage: 2, name: "재사용·재활용 가능성 판단",
