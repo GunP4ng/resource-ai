@@ -222,6 +222,15 @@ export async function caseRoute(services: RouteServices, context: RouteRequest):
         privateGuard();
         return response(page("입력 확인", `<h1>입력을 확인해 주세요</h1><p role="alert">${error.issues.map(issue => escapeHtml(issue.message)).join(" ")} 작성한 내용은 그대로 남겨 두었고 저장된 사례도 그대로입니다.</p>${form(url.pathname, !!snapshot, snapshot?.version, selection, snapshot?.input, draft)}`), 400);
       }
+      if (error instanceof AssessmentInputError && error.issues.length === 1 && error.issues[0]?.field === "assessmentDate"
+        && url.pathname === "/cases" && format === "form" && typeof raw === "object" && raw !== null && !Array.isArray(raw)
+        // The creation form has no photo control and cannot restore submitted references.
+        && !("photoRefs" in raw && typeof raw.photoRefs === "string" && raw.photoRefs.trim() !== "")) {
+        privateGuard();
+        return response(inputPage({
+          authenticated: !!actor, localAuth: !!dependencies.localAuth, connected: dependencies.reviewConfigured ?? !!dependencies.adapter, photoEnabled: services.photoEnabled,
+        }, { field: "assessmentDate", draft: Object.fromEntries(Object.entries(raw)) }), 400);
+      }
       throw error;
     }
     const outside = unsupportedScope(input);

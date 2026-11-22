@@ -124,16 +124,22 @@ export function caseListPage(rows: readonly CaseListRow[], localAuth: boolean, o
     <section class="case-list" aria-label="사례 목록">${visibleRows.length ? table : `<p class="case-empty">${rows.length ? "이 상태의 사례가 없습니다." : "저장된 사례가 없어요."}</p>`}</section>
     ${localAuth ? '<form method="post" action="/logout"><button class="secondary-action" type="submit">로그아웃</button></form>' : ""}`, "workspace");
 }
-export function inputPage(options: InputView, correction?: { readonly material: string; readonly draft: Readonly<Record<string, unknown>> }): string {
+type InputCorrection = { readonly draft: Readonly<Record<string, unknown>> }
+  & ({ readonly material: string } | { readonly field: "assessmentDate" });
+
+export function inputPage(options: InputView, correction?: InputCorrection): string {
+  const scopeCorrection = correction && "material" in correction ? correction : undefined;
   const landing = correction ? "" : `<section class="intake-landing" data-intake-landing aria-labelledby="intake-heading">
       <h1 id="intake-heading">폐자원 처리 방향을 함께 검토해요</h1>
       ${options.connected ? "" : '<p class="notice" data-intake-connection-notice role="status">지금은 검토에 연결할 수 없습니다.</p>'}
       <a class="primary-action" href="#case-intake" data-intake-start>폐자원 검토 시작</a>
     </section>`;
   return page("사례 입력", `${landing}
-    <section class="intake-panel" id="case-intake" data-intake-panel aria-label="새 사례 입력" tabindex="-1"${correction ? " data-out-of-scope" : ""}>
+    <section class="intake-panel" id="case-intake" data-intake-panel aria-label="새 사례 입력" tabindex="-1"${scopeCorrection ? " data-out-of-scope" : ""}>
       <h1 class="intake-heading" id="intake-form-heading" tabindex="-1">새 사례 입력</h1>
-      ${correction ? `<div class="notice" role="alert"><p>${escapeHtml(correction.material)}는 검토 범위에 포함되지 않습니다. 판정하거나 저장하지 않았습니다.</p><p>폐플라스틱·금속 스크랩·폐목재·포장재(종이·복합 포함)를 검토합니다. 재질을 확인한 뒤 아래 입력을 고쳐 다시 제출하세요.</p></div>` : ""}
+      ${correction ? `<div class="notice" role="alert">${scopeCorrection
+        ? `<p>${escapeHtml(scopeCorrection.material)}는 검토 범위에 포함되지 않습니다. 판정하거나 저장하지 않았습니다.</p><p>폐플라스틱·금속 스크랩·폐목재·포장재(종이·복합 포함)를 검토합니다. 재질을 확인한 뒤 아래 입력을 고쳐 다시 제출하세요.</p>`
+        : "<p>검토 기준일을 9999년 12월 31일 이하의 실제 날짜로 고쳐 다시 제출하세요. 입력한 다른 항목은 그대로 남아 있습니다.</p>"}</div>` : ""}
       <p class="intake-intro">알고 있는 내용을 적어 주세요. 폐자원 설명과 검토 기준일은 필수입니다.</p>
       ${form("/cases", false, undefined, "", undefined, correction?.draft)}
     </section>`, "workspace");

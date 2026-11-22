@@ -94,7 +94,7 @@ export function intakeForm(action: string, values: {
         </div>
         <div class="intake-field">
           <label for="assessmentDate">검토 기준일 <span class="intake-required">필수</span></label>
-          <input id="assessmentDate" name="assessmentDate" type="date" required value="${supplied("assessmentDate")}" aria-describedby="intake-date-help">
+          <input id="assessmentDate" name="assessmentDate" type="date" required max="9999-12-31" value="${supplied("assessmentDate")}" aria-describedby="intake-date-help">
           <p id="intake-date-help" class="intake-help">검토에 적용할 기준 날짜를 골라 주세요.</p>
         </div>
       </div>
