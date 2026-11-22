@@ -155,19 +155,23 @@ class ChromiumPrintTest(unittest.TestCase):
         self.assertFalse(usage.is_visible())
 
         self.assert_substantive_last_page(default_pages, footer_text, "authenticated-pet")
+        last_checks = [normalized(item) for item in page.locator("#checks li").all_text_contents()][-3:]
+        self.assertEqual(len(last_checks), 3)
+        for check in last_checks:
+            self.assertIn(check, default_pages[-1], "Final PET page must contain the report's actual checks")
         default_text = " ".join(default_pages)
-        # Vary the last block's position around the observed page boundary (688–704 px).
+        # Replay #129's last-block padding around the observed page boundary (688–704 px).
         # The separate oversized-content case below verifies printable text fragmentation.
         for pixels in range(624, 801, 8):
-            with self.subTest(margin_px=pixels):
-                style = page.add_style_tag(content=f"@media print{{#advanced{{margin-top:{pixels}px}}}}")
+            with self.subTest(padding_px=pixels):
+                style = page.add_style_tag(content=f"@media print{{#advanced{{padding-top:{pixels}px}}}}")
                 try:
-                    pages = self.pdf_pages(page)
+                    pages = self.pdf_pages(page, artifact=f"height-{pixels}")
                 finally:
                     style.evaluate("style => style.remove()")
                 self.assertEqual(details.evaluate_all("elements => elements.map(el => el.open)"), states)
                 self.assertEqual(" ".join(pages), default_text)
-                self.assert_report_ending(pages, footer_text)
+                self.assert_substantive_last_page(pages, footer_text, f"height-{pixels}")
 
         self.assertTrue(footer.is_visible())
         disclosure.locator("summary").press("Enter")
