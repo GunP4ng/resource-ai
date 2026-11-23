@@ -49,7 +49,8 @@ function maskMaterialDenials(value: string | null): string {
 function maskFactualTreatmentDenials(value: string | null): string {
   const text = (value ?? "").normalize("NFKC");
   // A qualifier can be a separate assertion; never clear an unresolved absence.
-  if (isUnknownCaseText(text, "clause") || /추정|아님|아닌|\?|확인\s*(?:전|예정|필요)/u.test(text)) return text;
+  if (isUnknownCaseText(text, "clause")
+    || /추정|불확실|아님|아닌|\?|확인\s*(?:전|예정|필요|되지\s*않|(?:이|은|도)?\s*안|할\s*수\s*없|불가|못)/u.test(text)) return text;
   return text.replace(/(?:^|,)[\p{Zs}\t]*(?:오일[\p{Zs}\t]+안[\p{Zs}\t]+묻음|방부[\p{Zs}\t]+미처리|무도장)[\p{Zs}\t]*(?=,|$)/gu, ",");
 }
 

@@ -125,6 +125,7 @@ for (const [source, denial] of [
     for (const suffix of [
       `${denial} 여부 미확인`, `${denial} 추정`, `${denial}?`, `${denial}, 추정`,
       `추정, ${denial}`, `${denial}, 여부 미상`, `${denial}, 아님`,
+      `${denial}, 확인되지 않음`, `확인이 안 됨, ${denial}`, `${denial}, 불확실`,
       `${denial}, 오일 묻음`, `방부 처리됨, ${denial}`, `${denial}, 도료 있음`,
       `${denial}, 도장됨`, `도장됨, ${denial}`,
     ]) {
