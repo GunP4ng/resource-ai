@@ -158,7 +158,8 @@ code{font-family:ui-monospace,monospace}
   li{margin-block:0}
   dl{gap:var(--s8);margin-block:var(--s8)}
   tr,section[aria-labelledby="priority-heading"] li{break-inside:avoid}
-  #checks{break-before:page;break-after:avoid-page}
+  #checks{break-after:avoid-page}
+  #checks:has(li){break-before:page}
   #advanced{break-inside:auto;break-after:avoid-page}
   #advanced p{margin-block:4pt}
   #advanced p:nth-last-child(-n+5){break-after:avoid-page}

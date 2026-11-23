@@ -63,8 +63,13 @@ async function correctionFields(response: Response) {
   assert.doesNotMatch(html, /data-intake-landing|data-out-of-scope|id="decision-summary"/);
   // Browsers consume the first source newline in a textarea.
   fields.append("description", decode(description).replace(/^\n/, ""));
-  assert.equal(fields.size, 8);
+  assert.equal(fields.size, 9);
+  assert.match(fields.get("submissionId") ?? "", /^[a-f0-9-]{36}$/);
   return fields;
+}
+function caseFields(fields: URLSearchParams) {
+  const { submissionId: _submissionId, ...input } = Object.fromEntries(fields);
+  return input;
 }
 
 test("G021 native create recovers a sole invalid or missing date and resubmits the retained draft", async t => {
@@ -80,7 +85,7 @@ test("G021 native create recovers a sole invalid or missing date and resubmits t
     if (date !== undefined) params.set("assessmentDate", date);
     const response = await post(params, date === badDate ? `/cases?progress=${token}` : "/cases");
     const fields = await correctionFields(response);
-    assert.deepEqual(Object.fromEntries(fields), { ...draft, assessmentDate: date ?? "" });
+    assert.deepEqual(caseFields(fields), { ...draft, assessmentDate: date ?? "" });
     assert.deepEqual(counts(), [0, 0, 0]);
     retry = fields;
   }
@@ -139,7 +144,7 @@ test("G021 keeps mass precedence, generic failures, scope handling and saved edi
   assert.equal(glass.status, 422);
   assert.match(await glass.text(), /유리는 검토 범위에 포함되지 않습니다/);
   const glassDraft = await correctionFields(await post(new URLSearchParams({ ...invalid, polymer: "유리" })));
-  assert.deepEqual(Object.fromEntries(glassDraft), { ...invalid, polymer: "유리" });
+  assert.deepEqual(caseFields(glassDraft), { ...invalid, polymer: "유리" });
   assert.deepEqual(counts(), [0, 0, 0]);
 
   const created = await post(new URLSearchParams(valid));

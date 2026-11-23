@@ -34,6 +34,9 @@ function sessionFailureCode(error: unknown): SessionFailureCode | undefined {
   const code = error.code;
   return Object.keys(sessionFailures).find((key): key is SessionFailureCode => key === code);
 }
+export function isRequestTimeout(error: unknown): boolean {
+  return error instanceof HttpFailure ? error.status === 504 : sessionFailureCode(error) === "timeout";
+}
 export const defaultBodyBytes = 16384;
 export const caseFormTextLimits = {
   description: 10000, process: 500, polymer: 500, contamination: 500, region: 500, answers: 10000,

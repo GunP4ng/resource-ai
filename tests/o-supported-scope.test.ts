@@ -91,8 +91,10 @@ test("initial native 422 keeps all eight fields and multiline text available for
     assert.doesNotMatch(html, /data-intake-landing|id="decision-summary"/);
     // A browser discards the first newline after the opening textarea tag.
     fields.append("description", decode(description).replace(/^\n/, ""));
-    assert.equal(fields.size, 8);
-    assert.deepEqual(Object.fromEntries(fields), original);
+    assert.equal(fields.size, 9);
+    const { submissionId, ...caseFields } = Object.fromEntries(fields);
+    assert.match(submissionId ?? "", /^[a-f0-9-]{36}$/);
+    assert.deepEqual(caseFields, original);
 
     fields.set("polymer", "PET");
     const accepted = await post(fields);

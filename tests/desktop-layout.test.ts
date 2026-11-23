@@ -24,7 +24,7 @@ test("one-page intake has three visible sections and a native submit in the summ
       forms.push(el.getAttribute("action") ?? "");
       assert.equal(el.getAttribute("method"), "post");
     } })
-    .on("#case-intake form [name]", { element(el) { controls.push(el.getAttribute("name") ?? ""); } })
+    .on('#case-intake form [name]:not([type="hidden"])', { element(el) { controls.push(el.getAttribute("name") ?? ""); } })
     .on("#case-intake form [data-intake-summary] button[type=submit]", { element(el) {
       assert.equal(el.hasAttribute("hidden"), false);
       targets.push("native submit");

@@ -65,11 +65,13 @@ test("current native case form omits photoRefs and commits owned normalized text
     const values = { description: "합성 네이티브 사례", process: "사출", polymer: "", contamination: "없음",
       hazardousContact: "no", massKg: "12.5", region: "울산", assessmentDate: "2026-11-05" };
     const names = [...form.matchAll(/<(?:input|textarea|select)\b[^>]*\bname="([^"]+)"/g)].map(match => match[1]);
-    assert.deepEqual(names.toSorted(), Object.keys(values).toSorted());
+    assert.deepEqual(names.toSorted(), [...Object.keys(values), "submissionId"].toSorted());
+    const submissionId = /name="submissionId" value="([^"]+)"/.exec(form)?.[1];
+    assert.ok(submissionId);
     const submit = (value: Record<string, string>) => app.fetch(new Request(origin + "/cases", {
       method: "POST", headers: { origin, "content-type": "application/x-www-form-urlencoded" }, body: new URLSearchParams(value),
     }));
-    const created = await submit(values);
+    const created = await submit({ ...values, submissionId });
     assert.equal(created.status, 303);
     const path = created.headers.get("location"); assert.ok(path);
     const id = path.slice("/cases/".length);

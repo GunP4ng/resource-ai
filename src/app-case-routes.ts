@@ -1,3 +1,4 @@
+import { createHash, randomUUID } from "node:crypto";
 import type { RouteRequest, RouteServices } from "./app-types.ts";
 import type { CaseInput } from "./contracts.ts";
 import { AssessmentInputError } from "./assessment.ts";
@@ -178,6 +179,19 @@ export async function caseRoute(services: RouteServices, context: RouteRequest):
     privateGuard();
     if (snapshot && snapshot.editUntil <= now()) throw new HttpFailure(sessionFailures["case-not-found"].status, sessionFailures["case-not-found"].message);
     let payload = raw, expected: number | null = null;
+    const draft = format === "form" && typeof raw === "object" && raw !== null && !Array.isArray(raw)
+      ? Object.fromEntries(Object.entries(raw)) : undefined;
+    let submissionId: string | undefined;
+    let newCaseId: string | undefined;
+    if (!snapshot && draft) {
+      const { submissionId: supplied, ...fields } = draft;
+      if (supplied !== undefined && (typeof supplied !== "string" || !/^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/.test(supplied)))
+        throw new HttpFailure(400, "사례 입력 화면을 다시 열어 제출해 주세요.");
+      submissionId = supplied ?? randomUUID();
+      // Keep browser retries on one owner-bound case ID, including after a lost success response.
+      newCaseId = createHash("sha256").update(`${owner}:${submissionId}`).digest("hex");
+      payload = fields;
+    }
     if (snapshot) {
       if (typeof raw !== "object" || raw === null || Array.isArray(raw)) throw new HttpFailure(400, "수정 입력은 JSON 객체로 보내 주세요.");
       const fields: Record<string, unknown> = Object.fromEntries(Object.entries(raw));
@@ -211,7 +225,7 @@ export async function caseRoute(services: RouteServices, context: RouteRequest):
     }
     let input: CaseInput;
     try {
-      input = snapshot ? preparer.prepareAnswer(snapshot.input, payload) : preparer.prepareSubmit(raw, format);
+      input = snapshot ? preparer.prepareAnswer(snapshot.input, payload) : preparer.prepareSubmit(payload, format, newCaseId);
     } catch (error) {
       if (error instanceof AssessmentInputError && error.issues.some(issue => issue.field === "massKg")
         && format === "form" && typeof raw === "object" && raw !== null && !Array.isArray(raw)) {
@@ -246,6 +260,28 @@ export async function caseRoute(services: RouteServices, context: RouteRequest):
     const authority = dependencies.photoExecution;
     const ticket = input.photoRefs.length ? authority?.current() : undefined;
     if (input.photoRefs.length && (input.photoRefs.length > 3 || !ticket || !snapshot || !caseStore.eligible(snapshot, input, ticket))) throw new HttpFailure(sessionFailures.provider.status, sessionFailures.provider.message);
+    const alreadySaved = newCaseId ? caseStore.read(owner, newCaseId) : undefined;
+    if (alreadySaved) {
+      privateGuard();
+      const previousPath = `/cases/${alreadySaved.input.caseId}`;
+      if (revision(alreadySaved.input) === revision(input)) return redirect(previousPath);
+      return response(page("이미 저장된 사례", `<h1>이미 저장된 사례가 있습니다</h1>
+        <p>이 입력 화면에서 이미 사례를 저장했습니다. 수정 내용은 기존 사례에서 반영하거나 새 검토로 제출해 주세요.</p>
+        <p><a href="${previousPath}">저장된 사례 열기</a> · <a href="/#case-intake">새 사례 입력</a></p>`, "workspace"), 409);
+    }
+    if (draft && !snapshot) {
+      context.recoverTimeout(() => response(inputPage({
+        authenticated: !!actor, localAuth: !!dependencies.localAuth, connected: dependencies.reviewConfigured ?? !!dependencies.adapter, photoEnabled: services.photoEnabled,
+      }, { timeout: true, draft, submissionId }), 504));
+    } else if (draft && snapshot) {
+      const action = escapeHtml(url.pathname);
+      const retryFields = Object.entries(draft).filter((entry): entry is [string, string] => typeof entry[1] === "string")
+        .map(([name, value]) => `<input type="hidden" name="${escapeHtml(name)}" value="${escapeHtml(value.replace(/\r\n?/g, "\n")).replace(/\n/g, "&#10;")}">`).join("");
+      context.recoverTimeout(() => response(page("검토 시간 초과", `<h1>검토 시간이 초과되었습니다</h1>
+        <p role="alert">제한 시간 안에 검토를 마치지 못했습니다. 입력한 수정 내용은 다시 요청할 때 그대로 사용합니다.</p>
+        <form method="post" action="${action}">${retryFields}<button type="submit">다시 요청</button></form>
+        <p><a href="/cases/${snapshot.input.caseId}">마지막 저장 결과 보기</a></p>`, "workspace"), 504));
+    }
     const lease = caseStore.begin(owner, input.caseId, expected, privateGuard);
     const cancel = () => cancelLease(lease);
     signal.addEventListener("abort", cancel, { once: true });
