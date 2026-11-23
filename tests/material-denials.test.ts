@@ -108,6 +108,37 @@ function cleanVariants(denial: string): string[] {
     [`오염 없음${separator}${denial}`, `${denial}${separator}오염 없음`])];
 }
 
+for (const [source, denial] of [
+  [copper, "오일 안 묻음"], [wood, "방부 미처리"], [copper, "무도장"], [wood, "무도장"],
+] as const) {
+  const input = { ...source, contamination: denial, massKg: 100, region: "울산", assessmentDate: "2026-11-25" };
+  for (const field of ["description", "process"] as const) {
+    test(`#157 ${source.caseId} repeating ${denial} in ${field} preserves the recommendation`, async () => {
+      const control = await createResourceDomain(input).decide();
+      assert.equal(control.state, "compared");
+      const facts = { ...input, [field]: `${input[field]}, ${denial}` };
+      const original = structuredClone(facts);
+      assert.deepEqual(await createResourceDomain(facts).decide(), control);
+      assert.deepEqual(facts, original);
+    });
+
+    for (const suffix of [
+      `${denial} 여부 미확인`, `${denial} 추정`, `${denial}?`, `${denial}, 추정`,
+      `추정, ${denial}`, `${denial}, 여부 미상`, `${denial}, 아님`,
+      `${denial}, 확인되지 않음`, `확인이 안 됨, ${denial}`, `${denial}, 불확실`,
+      `${denial}, 오일 묻음`, `방부 처리됨, ${denial}`, `${denial}, 도료 있음`,
+      `${denial}, 도장됨`, `도장됨, ${denial}`,
+    ]) {
+      test(`#157 ${source.caseId} ${field} keeps qualified or affirmative ${suffix} held`, async () => {
+        const result = await createResourceDomain({ ...input, [field]: `${input[field]}, ${suffix}` }).decide();
+        assert.equal(result.state, "needs-review");
+        assert.ok(result.reasons.includes(safetyReasons.materialTreatment));
+        assert.equal("recommendations" in result, false);
+      });
+    }
+  }
+}
+
 for (const { input, code } of denialFixtures) {
   test(`#137 ${input.caseId} complete denials preserve the full conditional decision`, async () => {
     const control = await createResourceDomain({ ...input, contamination: "없음" }).decide();
@@ -139,6 +170,16 @@ type NativeDenialCase = {
 };
 
 const nativeDenials: NativeDenialCase[] = [];
+for (const [input, denial, code] of [
+  [copper, "오일 안 묻음", "51-29-02"], [wood, "방부 미처리", "51-20-22"], [wood, "무도장", "51-20-22"],
+] as const) {
+  for (const field of ["description", "process"] as const) {
+    nativeDenials.push({ label: `#157 ${input.caseId} complete denial in ${field}`,
+      input: { ...input, [field]: `${input[field]}, ${denial}`, contamination: denial,
+        massKg: 100, region: "울산", assessmentDate: "2026-11-25" },
+      outcome: "clear", code });
+  }
+}
 for (const { input, code } of denialFixtures) {
   for (const contamination of [...treatmentDenials.flatMap(cleanVariants), ...horizontalVariants, "오일 없음", "오일 없다"]) {
     nativeDenials.push({ label: `${input.caseId} clear ${JSON.stringify(contamination)}`,
@@ -224,7 +265,7 @@ nativeDenials.push(
     outcome: "review", terms: ["오일"] },
   { label: "plain wood with preservative denial in process",
     input: { ...plainWood, process: `${wood.process}, 방부 미처리`, contamination: "무도장" },
-    outcome: "review", terms: ["방부"], questions: [originQuestion, historyQuestion] },
+    outcome: "review", terms: ["도장"], questions: [originQuestion, historyQuestion] },
   { label: "plain wood with unknown condition in description",
     input: { ...plainWood, description: `${plainWood.description}, 원목 상태 미확인`, contamination: "방부 미처리, 무처리 원목 상태" },
     outcome: "review", terms: ["방부"], questions: [originQuestion, historyQuestion] },
@@ -281,9 +322,10 @@ for (const [residue, separator] of [["슬러지 잔류", "\n"], ["분진 잔류"
 }
 
 for (const field of ["description", "process", "polymer"] as const) {
-  nativeDenials.push({ label: `new forms are contamination-only (${field})`,
+  nativeDenials.push({ label: `#157 complete 무도장 in ${field}`,
     input: { ...copper, [field]: `${copper[field]}, 무도장`, contamination: "없음" },
-    outcome: "review", terms: ["도장"], code: field === "polymer" ? undefined : "51-29-02" });
+    outcome: field === "polymer" ? "review" : "clear",
+    terms: field === "polymer" ? ["도장"] : [], code: field === "polymer" ? undefined : "51-29-02" });
 }
 nativeDenials.push({ label: "paper keeps its legacy treatment hold",
   input: { ...cases[2]!.input, contamination: "무도장" }, outcome: "review", terms: ["도장"] });

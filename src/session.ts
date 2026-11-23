@@ -191,7 +191,7 @@ async function boundedRun(runner: CaseRunner, input: CaseInput, signal: AbortSig
 /** H-owned O4 adapter. The HTTP layer must authenticate/authorize caseId before answer(). */
 export function createAssessmentAdapter(options: { readonly runner?: CaseRunner; readonly resources?: ResourceProvider; readonly timeoutMs?: number; readonly ttlMs?: number; readonly maxCases?: number; readonly now?: () => number; readonly checkRequest?: () => void } = {}): AssessmentAdapter & {
   submitForm(raw: unknown, signal: AbortSignal): Promise<AssessmentEnvelope>; dispose(): void;
-  prepareSubmit(raw: unknown, format: "json" | "form"): CaseInput;
+  prepareSubmit(raw: unknown, format: "json" | "form", caseId?: string): CaseInput;
   prepareAnswer(input: CaseInput, raw: unknown): CaseInput;
   evaluate(input: CaseInput, signal: AbortSignal, reportProgress?: import("./app-progress.ts").ReviewProgress): Promise<AssessmentEnvelope>;
   settled(): Promise<void>;
@@ -259,7 +259,7 @@ export function createAssessmentAdapter(options: { readonly runner?: CaseRunner;
     } finally { pending--; }
   };
   return {
-    prepareSubmit: (raw, format) => submission(raw, randomUUID(), format),
+    prepareSubmit: (raw, format, caseId = randomUUID()) => submission(raw, caseId, format),
     prepareAnswer: answered,
     evaluate,
     submit: (raw, signal) => submit(raw, signal, "json"),
@@ -293,8 +293,8 @@ export function createResourceApp(options: { readonly origin: string; readonly r
     submit: (raw, signal) => format.getStore() === "form" ? adapter.submitForm(raw, signal) : adapter.submit(raw, signal),
     answer: adapter.answer,
   } });
-  return { fetch: (request: Request) => format.run(request.headers.get("content-type")?.split(";", 1)[0]?.trim().toLowerCase()
-    === "application/x-www-form-urlencoded" ? "form" : "json", () => app(request)),
+  return { fetch: (request: Request, registerTimeoutRecovery?: Parameters<typeof app>[1]) => format.run(request.headers.get("content-type")?.split(";", 1)[0]?.trim().toLowerCase()
+    === "application/x-www-form-urlencoded" ? "form" : "json", () => app(request, registerTimeoutRecovery)),
     async settled() { await app.settled(); await adapter.settled(); },
     dispose: () => adapter.dispose(), async close() { await app.settled(); await adapter.settled(); app.dispose(); } };
 }

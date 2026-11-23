@@ -1,4 +1,5 @@
 import type { CaseInput } from "./contracts.ts";
+import { randomUUID } from "node:crypto";
 import { MAX_CASE_MASS_KG } from "./contracts.ts";
 import { caseFormTextLimits } from "./app-http.ts";
 import { escapeHtml } from "./report-html.ts";
@@ -18,6 +19,8 @@ const materials = [
 export function intakeForm(action: string, values: {
   readonly input?: CaseInput | undefined;
   readonly draft?: Readonly<Record<string, unknown>> | undefined;
+  readonly submissionId?: string | undefined;
+  readonly retry?: boolean;
 } = {}): string {
   const supplied = (field: keyof CaseInput): string => {
     const draft = values.draft?.[field];
@@ -29,6 +32,7 @@ export function intakeForm(action: string, values: {
   // The HTML parser discards one leading newline in a textarea.
   const textareaDescription = /^[\r\n]/u.test(description) ? `\n${description}` : description;
   return `<form method="post" action="${escapeHtml(action)}" class="intake-form" data-intake-form>
+    <input type="hidden" name="submissionId" value="${escapeHtml(values.submissionId ?? randomUUID())}">
     <div class="intake-layout">
     <div class="intake-fields">
     <fieldset class="intake-section" data-intake-section="material" aria-labelledby="intake-material-heading">
@@ -113,7 +117,7 @@ export function intakeForm(action: string, values: {
       <p class="intake-help" id="intake-submit-help" data-intake-submit-help>제출하면 검토 결과나 연결 상태를 알려드립니다.</p>
       <div class="intake-actions">
         <button type="button" class="secondary-action intake-example" data-intake-example hidden>예시로 채우기</button>
-        <button type="submit" data-intake-submit aria-describedby="intake-submit-help">검토 요청</button>
+        <button type="submit" data-intake-submit aria-describedby="intake-submit-help">${values.retry ? "다시 요청" : "검토 요청"}</button>
       </div>
       <p class="intake-help intake-example-status" data-intake-example-status role="status"></p>
     </aside>

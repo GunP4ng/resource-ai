@@ -11,6 +11,7 @@ import type { createPhotoStore } from "./photos.ts";
 import { createCaseStore } from "./o-case-store.ts";
 import type { OCaseStore } from "./o-case-store.ts";
 import type { AppDependencies } from "./app.ts";
+import { errorResponse } from "./app-http.ts";
 import { checkedConfiguration, AzureConfigurationError } from "./azure-configuration.ts";
 import type { AzureConfiguration } from "./azure-configuration.ts";
 import type { PhotoExecutionAuthority, PhotoExecutionTicket } from "./photo-execution.ts";
@@ -121,6 +122,7 @@ export function createOperationalApp(options: {
   return {
     async fetch(request: Request): Promise<Response> {
       const budget = requestDeadline(clock, clock.now() + timeoutMs, request.signal); active.add(budget);
+      let timeoutRecovery: (() => Response) | undefined;
       try {
         if (disposed) budget.stop("cancelled"); budget.check();
         // Forward the same body stream; cloning a Request may tee it and leave the
@@ -141,14 +143,16 @@ export function createOperationalApp(options: {
               modelProvider: enabled ? options.operations?.provider === "subscription" ? "chatgpt-subscription" : "azure-openai-responses" : null,
               liveModelVerified: false }, { headers: { "cache-control": "no-store" } });
           }
-          return app.fetch(forwarded);
+          return app.fetch(forwarded, render => { timeoutRecovery = render; });
         };
         const response = await requestBudgets.run(budget, () => Promise.race([budget.interrupted, work()]));
         if (!budget.committed) budget.check(); return response;
       } catch (error) {
         const failure = budget.failure ?? (error instanceof SessionFailure ? error : undefined);
-        return new Response(failure?.code === "timeout" ? "Request deadline exceeded" : failure?.code === "cancelled" ? "Request cancelled" : "Execution failed",
-          { status: failure?.code === "timeout" ? 504 : failure?.code === "cancelled" ? 408 : 502, headers: { "cache-control": "no-store" } });
+        if (failure?.code === "timeout") return timeoutRecovery?.() ?? errorResponse(failure,
+          '<p><a href="/#case-intake">입력 화면</a> · <a href="/cases">내 사례</a></p>', options);
+        return new Response(failure?.code === "cancelled" ? "Request cancelled" : "Execution failed",
+          { status: failure?.code === "cancelled" ? 408 : 502, headers: { "cache-control": "no-store" } });
       } finally { budget.close(); active.delete(budget); }
     },
     async settled() { await app.settled(); while (callbacks.size) await Promise.allSettled([...callbacks]); },

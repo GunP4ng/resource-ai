@@ -10,6 +10,8 @@ import { syntheticCase } from "./h-fixtures.ts";
 import { revision } from "../src/o-validation.ts";
 import type { CaseInput } from "../src/contracts.ts";
 import { getEventListeners } from "node:events";
+import { createCaseStore } from "../src/o-case-store.ts";
+import type { CaseRunResult } from "../src/session.ts";
 
 // Synthetic identity/configuration only. Every transport is replaced; no Azure request.
 const origin = "http://localhost";
@@ -45,6 +47,68 @@ async function cookie(app: ReturnType<typeof createOperationalApp>) {
 function post(token: string, value: unknown = submission, path = "/cases", signal?: AbortSignal) {
   return new Request(origin + path, { method: "POST", signal, headers: { cookie: token, origin, "content-type": "application/json" }, body: JSON.stringify(value) });
 }
+
+test("#157 a timed-out native form can be retried with the same draft and only one stored case", async () => {
+  const clock = new ManualClock();
+  const cases = createCaseStore();
+  const first = deferred<CaseInput>(), late = deferred<CaseRunResult>();
+  const second = deferred<CaseInput>(), finish = deferred<CaseRunResult>();
+  let runs = 0;
+  const app = createOperationalApp({ origin, clock, timeoutMs: 5_000, caseStore: cases, actorForRequest: async () => "qa-157",
+    runner: async input => ++runs === 1 ? (first.resolve(input), late.promise) : (second.resolve(input), finish.promise) });
+  try {
+    const token = await cookie(app);
+    const html = await (await app.fetch(new Request(origin, { headers: { cookie: token } }))).text();
+    const id = /name="submissionId" value="([^"]+)"/.exec(html)?.[1];
+    assert.ok(id);
+    const description = 'README 신규 사용자 PET 사출 QA 1 & "재시도"';
+    const params = new URLSearchParams({ submissionId: id, description, process: "사출", polymer: "PET", contamination: "없음",
+      hazardousContact: "no", massKg: "100", region: "울산", assessmentDate: "2026-11-25" });
+    const submit = (body: URLSearchParams) => app.fetch(new Request(origin + "/cases", { method: "POST", headers: { origin, cookie: token }, body }));
+    const pending = submit(params);
+    const firstInput = await first.promise;
+    clock.advance(5_000);
+    const timedOut = await pending;
+    assert.equal(timedOut.status, 504);
+    assert.match(timedOut.headers.get("content-type") ?? "", /^text\/html/);
+    const restored = new URLSearchParams();
+    let text = "";
+    await new HTMLRewriter()
+      .on("form[data-intake-form] input[name]", { element(el) { restored.set(el.getAttribute("name") ?? "", el.getAttribute("value") ?? ""); } })
+      .on("form[data-intake-form] select[name] option[selected]", { element(el) { restored.set("hazardousContact", el.getAttribute("value") ?? ""); } })
+      .on("form[data-intake-form] textarea[name=description]", { text(chunk) { text += chunk.text; } })
+      .transform(timedOut).text().then(body => {
+        assert.match(body, /검토 시간이 초과되었습니다/);
+        assert.match(body, /다시 요청<\/button>/);
+        assert.doesNotMatch(body, /Request deadline exceeded/);
+      });
+    // HTMLRewriter returns serialized entities for attributes and text chunks.
+    assert.equal(text, "README 신규 사용자 PET 사출 QA 1 &amp; &quot;재시도&quot;");
+    restored.set("description", description);
+    assert.deepEqual(Object.fromEntries(restored), Object.fromEntries(params));
+    assert.deepEqual(cases.list("actor:qa-157"), []);
+
+    const retry = submit(restored);
+    assert.deepEqual(await second.promise, firstInput);
+    assert.equal((await submit(restored)).status, 409);
+    finish.resolve({});
+    const stored = await retry;
+    assert.equal(stored.status, 303);
+    assert.equal(stored.headers.get("location"), `/cases/${firstInput.caseId}`);
+    const repeated = await submit(restored);
+    assert.equal(repeated.status, 303);
+    assert.equal(repeated.headers.get("location"), stored.headers.get("location"));
+    const changed = new URLSearchParams(restored);
+    changed.set("massKg", "200");
+    assert.equal((await submit(changed)).status, 409);
+    late.resolve({});
+    await app.settled();
+    assert.equal(runs, 2);
+    const rows = cases.list("actor:qa-157");
+    assert.equal(rows.length, 1);
+    assert.equal(rows[0]?.version, 1);
+  } finally { late.resolve({}); finish.resolve({}); app.dispose(); await app.close(); cases.dispose(); }
+});
 
 test("P2 real 150ms authentication plus resources shares the 200ms request deadline", async () => {
   const f = await setup(); let slow = false, resourceAborted = false;

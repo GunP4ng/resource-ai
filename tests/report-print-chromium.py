@@ -220,8 +220,18 @@ class ChromiumPrintTest(unittest.TestCase):
     def check_material_report(self, page, url, label):
         self.assertEqual(page.goto(url + "/report").status, 200)
         footer = normalized(page.locator("main footer").inner_text())
+        details = page.locator("main details")
+        states = details.evaluate_all("elements => elements.map(el => el.open)")
         pages = self.pdf_pages(page, artifact=label)
+        self.assertEqual(details.evaluate_all("elements => elements.map(el => el.open)"), states)
         self.assert_substantive_last_page(pages, footer, label)
+        if label.startswith("authenticated-default"):
+            self.assertEqual(page.locator("#checks li").count(), 0)
+            last_source = normalized(page.locator("#evidence > section").last.locator("h3").text_content())
+            self.assertIn(last_source, pages[-1],
+                          "Empty checks must continue on the final source page instead of forcing a trailing page")
+            for text in page.locator("#checks > h2, #checks > p").all_text_contents():
+                self.assertIn(normalized(text), pages[-1])
         if label == "authenticated-pp":
             with self.subTest(summary_evidence="PP"):
                 self.assert_summary_evidence(pages[0])
@@ -269,9 +279,11 @@ class ChromiumPrintTest(unittest.TestCase):
                     ("authenticated-hdpe", "HDPE", "100"),
                     ("authenticated-pp", "PP", "100"),
                     ("authenticated-default", "", ""),
+                    ("authenticated-default-mass", "", "100"),
                 ]:
-                    material_url = self.submit(page, origin, f"QA 로그인 {label} 사출 부산물", polymer, mass)
-                    self.check_material_report(page, material_url, label)
+                    with self.subTest(material=label):
+                        material_url = self.submit(page, origin, f"QA 로그인 {label} 사출 부산물", polymer, mass)
+                        self.check_material_report(page, material_url, label)
                 self.check_inquiry(page, url, footer)
                 description = " ".join(f"synthetic-appendix-{index:02d}" for index in range(30))
                 self.check_inquiry(page, self.submit(page, origin, description), footer, description)

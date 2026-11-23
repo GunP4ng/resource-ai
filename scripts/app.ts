@@ -148,7 +148,7 @@ const runner = injection.runner ?? (mode === "subscription"
 const app = operator?.app ?? createOperationalApp({ origin, runner, resources, localAuth, caseStore, photoStore,
   presentationMode: injection.runner ? "synthetic" : "live",
   photoPolicy: photoStore ? { retentionMs } : undefined,
-  runtime: { identity: localAuth ? "local-operator" : "anonymous", storage: localAuth ? "sqlite" : "ephemeral", runner: injection.runner ? "unspecified" : mode === "operational" ? "subscription" : mode }, timeoutMs: 10000 });
+  runtime: { identity: localAuth ? "local-operator" : "anonymous", storage: localAuth ? "sqlite" : "ephemeral", runner: injection.runner ? "unspecified" : mode === "operational" ? "subscription" : mode }, timeoutMs: mode === "subscription" ? 55_000 : 10_000 });
 const cleanup = photoStore ? createPhotoCleanupWorker(runtime, caseStore, photoStore) : undefined;
 await cleanup?.run();
 const cleanupTimer = cleanup ? setInterval(() => { void cleanup.run(); }, 30000) : undefined;

@@ -1,7 +1,7 @@
 import { randomBytes } from "node:crypto";
-import type { AppDependencies, StoredAssessment } from "./app-types.ts";
+import type { AppDependencies, RouteRequest, StoredAssessment } from "./app-types.ts";
 export type { AppDependencies, AssessmentAdapter, AssessmentEnvelope } from "./app-types.ts";
-import { HttpFailure, bounded, body, caseBody, defaultBodyBytes, errorResponse, idPattern, redirect, response } from "./app-http.ts";
+import { HttpFailure, bounded, body, caseBody, defaultBodyBytes, errorResponse, idPattern, isRequestTimeout, redirect, response } from "./app-http.ts";
 import { caseInputSummary, form, caseListPage, inputPage } from "./app-views.ts";
 import { loginPage, loginRequiredPage } from "./login-views.ts";
 import { caseRoute } from "./app-case-routes.ts";
@@ -54,8 +54,9 @@ export function createApp(dependencies: AppDependencies) {
   const reviewProgress = reviewProgressStore();
   const secure = origin.startsWith("https:");
   const pending = new Set<Promise<unknown>>();
-  const fetch = async (request: Request): Promise<Response> => {
+  const fetch = async (request: Request, registerTimeoutRecovery?: RouteRequest["recoverTimeout"]): Promise<Response> => {
     const deadline = performance.now() + timeoutMs;
+    let timeoutRecovery: (() => Response) | undefined;
     let recovery = '<p><a href="/cases">내 사례에서 마지막 결과 보기</a> · <a href="/">사례 입력</a></p>';
     try {
       return await bounded(async (signal) => {
@@ -271,6 +272,7 @@ export function createApp(dependencies: AppDependencies) {
           try {
             return await caseRoute({ dependencies, origin, now, caseStore, maxBodyBytes, photoEnabled, cancelLease },
               { request, url, signal, guard, privateGuard, actor, owner, sessionDeadline, caseMatch, photoMatch,
+                recoverTimeout(render) { timeoutRecovery = render; registerTimeoutRecovery?.(render); },
                 ...(progress ? { reportProgress: progress.report } : {}) });
           } finally { progress?.done(); }
         }
@@ -316,6 +318,7 @@ export function createApp(dependencies: AppDependencies) {
         throw new HttpFailure(404, "페이지를 찾을 수 없습니다.");
       }, request, timeoutMs, pending);
     } catch (error) {
+      if (timeoutRecovery && isRequestTimeout(error)) return timeoutRecovery();
       return errorResponse(error, recovery, dependencies,
         !!dependencies.localAuth && request.method === "POST" && new URL(request.url).pathname === "/login");
     }

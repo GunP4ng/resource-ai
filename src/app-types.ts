@@ -33,7 +33,7 @@ export interface AppDependencies {
   readonly runtime?: ReportPresentation["runtime"];
   readonly presentationMode?: ReportPresentation["mode"];
   readonly preparer?: {
-    prepareSubmit(raw: unknown, format: "json" | "form"): CaseInput;
+    prepareSubmit(raw: unknown, format: "json" | "form", caseId?: string): CaseInput;
     prepareAnswer(input: CaseInput, raw: unknown): CaseInput;
     evaluate(input: CaseInput, signal: AbortSignal, reportProgress?: ReviewProgress): Promise<AssessmentEnvelope>;
   };
@@ -66,4 +66,5 @@ export interface RouteRequest {
   readonly caseMatch: RegExpExecArray | null;
   readonly photoMatch: RegExpExecArray | null;
   readonly reportProgress?: ReviewProgress;
+  readonly recoverTimeout: (render: () => Response) => void;
 }

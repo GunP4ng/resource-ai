@@ -45,6 +45,15 @@ function maskMaterialDenials(value: string | null): string {
     .replace(/(?:^|[,;.\n])\s*(?:no|without)\s+(?:paint|preservatives?|oil|adhesives?)(?=\s*(?:[,;.\n]|$))/giu, ",");
 }
 
+/** These reported absences also occur as complete description/process clauses. */
+function maskFactualTreatmentDenials(value: string | null): string {
+  const text = (value ?? "").normalize("NFKC");
+  // A qualifier can be a separate assertion; never clear an unresolved absence.
+  if (isUnknownCaseText(text, "clause")
+    || /추정|불확실|아님|아닌|\?|확인\s*(?:전|예정|필요|되지\s*않|(?:이|은|도)?\s*안|할\s*수\s*없|불가|못)/u.test(text)) return text;
+  return text.replace(/(?:^|,)[\p{Zs}\t]*(?:오일[\p{Zs}\t]+안[\p{Zs}\t]+묻음|방부[\p{Zs}\t]+미처리|무도장)[\p{Zs}\t]*(?=,|$)/gu, ",");
+}
+
 /** Reported absence only. Unrecognized or affirmative remainder cannot establish clean context. */
 export function isDeclaredCleanMaterial(input: CaseInput, family: MaterialFamily): boolean {
   const assertions = treatmentAssertions(input.contamination, family);
@@ -201,7 +210,7 @@ function scanMaterialHazards(input: CaseInput): { terms: readonly string[]; hold
   const family = materialFamily(input);
   if (family === null) return { terms: [], hold: false };
   const assertions = treatmentAssertions(input.contamination, family);
-  const fields = [input.polymer, input.description, input.process];
+  const fields = [input.polymer, maskFactualTreatmentDenials(input.description), maskFactualTreatmentDenials(input.process)];
   if (assertions === null) fields.push(input.contamination);
   const unplated = fields.map(value => unplatedFields.has((value ?? "").normalize("NFKC").trim()));
   const hazardFields = fields.map((value, index) => unplated[index] ? "" : maskMaterialDenials(value));
@@ -245,7 +254,7 @@ export function materialHazardReasons(input: CaseInput): readonly string[] {
 }
 
 function hasUnresolvedMaterialHistory(value: string | null): boolean {
-  const remainder = maskMaterialDenials(value)
+  const remainder = maskMaterialDenials(maskFactualTreatmentDenials(value))
     .replace(/(?:무처리|미처리|\buntreated\b)(?![^,;.\n]*(?:미상|미확인|불명|모름|추정|아님|아닌|unknown))/giu, "");
   if (unresolvedMaterialHistory.test(remainder)) return true;
   const observation = /^(?:(.+?)[ \t]*,[ \t]*)?잔여[ \t]+물질[ \t]+있음$/u
