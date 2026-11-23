@@ -313,7 +313,9 @@ for (const name of ["normal", "held", "review"]) {
     app.setTime(at(60) + 1);
     const result = await pending;
     assert.equal(result.status, 200);
-    assert.equal(await result.text(), publicHtml);
+    // Each freshly rendered editable demo gets its own independent submit key.
+    const retryKey = /(<input type="hidden" name="submissionId" value=")[a-f0-9-]{36}(">)/g;
+    assert.equal((await result.text()).replace(retryKey, "$1$2"), publicHtml.replace(retryKey, "$1$2"));
   });
 }
 
