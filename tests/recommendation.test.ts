@@ -8,6 +8,8 @@ import { lookupLegalEvidence } from "../src/evidence.ts";
 import { assessCase } from "../src/assessment.ts";
 import { recommend, recommendationBlockers } from "../src/recommendation.ts";
 import { safetyReasons } from "../src/o-safety-reasons.ts";
+import { materialQuestions, materialStream } from "../src/material-context.ts";
+import { createSyntheticResourceApp } from "./synthetic-runtime.ts";
 import h008 from "../data/h-candidates/2026-11-12/inputs/HYEOB-20261112-008.json" with { type: "json" };
 
 test("complete safe facts produce a public-law conditional recommendation without field resources", async () => {
@@ -153,6 +155,384 @@ for (const [name, patch, state] of [
     });
   }
 }
+
+const originBindingCases = [
+  ["late English denial with a determiner", "Industrial general waste, laser deburring, the classification is denied", "needs-review"],
+  ["late English denial with a possessive", "Industrial general waste, laser deburring, its classification is denied", "needs-review"],
+  ["late English denial of final classification", "Industrial general waste, laser deburring, its final classification is denied", "needs-review"],
+  ["late English denial about a classification audit", "Industrial general waste, laser deburring, its final classification audit is denied", "compared"],
+  ["late English pending classification with a determiner", "Industrial general waste, laser deburring, the classification is pending", "needs-information"],
+  ["late English pending classification without a determiner", "Industrial general waste, laser deburring, classification is pending", "needs-information"],
+  ["late Korean applicability with a temporal modifier", "사업장일반폐기물, 자력 연마, 아직 해당 여부는 미확인", "needs-information"],
+  ["late Korean applicability with current framing", "사업장일반폐기물, 자력 연마, 현재 해당 여부는 미확인", "needs-information"],
+  ["Korean pickup before applicability", "사업장일반폐기물 (수거 대기 및 해당 여부 미확인), 금속 절단", "needs-information"],
+  ["Korean applicability before pickup", "사업장일반폐기물 (해당 여부 미확인 및 수거 대기), 금속 절단", "needs-information"],
+  ["English pickup before classification", "Industrial general waste (pickup pending and the classification is denied), laser deburring", "needs-review"],
+  ["English classification before pickup", "Industrial general waste (the classification is denied and pickup pending), laser deburring", "needs-review"],
+  ["English denial after a pickup update", "Industrial general waste (pickup scheduled and the classification is denied), laser deburring", "needs-review"],
+  ["English denial before unfamiliar logistics and independent confirmation", "Industrial general waste (its classification is denied and dispatch moves to Friday and pickup confirmed), laser deburring", "needs-review"],
+  ["English confirmation beside unfamiliar logistics and independent uncertainty", "Industrial general waste (its classification is confirmed and dispatch moves to Friday and pickup pending), laser deburring", "compared"],
+  ["English pickup update with no category answer", "Industrial general waste (pickup scheduled and shift unknown), laser deburring", "compared"],
+  ["Korean uncertainty after a pickup update", "사업장일반폐기물 (수거 예정 및 해당 여부 미확인), 금속 절단", "needs-information"],
+  ["Korean pickup update with no category answer", "사업장일반폐기물 (수거 예정 및 교대 미확인), 금속 절단", "compared"],
+  ["Korean independent confirmation beside a framed denial", "사업장일반폐기물 (수거 확인 및 현재로서는 해당 여부는 비해당), 금속 절단", "needs-review"],
+  ["compound answer to one category subject remains unresolved", "Industrial general waste (classification: confirmed and denied), laser deburring", "needs-information"],
+  ["a classification mention inside another subject is not an answer", "Industrial general waste (pickup scheduled and optical classification sorting), laser deburring", "compared"],
+  ["coordinated pickup and shift", "Industrial general waste (awaiting pickup and shift unknown), laser deburring", "compared"],
+  ["coordinated origin pending and unconfirmed", "Industrial general waste (pickup scheduled and classification is pending and unconfirmed), laser deburring", "needs-information"],
+  ["coordinated origin pending and unconfirmed without pickup", "Industrial general waste (classification pending and unconfirmed), laser deburring", "needs-information"],
+  ["coordinated origin pending beside pickup", "Industrial general waste (pickup scheduled and classification pending), laser deburring", "needs-information"],
+  ["coordinated origin denial before independent statuses", "Industrial general waste (pickup scheduled and classification is denied and shift pending and unconfirmed), laser deburring", "needs-review"],
+  ["coordinated origin condition with only independent statuses", "Industrial general waste (awaiting pickup and unconfirmed and shift pending), laser deburring", "compared"],
+  ["coordinated origin verified and pending contradiction", "Industrial general waste (pickup scheduled and classification is verified and pending), laser deburring", "needs-information"],
+  ["coordinated origin incomplete category predicate", "Industrial general waste (pickup scheduled and classification is pending external review and shift confirmed), laser deburring", "needs-information"],
+  ["coordinated origin unrelated classification work", "Industrial general waste (pickup scheduled and classification audit scheduled), laser deburring", "compared"],
+  ["coordinated origin continuation ends at unrelated work", "Industrial general waste (pickup scheduled and classification is denied and dispatch moves to Friday and unconfirmed), laser deburring", "needs-review"],
+  ["coordinated origin continuation before the declaration", "Classification is verified and pending, laser deburring, industrial general waste", "needs-information"],
+  ["coordinated origin repeated confirmation before the declaration", "Classification is verified and confirmed, laser deburring, industrial general waste", "compared"],
+  ["coordinated origin bare verified and pending answers", "Industrial general waste (verified and pending), laser deburring", "needs-information"],
+  ["English source with required classification", "Steel scrap needs to be classified as industrial general waste", "needs-information"],
+  ["English source with completed classification", "Steel scrap is classified as industrial general waste", "compared"],
+  ["English obligation with an adverb before classification", "Steel scrap needs to be formally classified as industrial general waste", "needs-information"],
+  ["English completed classification with the same adverb", "Steel scrap has been formally classified as industrial general waste", "compared"],
+  ["English modal with adverbs around the passive perfect", "Steel scrap may already have been officially classified as industrial general waste", "needs-information"],
+  ["English modal with never", "Steel scrap might never be classified as industrial general waste", "needs-information"],
+  ["English passive obligation shared by coordinated predicates", "Steel scrap needs to be sorted and formally classified as industrial general waste", "needs-information"],
+  ["English completed passive shared by coordinated predicates", "Steel scrap has been sorted and formally classified as industrial general waste", "compared"],
+  ["English completed classification with its own auxiliary after a passive obligation", "Steel scrap needs to be sorted and has been formally classified as industrial general waste", "compared"],
+  ["English completed classification with a modal elsewhere in the sentence", "Steel scrap that may need deburring has already been officially classified as industrial general waste", "compared"],
+  ["English obligation with adverbs on both sides of the auxiliary", "Steel scrap must now be more formally classified as industrial general waste", "needs-information"],
+  ["English completed classification with the same adverbs", "Steel scrap has now been more formally classified as industrial general waste", "compared"],
+  ["English requirement in generating process", "Industrial general waste from steel scrap that needs to be deburred", "compared"],
+  ["English modal in a standalone process", "Industrial general waste, steel scrap may need deburring", "compared"],
+  ["English modal in the source of a completed classification", "Steel scrap that may need deburring is classified as industrial general waste", "compared"],
+  ["English copular qualifier with an incomplete answer", "Industrial general waste is pending external review, laser deburring", "needs-information"],
+  ["independent status awaiting pickup with a time", "Industrial general waste (status: awaiting pickup tomorrow), laser deburring", "compared"],
+  ["category status awaiting verification", "Industrial general waste (status: awaiting verification tomorrow), laser deburring", "needs-information"],
+  ["independent status pending pickup", "Industrial general waste (status: pending pickup), laser deburring", "compared"],
+  ["Korean source with affirmative copula", "전해 연삭 공정에서 발생한 사업장일반폐기물입니다", "compared"],
+  ["Korean source with completed classification", "전해 연삭 공정에서 발생한 사업장일반폐기물로 분류됨", "compared"],
+  ["Korean source with completed confirmation", "전해 연삭 공정에서 발생한 사업장일반폐기물로 확인됨", "compared"],
+  ["Korean source with confirmation still required", "전해 연삭 공정에서 발생한 사업장일반폐기물로 확인 필요", "needs-information"],
+  ["Korean source with required classification", "전해 연삭 공정에서 발생한 사업장일반폐기물로 분류해야 합니다", "needs-information"],
+  ["Korean requirement in generating process", "추가 연마가 필요한 전해 연삭 공정에서 발생한 사업장일반폐기물입니다", "compared"],
+  ["English coordinated source with completed classification", "Steel scrap from cutting and grinding is classified as industrial general waste", "compared"],
+  ["Korean coordinated source with affirmative copula", "절단 및 연삭 공정에서 발생한 사업장일반폐기물입니다", "compared"],
+  ["Korean denial with an applicability particle", "사업장일반폐기물에 해당하지 않습니다, 금속 절단", "needs-review"],
+  ["Korean denial without an applicability particle", "사업장일반폐기물 해당하지 않습니다, 금속 절단", "needs-review"],
+  ["Korean denial with a compound applicability particle", "사업장일반폐기물에는 해당하지 않습니다, 금속 절단", "needs-review"],
+  ["Korean affirmation with a compound classification particle", "사업장일반폐기물로는 분류되었습니다, 금속 절단", "compared"],
+  ["Korean confirmation with stacked case particles", "사업장일반폐기물로서도 확인되었음, 금속 절단", "compared"],
+  ["Korean uncertainty with a compound applicability particle", "사업장일반폐기물에도 해당 여부 미확인, 금속 절단", "needs-information"],
+  ["English named qualifier before an intervening process", "The classification is pending, laser deburring, Industrial general waste", "needs-information"],
+  ["Korean named qualifier before an intervening process", "아직 해당 여부는 미확인, 자력 연마, 사업장일반폐기물", "needs-information"],
+  ["G034 aspect pending", "Industrial general waste (pickup scheduled and the classification remains pending), laser deburring", "needs-information"],
+  ["G034 aspect pending without pickup", "Industrial general waste (the classification remains pending), laser deburring", "needs-information"],
+  ["G034 perfect denial", "Industrial general waste (pickup scheduled and the classification has been denied), laser deburring", "needs-review"],
+  ["G034 copular denial control", "Industrial general waste (pickup scheduled and the classification is denied), laser deburring", "needs-review"],
+  ["G034 adversative denial", "Industrial general waste (pickup scheduled but the classification is denied), laser deburring", "needs-review"],
+  ["G034 denial before independent shift", "Industrial general waste (the classification is denied but shift pending), laser deburring", "needs-review"],
+  ["G034 adversative independent statuses", "Industrial general waste (pickup scheduled but shift unknown), laser deburring", "compared"],
+  ["G034 Korean adversative uncertainty", "사업장일반폐기물 (수거 예정이나 해당 여부는 미확인), 금속 절단", "needs-information"],
+  ["G034 Korean adversative independent statuses", "사업장일반폐기물 (수거 예정이나 교대 미확인), 금속 절단", "compared"],
+  ["G034 shared passive obligation", "Steel scrap needs to be inspected and formally classified as industrial general waste", "needs-information"],
+  ["G034 shared completed passive", "Steel scrap has been inspected and formally classified as industrial general waste", "compared"],
+  ["G034 never classified", "Steel scrap has never been classified as industrial general waste", "needs-information"],
+  ["G034 direct classification denial", "Steel scrap is not classified as industrial general waste", "needs-review"],
+  ["G034 final classification with past perfect", "Industrial general waste (pickup scheduled and its final classification had already been denied), laser deburring", "needs-review"],
+  ["G034 past aspect with an unfamiliar pending answer", "Industrial general waste (pickup scheduled and the classification remained with the reviewer), laser deburring", "needs-information"],
+  ["G034 independent classification audit", "Industrial general waste (pickup scheduled but its final classification audit remains pending), laser deburring", "compared"],
+  ["G034 shared auxiliary across several participles", "Steel scrap must be weighed and washed and formally classified as industrial general waste", "needs-information"],
+  ["G034 local completed passive overrides a separate obligation", "Steel scrap needs to be weighed and has been formally classified as industrial general waste", "compared"],
+  ["G034 local completed passive overrides an earlier prohibition", "Steel scrap must not be crushed and has already been formally classified as industrial general waste", "compared"],
+  ["G034 never across a shared passive", "Steel scrap has never been weighed and formally classified as industrial general waste", "needs-information"],
+  ["G034 not yet across a shared passive", "Steel scrap has not yet been weighed and formally classified as industrial general waste", "needs-information"],
+  ["G034 not already in the perfect passive", "Steel scrap had not already been formally classified as industrial general waste", "needs-information"],
+  ["G034 negative classification with a local completed auxiliary", "Steel scrap needs to be weighed and was not formally classified as industrial general waste", "needs-review"],
+  ["G034 local completed passive after an unrelated source restriction", "Steel scrap that must not be crushed has been formally classified as industrial general waste", "compared"],
+  ["G034 never classified in a shortened report", "Never been classified as industrial general waste", "needs-information"],
+  ["G034 not yet classified in a shortened report", "Not yet been classified as industrial general waste", "needs-information"],
+  ["G034 an alternative is not evidence of completed classification", "Steel scrap has been weighed or formally classified as industrial general waste", "needs-information"],
+  ["G034 named classification has never been verified", "Industrial general waste (pickup scheduled but its final classification has never been verified), laser deburring", "needs-information"],
+] as const;
+
+const originPolarityCases = [
+  ["negated classification subject", "No steel scrap has been classified as industrial general waste", "needs-review"],
+  ["affirmative classification subject", "Steel scrap has been classified as industrial general waste", "compared"],
+  ["negated subject shared with a local auxiliary", "No steel scrap has been inspected and has been formally classified as industrial general waste", "needs-review"],
+  ["earlier negative source with its own subject", "No crushing was required and steel scrap has been classified as industrial general waste", "compared"],
+  ["earlier negative source in a separate clause", "No crushing was required, steel scrap has been classified as industrial general waste", "compared"],
+  ["earlier named denial still qualifies the classification", "Classification is denied, steel scrap has been classified as industrial general waste", "needs-review"],
+  ["named classification framed before the link verb", "Industrial general waste (pickup scheduled but its final classification still remains pending), laser deburring", "needs-information"],
+  ["confirmed classification with the same framing", "Industrial general waste (pickup scheduled but its final classification still remains confirmed), laser deburring", "compared"],
+  ["denied classification with the same framing", "Industrial general waste (pickup scheduled but its final classification still remains denied), laser deburring", "needs-review"],
+  ["source audit pending with the same framing", "Industrial general waste (pickup scheduled but its final classification audit still remains pending), laser deburring", "compared"],
+  ["shared passive obligation with a locative adjunct", "Steel scrap needs to be inspected on site and formally classified as industrial general waste", "needs-information"],
+  ["shared completed passive with a locative adjunct", "Steel scrap has been inspected on site and formally classified as industrial general waste", "compared"],
+  ["shared passive denial with a locative adjunct", "Steel scrap has not been inspected on site and formally classified as industrial general waste", "needs-review"],
+  ["shared passive still incomplete with a different locative adjunct", "Steel scrap has not yet been inspected at the facility and formally classified as industrial general waste", "needs-information"],
+  ["classification has its own completed auxiliary after a locative adjunct", "Steel scrap needs to be inspected on site and has been formally classified as industrial general waste", "compared"],
+] as const;
+
+const originClauseCases = [
+  ["coordinated source preserves the negative subject", "No steel scrap from cutting and grinding has been inspected and formally classified as industrial general waste", "needs-review"],
+  ["coordinated source with an affirmative subject", "Steel scrap from cutting and grinding has been inspected and formally classified as industrial general waste", "compared"],
+  ["coordinated source preserves the subject across a local auxiliary", "No steel scrap from cutting and grinding has been inspected and has been formally classified as industrial general waste", "needs-review"],
+  ["a new subject ends the scope of the negated source", "No steel scrap from cutting and grinding has been inspected and other steel scrap has been formally classified as industrial general waste", "compared"],
+  ["a gerund can begin a new subject after a complete predicate", "No steel scrap was removed from cutting and grinding waste has been formally classified as industrial general waste", "compared"],
+  ["classification shares the embedded infinitive", "Steel scrap was sent to be inspected and formally classified as industrial general waste", "needs-information"],
+  ["a locative adjunct ends before an embedded infinitive", "Steel scrap was sent from the facility to be inspected and formally classified as industrial general waste", "needs-information"],
+  ["classification has its own finite passive after an infinitive", "Steel scrap was sent to be inspected and has been formally classified as industrial general waste", "compared"],
+  ["classification shares a finite passive with a destination", "Steel scrap was sent to the facility and formally classified as industrial general waste", "compared"],
+  ["named denial in the same clause as the declaration", "Classification is denied and steel scrap has been classified as industrial general waste", "needs-review"],
+  ["unrelated denial in the same clause as the declaration", "Pickup is denied and steel scrap has been classified as industrial general waste", "compared"],
+  ["classification audit denial does not qualify the declaration", "Classification audit is denied and steel scrap has been classified as industrial general waste", "compared"],
+] as const;
+
+type OriginCase = readonly [name: string, process: string, state: "compared" | "needs-information" | "needs-review"];
+
+const originSubjectCases = [
+  ["source noun under a negative subject", "No steel scrap from machining and assembly has been inspected and formally classified as industrial general waste", "needs-review"],
+  ["source noun under an affirmative subject", "Steel scrap from machining and assembly has been inspected and formally classified as industrial general waste", "compared"],
+  ["shared purpose with a complement", "Steel scrap was sent to be inspected for damage and formally classified as industrial general waste", "needs-information"],
+  ["completed classification after a purpose with a complement", "Steel scrap was sent to be inspected for damage and has been formally classified as industrial general waste", "compared"],
+  ["earlier coordinated answers conflict", "Classification is confirmed and denied and steel scrap has been classified as industrial general waste", "needs-information"],
+  ["earlier coordinated affirmative answers", "Classification is confirmed and verified and steel scrap has been classified as industrial general waste", "compared"],
+  ["punctuation after conflicting answers", "Classification is confirmed and denied, steel scrap has been classified as industrial general waste", "needs-information"],
+  ["complete classification beside the declaration", "Classification is complete and steel scrap has been classified as industrial general waste", "compared"],
+  ["confirmed classification beside the declaration", "Classification is confirmed and steel scrap has been classified as industrial general waste", "compared"],
+  ["completed classification beside the declaration", "Classification is completed and steel scrap has been classified as industrial general waste", "compared"],
+  ["new subject with a noun after a finished passive", "No steel scrap from machining and assembly has been inspected and salvage from the annex was classified as industrial general waste", "compared"],
+  ["new negative subject after a finished passive", "Steel scrap from machining and assembly has been inspected but no salvage from the annex was classified as industrial general waste", "needs-review"],
+  ["modifier on an intervening predicate leaves the subject unchanged", "No steel scrap from machining and assembly has been inspected and visually checked and has been formally classified as industrial general waste", "needs-review"],
+  ["modifier before a local auxiliary leaves the subject unchanged", "No steel scrap from machining and assembly has been inspected and then has been formally classified as industrial general waste", "needs-review"],
+  ["a status noun can also name a source", "No steel scrap from machining and collection and assembly has been inspected and formally classified as industrial general waste", "needs-review"],
+  ["a noun spelled like a modal can also name a source", "No steel scrap from machining and can production and assembly has been inspected and formally classified as industrial general waste", "needs-review"],
+  ["independent subject ends inherited classification status", "Classification is complete and pickup is confirmed and denied and steel scrap has been classified as industrial general waste", "compared"],
+  ["earlier answer inherits through multiple predicates", "The classification has already been verified and still remains confirmed and was denied and steel scrap has been classified as industrial general waste", "needs-information"],
+  ["adversative answer inherits classification subject", "Classification is complete but was denied and steel scrap has been classified as industrial general waste", "needs-information"],
+] as const satisfies readonly OriginCase[];
+
+const originSubjectMatrix: OriginCase[] = [];
+for (const source of ["from fabrication and dispatch and quality control", "from stamping or assembly"]) {
+  for (const complement of ["for hidden defects", "with a calibrated gauge"]) {
+    for (const modifier of ["formally", "then independently"]) {
+      const subject = `steel scrap ${source}`;
+      const inspected = `been inspected ${complement}`;
+      const classified = `${modifier} classified as industrial general waste`;
+      const label = `${source}, ${complement}, ${modifier}`;
+      originSubjectMatrix.push(
+        [`negative shared subject (${label})`, `No ${subject} has ${inspected} and ${classified}`, "needs-review"],
+        [`shared purpose (${label})`, `The ${subject} was brought in to be inspected ${complement} and ${classified}`, "needs-information"],
+        [`local completion (${label})`, `The ${subject} was brought in to be inspected ${complement} but has been ${classified}`, "compared"],
+      );
+    }
+  }
+}
+
+const originSteel = { ...syntheticCase, description: "합성 QA 강철 절단 스크랩", polymer: "철 스크랩",
+  massKg: 180, region: "경기", assessmentDate: "2026-11-15" };
+
+for (const [name, process, state] of [
+  ["affirmed", "사업장일반폐기물, 금속 절단", "compared"],
+  ["ordinary origin only", "공장 강철 절단 공정", "needs-information"],
+  ["explicit negation", "사업장일반폐기물 아님, 공장 강철 절단 공정", "needs-review"],
+  ["explicit unknown", "사업장일반폐기물 여부 미확인, 공장 강철 절단 공정", "needs-information"],
+  ["conditional", "사업장일반폐기물인 경우, 공장 강철 절단 공정", "needs-information"],
+  ["question", "공장 강철 절단 공정, 사업장일반폐기물인지 확인 중", "needs-information"],
+  ["estimate", "공장 강철 절단 공정, 사업장일반폐기물로 추정", "needs-information"],
+  ["structured unknown", "폐기물 분류 미상 (사업장일반폐기물 또는 생활폐기물), 공장 강철 절단", "needs-information"],
+  ["English unknown", "industrial general waste classification unknown, steel cutting", "needs-information"],
+  ["irrelevant context", "사업장 일반 안전교육을 실시한 뒤 강철 절단", "needs-information"],
+  ["historical wording without comma", "사업장일반폐기물 금속 절단", "compared"],
+  ["unrelated Korean uncertainty", "사업장 일반 폐기물 금속 절단, 작업 시간 미확인", "compared"],
+  ["unrelated English uncertainty", "Industrial General Waste from steel cutting (shift unknown)", "compared"],
+  ["affirmative Korean classification", "금속 절단 공정에서 발생한 사업장일반폐기물로 분류됨", "compared"],
+  ["affirmative English classification", "Steel cutting scrap classified as industrial general waste", "compared"],
+  ["English partial category", "Industrial general safety training before steel cutting", "needs-information"],
+  ["English category inside another word", "industrial general wastewater from steel cutting", "needs-information"],
+  ["Korean category inside another word", "비사업장일반폐기물 금속 절단", "needs-information"],
+  ["Korean category with an attached qualifier", "사업장일반폐기물여부 미확인, 금속 절단", "needs-information"],
+  ["Korean category with an attached denial", "사업장일반폐기물이아님, 금속 절단", "needs-review"],
+  ["Korean verification pending", "금속 절단, 사업장일반폐기물 해당 여부 확인 필요", "needs-information"],
+  ["Korean question about denial", "사업장일반폐기물이 아닌지 확인 중, 금속 절단", "needs-information"],
+  ["Korean question punctuation", "금속 절단, 사업장일반폐기물?", "needs-information"],
+  ["Korean alternative before the category", "생활폐기물 또는 사업장일반폐기물, 금속 절단", "needs-information"],
+  ["English conditional prefix", "If classified as industrial general waste, steel cutting", "needs-information"],
+  ["English uncertain prefix", "Possibly industrial general waste, steel cutting", "needs-information"],
+  ["English parenthetical uncertainty", "Industrial general waste (unconfirmed), steel cutting", "needs-information"],
+  ["English confirmation pending", "Industrial general waste classification is not confirmed, steel cutting", "needs-information"],
+  ["English explicit denial", "Not classified as industrial general waste, steel cutting", "needs-review"],
+  ["legacy process-wide negation", "Industrial general waste, not steel cutting", "needs-review"],
+  ["parenthesized before confirmation", "사업장일반폐기물 (확인 전), 금속 절단", "needs-information"],
+  ["comma-separated origin uncertainty", "사업장일반폐기물, 여부 미확인", "needs-information"],
+  ["Korean conditional prefix", "만약 사업장일반폐기물, 금속 절단", "needs-information"],
+  ["before confirmation", "사업장일반폐기물 확인 전, 금속 절단", "needs-information"],
+  ["Korean assumption", "사업장일반폐기물이라고 가정, 금속 절단", "needs-information"],
+  ["punctuation and newline before the qualifier", "사업장일반폐기물; \n(확인 전)\n금속 절단", "needs-information"],
+  ["punctuation and newline after the conditional prefix", "만약, \r\n사업장일반폐기물, 금속 절단", "needs-information"],
+  ["Korean alternative after the category", "사업장일반폐기물 또는 생활폐기물", "needs-information"],
+  ["independently named job-time uncertainty", "사업장일반폐기물, 금속 절단 시간 미확인", "compared"],
+  ["job-time uncertainty on a later line", "사업장일반폐기물, 금속 절단 시간:\n미확인", "compared"],
+  ["polite Korean denial", "사업장일반폐기물이 아닙니다, 금속 절단", "needs-review"],
+  ["reported Korean denial", "사업장일반폐기물이 아니라고 확인됨, 금속 절단", "needs-review"],
+  ["adjacent Korean applicability uncertainty", "사업장일반폐기물, 해당 여부 미확인, 금속 절단", "needs-information"],
+  ["adjacent Korean classification pending", "사업장일반폐기물, 분류 확인 전, 금속 절단", "needs-information"],
+  ["adjacent English classification unknown", "industrial general waste, classification unknown, steel cutting", "needs-information"],
+  ["English classification reported as unknown", "industrial general waste classified as unknown, metal cutting", "needs-information"],
+  ["Korean confirmation missing", "사업장일반폐기물 확인되지 않음, 금속 절단", "needs-information"],
+  ["adjacent English confirmation missing", "industrial general waste, not yet confirmed, steel cutting", "needs-information"],
+  ["independent pending pickup", "Industrial general waste (pending pickup), steel cutting", "compared"],
+  ["independent pickup pending", "Industrial general waste (pickup pending), steel cutting", "compared"],
+  ["separate unknown classification", "사업장일반폐기물, 분류 미상, 금속 절단", "needs-information"],
+  ["separate undetermined classification", "사업장일반폐기물, 분류 불명, 금속 절단", "needs-information"],
+  ["separate estimate", "사업장일반폐기물, 추정, 금속 절단", "needs-information"],
+  ["particle before a parenthesized estimate", "사업장일반폐기물로 (추정), 금속 절단", "needs-information"],
+  ["adjacent unconfirmed classification", "사업장일반폐기물 분류 미확인, 금속 절단", "needs-information"],
+  ["adjacent unknown classification", "사업장일반폐기물 분류 미상, 금속 절단", "needs-information"],
+  ["particle before a separate applicability qualifier", "사업장일반폐기물로, 여부 미확인, 금속 절단", "needs-information"],
+  ["separate classification verification required", "사업장일반폐기물, 분류 확인 필요, 금속 절단", "needs-information"],
+  ["independent Korean pickup pending", "산출 품목: 사업장일반폐기물(수거 대기), 금속 절단", "compared"],
+  ["independent English pickup pending in the next clause", "Industrial general waste, pending pickup, steel cutting", "compared"],
+  ["particle before independently named job-time uncertainty", "사업장일반폐기물은, 작업 시간 미상, 금속 절단", "compared"],
+  ["round two Korean topic particle", "사업장일반폐기물, 해당 여부는 미확인, 금속 절단", "needs-information"],
+  ["round two Korean polite uncertainty", "사업장일반폐기물, 분류 미상입니다, 금속 절단", "needs-information"],
+  ["round two English answer before subject", "Industrial general waste (pending classification), steel cutting", "needs-information"],
+  ["round two named status with answer first", "Industrial general waste (status: pending pickup), steel cutting", "compared"],
+  ["round two named status with subject first", "Industrial general waste (status: pickup pending), steel cutting", "compared"],
+  ["round two positive applicability answer", "사업장일반폐기물 해당 여부: 해당, 금속 절단", "compared"],
+  ["unfamiliar English process", "industrial general waste, laser deburring", "compared"],
+  ["unfamiliar Korean process in a separate clause", "사업장일반폐기물, 자력 연마", "compared"],
+  ["unfamiliar Korean process in the declaration", "사업장일반폐기물 자력 연마", "compared"],
+  ["named work time with polite uncertainty", "사업장일반폐기물, 작업 시간 미상입니다, 자력 연마", "compared"],
+  ["normalized punctuation and continued answer", "사업장일반폐기물（해당 여부：\r\n 해당입니다），자력 연마", "compared"],
+  ["negative applicability answer", "사업장일반폐기물 해당 여부: 비해당, 금속 절단", "needs-review"],
+  ["negative English applicability answer", "industrial general waste (applicability: no), steel cutting", "needs-review"],
+  ["positive English applicability answer", "industrial general waste (applicability: yes), steel cutting", "compared"],
+  ["mixed applicability answer", "사업장일반폐기물 해당 여부: 해당 / 비해당, 금속 절단", "needs-information"],
+  ["conflicting labeled answers", "industrial general waste (applicability: yes), applicability: no, steel cutting", "needs-information"],
+  ["unknown wording in a category-linked answer", "사업장일반폐기물 해당 여부: 담당자 검토로 넘김, 자력 연마", "needs-information"],
+  ["direct mention without declaration", "Discussed industrial general waste during training, laser deburring", "needs-information"],
+  ["named pickup does not answer category status", "Industrial general waste (classification: pickup pending), steel cutting", "needs-information"],
+  ["named work time ends bare qualifier attachment", "사업장일반폐기물, 작업 시간: 미상, 확인 전, 자력 연마", "compared"],
+  ["affirmative English classification with a copula", "Steel cutting scrap is classified as industrial general waste", "compared"],
+  ["uncertain attribution in a classification declaration", "Steel cutting scrap may be classified as industrial general waste", "needs-information"],
+  ["late explicit category qualifier", "industrial general waste, laser deburring, classification status: deferred to inspector", "needs-information"],
+  ["unanswered category qualifier", "사업장일반폐기물, 해당 여부:, 자력 연마", "needs-information"],
+  ["attached Korean polite copula", "사업장일반폐기물입니다, 자력 연마", "compared"],
+  ["explicit English denial with a copula", "Steel cutting scrap is not classified as industrial general waste", "needs-review"],
+  ["independent Korean work time label", "사업장일반폐기물, 작업 시간: 추가 확인 대기, 자력 연마", "compared"],
+  ["ambiguous English status without an independent subject", "industrial general waste (status: needs supervisor signoff), laser deburring", "needs-information"],
+  ["Korean uncertainty with a predicate modifier", "사업장일반폐기물 아직 미확인, 자력 연마", "needs-information"],
+  ["Korean indirect category question", "사업장일반폐기물 맞는지 확인 중, 자력 연마", "needs-information"],
+  ["unresolved answer about pickup alone", "Industrial general waste (pickup awaiting supervisor), laser deburring", "compared"],
+  ["English copular denial conflicts with a positive answer", "industrial general waste is not applicable, applicability: yes, laser deburring", "needs-information"],
+  ["the category itself as an answer label", "industrial general waste: no, laser deburring", "needs-review"],
+  ["unfamiliar process with an incidental classification noun", "industrial general waste, optical classification sorting", "compared"],
+  ["G034 shared obligation across a hyphenated participle", "Steel scrap must be re-weighed and formally classified as industrial general waste", "needs-information"],
+  ["G034 shared obligation with a trailing participle modifier", "Steel scrap must be washed thoroughly and then formally classified as industrial general waste", "needs-information"],
+  ["G034 explicit adversative denial beside the category", "Industrial general waste but the classification is denied, laser deburring", "needs-review"],
+  ["G034 Korean explicit adversative denial beside the category", "사업장일반폐기물이나 해당 여부는 비해당, 금속 절단", "needs-review"],
+  ["G034 punctuation leaves an independent Korean status independent", "사업장일반폐기물 (수거 예정, 미확인), 금속 절단", "compared"],
+  ...originBindingCases,
+  ...originPolarityCases,
+  ...originClauseCases,
+  ...originSubjectCases,
+  ...originSubjectMatrix,
+] as const) {
+  test(`reported process category: ${name}`, async () => {
+    const input = { ...originSteel, process };
+    const original = structuredClone(input);
+    const confirmed = state === "compared";
+    const asksOrigin = (questions: readonly string[]) =>
+      questions.some(question => question.startsWith("발생 공정 입력란에 사업장일반폐기물"));
+    assert.equal(asksOrigin(materialQuestions(input)), state === "needs-information", "origin question");
+    assert.equal(materialStream(input), confirmed ? "ferrous" : null);
+
+    for (const includeWeakContext of [false, true]) {
+      const lookup = lookupLegalEvidence(input, undefined, { includeWeakContext });
+      const ferrousCitations = lookup.citations.filter(citation => citation.sourceId.startsWith("legal-291947-metal-iron-"));
+      assert.equal(ferrousCitations.length > 0, confirmed, `ferrous citations (weak context: ${includeWeakContext})`);
+      const wasteCodes = lookup.citations.filter(citation => citation.kind === "waste-code").map(citation => citation.locator);
+      assert.deepEqual(wasteCodes, confirmed ? ["별표4 제2호 51-29-01, PDF 10쪽"] : []);
+    }
+
+    const domain = createResourceDomain(input);
+    const result = await domain.decide();
+    assert.equal(result.state, state);
+    assert.deepEqual(input, original);
+    assert.equal((await domain.assessRoutes(input)).find(route => route.route === "mechanical-recycling")?.eligibility.state, "unknown");
+    if (result.state === "compared") {
+      assert.equal(result.humanApproval, "pending");
+      assert.deepEqual(result.recommendations?.map(({ routeId, rank, grade }) => ({ routeId, rank, grade })),
+        [{ routeId: "mechanical-recycling", rank: 1, grade: "public-conditional" }]);
+    } else {
+      assert.equal("recommendations" in result, false);
+      assert.ok(result.evidence.every(record => !record.sourceId.startsWith("legal-291947-metal-iron-")));
+      if (result.state === "needs-information") assert.ok(asksOrigin(result.questions));
+      assert.ok(result.conditionalAlternatives?.some(alternative => alternative.routeId === "disposal"));
+      for (const alternative of result.conditionalAlternatives ?? []) {
+        assert.equal(alternative.state, "informational");
+        assert.equal(alternative.executable, false);
+        assert.equal("rank" in alternative, false);
+        assert.ok(alternative.citations.every(citation => citation.scope === "general-requirement"));
+      }
+    }
+  });
+}
+
+async function assertNativeOriginBinding(cases: readonly OriginCase[]) {
+  const origin = "http://localhost:3000";
+  const app = createSyntheticResourceApp({ origin });
+  try {
+    const cookie = (await app.fetch(new Request(origin))).headers.get("set-cookie")?.split(";")[0];
+    assert.ok(cookie);
+    for (const [name, process, state] of cases) {
+      const input = { ...originSteel, process };
+      const fields = { description: input.description, polymer: input.polymer!, process,
+        contamination: input.contamination!, hazardousContact: input.hazardousContact, massKg: String(input.massKg),
+        region: input.region!, assessmentDate: input.assessmentDate! };
+      const submitted = await app.fetch(new Request(origin + "/cases", { method: "POST",
+        headers: { cookie, origin, "content-type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams(fields) }));
+      assert.equal(submitted.status, 303, name);
+      const location = submitted.headers.get("location");
+      assert.ok(location, name);
+      const exported = await app.fetch(new Request(origin + location + "/input", { headers: { cookie } }));
+      assert.equal(exported.status, 200, name);
+      assert.deepEqual(await exported.json(), { ...input, caseId: location.split("/").at(-1) }, name);
+      const page = await app.fetch(new Request(origin + location, { headers: { cookie } }));
+      assert.equal(page.status, 200, name);
+      const html = await page.text();
+      assert.equal(html.includes("<h3>1순위 · 기계적 재활용</h3>"), state === "compared", name);
+      if (state === "needs-information") assert.match(html, /<h1>추가 정보 필요<\/h1>/u, name);
+      if (state === "needs-review") assert.match(html, /<h1>검토 필요<\/h1>/u, name);
+    }
+  } finally {
+    await app.close();
+  }
+}
+
+test("native origin binding preserves raw input and gates the ranked route", async () => {
+  await assertNativeOriginBinding(originBindingCases);
+});
+
+for (const originCase of [...originPolarityCases, ...originClauseCases, ...originSubjectCases]) {
+  test(`native origin polarity: ${originCase[0]}`, async () => {
+    await assertNativeOriginBinding([originCase]);
+  });
+}
+
+test("separately reported contamination uncertainty preserves the confirmed process category", async () => {
+  const input = { ...originSteel, process: "사업장일반폐기물, 오염 여부 미확인" };
+  assert.deepEqual(materialQuestions(input), [safetyReasons.contaminationUnknown]);
+  assert.equal(materialStream(input), "ferrous");
+  const result = await createResourceDomain(input).decide();
+  assert.equal(result.state, "needs-information");
+  if (result.state !== "needs-information") throw new Error(JSON.stringify(result));
+  assert.deepEqual(result.questions, [safetyReasons.contaminationUnknown]);
+  assert.equal("recommendations" in result, false);
+});
 
 for (const patch of [
   { hazardousContact: "unknown" },
